@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 01:48:17  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.1  1999/12/13 01:28:35  neeri
  * Added to new MacPerl build
  *
@@ -41,14 +44,14 @@ include "Perl.rsrc";
 
 resource 'vers' (1) {
 	0x05, 0x06, development, 0x01, verUS,
-	"5.6d1",
+	"5.6.0d1",
 	"Perl 5 - ported by Matthias Neeracher."
 	};
 
 resource 'vers' (2) {
 	0x05, 0x06, development, 0x01, verUS,
-	"5.6d1",
-	"Perl 5.6d1 (21May98)"
+	"5.6.0d1",
+	"Perl 5.6.0d1 (2000-30-01)"
 	};
 
 resource 'DLOG' (2001)	{
@@ -250,7 +253,7 @@ resource 'cmdo' (128) {
 			},
 			notDependent {}, VersionDialog {
 				VersionString {
-					"5.2.1a1"
+					"5.6.0d1"
 				},
 				"Perl by Larry Wall <larry@wall.org>\n"
 				"MPW port by Matthias Neeracher <neeri@iis.ee.ethz.ch>\n"
