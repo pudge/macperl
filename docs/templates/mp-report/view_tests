@@ -4,8 +4,6 @@
 Look around, click around, have fun.  They key below describes the status of each user test,
 and an average of tests is calculated to get the status of each test program.  So if a test
 is marked OK, feel free to test it anyway, because we want to make sure it is OK.
-Please read the test guidelines (not yet available ... does someone want to
-write something up?).
 </p>
 
 [% INCLUDE statusexplainlink %]
@@ -14,11 +12,9 @@ write something up?).
 <form action="[% env.script_name %]" method="post">
 
 <p>Select a MacPerl version to view:
-[% versions = version.nsort.keys.reverse;
-   version.0 = "All";
-   form.version ||= versions.0;
+[% version.0 = "All";
    PROCESS get_select label => "", name => "version",
-	data => version, seldef => form.version || versions.0;
+	data => version, seldef => form.version;
 %]
 
 	<input type="hidden" name="op" value="view_tests" />
