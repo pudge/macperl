@@ -166,7 +166,7 @@ sub new {
 
 	$self = { _DB => $db, ID => $db->{ID}, SWITCH => 0, GLUENAME => $app };
 
-	ADDRESS($self, @add);
+	ADDRESS($self, $addtype, @add);
 
 	@{$self}{qw(CLASS NAMES IDS)} = _merge_classes($db);
 	_merge_enums($db, $self);

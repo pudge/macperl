@@ -29,7 +29,7 @@ XSCHECK: {
 	}
 # We don't want to detab anymore ... I think
 #	$dup .= "Entab -t 0 $file>$new\n";
-	$dup .= "Duplicate $file $new\n";
+	$dup .= "Duplicate -y $file $new\n";
 	$new =~ /^(.*:)/; 
 	$mkpath{$1} = 1;
 }
