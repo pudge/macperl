@@ -18,6 +18,8 @@ compilers used, etc.
 Then you can start testing, and reporting the results.
 </p>
 
+[% INCLUDE statusexplainlink %]
+
 <p>
 Any bugs you run
 into, please check out the
