@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.7  2003/03/17 06:15:56  pudge
+ * A go at fixing the problems with the GUSI routines, so that if a path doesn't exist, we try to get the directory instead; still need some cleanup and a lot of testing
+ *
  * Revision 1.6  2002/12/17 16:18:37  pudge
  * Use new constant
  *
@@ -156,6 +159,8 @@ static OSErr GUSIFSpUp(FSSpec * spec)
 			gMacPerl_OSErr = FSMakeFSSpec(
 				spec->vRefNum, spec->parID, NULL, spec
 			);
+			if (gMacPerl_OSErr == fnfErr)
+				gMacPerl_OSErr = noErr;
 		}
 	}
 
@@ -180,6 +185,8 @@ static OSErr GUSIFSpDown(FSSpec * spec, ConstStr31Param name)
 		gMacPerl_OSErr = FSMakeFSSpec(
 			pb->dirInfo.ioVRefNum, pb->dirInfo.ioDrDirID, path, spec
 		);
+		if (gMacPerl_OSErr == fnfErr)
+			gMacPerl_OSErr = noErr;
 	}
 
 	free(pb);
@@ -207,7 +214,7 @@ static char * GUSIFSp2FullPath(const FSSpec * spec)
 		spec2->parID   = spec->parID;
 		spec2->name[0] = 0;
 
-		if ( gMacPerl_OSErr = GUSIFSpUp(spec2) ) {
+		if ( GUSIFSpUp(spec2) ) {
 			free(name);
 			free(spec2);
 			return "";
@@ -240,7 +247,6 @@ static char * GUSIFSp2FullPath(const FSSpec * spec)
 static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 {
 	FSRef		ref;
-	char *		name = malloc(255);
 
 	// convert from GUSI-style FSSpec encoding (see GUSIFSp2Encoding)
 	if (*fileName == '\021' && fileName[13] == ':') {
@@ -262,19 +268,17 @@ static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 
  		switch (gMacPerl_OSErr = FSMakeFSSpec(spec->vRefNum, spec->parID, path, spec)) {
 		 	case fnfErr: // It is OK if file does not exist
-		 		free(name);
 				gMacPerl_OSErr = noErr;
- 		 		return gMacPerl_OSErr;
+ 				return gMacPerl_OSErr;
 			default:
-		 		free(name);
 				return gMacPerl_OSErr;
 		}
 	}
 
 	// If file doesn't exist, see if dir does
-	*name = 0;
 	if ( (gMacPerl_OSErr = FSPathMakeRef((UInt8 *)fileName, &ref, NULL)) && (gMacPerl_OSErr == fnfErr) ) {
-		char * fileNameCpy	= malloc(strlen(fileName));
+		char *	fileNameCpy = malloc(strlen(fileName));
+		char *	name;
 
 		strcpy(fileNameCpy, fileName);
 
@@ -303,19 +307,19 @@ static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 			name++;
 			gMacPerl_OSErr = FSPathMakeRef((UInt8 *)dir, &ref, NULL);
 			free(dir);
-			free(fileNameCpy);
-			if (gMacPerl_OSErr) {
-		 		free(name);
-				return gMacPerl_OSErr;
-			}
 		}
-		free(fileNameCpy);
-	}
 
-	// get FSSpec
-	gMacPerl_OSErr = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, NULL, spec, NULL);
-	if ( !gMacPerl_OSErr && *name != 0 )
-		gMacPerl_OSErr = GUSIFSpDown(spec, name);
+		if (gMacPerl_OSErr) {
+			free(fileNameCpy);
+			return gMacPerl_OSErr;
+		} else {
+			if (! (gMacPerl_OSErr = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, NULL, spec, NULL)) )
+				GUSIFSpDown(spec, name);
+			free(fileNameCpy);
+		}
+	} else {
+		gMacPerl_OSErr = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, NULL, spec, NULL);
+	}
 
 	return gMacPerl_OSErr;
 }
@@ -341,6 +345,20 @@ static OSErr GUSISpecial2FSp(OSType object, short vol, FSSpec * desc)
 	return GUSIFSpUp(desc);
 }
 
+static char * GUSIFS2FullPath(const FSRef * ref)
+{
+	UInt8 *	path     = malloc(2*PATH_MAX); // to be safe
+	UInt32	pathSize = 2*PATH_MAX;
+
+	gMacPerl_OSErr = FSRefMakePath(ref, path, pathSize);
+	return path;
+}
+
+static OSErr GUSIPath2FS(const char * fileName, FSRef * ref)
+{
+	gMacPerl_OSErr = FSPathMakeRef((UInt8 *)fileName, ref, NULL);
+	return gMacPerl_OSErr;
+}
 
 
 static void fsetfileinfo(char * path, OSType creator, OSType type)
