@@ -1,3 +1,17 @@
+v0.03, xx December 2002
+
+* Fix AEDesc->data bug, remove debugging code (oops)
+
+* Refactor Makefile.PLs, now use distributed xsubpp (brian d foy)
+  instead of system xsubpp, and auto-generate $module.pod from
+  POD in $module.pm and $module.xs; $module.c files no longer included
+
+* Require 5.006 in the base Makefile.PL (just in case)
+
+* Fix POD in a few places
+
+
+
 v0.02, 9 December 2002
 
 * Addition of Mac::AppleEvents and Mac::OSA

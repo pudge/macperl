@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2002/11/13 02:04:50  pudge
+ * Aieeeeee!  Big ol' Carbon update.
+ *
  * Revision 1.2  2000/09/09 22:18:26  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -66,11 +69,9 @@ static SV * MakeOSSV(OSType type)
 
 MODULE = Mac::Components	PACKAGE = Mac::Components
 
-=head1 EXTENSION
+=head2 Functions
 
-Mac::Components - Extension description
-
-=head2 Mac::Components
+=over 4
 
 =item RegisterComponentResource TR, GLOBAL
 
@@ -316,3 +317,6 @@ RegisterComponentResourceFile(resRefNum, global)
 		XSRETURN_UNDEF;
 	}
 
+=back
+
+=cut

@@ -6,6 +6,10 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2002/12/10 01:50:57  pudge
+ * Add GetProcessPID and GetProcessForPID, for mapping between Mac OS PSN
+ * and Unix PID.
+ *
  * Revision 1.5  2002/11/13 02:04:52  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -74,6 +78,8 @@ The fields are:
     launchPreferredSize
     launchMinimumSize
 
+=over 4
+
 =cut
 
 STRUCT * LaunchParam
@@ -90,7 +96,7 @@ STRUCT * LaunchParam
 Returns LaunchParam.
 
     $launch = 
-        new LaunchParam(launchAppSpec => "hd:apps:myapp", launchMinimumSize => 32000);
+        new LaunchParam(launchAppSpec =E<gt> "hd:apps:myapp", launchMinimumSize => 32000);
 
 =cut
 LaunchParam
@@ -105,6 +111,8 @@ _new()
 	RETVAL
 
 =item DESTROY LPB
+
+=back
 
 =cut
 void
@@ -134,6 +142,8 @@ The field names are:
     processActiveTime
     processAppSpec
 
+=over 4
+
 =cut
 
 STRUCT * ProcessInfo
@@ -152,6 +162,8 @@ STRUCT * ProcessInfo
 
 =item DESTROY PI
 
+=back
+
 =cut
 void
 DESTROY(pi)
@@ -162,6 +174,8 @@ DESTROY(pi)
 MODULE = Mac::Processes	PACKAGE = Mac::Processes
 
 =head2 Functions
+
+=over 4
 
 =item LaunchApplication LAUNCHPARAMS
 

@@ -24,7 +24,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Voice);
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		SpeechManagerVersion
@@ -179,11 +179,9 @@ sub kFemale ()                     {          2; }
 
 =include Speech.xs
 
-=head1 BUGS/LIMITATIONS
+=head1 AUTHOR
 
-=head1 AUTHOR(S)
-
-Matthias Ulrich Neeracher <neeracher@mac.com> Author
+Matthias Ulrich Neeracher neeracher@mac.com
 
 =cut
 

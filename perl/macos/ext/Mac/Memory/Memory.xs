@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.8  2002/11/13 02:04:52  pudge
+ * Aieeeeee!  Big ol' Carbon update.
+ *
  * Revision 1.7  2002/01/23 20:24:58  pudge
  * Fix silly error
  *
@@ -66,6 +69,8 @@ MODULE = Mac::Memory	PACKAGE = Handle
 
 Handle provides an object interface to do simple operations on MacOS handles.
 The interface is simpler than the more general memory management functions.
+
+=over 4
 
 =item new
 
@@ -294,11 +299,14 @@ Almost all of the memory management needs in MacPerl can be handled by the above
 =cut
 
 MODULE = Mac::Memory	PACKAGE = Ptr
+
 =head2 Ptr
 
 Handle provides an object interface to do simple operations on MacOS pointers
 (nonrelocatable heap blocks). There are very few good reasons to create pointers
 like this.
+
+=over 4
 
 =cut
 

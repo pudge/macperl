@@ -25,7 +25,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		CloseResFile
@@ -149,9 +149,9 @@ sub kSystemResFile ()              {          0; }
 
 =head1 AUTHOR
 
-Matthias Ulrich Neeracher <neeracher@mac.com> "Programs"
+Matthias Ulrich Neeracher neeracher@mac.com "Programs"
 
-Bob Dalgleish <bob.dalgleish@sasknet.sk.ca> "Documentation"
+Bob Dalgleish bob.dalgleish@sasknet.sk.ca "Documentation"
 
 =cut
 

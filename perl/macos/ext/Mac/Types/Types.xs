@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2002/11/13 02:04:53  pudge
+ * Aieeeeee!  Big ol' Carbon update.
+ *
  * Revision 1.2  2000/09/09 22:18:29  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -32,7 +35,7 @@
 
 MODULE = Mac::Types	PACKAGE = Mac::Types
 
-=head2 Functions
+=head2 XS Functions
 
 =over 4
 

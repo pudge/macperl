@@ -22,7 +22,7 @@ BEGIN {
 	use DynaLoader;
 	
 	use vars qw(@ISA @EXPORT $VERSION);
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		RegisterComponentResource
@@ -128,8 +128,6 @@ sub defaultComponentAnyFlagsAnyManufacturerAnySubType () { (defaultComponentAnyF
 
 =item kComponentTargetSelect
 
-=item kComponentTargetSelect
-
 =item kComponentUnregisterSelect
 
 Standard component selectors.
@@ -152,6 +150,8 @@ sub kComponentUnregisterSelect ()  {         -7; }
 
 Flags for C<SetDefaultComponent()>.
 
+=back
+
 =cut
 sub registerComponentGlobal ()     	  {          1; }
 sub registerComponentNoDuplicates ()  {          2; }
@@ -159,13 +159,11 @@ sub registerComponentAfterExisting () {          4; }
 
 =include Components.xs
 
-=head1 FILES
+=head1 AUTHOR
 
-=head1 AUTHOR(S)
+Matthias Ulrich Neeracher neeracher@mac.com "Programs"
 
-Matthias Ulrich Neeracher <neeracher@mac.com> Author
-
-Bob Dalgleish <bob.dalgleish@sasknet.sk.ca> Documenter
+Bob Dalgleish bob.dalgleish@sasknet.sk.ca "Documentation"
 
 =cut
 1;

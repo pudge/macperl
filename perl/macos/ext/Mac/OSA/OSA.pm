@@ -28,7 +28,7 @@ BEGIN {
 	use Mac::AppleEvents;
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		OSALoad
@@ -336,13 +336,11 @@ sub kGenericComponentVersion ()    {     0x0100; }
 
 =include OSA.xs
 
-=head1 BUGS/LIMITATIONS
+=head1 AUTHOR
 
-=head1 AUTHOR(S)
+Matthias Ulrich Neeracher neeracher@mac.com "Programs"
 
-Matthias Ulrich Neeracher <neeracher@mac.com> Author
-
-Bob Dalgleish <bob.dalgleish@sasknet.sk.ca> Documenter
+Bob Dalgleish bob.dalgleish@sasknet.sk.ca "Documentation"
 
 =cut
 

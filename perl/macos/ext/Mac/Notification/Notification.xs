@@ -68,7 +68,7 @@ STRUCT * NMRec
 
 =over 4
 
-=item new NMRec (KEY => VALUE...)
+=item new NMRec (KEY =E<gt> VALUE...)
 
 Create a new notification record and fill it in.
 

@@ -34,7 +34,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.21';
+	$VERSION = '1.22';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		GetApplLimit
@@ -138,11 +138,11 @@ sub open {
 
 The low level interface is not likely to be needed, except for the HLock() function.
 
-=head1 Author
+=head1 AUTHOR
 
 Matthias Ulrich Neeracher neeracher@mac.com "Programs"
 
-Bob Dalgleish <bob.dalgleish@sasknet.sk.ca> "Documentation"
+Bob Dalgleish bob.dalgleish@sasknet.sk.ca "Documentation"
 
 =cut
 

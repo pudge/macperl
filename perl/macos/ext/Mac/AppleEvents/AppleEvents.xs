@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/12/10 19:13:22  pudge
+ * Fix dumb bug in getting AEDesc data.  Remove debugging code.
+ *
  * Revision 1.3  2002/12/10 03:06:23  pudge
  * Big update for Carbon support
  *
@@ -828,6 +831,8 @@ speeded up AE library. Consult the AEGizmo documentation for details of usage
 of the library. The Build/Print facility uses a formatting convention similar
 to scanf/printf to put things together.
 
+=over 4
+
 =item AEBuild FORMAT, PARM, ...
 
 Build an AppleEvent descriptor using the format per the Gizmo documentation
@@ -972,12 +977,16 @@ AEPrint(desc)
 	OUTPUT:
 	RETVAL
 
+=back
+
 =head2 AEGizmos Subdescriptors
 
 The Apple Event Gizmos subdescriptor approach uses a dictionary method for
 extracting and constructing descriptors.  Parsing an Apple Event using the
 dictionary is very time efficient, and translating to and from the dictionary
 tables is quick and efficient.
+
+=over 4
 
 =item AEDescToSubDesc DESC
 
@@ -1178,6 +1187,8 @@ MODULE = Mac::AppleEvents	PACKAGE = AEStream
 
 The Apple Event Gizmos streams approach uses a streaming model for building 
 a sequence of descriptors.
+
+=over 4
 
 =item new AEStream
 

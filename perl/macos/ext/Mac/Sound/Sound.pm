@@ -2,9 +2,6 @@
 
 Mac::Sound - Macintosh Toolbox Interface to Sound Manager
 
-=head1 SYNOPSIS
-
-
 =head1 DESCRIPTION
 
 Access to Inside Macintosh is essential for proper use of these functions.
@@ -24,7 +21,7 @@ BEGIN {
 	use Mac::Memory();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		twelfthRootTwo
@@ -648,13 +645,9 @@ sub SndPlay {
 
 =include Sound.xs
 
-=head1 BUGS/LIMITATIONS
+=head1 AUTHOR
 
-=head1 FILES
-
-=head1 AUTHOR(S)
-
-Matthias Ulrich Neeracher <neeracher@mac.com> 
+Matthias Ulrich Neeracher neeracher@mac.com
 
 =cut
 

@@ -2,9 +2,6 @@
 
 Mac::Files - Macintosh Toolbox Interface to the File and Alias Manager
 
-=head1 SYNOPSIS
-
-
 =head1 DESCRIPTION
 
 =cut
@@ -19,7 +16,7 @@ BEGIN {
 	
 	use vars qw(@ISA @EXPORT $VERSION);
 
-	$VERSION = '1.02';
+	$VERSION = '1.03';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		FSpGetCatInfo
@@ -908,7 +905,7 @@ sub FlushVol 	{	_FlushVol  (&_VolumeID);	}
 
 =head1 AUTHOR
 
-Matthias Ulrich Neeracher <neeracher@mac.com>
+Matthias Ulrich Neeracher neeracher@mac.com
 
 =cut
 

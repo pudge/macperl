@@ -72,17 +72,8 @@ Hm, the MacPerl.t test might not fully work remotely now.  Not tested yet.
 
 Matthias added some extensions to XS for his Toolbox modules; they were
 never fully embraced by p5p, and as a result, we have a separate xsubpp
-for these additional XS macros. There is currently no resolution to this
-problem.  Either we write a pre-preprocessor that converts the .xs files
-to be able to be handled by perl's xsubpp, or we modify the .xs so that
-it can be handled by perl's xsubpp, or we distribute a separate xsubpp
-(which is dangerous, as xsubpp changes with versions of perl).
-
-Currently, Mac::Carbon is distributed with the already-processed .c files.
-If you really want to compile with the .xs files, you can use the xsubpp
-programs (either the 5.6 or 5.8 versions) included in the distribution.
-This is only temporary, until we have a permanent resolution to these
-issues.
+for these additional XS macros.  The Makefile.PLs will choose and use
+the appropriate xsubpp version for your version of perl.
 
 You might want to run the test suite with C<make test TEST_VERBOSE=1>.
 It's cool.
@@ -107,7 +98,8 @@ modules are:
 	Mac::Speech
 	Mac::Types
 
-Coming next, hopefully:
+Coming next, hopefully (to be distributed separately on the CPAN
+and SourceForge.net):
 
 	Mac::AppleEvents::Simple
 	Mac::OSA::Simple

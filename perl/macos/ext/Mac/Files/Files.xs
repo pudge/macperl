@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2002/11/13 02:04:51  pudge
+ * Aieeeeee!  Big ol' Carbon update.
+ *
  * Revision 1.5  2002/01/30 07:43:54  neeri
  * Check ownership of CatInfos
  *
@@ -139,9 +142,9 @@ Further information for a directory, including:
     Point      frScroll          scroll position
     long       frOpenChain       DirID chain of open folders
     I8         frScript          Script flag and number
-    I8         frXFlags;         More flag bits
+    I8         frXFlags          More flag bits
     short      frComment         comment
-    long       frPutAway;        DirID
+    long       frPutAway         DirID
 
 =cut
 STRUCT DXInfo
@@ -152,12 +155,47 @@ STRUCT DXInfo
 	short			frComment;					/*comment*/
 	long			frPutAway;					/*DirID*/
 
-=back
-
 =cut
 
 MODULE = Mac::Files	PACKAGE = CatInfo
 
+=item CatInfo
+
+Catalog information of a file or a directory, including:
+
+    Str255     ioNamePtr         ptr to Vol:FileName string
+    short      ioVRefNum         volume refnum (DrvNum for Eject and MountVol)
+    short      ioFRefNum         reference number
+    I8         ioFVersNum        version number
+    short      ioFDirIndex       GetFInfo directory index
+    I8         ioFlAttrib        GetFInfo: in-use bit=7, lock bit=0
+    I8         ioACUser          access rights for directory only
+    FInfo      ioFlFndrInfo      user info
+    long       ioDirID           A directory ID
+    U16        ioFlStBlk         start file block (0 if none)
+    long       ioFlLgLen         logical length (EOF)
+    long       ioFlPyLen         physical length
+    U16        ioFlRStBlk        start block rsrc fork
+    long       ioFlRLgLen        file logical length rsrc fork
+    long       ioFlRPyLen        file physical length rsrc fork
+    time_t     ioFlCrDat         file creation date& time
+    time_t     ioFlMdDat         last modified date and time
+    time_t     ioFlBkDat         
+    FXInfo     ioFlXFndrInfo     
+    long       ioFlParID         
+    long       ioFlClpSiz        
+    DInfo      ioDrUsrWds        
+    long       ioDrDirID         
+    U16        ioDrNmFls         
+    time_t     ioDrCrDat         
+    time_t     ioDrMdDat         
+    time_t     ioDrBkDat         
+    DXInfo     ioDrFndrInfo      
+    long       ioDrParID         
+
+=back
+
+=cut
 STRUCT * CatInfo
 	HFileInfo *		STRUCT;
 		INPUT:

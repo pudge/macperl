@@ -4,7 +4,7 @@ require Exporter;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $Target);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 
 @ISA = qw(Exporter);
 
@@ -161,8 +161,6 @@ sub _CarbonDoScript {
 
 __END__
 
-=cut
-
 =head1 NAME
 
 MacPerl - Built-in Macintosh specific routines.
@@ -175,7 +173,7 @@ MacPerl - Built-in Macintosh specific routines.
 
     MacPerl::SetFileInfo("MPS ", "TEXT", yin, yang);
     MacPerl::GetFileInfo(yin);
-    
+
     MacPerl::Quit(kMacPerlAlwaysQuit);
 
 =head1 FUNCTIONS

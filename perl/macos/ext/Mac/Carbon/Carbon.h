@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2002/12/10 01:47:17  pudge
+ * Some cleanup, and add idle proc, which we don't actually use
+ *
  * Revision 1.2  2002/11/14 12:47:58  pudge
  * Cast errno to short
  *
@@ -138,6 +141,7 @@ static char * GUSIFSp2FullPath(const FSSpec * spec)
 	UInt8 *		path     = (UInt8 *)NewPtr(2*PATH_MAX); // to be safe
 	UInt32		pathSize = 2*PATH_MAX;
 
+	// File doesn't exist, big problem
 	if ( (gMacPerl_OSErr = FSpMakeFSRef(spec, &ref)) ) { // && (gMacPerl_OSErr != fnfErr) )
 		return "";
 	}
@@ -180,9 +184,11 @@ static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 		}
 	}
 
+	// File doesn't exist, big problem
 	if (gMacPerl_OSErr = FSPathMakeRef((UInt8 *)fileName, &ref, NULL))
 		return gMacPerl_OSErr;
 
+	// get FSSpec
 	gMacPerl_OSErr = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, NULL, spec, NULL);
 	return gMacPerl_OSErr;
 }

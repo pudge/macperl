@@ -29,7 +29,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Gestalt);
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		Gestalt
@@ -2273,11 +2273,11 @@ sub gestaltExtToolboxTable ()      {     'xttt'; }
 
 =include Gestalt.xs
 
-=head1 AUTHOR(S)
+=head1 AUTHOR
 
-Matthias Ulrich Neeracher <neeracher@mac.com> Author
+Matthias Ulrich Neeracher neeracher@mac.com "Programs"
 
-Bob Dalgleish <bob.dalgleish@sasknet.sk.ca> Documenter
+Bob Dalgleish bob.dalgleish@sasknet.sk.ca "Documentation"
 
 =cut
 

@@ -477,6 +477,8 @@ sub kNoTimeOut					  () {		   -2; }
 
 Options for C<AEResumeTheCurrentEvent()>.
 
+=back
+
 =cut
 sub kAENoDispatch				  () {			0; }
 sub kAEUseStandardDispatch		  () { 0xFFFFFFFF; }
@@ -564,9 +566,6 @@ sub kAEEndsWith                   () {     'ends'; }
 sub kAEContains                   () {     'cont'; }
 
 }
-=back
-
-=cut
 
 BEGIN {
 	use Exporter   ();
@@ -896,6 +895,8 @@ AEDesc is a Perl package that encapsulates an AppleEvent Descriptor.
 It uses the OO methods of Perl5 to make building and parsing data structures
 easier.
 
+=over 4
+
 =item new TYPE, HANDLE
 
 =item new TYPE, DATA
@@ -992,6 +993,8 @@ package AEKeyDesc;
 AEKeyDesc is a Perl package that encapsulates an AppleEvent keyword.
 It uses the OO methods of Perl5 to make building and parsing data structures
 easier.
+
+=over 4
 
 =item new KEY, TYPE, HANDLE
 

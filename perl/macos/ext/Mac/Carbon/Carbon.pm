@@ -130,29 +130,12 @@ of the issues, including bugs and possibilities for bugs, involved.
 
 =item *
 
-AEGetDescData is screwing up on returning data of type TEXT with two or
-three characters, in AppleEvents.xs for AEDesc->data().  Freaky.
-
-=item *
-
 When creating FSSpecs, the file must exist.  This is Bad.
 
 =item *
 
 Docs not updated for Carbon incompatibilities (including changes to
 Processes fields).  Generate list of all unsupported functions.
-
-=item *
-
-Deal with xsubpp issues (F<README>).
-
-=item *
-
-Related to xsubpp issues, embedded POD in .xs should somehow be moved
-to .pm files (perhaps the new preprocessor could automatically dump
-the POD into the corresponding .pm file).  This currently causes an
-error during the build, and results in man pages not being properly
-created, with all the documentation.
 
 =item *
 
@@ -182,10 +165,6 @@ then the tied %Application hash should be implemented differently.
 
 =item *
 
-In MacPerl package, perhaps support Ask/Answer/Pick via DoAppleScript.
-
-=item *
-
 Can we support XCMDs etc. via XL?  Do we want to?
 
 =back
@@ -197,12 +176,14 @@ Can we support XCMDs etc. via XL?  Do we want to?
 See each individual module for more information on use.  See F<README>
 for more information about modules not included here.
 
+	Mac::AppleEvents	appleevents
 	Mac::Components		components
 	Mac::Files		files
 	Mac::Gestalt		gestalt
 	Mac::Memory		memory
 	Mac::MoreFiles		morefiles
 	Mac::Notification	notification
+	Mac::OSA		osa	
 	Mac::Processes		processes
 	Mac::Resources		resources
 	Mac::Sound		sound
@@ -218,18 +199,20 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
 BEGIN {
 	my @modules = qw(
+		AppleEvents
 		Components
 		Files
 		Gestalt
 		Memory
 		MoreFiles
 		Notification
+		OSA
 		Processes
 		Resources
 		Sound
@@ -269,8 +252,10 @@ Nandor E<lt>pudge@pobox.comE<gt>.
 =head1 THANKS
 
 Michael Blakeley E<lt>mike@blakeley.comE<gt>,
+brian d foy E<lt>comdog@panix.comE<gt>,
 Gero Herrmann E<lt>herr@ils.uec.ac.jpE<gt>,
-Dan Sugalksi E<lt>dan@sidhe.orgE<gt>.
+Dan Sugalksi E<lt>dan@sidhe.orgE<gt>,
+Steve Zellers.
 
 =head1 SEE ALSO
 
