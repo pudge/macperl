@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.5  2000/12/25 09:49:19  neeri
+#  Tweak makefile
+#
 #  Revision 1.4  2000/12/22 08:31:47  neeri
 #  Some build tweaks
 #
@@ -180,8 +183,13 @@ Dynamic_Ext_Std	=
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= \
+	re:re Fcntl:Fcntl File:Glob:Glob Sys:Hostname:Hostname \
 	DynaLoader:DynaLoader NDBM_File:NDBM_File DB_File:DB_File Socket:Socket \
-	Opcode:Opcode POSIX:POSIX IO:IO
+	Opcode:Opcode POSIX:POSIX IO:IO attrs:attrs Data:Dumper:Dumper \
+	Devel:Peek:Peek
+	# Devel:DProf:DProf bad errors
+	# Errno no idea
+
 Static_Ext_AutoInit	= 	$(Static_Ext_Mac:f) $(Static_Ext_Std:f)
 More_Static_Ext		= 	OSA XL
 Static_Ext_Prefix		= 	:ext:{$(Static_Ext_Mac)} ::ext:{$(Static_Ext_Std)}
