@@ -146,11 +146,14 @@ sub template {
 		strip_mode	=> [ $strip_mode, 1 ]
 	}});
 
-	my $template = Template->new(
+	my %data = (
 		TRIM		=> 1,
 		INCLUDE_PATH	=> $self->{tt_path},
-		LOAD_FILTERS	=> $filters,
-	);
+		LOAD_FILTERS	=> $filters
+		    );
+	$data{COMPILE_DIR}      =  $self->{ttc_path} if $self->{ttc_path};
+
+	my $template = Template->new(%data);
 }
 
 sub process {
