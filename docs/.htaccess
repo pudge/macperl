@@ -1,0 +1,20 @@
+ErrorDocument 404 /404.shtml
+
+IndexOptions +NameWidth=*
+IndexOptions +DescriptionWidth=*
+IndexOptions +IconsAreLinks
+IndexIgnore tmp
+
+AddDescription "MacPerl source snapshot"		macperl@
+AddDescription "Perl release in Mac OS format"		perl-5.*.sit.bin
+AddDescription "Older Releases"				old
+
+AddDescription "Libraries needed for MacPerl build"	macperl_build_libs
+AddDescription "Apple event library"			AEGizmos
+AddDescription "MoreFiles library"			MoreFiles
+AddDescription "Mac OS port of patch"			Patch_21
+AddDescription "Mac OS port of SFIO"			Sfio
+AddDescription "Load in external libs"			XL
+AddDescription "Mac OS port of bsd-db"			db_
+AddDescription "Mac OS port of dmake"			dmake
+AddDescription "InternetConfig SDK"			icprogkit
