@@ -3,6 +3,12 @@ I know it isn't perfect, but it is a start.
 If you have any questions, ask the MacPerl Porters list.  Thanks!
 </p>
 
+<style type="text/css">
+<!--
+li { padding-bottom: 8pt }
+-->
+</style>
+
 <ul>
 
 <li>Create a new Configuration if you are testing a new version of MacPerl!</li>
@@ -15,7 +21,7 @@ setup to do this, you just need to install MPW, set to the right directory,
 and run the script.</li>
 
 <li>From MPW, change directory to the <em>t</em> directory.  If
-the MACPERL and PERL5LIB environment variables are set bu ToolServer, then
+the MACPERL and PERL5LIB environment variables are set by ToolServer, then
 comment those out of your ToolServer startup file and restart ToolServer.
 Then, run the MacPerlTests.cmd MPW script.</li>
 
