@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+	<title>MacPerl Build Process</title>
+	<meta name="generator" content="BBEdit 6.0.2" />
+</head>
+<body>
+
+<h1>MacPerl Build Process</h1>
+
+<p>
+<a name="bar">These</a> are the install procedures for <a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.
+</p>
+
+<h2>Ingredients</h2>
+
+<ul>
+	<li>The <a href="ftp://sunsite.cnlab-switch.ch//software/platform/macos/src/mpw_c/dmake_40m2.sit.bin">dmake</a> MPW tool</li>
+	<li>The <a href="ftp://sunsite.cnlab-switch.ch/software/platform/macos/src/mpw_c/Patch_21.sit.bin">Patch</a> MPW tool</li>
+	<li>The latest version of a number of <a href="ftp://sunsite.cnlab-switch.ch//software/platform/macos/src/mw_c/">packages:</a>
+		<ul>
+			<li>GUSI 2 (GUSI_215 or later)</li>
+			<li>sfio (sfio_04Aug99 or later)</li>
+			<li>(Berekeley) db (db_186 or later)</li>
+			<li>XL (XL_15 or later)</li>
+		</ul></li>
+	<li>AEGizmos</li>
+	<li><a href="http://devworld.apple.com/samplecode/Sample_Code/Files/MoreFiles.htm">MoreFiles 1.5</a></li>
+	<li>IC source</li>
+	<li>A complete installation of <a href="http://developer.apple.com/tools/mpw-tools/">MPW</a></li>
+	<li>A reasonably recent version of the Metrowerks CodeWarrior compilers for MPW (Pro 5 recommended) 
+		<em>or</em> of the MPW C/C++ compilers (I used SC 8.8.4f1, MrC 4.1.0f1c1,
+		MWCPPC 2.3.2 build 75, and MWC68K 2.3.2 build 79)
+	</li>
+	<li>STLport 3.12.3 if MrC/SC</li>
+	<li>(Perl and MacPerl source)</li>
+</ul>
+
+
+<h2>Recipe</h2>
+
+<ol>
+	<li>Install the patch and dmake MPW tools (including BuildProgram
+		and BuildCommands from the dmake distribution).</li>
+	<li>Create a folder "MacPerl".</li>
+	<li>Unpack the perl distribution and put it into that folder.</li>
+	<li>Put either the db and XL distributions or aliases to them into that folder.
+		(IC, MF, AEGizmos)</li>
+	<li>Unpack the GUSI and sfio distributions and run their installation scripts
+		GUSI_Install.MPW and sfio_Install.MPW.</li>
+	<li>STLport / CW_Max_NoDup_Update</li>
+	<li>Edit Makefiles for compilers</li>
+	<li>Change directory in MPW to :perl:macos: and buildprogram all</li>
+	<li>Change directory in MPW to :macperl: and buildprogram all</li>
+</ol>
+
+<ul>
+	<li><a name="foo">Put</a> the the MacPerl distribution (the "macos" folder) inside the perl distribution 
+		(perl-5.6.0).</li>
+	<li>Change your directory to the macos folder.</li>
+	<li>Apply the patch by executing the command "patch &lt; MacPerl-patch-5.6.0"</li>
+	<li>Edit the MacPerlConfig.mk file to specify your preferred compilers.</li>
+	<li>Build the "all" target. It will fail at the "x2p" point.</li>
+</ul>
+
+<p>Good luck, and have fun
+
+Matthias Neeracher 09Apr00</p>
+
+</body>
+</html>
