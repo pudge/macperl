@@ -1,14 +1,12 @@
 name=useperl
 description="use.perl.org theme"
 include_theme=slashcode
-
-topic images
-htdocs
-images
-misc
-tasks
-plugins
-
+#topic images
+#htdocs
+#images
+#misc
+#tasks
+#portald-site
 template=templates/admin;menu;default
 template=templates/currentAdminUsers;misc;default
 template=templates/data;misc;default
@@ -32,15 +30,17 @@ template=templates/useperlcopyright;misc;default
 template=templates/useperlmenu;misc;default
 template=templates/users;menu;default
 plugin=Admin
-plugin=CheesyPortal
+plugin=ForumZilla
 plugin=Hof
+plugin=HumanConf
 plugin=Journal
 plugin=Messages
+plugin=Print
 plugin=PollBooth
+plugin=Print
 plugin=PubKey
 plugin=Search
 plugin=Sections
 plugin=Stats
 plugin=Submit
-plugin=Subscribe
 plugin=Zoo
