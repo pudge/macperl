@@ -45,6 +45,7 @@ LinkPPC		=	MWLinkPPC ${MWLOpt}
 MPWLOpt		=	${LOpt} -c 'MPS ' -t MPST -w -mf
 LinkSC		=	Link ${MPWLOpt}  -model far
 LinkMrC		= 	PPCLink ${MPWLOpt}
+# nodup
 SharedLibPPC=	MWLinkPPC -xm sharedlibrary -sym on -msg nowarn
 SharedLibMrC= 	PPCLink -xm sharedlibrary -sym off -d
 
