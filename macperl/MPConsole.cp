@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.6  2001/11/02 22:36:17  pudge
+Sync with perforce
+
 Revision 1.5  2001/10/29 10:38:01  neeri
 Another go at our perennial favorite (MacPerl Bug #422129)
 
@@ -145,6 +148,7 @@ void HarvestConsole(DPtr doc, MPConsoleSocket * sock)
 		
 		doc->u.cons.fence = (*doc->theText)->teLength;
 		sock->eof			= true;
+		gGotEof				= nil;
 	} else 
 		while (chr-- > end)
 			if (*chr == '\n') {
