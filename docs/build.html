@@ -31,7 +31,7 @@
 </head>
 <body>
 
-<h1 class="head">MacPerl Build Process (Unfinished)</h1>
+<h1 class="head">MacPerl Build Process</h1>
 
 <p>
 
@@ -85,12 +85,13 @@ recommended versions for building with.
 		set up especially for the build, so if you get the
 		individual packages you might have some broken paths.</li>
 
-	<li><strong><a href="http://sourceforge.net/projects/gusi/">GUSI 2</a></strong>
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7941&amp;release_id=21478">GUSI 2</a></strong>
 		(GUSI_215 or later; get the Pro5 libs in addition if using CodeWarrior
 		Pro 5)</li>
 
 	<li><strong><a href="http://developer.apple.com/tools/mpw-tools/">MPW</a></strong>,
-		the complete installation from Apple</li>
+		the complete installation from Apple (I got the single image of
+		MPW-GM)</li>
 
 	<li><strong><a href="http://www.metrowerks.com/">Metrowerks</a>
 		CodeWarrior compilers for MPW</strong> (Pro 5 recommended; MWC68K 2.3.2 build 79, MWCPPC 2.3.2 build 75) 
@@ -106,7 +107,7 @@ recommended versions for building with.
 
 	<li><strong><a href="http://www.cpan.org/src/5.0/perl-5.6.0.tar.gz">perl-5.6.0 source</a></strong></li>
 
-	<li><strong><a href="#">MacPerl source kit</a></strong></li>
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=22346">MacPerl 5.6.0 source kit</a></strong></li>
 </ul>
 
 
@@ -151,7 +152,7 @@ recommended versions for building with.
 	<li><p>Change directory (using the "directory" command) in MPW to the
 		GUSI directory, and run the <em>GUSI_Install.MPW</em> script.
 		<sup><a href="#" onmouseover="set_status(3);" onclick="return no_click(3);">3</a></sup></p><pre>
-			directory "Bourque:Prog:src:GUSI_215"
+			directory "Bourque:macperl:GUSI_215"
 			GUSI_Install.MPW</pre>
 		
 		<p>If using STLport (SC/MrC builds), also run the
@@ -176,10 +177,10 @@ recommended versions for building with.
 	<li><p>Unpack the MacPerl source kit.  Put the <em>macperl</em>
 		folder inside the working directory with everything
 		else.  Put the <em>macos</em> folder inside the
-		<em>perl</em> folder created in the last step.</p></li>
+		<em>perl</em> folder created in the previous step.</p></li>
 
 	<li><p>Change directory to the macos directory and apply the patch.</p><pre>
-		directory "Bourque:Prog:src:macperl:perl:macos:"
+		directory "Bourque:macperl:perl:macos:"
 		patch &lt; MacPerl.patch</pre></li>
 
 	<li><p>Open <em>:macperl:perl:macos:MacPerlConfig.mk</em> and
@@ -199,7 +200,8 @@ recommended versions for building with.
 		execute <tt>buildprogram all</tt>.  This will build
 		the MacPerl application and supporting files.</p></li>
 
-	<li><p>Do a happy dance.  You're done.</p></li>
+	<li><p>Do a happy dance.  You're done.  Note that there are
+		plenty of bugs, so some things will not work.</p></li>
 
 </ol>
 
