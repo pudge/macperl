@@ -45,7 +45,6 @@ if ($#ARGV > -1) {
     foreach $ext (@ARGV) {
 	($mname = $ext) =~ s!/!::!g;
 	($cname = $mname) =~ s!:!_!g;
-	print STDERR "$mname / $cname\n";
 		
 	print "    {   extern void boot_${cname}(pTHX_ CV* cv);\n";
 		
