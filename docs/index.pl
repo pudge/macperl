@@ -30,10 +30,10 @@ sub main {
 
 	# possible value of "op" parameter in form
 	$pw->{ops} = {
-		add_user	=> [ 1,			\&home	],
-		create_user	=> [ 1,			\&build	],
+	    home	=> [ 1,			\&home	],
+	    build	=> [ 1,			\&build	],
 
-		default		=> [ 1,			\&home	]
+	    default	=> [ 1,			\&home	]
 	};
 
 	compile($pw) if $compile;
@@ -44,7 +44,7 @@ sub main {
 sub home {
 	my($pw) = @_;
 	$pw->header();
-	$pw->process('home');
+	$pw->process('index');
 }
 
 sub build {

@@ -57,8 +57,8 @@ sub new {
 sub initdata {
 	my($self) = @_;
 	$self->{form} = $self->{cgi}->Vars;
-	if (keys %{$self->{form}} == 1 && !$self->{form}{op}) {
-		($self->{form}{op}) = keys %{$self->{form}};
+	if (keys %{$self->{form}} == 1 && $self->{form}{keywords}) {
+		$self->{form}{op} = $self->{form}{keywords};
 	}
 	main::login($self) if defined &main::login;	# maybe put in Pudge::Web?
 }
