@@ -1,6 +1,7 @@
 TYPEMAP
 ConnectionID		T_IV
 Str255			T_STR255
+Str63			T_STR255
 OSType			T_OSTYPE
 FSSpec			T_FSSPEC
 Handle			T_PTROBJ
