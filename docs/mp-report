@@ -56,7 +56,7 @@ sub view_config {
 		config		=> $config,
 		myuser		=> $user,
 		map { ($_ => get_param($pw, $_)) }
-			qw ( processor version )
+			qw ( processor version gusiversion osversion )
 	});
 }
 
@@ -150,15 +150,15 @@ sub create_config {
 		$config{$_} = $pw->{form}{$_} ? 1 : 0;
 	}
 
-	for (qw(processor version name notes results)) {
+	for (qw(processor version gusiversion osversion name notes results)) {
 		$config{$_} = $pw->{form}{$_};
 	}
 
 	($config{ram} = $pw->{form}{ram}) =~ s/\D//g;
 
-	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @config{qw(processor ram version cvs build mwc mpw name notes results)});
-INSERT INTO	configs	(user_id, processor, ram, version, cvs, build, mwc, mpw, name, notes, results)
-VALUES			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @config{qw(processor ram version gusiversion osversion cvs build mwc mpw name notes results)});
+INSERT INTO	configs	(user_id, processor, ram, version, gusiversion, osversion, cvs, build, mwc, mpw, name, notes, results)
+VALUES			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 EOT
 	$config{id} = $sth->{'mysql_insertid'};
 
@@ -199,7 +199,7 @@ sub add_config {
 	my($pw) = @_;
 	$pw->header('Add Configuration');
 	$pw->process('add_config', { map { ($_ => get_param($pw, $_)) }
-		qw( processor version )
+		qw( processor version gusiversion osversion )
 	});
 }
 

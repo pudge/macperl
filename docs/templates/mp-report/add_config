@@ -38,7 +38,11 @@ Save discussion of individual tests for the tests section.
 	<td valign="top">RAM (MB):</td>
 	<td><input type="text" name="ram" size="6" maxlength="6" /></td>
 </tr><tr>
-[% PROCESS get_select label => "Version", name => "version", data => version %]
+[% PROCESS get_select label => "MacPerl Version", name => "version",     data => version %]
+</tr><tr>
+[% PROCESS get_select label => "GUSI Version",    name => "gusiversion", data => gusiversion %]
+</tr><tr>
+[% PROCESS get_select label => "Mac OS Version",  name => "osversion",   data => osversion %]
 </tr><tr>
 	<td valign="top">Was this a CVS checkout?</td>
 	<td><input type="checkbox" name="cvs" /></td>

@@ -22,8 +22,14 @@ just for testing purposes.
 	<td valign="top">RAM (MB):</td>
 	<td>[% config.ram %]</td>
 </tr><tr>
-	<td valign="top">Version:</td>
+	<td valign="top">MacPerl Version:</td>
 	<td>[% version.${config.version} %]</td>
+</tr><tr>
+	<td valign="top">GUSI Version:</td>
+	<td>[% gusiversion.${config.gusiversion} %]</td>
+</tr><tr>
+	<td valign="top">Mac OS Version:</td>
+	<td>[% osversion.${config.osversion} %]</td>
 </tr><tr>
 	<td valign="top">Was this a CVS checkout?</td>
 	<td>[% config.cvs ? "Yes" : "No" %]</td>

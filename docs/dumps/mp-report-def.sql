@@ -48,6 +48,8 @@ CREATE TABLE configs (
         processor       INT(6) NOT NULL,
         ram             INT(6) NOT NULL,
         version         INT(6) NOT NULL,
+        gusiversion	INT(6) NOT NULL,
+        osversion	INT(6) NOT NULL,
         cvs             TINYINT(1) NOT NULL DEFAULT '0',
         build           TINYINT(1) NOT NULL DEFAULT '0',
         mwc             TINYINT(1) NOT NULL DEFAULT '0',
@@ -79,6 +81,21 @@ INSERT INTO code_param (type, name) VALUES ("status", "Major porting needed");
 INSERT INTO code_param (type, name) VALUES ("status", "Not applicable to platform");
 
 INSERT INTO code_param (type, name) VALUES ("version", "5.6.1d2");
+
+INSERT INTO code_param (type, name) VALUES ("gusiversion", "2.1.5");
+INSERT INTO code_param (type, name) VALUES ("gusiversion", "2.1.6b1");
+INSERT INTO code_param (type, name) VALUES ("gusiversion", "2.1.6b2");
+INSERT INTO code_param (type, name) VALUES ("gusiversion", "2.1.6b3");
+
+INSERT INTO code_param (type, name) VALUES ("osversion", "<7.5");
+INSERT INTO code_param (type, name) VALUES ("osversion", "7.5");
+INSERT INTO code_param (type, name) VALUES ("osversion", "7.6");
+INSERT INTO code_param (type, name) VALUES ("osversion", "8.0");
+INSERT INTO code_param (type, name) VALUES ("osversion", "8.1");
+INSERT INTO code_param (type, name) VALUES ("osversion", "8.5");
+INSERT INTO code_param (type, name) VALUES ("osversion", "8.6");
+INSERT INTO code_param (type, name) VALUES ("osversion", "9.0");
+INSERT INTO code_param (type, name) VALUES ("osversion", "9.1");
 
 INSERT INTO tests (test) VALUES ("base/cond");
 INSERT INTO tests (test) VALUES ("base/if");
