@@ -13,6 +13,10 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.5  2001/02/23 18:23:45  pudge
+Last big update for awhile, I hope.  Covers maint-5.6.  More changes to bleadperl
+have been done, and we'll sync up later.
+
 Revision 1.4  2001/02/14 03:31:55  pudge
 Little fixes for bleadperl
 
@@ -2045,7 +2049,7 @@ First build released to public
  *	have statfs() and struct statfs, they have ustat() and getmnt()
  *	with struct ustat and struct fs_data.
  */
-#undef HAS_STRUCT_STATFS_FLAGS /**/
+#undef HAS_STRUCT_STATFS_F_FLAGS /**/
 
 /* HAS_STRUCT_STATFS:
  *	This symbol, if defined, indicates that the struct statfs
