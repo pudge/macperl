@@ -25,23 +25,26 @@ if ($done[0] eq "perl") {
 	shift @done;
 }
 
-$args = "{\"" . join("\", \"", map { s/(["'])/\\$1/g; $_ } @done) . "\"}";
-
-MacPerl::DoAppleScript qq{
-	tell the current application
-		ignoring application responses
-			do script $args
-		end ignoring
-	end tell
-}
-
+# $args = "{\"" . join("\", \"", map { s/(["'])/\\$1/g; $_ } @done) . "\"}";
+# 
+# MacPerl::DoAppleScript qq{
+# 	tell the current application
+# 		ignoring application responses
+# 			do script $args
+# 		end ignoring
+# 	end tell
+# }
+# 
 # $args = "[Ò" . join("Ó, Ò", @done) . "Ó]";
-# 
-# $evt = AEBuildAppleEvent("misc", "dosc", typeApplSignature, "McPL", 0, 0,
-# 	"'----': $args") or die $^E;
-# $rep = AESend($evt, kAENoReply) or die $^E;
-# 
-# AEDisposeDesc $evt;
-# AEDisposeDesc $rep;
 
-	
+
+$args = '[' . join(',', map { 'TEXT(@)' } 1..@done ) . ']';
+
+$evt = AEBuildAppleEvent("misc", "dosc", typeApplSignature, "McPL", 0, 0,
+	"'----': $args", @done) or die $^E;
+$rep = AESend($evt, kAENoReply) or die $^E;
+
+AEDisposeDesc $evt;
+AEDisposeDesc $rep;
+
+__END__

@@ -1,5 +1,5 @@
 These are the build procedures for
-<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1b1.  Please send feedback to the
+<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1b2.  Please send feedback to the
 <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a> list,
 and <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">submit bugs
 at SourceForge.net</a>.
@@ -58,9 +58,9 @@ You should upgrade GUSI if it has changed since your last build.
 <b>Note:</b> if you don't already have it, you will need to
 upgrade your db library to
 <a href="http://dev.macperl.org/files/macperl_build_libs/db_185h.sit.bin">db_185h</a>
-and your XML to
+and your XL to
 <a href="http://dev.macperl.org/files/macperl_build_libs/XL_16.bin">XL_16</a>
-for MacPerl 5.6.1b1 (or re-fetch all of the
+for MacPerl 5.6.1b2 (or re-fetch all of the
 <a href="http://dev.macperl.org/files/macperl_build_libs.sit.bin">macperl_build_libs</a>
 archive).
 </p>
@@ -116,7 +116,7 @@ will be properly unpacked.
 	</li>
 
 	<li>
-		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=55582">MacPerl 5.6.1 source kit</a></strong>
+		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=62191">MacPerl 5.6.1 source kit</a></strong>
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 	</li>
 </ul>
