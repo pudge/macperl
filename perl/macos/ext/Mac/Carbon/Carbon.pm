@@ -130,6 +130,11 @@ of the issues, including bugs and possibilities for bugs, involved.
 
 =item *
 
+AEGetDescData is screwing up on returning data of type TEXT with two or
+three characters, in AppleEvents.xs for AEDesc->data().  Freaky.
+
+=item *
+
 When creating FSSpecs, the file must exist.  This is Bad.
 
 =item *
