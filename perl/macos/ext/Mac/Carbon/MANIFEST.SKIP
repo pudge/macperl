@@ -1,4 +1,7 @@
-CVS/*$
-\.DS_Store$
-^MacPerl/XL.xs$
-^MacPerl/AutoInit.pl$
+CVS
+\.DS_Store
+MacPerl/XL.xs
+MacPerl/AutoInit.pl
+QuickDraw/Makefile.PL
+QuickDraw/QuickDraw\.*
+QuickDraw/t/*

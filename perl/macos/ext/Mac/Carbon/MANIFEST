@@ -12,7 +12,6 @@ Files/Files.pm
 Files/Files.xs
 Files/Makefile.PL
 Files/t/Files.t
-Files/t/Files.t.old
 Files/typemap
 Gestalt/Gestalt.c
 Gestalt/Gestalt.pm
@@ -58,8 +57,8 @@ MoreFiles/MoreFilesSrc/Optimization.h
 MoreFiles/MoreFilesSrc/OptimizationEnd.h
 MoreFiles/MoreFilesSrc/Search.c
 MoreFiles/MoreFilesSrc/Search.h
-MoreFiles/t/Application.t.old
-MoreFiles/t/Iterate.t.old
+MoreFiles/eg/Application.plx
+MoreFiles/eg/Iterate.plx
 MoreFiles/t/MoreFiles.t
 Notification/Makefile.PL
 Notification/Notification.c
@@ -82,7 +81,6 @@ Resources/Resources.c
 Resources/Resources.pm
 Resources/Resources.xs
 Resources/t/Resources.t
-Resources/t/Resources.t.old
 Sound/Makefile.PL
 Sound/Sound.c
 Sound/Sound.pm
@@ -94,10 +92,10 @@ Speech/Makefile.PL
 Speech/Speech.c
 Speech/Speech.pm
 Speech/Speech.xs
-Speech/eg/Cellist.t
-Speech/eg/DumpVoices.t
-Speech/eg/JukeBox.t
-Speech/eg/Phonemes.t
+Speech/eg/Cellist.plx
+Speech/eg/DumpVoices.plx
+Speech/eg/JukeBox.plx
+Speech/eg/Phonemes.plx
 Speech/t/Speech.t
 Speech/typemap
 Types/Makefile.PL
