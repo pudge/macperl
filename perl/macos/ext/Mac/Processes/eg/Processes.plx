@@ -14,10 +14,11 @@ while (($psn, $pi) = each %Process) {
 	# check with PSN
 	print "** vv **  this is us\n" if SameProcess(GetCurrentProcess(), $pi->processNumber);
 
-	printf "%-30s %08X % 4d %s\n", 
+	printf "%-30s %08X % 4d %s %s\n", 
 		$pi->processName, $pi->processNumber,
 		GetProcessPID($pi->processNumber),
-		$pi->processAppSpec;
+		$pi->processAppSpec,
+		$pi->processSignature;
 
 	# check with PID
 	print "** ^^ **  this is us\n" if $$ == GetProcessPID($pi->processNumber);
