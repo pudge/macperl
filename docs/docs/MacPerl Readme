@@ -1,36 +1,28 @@
-If you read this file _as_is_, just ignore the funny characters you see.
-It is written in the POD format (see pod/perlpod.pod) which is specially
-designed to be readable as is.
-
 =head1 NAME
 
-README.macos - Perl under Mac OS (Classic)
+MacPerl Readme
 
 
 =head1 SYNOPSIS
 
-This document describes perl under Mac OS (Classic). If you are running
-perl under Mac OS X, you don't want to be here (unless you are in the
-Classic environment under Mac OS X).
-
-When we say "Mac OS" below, we mean pre-Mac OS X, which includes
-Mac OS 7, 8, and 9.  "MacPerl" is the name of the Mac OS application
-implementing perl.
+Welcome to MacPerl, the application that implements perl,
+the programming language and environment, on Mac OS (Classic).
+If you are running perl under Mac OS X, you don't want to be here
+(unless you are in the Classic environment under Mac OS X).
 
 
 =head1 DESCRIPTION
 
-Feel free to give MacPerl away according to the terms stated in
-README.  Please ignore the installation instructions there; they do not
+Please read the READMEs that come with MacPerl, but ignore the
+installation instructions presented in the main README; they do not
 apply to the Mac OS port of perl.
-
-Read on for information about using, installing, building, and
-living with MacPerl.
 
 
 =head2 System Requirements
 
-MacPerl 5.6 requires System 7. (what other requirements ??)
+MacPerl 5.6 requires System 7.5 or above, and 8MB RAM.
+You will be much better off with 64MB RAM, System 8.1,
+and a PowerPC Macintosh.
 
 
 =head2 Installing
@@ -46,7 +38,7 @@ in F<Install.MPW_Perl>.
 
 There are two portions to the MacPerl documentation.  The first
 is this README, along with the rest of the READMEs, licenses, and
-manuals in the MacPerl directory.
+manuals in the MacPerl F<Documentation> directory.
 
 The other is the considerable amount of POD-based online help
 that comes with Perl.  For this help to work, make sure you have:
@@ -55,14 +47,16 @@ that comes with Perl.  For this help to work, make sure you have:
 
 =item *
 
-F<MacPerl Help> and the F<pod> folder in the same folder as your
-MacPerl application.
+F<MacPerl Help>, the F<pod> folder, and F<Shuck> in the same folder
+as your MacPerl application.
 
 =item *
 
-A recent version of Internet Config (version 1.4 is bundled with the
-distribution - ??), or the Internet control panel shipped with recent versions
-of Mac OS.
+A recent version of Internet Config, or the Internet control panel
+shipped with recent versions of Mac OS.
+
+[Currently, Internet Config is not shipped with MacPerl; this can
+be remedied if necessary.]
 
 =item *
 
@@ -98,39 +92,39 @@ MacPerl is distributed in several forms.  The source is available
 in a single archive.  The compiled, prepared distribution of MacPerl
 is available in two forms, a web-based installer that allows you to
 choose which pieces to download as-needed, and a large installer with
-everything in it.
+everything in it.  The web-based installer is recommended, as it
+only downloads the components you need.
 
-   MacPerl-5.6.1r1_src.bin
-   MacPerl-5.6.1r1_web.bin
-   MacPerl-5.6.1r1_full.bin
+   MacPerl-5.6.1b1_web.bin
+   MacPerl-5.6.1b1_full.bin
    ^       ^    ^^ ^    ^
    MacPerl |    || |    MacBinary Suffix ("bin")
-           |    || Distribution Component ("src", "web", "full")
-           |    |MacPerl Release ("1")
+           |    || Distribution Component (web", "full")
+           |    |Build Number ("1")
            |    Type ("d"evelopment, "a"lpha, "b"eta, "r"elease)
            Perl Version ("5.6.1")
 
-The web and full installers give the following options:
+The web and full installers give the following options
+(and variations on the themes):
 
 =over 4
 
-* fat/ppc/68k
+=item Easy Install
 
-* library (any options?  no Mac modules option?)
+This installs the application (for your platform), the
+documentation, and the library.  This will be the option
+for most users.
 
-* shuck and docs
+=item MPW Tool
 
-* tool
+This installs the MPW tool (for your platform), a command-line
+version of perl for use with ToolServer and Macintosh Programmer's
+Workshop.  When selected, the documentation and library will be
+selected as well, by default.
 
-* glue?  other tools?
+=item Developer Kit
 
-* extra extensions?
-
-* translators?
-
-* examples?
-
-* internet config
+This installs the source and the SYM files for debugging.
 
 =back
 
@@ -141,32 +135,17 @@ The perl 5.6.1 source itself builds on Mac OS, with some additional
 pieces.  Support for Mac OS is now in the perl core, and MacPerl is
 kept in close sync with regular perl releases.
 
-To build perl for Mac OS (as an MPW tool), you will need the either
-the perl source, plus the the addition of the "macos" subdirectory,
-distributed separately (L<"CONTACT">).  It includes extra source files,
-config files, and make files.  It also includes a lot of extra
-Mac-specific modules.
-
-To build the MacPerl application, you will also need the "macperl"
-directory, which includes the source files for creating the
-application itself.
-
-All of this is available as a single archive, or in pieces via
-anonymous CVS or the main perl repository, in the maint-5.6/macperl
-branch.
-
-You will also need compilers and libraries, all of them freely
-available.  These are linked to from the development site. Go to that
-site for all things having to do with MacPerl development.
+You will need compilers and libraries, all of them freely
+available.  These are linked to from the development site at
+http://dev.macperl.org/. Go to that site for all things having to
+do with MacPerl development.
 
 
 =head1 CONTACT
 
 Please send your bug reports, patches, and feature requests for MacPerl
-to the MacPerl site at SourceForge.  Also head over there for the latest
-source and links to other sites.
-
-	http://dev.macperl.org/
+to the MacPerl development site at http://dev.macperl.org/.  Also head
+over there for the latest source and links to other sites.
 
 
 =head1 CREDITS
@@ -192,4 +171,4 @@ by Ramon M. Felciano.
 
 =head1 DATE
 
-Last modified 2001.07.20.
+Last modified 2001.10.02.

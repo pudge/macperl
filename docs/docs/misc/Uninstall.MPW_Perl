@@ -1,0 +1,39 @@
+:Perl -Sx "{0}" {"Parameters"} || Open Config.MPW_Perl; Exit
+#!perl
+#
+# Uninstall.MPW_Tool	-	Get rid of MPW Perl installation
+#
+# To get rid of all MPW Perl related material:
+# - Change the directory to this folder
+# - Run this script
+# - Execute the commands written to the worksheet
+#
+
+###################### NO USER CONFIGURABLE PARTS BELOW #########################
+
+print "######################### MPW Perl Uninstaller ########################\n\n";
+
+	do "Config.MPW_Perl" 
+		or die <<END;
+### ERROR - Configuration file seems to be corrupted or missing
+### 
+### I guess you have to find and delete the tools by hand
+END
+	$BINFOLDER =~ s/\'/'¶''/g;
+	$MACPERL =~ s/\'/'¶''/g;
+	$P5LIB =~ s/\'/'¶''/g;
+	$SHUCK =~ s/\'/'¶''/g;
+	$CMD =~ s/\'/'¶''/g;
+	print <<END;
+# Delete Tools and Scripts
+#
+# Please select the following commands and press <Enter>:
+
+Delete ${BINFOLDER}perl ${BINFOLDER}a2p ${BINFOLDER}find2perl
+
+# Delete UserStartup¥Perl file
+#
+# Please select the following commands and press <Enter>:
+
+Delete "\{MPW\}"UserStartup¥Perl
+END
