@@ -133,11 +133,13 @@ of the issues, including bugs and possibilities for bugs, involved.
 
 =head1 KNOWN BUGS
 
+See L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Mac-Carbon> for more information.
+
 =over 4
 
 =item *
 
-When creating FSSpecs, the file must exist.  This is Bad.
+Make test suite work without being run from Terminal.app.
 
 =item *
 
@@ -150,9 +152,23 @@ Processes fields).  Generate list of all unsupported functions.
 
 =item *
 
-Test suite needs a lot of work. There are surely bugs to be uncovered
-in a test suite.  All modules have been tested to some degree, but more
-exhaustive testing needs to happen.
+Need more tests for Mac::Components, Mac::MoreFiles, Mac::Resources,
+Mac::InternetConfig, Mac::Processes, Mac::Sound.
+
+=item *
+
+In a few places, we need to know a text encoding, and assume it
+(such as in LSFindApplicationForInfo(), where Latin-1 is assumed).
+Is this correct?
+
+=item *
+
+FSSpecs are limited to 31 characters.  I think.  Ugh.
+
+=item *
+
+In Mac::Processes, there are some issues with unsupported fields in the
+ProcessInfo struct.
 
 =item *
 
@@ -164,24 +180,7 @@ complained before except on principle, but still ...
 
 =item *
 
-In Mac::Processes, there are some issues with unsupported fields in the
-ProcessInfo struct.
-
-=item *
-
-In Mac::MoreFiles, FSpDTGetAPPL is very slow, as it has to fall back on
-CatSearch().  And worse, it doesn't find applications that don't have the
-creator/type in the application, but in the PkgInfo file.  If this acceptable,
-then the tied %Application hash should be implemented differently.
-
-=item *
-
 Can we support XCMDs etc. via XL?  Do we want to?
-
-=item *
-
-Find a way to open resources stored in data files.  Technically not a bug,
-but darnit, it's a pain in the rear.
 
 =back
 
@@ -196,6 +195,7 @@ for more information about modules not included here.
 	Mac::Components		components
 	Mac::Files		files
 	Mac::Gestalt		gestalt
+	Mac::InternetConfig	internetconfig
 	Mac::Memory		memory
 	Mac::MoreFiles		morefiles
 	Mac::Notification	notification
@@ -215,7 +215,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.05';
+$VERSION = '0.50';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -225,6 +225,7 @@ BEGIN {
 		Components
 		Files
 		Gestalt
+		InternetConfig
 		Memory
 		MoreFiles
 		Notification
@@ -239,9 +240,11 @@ BEGIN {
 	# oh oh, it's magic ...
 	for (@modules) {
 		no strict 'refs';
-		eval "use Mac::$_";
+		my $mod = 'Mac::' . $_;
+		eval "use $mod";
 		die if $@;
-		my @export = @{'Mac::' . $_ . '::EXPORT'};
+
+		my @export = @{$mod . '::EXPORT'};
 		push @EXPORT, @export;
 		$EXPORT_TAGS{ lc $_ } = \@export;
 	}
