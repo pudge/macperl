@@ -209,7 +209,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -256,6 +256,11 @@ __END__
 The Mac Toolbox modules were written by Matthias Neeracher
 E<lt>neeracher@mac.comE<gt>.  They are currently maintained by Chris
 Nandor E<lt>pudge@pobox.comE<gt>.
+
+=head1 THANKS
+
+Michael Blakeley E<lt>mike@blakeley.comE<gt>,
+Dan Sugalksi E<lt>dan@sidhe.orgE<gt>.
 
 =head1 SEE ALSO
 
