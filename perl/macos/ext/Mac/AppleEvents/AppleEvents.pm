@@ -20,7 +20,7 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = '1.27';
+$VERSION = '1.28';
 
 =head2 Constants: AppleEvent Descriptor Types
 
@@ -295,12 +295,13 @@ sub typeDecimalStruct				() { 'decm' }
 
 sub typeFSRef					() { 'fsrf' }
 sub typeFileURL					() { 'furl' }
-sub typeApplicationURL				() { 'aprl' }
 
 sub kAEShowPreferences				() { 'pref' }
 
+sub typeApplicationURL				() { 'aprl' }
 sub typeKernelProcessID				() { 'kpid' }
 sub typeMachPort				() { 'port' }
+sub typeApplicationBundleID			() { 'bund' }
 
 sub keyAcceptTimeoutAttr			() { 'actm' }
 
