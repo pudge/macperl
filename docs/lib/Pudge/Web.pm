@@ -57,7 +57,10 @@ sub new {
 sub initdata {
 	my($self) = @_;
 	$self->{form} = $self->{cgi}->Vars;
-	main::login($self);	# maybe put in Pudge::Web?
+	if (keys %{$self->{form}} == 1 && !$self->{form}{op}) {
+	    ($self->{form}{op}) = keys %{$self->{form}};
+	}
+	main::login($self) if defined &main::login;	# maybe put in Pudge::Web?
 }
 
 sub main {
