@@ -1001,6 +1001,9 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len)
 				len    -= newline-msg;
 				msg 	= newline;
 				line	= msg;
+				
+				if (!len)	/* We're done */
+					return;
 			}
 		}
 	}
