@@ -8,9 +8,9 @@ use Exporter ();
 use Config;
 use strict;
 
-"$Config{'archname'}-$Config{'osvers'}" eq
-"-" or
-	die "Errno architecture (-) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
+#"$Config{'archname'}-$Config{'osvers'}" eq
+#"-" or
+#	die "Errno architecture (-) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
 
 $VERSION = "1.111";
 @ISA = qw(Exporter);
