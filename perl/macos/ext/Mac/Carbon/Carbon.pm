@@ -145,10 +145,6 @@ See L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Mac-Carbon> for more information.
 
 =item *
 
-Make test suite work without access to main console.
-
-=item *
-
 [GS]etFileInfo fails on UFS.
 
 =item *
@@ -212,7 +208,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.66';
+$VERSION = '0.70';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -398,18 +394,18 @@ are currently maintained by Chris Nandor E<lt>pudge@pobox.comE<gt>.
 
 =head1 THANKS
 
-Michael Blakeley E<lt>mike@blakeley.comE<gt>,
-Emmanuel. M. Decarie E<lt>emm@scriptdigital.comE<gt>,
-Matthew Drayton E<lt>matthew@stairways.com.auE<gt>,
-brian d foy E<lt>comdog@panix.comE<gt>,
-David Hand E<lt>davidhand@davidhand.comE<gt>,
-Gero Herrmann E<lt>herr@ils.uec.ac.jpE<gt>,
-Peter N Lewis E<lt>peter@stairways.com.auE<gt>,
-Paul McCann E<lt>pmccann@maths.adelaide.edu.auE<gt>,
-Randal Schwartz E<lt>merlyn@stonehenge.comE<gt>,
-John Siracusa E<lt>siracusa@mindspring.comE<gt>,
-Dan Sugalksi E<lt>dan@sidhe.orgE<gt>,
-Ken Williams E<lt>ken@mathforum.orgE<gt>,
+Michael Blakeley,
+Emmanuel. M. Decarie,
+Matthew Drayton,
+brian d foy,
+David Hand,
+Gero Herrmann,
+Peter N Lewis,
+Paul McCann,
+Randal Schwartz,
+John Siracusa,
+Dan Sugalksi,
+Ken Williams,
 Steve Zellers.
 
 =head1 SEE ALSO

@@ -46,23 +46,29 @@ Under Mac OS, extra non-Carbon-compatible routines are available.
 
 To build these modules on Mac OS X, the Developer Tools are required.
 
-The Test::More module is required for running tests.
-
-The separate Mac::Errors module is not required, but is highly recommended.
-
 Building these modules has been tested successfully on Mac OS X 10.1 through 10.3,
 with perl 5.6.0/5.6.1/5.8.0/5.8.1, with gcc2, gcc3.1, and gcc3.3.  There are a
 lot of warnings on 10.1, though the tests should all pass.
 
-Last I checked, a few things failed on the development release of Panther.
-These will be addressed once I install Panther and get to it (any day now?).
-Specifically, there were some problems with the Mac::Notification tests
-(which expose problems/changes with the Notification Manager and LaunchApplication()).
+You should use the most recent gcc on your machine.  You may need to make sure
+gcc version 3, or 3.3, is in effect.  This tells you what version of gcc is in use,
+from the command line:
 
-If you run the test suite on a remote computer (such as via ssh, instead
-of via the Terminal), note that it requires user feedback in some cases,
-and in general it is best to be there when you run the tests.  Maybe in the future
-this can be addressed (patches welcome).
+   % gcc_select
+   Current default compiler:
+   gcc version 3.3 20030304 (Apple Computer, Inc. build 1495)
+
+To change it, try one of the following (as root, or with sudo; sudo is
+used in the examples).  "3" will give you 3.1, "3.3" will give you 3.3.  Greater
+is probably better.
+
+   % sudo gcc_select 3.3
+   % sudo gcc_select 3
+
+The Test::More module is required for running tests.
+
+The separate Mac::Errors module is not required, but is highly recommended, for
+providing more information from Mac system error codes.
 
 
 =head1 BUILDING

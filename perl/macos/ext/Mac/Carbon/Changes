@@ -1,3 +1,13 @@
+* v0.70, 10 May 2004
+
+   Fix some major memory leaks in Mac::AppleEvents.  Due to a necessary change
+   for Mac OS X, caller of AEDesc->data method is now responsible for disposing of
+   the returned Handle object with Handle->dispose.
+
+   Improve Mac::Notification tests.
+
+   Clean up docs; add notes about gcc versions.
+
 * v0.66, 23 March 2004
 
    Fix _Unix2Mac to be more robust, by making it more limited: it must point
