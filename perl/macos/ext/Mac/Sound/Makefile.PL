@@ -8,9 +8,7 @@ $ARGS{'TYPEMAPS'} = [
 	catfile(updir(), 'QuickDraw', 'typemap'),
 ];
 
-$ARGS{'clean'} = {
-	'FILES'		=> 't/Sound.rsrc'
-};
+$ARGS{'clean'}{'FILES'} .= ' t/Sound.rsrc';
 
 if ($^O eq 'MacOS') {
 	$ARGS{'MACLIBS_SHARED'}	= '"{{SharedLibraries}}"SoundLib';
