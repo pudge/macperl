@@ -9,11 +9,16 @@ Copyright (c) 1991-1995 Matthias Neeracher
 	as specified in the README file.
 
 $Log$
+Revision 1.1  2000/08/14 01:48:17  neeri
+Checked into Sourceforge
+
 Revision 1.1  2000/05/14 21:45:03  neeri
 First build released to public
 
 
 *********************************************************************/
+
+#include <stdio.h>
 
 /* We need glue for Gestalt, but not for the rest of the stuff */
 
