@@ -41,7 +41,7 @@ MWLOpt		= 	${LOpt} -xm mpwtool -d
 Link68K		=	MWLink68K ${MWLOpt} -model far
 LinkPPC		=	MWLinkPPC ${MWLOpt} 
 MPWLOpt		=	${LOpt} -c 'MPS ' -t MPST -w -mf 
-LinkSC		=	Link ${MPWLOpt}  -model far -br 020
+LinkSC		=	Link ${MPWLOpt}  -model far
 LinkMrC		= 	PPCLink ${MPWLOpt}
 
 #

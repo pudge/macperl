@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.1  2000/08/14 01:48:17  neeri
+#  Checked into Sourceforge
+#
 #  Revision 1.2  2000/01/10 02:55:12  neeri
 #  Adapt to CW5.3 compilers, start MPW libraries
 #
@@ -116,18 +119,18 @@ LibFilesSC	=	\
 			:PLib:PerlLib.SC.Lib							\
 			"$(GUSI)lib:GUSI_Core.SC.Lib"					\
 			"$(SFIO)lib:sfio.SC.Lib"						\
-			"{{CLibraries}}CPlusLib.o"						\
-			"{{CLibraries}}StdCLib.o"						\
+			"{{CLibraries}}CPlusLib.far.o"					\
+			"{{CLibraries}}StdCLib.far.o"					\
 			"{{Libraries}}MacRuntime.o"						\
 			"{{Libraries}}Interface.o"						\
-			"{{Libraries}}IntEnv.o"							\
-			"{{Libraries}}MathLib.o"						\
-			"{{Libraries}}ToolLibs.o"						\
+			"{{Libraries}}IntEnv.far.o"						\
+			"{{Libraries}}MathLib.far.o"					\
+			"{{Libraries}}ToolLibs.far.o"					\
 			"{{CLibraries}}IOStreams.far.o"					\
 			"{{Libraries}}OpenTransport.o"					\
 			"{{Libraries}}OpenTransportApp.o"				\
 			"{{Libraries}}OpenTptInet.o"
-MoLibsSC	=	"$(DB)lib:db.Sfio.SC.Lib"				\
+MoLibsSC	=	"$(DB)lib:db.Sfio.SC.Lib"					\
 			"$(XL)"XL.SC.Lib
 
 LibFilesMrC	= 	\
@@ -194,11 +197,11 @@ h = $(h1) $(h2) $(h3) $(h4)
 c1 = $(mallocsrc) av.c scope.c op.c doop.c doio.c dump.c hv.c mg.c perlapi.c
 c2 = perl.c perly.c pp.c pp_hot.c pp_ctl.c pp_sys.c regcomp.c regexec.c xsutils.c
 c3 = gv.c sv.c taint.c toke.c util.c deb.c run.c globals.c perlio.c utf8.c universal.c
-cm = macish.c SubLaunch.c crypt.c PerlGUSIConfig.cp
+cm = SubLaunch.c crypt.c
 
 c = $(c1) $(c2) $(c3) $(cm)
 cp= $(cpm)
-libc = icemalloc.c
+libc = macish.c icemalloc.c PerlGUSIConfig.cp
 
 Objects68K = {$(c)}.68K.o
 ObjectsPPC = {$(c)}.PPC.o
@@ -253,7 +256,7 @@ miniperl:  Obj PLib UnPreload miniperl.{$(MACPERL_BUILD_TOOL)}
 	UnPreload miniperl
 	:miniperl -w -I::lib -MExporter -e 0 || BuildProgram minitest
 miniperl.68K:	:PLib:Perl.68K.Lib :PLib:PerlLib.68K.Lib miniperlmain.c.68K.o
-	$(Link68K) -o miniperl.68K :Obj:miniperlmain.c.68K.o $(LibFiles68K) :PLib:Perl.68K.Lib
+	$(Link68K) -o miniperl.68K :Obj:miniperlmain.c.68K.o $(LibFiles68K)  :PLib:Perl.68K.Lib
 miniperl.68K::	Perl.r Perl.rsrc 
 	Rez $(ROptions) -a -c 'MPS ' -t MPST Perl.r -o miniperl.68K
 miniperl.PPC:	:PLib:Perl.PPC.Lib :PLib:PerlLib.PPC.Lib miniperlmain.c.PPC.o
@@ -295,7 +298,7 @@ preplibrary: miniperl
 		directory $(MACPERL_SRC)
 		Set Echo 1
 	end
-	:miniperl -Ilib -e 'use AutoSplit; autosplit_lib_modules(@ARGV)' :lib:Å.pm :lib:Å:Å.pm
+	:miniperl -Ilib -I::lib -e 'use AutoSplit; autosplit_lib_modules(@ARGV)' :lib:Å.pm :lib:Å:Å.pm
 	directory ::
 	:macos:miniperl -Ilib -I:macos:lib -e 'use AutoSplit; autosplit_lib_modules(@ARGV)' :lib:Å.pm :lib:Å:Å.pm
 	directory macos
@@ -362,7 +365,7 @@ perl.exp: miniperl perl.nosym ::global.sym ::pp.sym ::globvar.sym
 	End  > perl.exp
 # Take care to avoid modifying lib/Config.pm without reason
 ":lib:Config.pm": miniperl ":lib:re.pm"
-	:miniperl configpm
+	:miniperl -I::lib: configpm
 
 ":lib:ExtUtils:Miniperl.pm": miniperlmain.c miniperl "::minimod.pl" ":lib:Config.pm"
 	:miniperl ::minimod.pl > :lib:ExtUtils:Miniperl.pm
@@ -371,7 +374,7 @@ perl.exp: miniperl perl.nosym ::global.sym ::pp.sym ::globvar.sym
 	Duplicate -y $< $@
 
 $(plextract):	miniperl ":lib:Config.pm"
-	:miniperl -Ilib $@.PL
+	:miniperl -Ilib -I::lib $@.PL
 
 install: all install.perl install.man
 

@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.1  2000/08/14 01:48:17  neeri
+Checked into Sourceforge
+
 Revision 1.1  2000/05/14 21:45:04  neeri
 First build released to public
 
@@ -736,7 +739,7 @@ done:
 	if (out[-1] != ':')
 		*out++ = ':';
 	*out = 0;
-	
+
 	return buf;
 }
 

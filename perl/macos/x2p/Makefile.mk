@@ -1,6 +1,9 @@
 # $RCSfile$$Revision$$Date$
 #
 # $Log$
+# Revision 1.1  2000/08/14 03:39:35  neeri
+# Checked into Sourceforge
+#
 
 MACPERL_SRC	= {$(PWD)}::
 
@@ -98,4 +101,4 @@ clean:
 realclean: clean
 
 $(plextract):
-	::miniperl -I::lib :::x2p:$@.PL
+	::miniperl -I:::lib -I::lib :::x2p:$@.PL

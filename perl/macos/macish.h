@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.1  2000/08/14 01:48:17  neeri
+Checked into Sourceforge
+
 Revision 1.1  2000/05/14 21:45:04  neeri
 First build released to public
 
@@ -200,4 +203,8 @@ double Perl_modf(double x, double * iptr);
 #if defined(__SC__) || defined(__MRC__)
 #undef Perl_atof
 double Perl_atof(const char *s);
+#endif
+
+#ifdef __SC__
+#pragma segment perl
 #endif
