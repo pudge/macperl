@@ -981,7 +981,7 @@ PP(pp_sort)
 			? ( (PL_op->op_private & OPpSORT_INTEGER)
 			    ? ( overloading ? amagic_i_ncmp : sv_i_ncmp)
 			    : ( overloading ? amagic_ncmp : sv_ncmp))
-			: ( (PL_op->op_private & OPpLOCALE)
+			: ( IN_LOCALE_RUNTIME
 			    ? ( overloading
 				? amagic_cmp_locale
 				: sv_cmp_locale_static)
@@ -1029,7 +1029,7 @@ PP(pp_flip)
  	if (PL_op->op_private & OPpFLIP_LINENUM) {
  	    struct io *gp_io;
  	    flip = PL_last_in_gv
- 		&& (gp_io = GvIOp(PL_last_in_gv))
+ 		&& (gp_io = GvIO(PL_last_in_gv))
  		&& SvIV(sv) == (IV)IoLINES(gp_io);
  	} else {
  	    flip = SvTRUE(sv);
@@ -1110,7 +1110,8 @@ PP(pp_flop)
 	SV *targ = PAD_SV(cUNOP->op_first->op_targ);
 	sv_inc(targ);
 	if ((PL_op->op_private & OPpFLIP_LINENUM)
-	  ? (PL_last_in_gv && SvIV(sv) == (IV)IoLINES(GvIOp(PL_last_in_gv)))
+	  ? (GvIO(PL_last_in_gv)
+	     && SvIV(sv) == (IV)IoLINES(GvIOp(PL_last_in_gv)))
 	  : SvTRUE(sv) ) {
 	    sv_setiv(PAD_SV(((UNOP*)cUNOP->op_first)->op_first->op_targ), 0);
 	    sv_catpv(targ, "E0");
@@ -2759,6 +2760,9 @@ S_doeval(pTHX_ int gimme, OP** startop)
     PL_compcv = (CV*)NEWSV(1104,0);
     sv_upgrade((SV *)PL_compcv, SVt_PVCV);
     CvEVAL_on(PL_compcv);
+    assert(CxTYPE(&cxstack[cxstack_ix]) == CXt_EVAL);
+    cxstack[cxstack_ix].blk_eval.cv = PL_compcv;
+
 #ifdef USE_THREADS
     CvOWNER(PL_compcv) = 0;
     New(666, CvMUTEXP(PL_compcv), 1, perl_mutex);

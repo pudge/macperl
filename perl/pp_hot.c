@@ -230,6 +230,12 @@ PP(pp_readline)
 PP(pp_eq)
 {
     dSP; tryAMAGICbinSET(eq,0);
+#ifndef NV_PRESERVES_UV
+    if (SvROK(TOPs) && SvROK(TOPm1s)) {
+	SETs(boolSV(SvRV(TOPs) == SvRV(TOPm1s)));
+	RETURN;
+    }
+#endif
     {
       dPOPnv;
       SETs(boolSV(TOPn == value));
@@ -1731,9 +1737,17 @@ PP(pp_iter)
 
     SvREFCNT_dec(*itersvp);
 
-    if ((sv = SvMAGICAL(av)
-	      ? *av_fetch(av, ++cx->blk_loop.iterix, FALSE) 
-	      : AvARRAY(av)[++cx->blk_loop.iterix]))
+    if (SvMAGICAL(av) || AvREIFY(av)) {
+	SV **svp = av_fetch(av, ++cx->blk_loop.iterix, FALSE);
+	if (svp)
+	    sv = *svp;
+	else
+	    sv = Nullsv;
+    }
+    else {
+	sv = AvARRAY(av)[++cx->blk_loop.iterix];
+    }
+    if (sv)
 	SvTEMP_off(sv);
     else
 	sv = &PL_sv_undef;

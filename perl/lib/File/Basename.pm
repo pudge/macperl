@@ -95,7 +95,7 @@ would yield
     $dir  eq 'Doc_Root:[Help]'
     $type eq '.Rnh'
 
-=over
+=over 4
 
 =item C<basename>
 
@@ -135,12 +135,13 @@ BEGIN {
 
 
 
-use 5.005_64;
+use 5.6.0;
+use warnings;
 our(@ISA, @EXPORT, $VERSION, $Fileparse_fstype, $Fileparse_igncase);
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(fileparse fileparse_set_fstype basename dirname);
-$VERSION = "2.6";
+$VERSION = "2.7";
 
 
 #   fileparse_set_fstype() - specify OS-based rules used in future
@@ -213,8 +214,8 @@ sub fileparse {
   }
 
   $tail .= $taint if defined $tail; # avoid warning if $tail == undef
-  wantarray ? ($basename . $taint, $dirpath . $taint, $tail)
-            : $basename . $taint;
+  wantarray ? ($basename .= $taint, $dirpath .= $taint, $tail)
+            : $basename .= $taint;
 }
 
 

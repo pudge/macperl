@@ -372,15 +372,24 @@ S_pad_findlex(pTHX_ char *name, PADOFFSET newoff, U32 seq, CV* startcv,
 	switch (CxTYPE(cx)) {
 	default:
 	    if (i == 0 && saweval) {
-		seq = cxstack[saweval].blk_oldcop->cop_seq;
 		return pad_findlex(name, newoff, seq, PL_main_cv, -1, saweval, 0);
 	    }
 	    break;
 	case CXt_EVAL:
 	    switch (cx->blk_eval.old_op_type) {
 	    case OP_ENTEREVAL:
-		if (CxREALEVAL(cx))
+		if (CxREALEVAL(cx)) {
+		    PADOFFSET off;
 		    saweval = i;
+		    seq = cxstack[i].blk_oldcop->cop_seq;
+		    startcv = cxstack[i].blk_eval.cv;
+		    if (startcv && CvOUTSIDE(startcv)) {
+			off = pad_findlex(name, newoff, seq, CvOUTSIDE(startcv),
+					  i-1, saweval, 0);
+			if (off)	/* continue looking if not found here */
+			    return off;
+		    }
+		}
 		break;
 	    case OP_DOFILE:
 	    case OP_REQUIRE:
@@ -395,9 +404,9 @@ S_pad_findlex(pTHX_ char *name, PADOFFSET newoff, U32 seq, CV* startcv,
 	    cv = cx->blk_sub.cv;
 	    if (PL_debstash && CvSTASH(cv) == PL_debstash) {	/* ignore DB'* scope */
 		saweval = i;	/* so we know where we were called from */
+		seq = cxstack[i].blk_oldcop->cop_seq;
 		continue;
 	    }
-	    seq = cxstack[saweval].blk_oldcop->cop_seq;
 	    return pad_findlex(name, newoff, seq, cv, i-1, saweval,FINDLEX_NOSEARCH);
 	}
     }
@@ -2244,8 +2253,8 @@ Perl_fold_constants(pTHX_ register OP *o)
     case OP_SLE:
     case OP_SGE:
     case OP_SCMP:
-
-	if (o->op_private & OPpLOCALE)
+	/* XXX what about the numeric ops? */
+	if (PL_hints & HINT_LOCALE)
 	    goto nope;
     }
 
@@ -3521,7 +3530,7 @@ Perl_newSTATEOP(pTHX_ I32 flags, char *label, OP *o)
 	cop->op_ppaddr = PL_ppaddr[ OP_NEXTSTATE ];
     }
     cop->op_flags = flags;
-    cop->op_private = (PL_hints & HINT_BYTE);
+    cop->op_private = (PL_hints & (HINT_BYTE|HINT_LOCALE));
 #ifdef NATIVE_HINTS
     cop->op_private |= NATIVE_HINTS;
 #endif
@@ -4110,9 +4119,15 @@ Perl_cv_undef(pTHX_ CV *cv)
      * CV, they don't hold a refcount on the outside CV.  This avoids
      * the refcount loop between the outer CV (which keeps a refcount to
      * the closure prototype in the pad entry for pp_anoncode()) and the
-     * closure prototype, and the ensuing memory leak.  --GSAR */
-    if (!CvANON(cv) || CvCLONED(cv))
+     * closure prototype, and the ensuing memory leak.  This does not
+     * apply to closures generated within eval"", since eval"" CVs are
+     * ephemeral. --GSAR */
+    if (!CvANON(cv) || CvCLONED(cv)
+	|| (CvOUTSIDE(cv) && SvTYPE(CvOUTSIDE(cv)) == SVt_PVCV
+	    && CvEVAL(CvOUTSIDE(cv)) && !CvGV(CvOUTSIDE(cv))))
+    {
 	SvREFCNT_dec(CvOUTSIDE(cv));
+    }
     CvOUTSIDE(cv) = Nullcv;
     if (CvPADLIST(cv)) {
 	/* may be during global destruction */
@@ -4669,12 +4684,17 @@ Perl_newATTRSUB(pTHX_ I32 floor, OP *o, OP *proto, OP *attrs, OP *block)
 	}
     }
 
-    /* If a potential closure prototype, don't keep a refcount on outer CV.
+    /* If a potential closure prototype, don't keep a refcount on
+     * outer CV, unless the latter happens to be a passing eval"".
      * This is okay as the lifetime of the prototype is tied to the
      * lifetime of the outer CV.  Avoids memory leak due to reference
      * loop. --GSAR */
-    if (!name)
+    if (!name && CvOUTSIDE(cv)
+	&& !(SvTYPE(CvOUTSIDE(cv)) == SVt_PVCV
+	     && CvEVAL(CvOUTSIDE(cv)) && !CvGV(CvOUTSIDE(cv))))
+    {
 	SvREFCNT_dec(CvOUTSIDE(cv));
+    }
 
     if (name || aname) {
 	char *s;
@@ -5446,13 +5466,6 @@ Perl_ck_ftst(pTHX_ OP *o)
 	else
 	    o = newUNOP(type, 0, newDEFSVOP());
     }
-#ifdef USE_LOCALE
-    if (type == OP_FTTEXT || type == OP_FTBINARY) {
-	o->op_private = 0;
-	if (PL_hints & HINT_LOCALE)
-	    o->op_private |= OPpLOCALE;
-    }
-#endif
     return o;
 }
 
@@ -5853,29 +5866,7 @@ Perl_ck_listiob(pTHX_ OP *o)
     if (!kid)
 	append_elem(o->op_type, o, newDEFSVOP());
 
-    o = listkids(o);
-
-    o->op_private = 0;
-#ifdef USE_LOCALE
-    if (PL_hints & HINT_LOCALE)
-	o->op_private |= OPpLOCALE;
-#endif
-
-    return o;
-}
-
-OP *
-Perl_ck_fun_locale(pTHX_ OP *o)
-{
-    o = ck_fun(o);
-
-    o->op_private = 0;
-#ifdef USE_LOCALE
-    if (PL_hints & HINT_LOCALE)
-	o->op_private |= OPpLOCALE;
-#endif
-
-    return o;
+    return listkids(o);
 }
 
 OP *
@@ -5905,18 +5896,6 @@ Perl_ck_sassign(pTHX_ OP *o)
 	    return kid;
 	}
     }
-    return o;
-}
-
-OP *
-Perl_ck_scmp(pTHX_ OP *o)
-{
-    o->op_private = 0;
-#ifdef USE_LOCALE
-    if (PL_hints & HINT_LOCALE)
-	o->op_private |= OPpLOCALE;
-#endif
-
     return o;
 }
 
@@ -6096,11 +6075,6 @@ OP *
 Perl_ck_sort(pTHX_ OP *o)
 {
     OP *firstkid;
-    o->op_private = 0;
-#ifdef USE_LOCALE
-    if (PL_hints & HINT_LOCALE)
-	o->op_private |= OPpLOCALE;
-#endif
 
     if (o->op_type == OP_SORT && o->op_flags & OPf_STACKED)
 	simplify_sort(o);
