@@ -17,8 +17,8 @@ The current release of MacPerl is
 <a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=20742">5.2.0r4</a>
 (1998.04.17), based on perl 5.004.
 The current development release is
-<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=68835">5.6.1b3</a>
-(2002.01.07), based on perl 5.6.1, which is the most recent release of perl.  MacPerl is also being
+<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=74061">5.6.1b4</a>
+(2002.02.07), based on perl 5.6.1, which is the most recent release of perl.  MacPerl is also being
 ported to perl 5.8.0, which is currently in development.  No releases of that are expected until
 MacPerl 5.6.1 is released.
 </p>
