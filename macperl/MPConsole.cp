@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.4  2001/10/11 05:19:31  neeri
+Fix exit code (MacPerl bug #422129)
+
 Revision 1.3  2001/04/13 05:28:13  neeri
 Forgot to install MPConsoleSpin (MacPerl bug #230880)
 
@@ -596,14 +599,12 @@ found:
 
 /********************* A kinder, gentler, spin **********************/
 
-extern "C" void Perl_my_exit(int status);
-
 bool MPConsoleSpin(bool /* wait */)
 {
 	if (gAborting && gRunningPerl) {
 		ResetConsole();
 
-		MacPerl_Exit(-128);
+		raise(SIGINT);
 	} 
 		
 	// 
