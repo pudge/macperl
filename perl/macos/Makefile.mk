@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.10  2001/01/24 07:45:04  neeri
+#  Optimize some build rules to avoid rebuilds
+#
 #  Revision 1.9  2001/01/23 07:42:15  neeri
 #  Support fat builds involving SC (Task 24871)
 #
@@ -249,12 +252,14 @@ PLib:
 	NewFolder PLib
 	
 translators:	miniperl :lib:Config.pm
+.IF "68K" == "$(MACPERL_INST_TOOL_68K)"
 	@echo "	Making x2p stuff"; 
 	Directory x2p; 
 		set echo 0
 		BuildProgram all
 		set echo 1
 	Directory ::
+.END
 
 
 # This is now done by installman only if you actually want the man pages.
