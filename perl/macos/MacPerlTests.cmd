@@ -1,18 +1,21 @@
+# Test suite for MacPerl
+# pudge@pobox.com
+
 echo "# `Date -t` ----- Begin MacPerl tests."
 echo ""
+
 perl -le 'symlink "::macos:perl", ":perl" unless -e ":perl"'
-# :perl -I::lib -e 'for(<:*:*.t>){open my $fh,"<$_";$t=<$fh>=~/(T)/?"-T":"  ";$s="$^X -I::lib $t $_"; print qq[echo "$s"\n$s\n]}'
+
+# weird bug in GUSI for opening file instead of directory
+perl -e 'chmod 0666, "TEST"; `rename TEST TEST-OLD`'
+# set up environment
 set -e MACPERL ""
 set -e PERL5LIB ""
-perl -e '`set -e MACPERL_OLD "{{MACPERL}}"` if `echo {{MACPERL}}`'
-perl -e '`set -e PERL5LIB_OLD "{{PERL5LIB}}"` if `echo {{PERL5LIB}}`'
-perl -e '`set -e MACPERL ""`'
-perl -e '`set -e PERL5LIB ""`'
-echo "# When finished, execute these lines to restore your ToolServer environment:"
-echo "perl -e '¶`set -e MACPERL  ¶"¶{¶{MACPERL_OLD¶}¶}¶"¶`  if ¶`echo ¶{¶{MACPERL_OLD¶}¶}¶`'"
-echo "perl -e '¶`set -e PERL5LIB ¶"¶{¶{PERL5LIB_OLD¶}¶}¶"¶` if ¶`echo ¶{¶{PERL5LIB_OLD¶}¶}¶`'"
-echo ""
+set -e PERL_CORE 1
 
+# :perl -I::lib -e 'for(<:*:*.t>){open my $fh,"<$_";$t=<$fh>=~/(T)/?"-T":"  ";$s="$^X -I::lib $t $_"; print qq[echo "$s"\n$s\n]}'
+
+# create/open file for dumping tests to
 perl -e 'open F, ">::macos:MacPerlTests.out"'
 open ::macos:MacPerlTests.out
 
@@ -32,8 +35,12 @@ echo ":perl -I::lib    :cmd:elsif.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :cmd:elsif.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :cmd:for.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :cmd:for.t >> ::macos:MacPerlTests.out
+
+perl -e 'chmod 0666, "TEST-OLD"; `rename TEST-OLD TEST`'
 echo ":perl -I::lib    :cmd:mod.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :cmd:mod.t >> ::macos:MacPerlTests.out
+perl -e 'chmod 0666, "TEST"; `rename TEST TEST-OLD`'
+
 echo ":perl -I::lib    :cmd:subval.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :cmd:subval.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :cmd:switch.t" >> ::macos:MacPerlTests.out
@@ -170,8 +177,12 @@ echo ":perl -I::lib    :lib:filefind.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:filefind.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :lib:filefunc.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:filefunc.t >> ::macos:MacPerlTests.out
+
+perl -e 'chmod 0666, "TEST-OLD"; `rename TEST-OLD TEST`'
 echo ":perl -I::lib    :lib:filehand.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:filehand.t >> ::macos:MacPerlTests.out
+perl -e 'chmod 0666, "TEST"; `rename TEST TEST-OLD`'
+
 echo ":perl -I::lib    :lib:filepath.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:filepath.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :lib:filespec.t" >> ::macos:MacPerlTests.out
@@ -190,8 +201,12 @@ echo ":perl -I::lib    :lib:gdbm.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:gdbm.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :lib:getopt.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:getopt.t >> ::macos:MacPerlTests.out
+
+perl -e 'chmod 0666, "TEST-OLD"; `rename TEST-OLD TEST`'
 echo ":perl -I::lib    :lib:glob-basic.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:glob-basic.t >> ::macos:MacPerlTests.out
+perl -e 'chmod 0666, "TEST"; `rename TEST TEST-OLD`'
+
 echo ":perl -I::lib    :lib:glob-case.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:glob-case.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :lib:glob-global.t" >> ::macos:MacPerlTests.out
@@ -218,6 +233,8 @@ echo ":perl -I::lib    :lib:io_dup.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:io_dup.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :lib:io_linenum.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:io_linenum.t >> ::macos:MacPerlTests.out
+
+perl -e 'chmod 0666, "TEST-OLD"; `rename TEST-OLD TEST`'
 echo ":perl -I::lib    :lib:io_multihomed.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :lib:io_multihomed.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :lib:io_pipe.t" >> ::macos:MacPerlTests.out
@@ -418,6 +435,8 @@ echo ":perl -I::lib    :op:mkdir.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :op:mkdir.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :op:my.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :op:my.t >> ::macos:MacPerlTests.out
+
+perl -e 'chmod 0666, "TEST"; `rename TEST TEST-OLD`'
 echo ":perl -I::lib    :op:my_stash.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :op:my_stash.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :op:nothr5005.t" >> ::macos:MacPerlTests.out
@@ -488,8 +507,12 @@ echo ":perl -I::lib    :op:substr.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :op:substr.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :op:sysio.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :op:sysio.t >> ::macos:MacPerlTests.out
+
+perl -e 'chmod 0666, "TEST-OLD"; `rename TEST-OLD TEST`'
 echo ":perl -I::lib -T :op:taint.t" >> ::macos:MacPerlTests.out
 :perl -I::lib -T :op:taint.t >> ::macos:MacPerlTests.out
+perl -e 'chmod 0666, "TEST"; `rename TEST TEST-OLD`'
+
 echo ":perl -I::lib    :op:tie.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :op:tie.t >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :op:tiearray.t" >> ::macos:MacPerlTests.out
@@ -567,8 +590,11 @@ echo ":perl -I::lib    :pragma:warnings.t" >> ::macos:MacPerlTests.out
 echo ":perl -I::lib    :run:runenv.t" >> ::macos:MacPerlTests.out
 :perl -I::lib    :run:runenv.t >> ::macos:MacPerlTests.out
 
-:perl -I::lib ::macos:MacPerlTests.plx ::macos:MacPerlTests.out >> ::macos:MacPerlTests.out
+echo ""
+echo "# `Date -t` ----- End MacPerl tests."
+echo ""
 
+# we know some things will fail
 echo "The following tests mostly work, but fail because of known"
 echo "IO problems.  Feel free to run them, and note the failures."
 echo "These tests are known to fail.  Run if you want to, but beware"
@@ -590,3 +616,7 @@ echo "# fails tests 329 (known problem in sysopen warning)"
 echo ":perl -I::lib    :pragma:warnings.t >> ::macos:MacPerlTests.out"
 echo ""
 echo "# `Date -t` ----- End MacPerl tests."
+
+# see how we did
+:perl -I::lib ::macos:MacPerlTests.plx ::macos:MacPerlTests.out >> ::macos:MacPerlTests.out
+save ::macos:MacPerlTests.out

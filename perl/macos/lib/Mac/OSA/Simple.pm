@@ -175,6 +175,8 @@ sub _compile {
     my($text, $comp, $script, $id);
     $self->{SCRIPT} = AECreateDesc('TEXT', $self->{SOURCE}) or
         _mydie() && return;
+# right thing?
+#    $self->{ID} = OSACompile($self->{COMP}, $self->{SCRIPT}, kOSAModeCompileIntoContext) or
     $self->{ID} = OSACompile($self->{COMP}, $self->{SCRIPT}, 0) or
         _mydie() && return;
     $self;
