@@ -1,0 +1,23 @@
+__section__
+default
+__description__
+
+__title__
+
+__page__
+menu
+__lang__
+en_US
+__name__
+messages
+__template__
+<DIV ALIGN="CENTER" CLASS="menu"><FONT FACE="[% constants.mainfontface %]" SIZE="1"><EM>Messages:</EM>
+[ [% FOR i = items %]
+	[% IF i.value %]<A HREF="[% i.value %]">[% END %][% i.label %][% IF i.value %]</A>[% END %]
+	[% " | " IF !loop.last AND i.value %]
+[% END %] ]
+</FONT></DIV>
+
+__seclev__
+100
+

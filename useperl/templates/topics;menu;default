@@ -1,0 +1,25 @@
+__section__
+default
+__description__
+Display topics menu.
+
+* items = arrayref of hashref of menu items (value (link), label)
+
+__title__
+
+__page__
+menu
+__lang__
+en_US
+__name__
+topics
+__template__
+<DIV ALIGN="CENTER" CLASS="menu"><FONT FACE="[% constants.mainfontface %]" SIZE="1"><EM>Topics:</EM>
+[ [% FOR i = items %]
+	[% IF i.value %]<A HREF="[% i.value %]">[% END %][% i.label %][% IF i.value %]</A>[% END %]
+	[% " | " IF !loop.last AND i.value %]
+[% END %] ]
+</FONT></DIV>
+
+__seclev__
+10000

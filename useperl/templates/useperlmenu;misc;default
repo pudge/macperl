@@ -1,0 +1,31 @@
+__section__
+default
+__description__
+Main user menu for use Perl
+__title__
+
+__page__
+misc
+__lang__
+en_US
+__name__
+useperlmenu
+__template__
+		<DIV ALIGN="CENTER" CLASS="menu"><FONT FACE="[% constants.mainfontface %]" SIZE="1"> [
+			<A HREF="[% constants.rootdir %]/faq.shtml">FAQ</A> |
+			<A HREF="[% constants.rootdir %]/about.shtml">About</A> |
+			<A HREF="[% constants.rootdir %]/submit.pl">Submit Story</A> |
+			<A HREF="[% constants.rootdir %]/search.pl">Older Stories</A> |
+			<A HREF="[% constants.rootdir %]/topics.shtml">Topics</A> |
+			<A HREF="[% constants.rootdir %]/pollBooth.pl">Polls</A> |
+			<A HREF="[% constants.rootdir %]/journal.pl">Journals</A> |
+			<A HREF="[% constants.rootdir %]/authors.pl">Authors</A> |
+			<A HREF="[% constants.rootdir %]/modulelist/">New Modules</A> |
+			<A HREF="[% constants.rootdir %]/users.pl?op=edithome">Preferences</A>
+[% IF !user.is_anon && user.currentPage != 'users' %]
+			| <A HREF="[% constants.rootdir %]/users.pl?op=userclose">Logout</A>
+[% END %]
+		] </FONT></DIV>
+
+__seclev__
+1000

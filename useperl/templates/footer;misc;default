@@ -1,0 +1,58 @@
+__section__
+default
+__description__
+Text that makes up the bottom of a page
+
+No specially passed variables
+__title__
+
+__page__
+misc
+__lang__
+en_US
+__name__
+footer
+__template__
+[% USE Slash %]
+
+</TD></TR></TABLE><P>
+
+<TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
+	<TR BGCOLOR="[% user.bg.3 %]">
+		<TD COLSPAN="3"><IMG SRC="[% constants.imagedir %]/pix.gif" WIDTH="1" HEIGHT="1"></TD>
+	</TR>
+	<TR BGCOLOR="[% user.bg.1 %]">
+		<TD ALIGN="LEFT"><IMG SRC="[% constants.imagedir %]/660000.gif" WIDTH="1" HEIGHT="60" ALT=""></TD>
+		<TD WIDTH="100%">
+			<TABLE WIDTH="100%" BORDER="0" CELLPADDING="5" CELLSPACING="0"><TR>
+				<TD ALIGN="LEFT"><A HREF="[% constants.rootdir %]"><IMG SRC="[% constants.imagedir %]/topics/useperl.gif" BORDER="0"></A></TD>
+				<TD><TT>[% PROCESS motd %]</TT></TD>
+				<TD ALIGN="RIGHT">
+<!-- START DOWNLOAD PERL -->
+<!-- Perl Mongers, Inc.  web@perlmongers.org -->
+<a href="http://www.cpan.org/ports/index.html"
+><img src="http://www.perl.org/Images/download_perl.gif"
+width="102" height="42" alt="Download Perl Now!" border="0"></a>
+<!-- END DOWNLOAD PERL -->
+</TD>
+			</TR></TABLE>
+		</TD>
+		<TD ALIGN="RIGHT"><IMG SRC="[% constants.imagedir %]/660000.gif" WIDTH="1" HEIGHT="60" ALT=""></TD>
+	</TR>
+	<TR BGCOLOR="[% user.bg.3 %]">
+		<TD COLSPAN="3"><IMG SRC="[% constants.imagedir %]/pix.gif" WIDTH="1" HEIGHT="1"></TD>
+	</TR>
+</TABLE>
+
+[% PROCESS useperlcopyright %]
+
+[% PROCESS useperlmenu;
+IF user.is_admin;
+   Slash.currentAdminUsers();
+END %]
+
+</BODY>
+</HTML>
+
+__seclev__
+10000

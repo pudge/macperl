@@ -1,0 +1,70 @@
+__section__
+default
+__description__
+Text that makes up the top of a page
+
+No specially passed variables
+__title__
+
+__page__
+misc
+__lang__
+en_US
+__name__
+header
+__template__
+[% INCLUDE linkrel %]
+</HEAD>
+<BODY BGCOLOR="[% user.bg.0 %]" TEXT="[% user.fg.1 %]" LINK="[% user.bg.3 %]" VLINK="[% user.fg.2 %]">
+
+[% IF constants.run_ads %]
+<!-- add code. You can use your own ad system - we use one that 
+sets a env variable in apache that contains the ad itself and just put it
+in this block -->
+<!-- end ad code -->
+[% END %]
+ 
+<TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0" WIDTH="99%" ALIGN="CENTER">
+	<TR VALIGN="TOP">
+		<TD BACKGROUND="[% constants.imagedir %]/line-bg.gif" ALIGN="LEFT"><IMG SRC="[% constants.imagedir %]/line-corner.gif" WIDTH="1" HEIGHT="74" ALT=""></TD>
+		<TD BACKGROUND="[% constants.imagedir %]/line-bg.gif" ALIGN="LEFT" WIDTH="100%"><A HREF="[% constants.real_rootdir %]/"><IMG SRC="[% constants.imagedir %]/slashhead.gif" WIDTH="248" HEIGHT="74" BORDER="0" ALT="[% constants.sitename %]"></A></TD>
+
+		<TD VALIGN="BOTTOM" BACKGROUND="[% constants.imagedir %]/line-bg.gif">
+			[% UNLESS 1 #user.noicons || user.light %]
+			<TABLE BORDER="0"><TR>
+				[% PROCESS recentTopics %]
+			</TR></TABLE>
+			[% END %]
+		</TD>
+
+		<TD VALIGN="MIDDLE" BACKGROUND="[% constants.imagedir %]/line-bg.gif" ALIGN="RIGHT">
+			<FORM ACTION="[% constants.rootdir %]/search.pl">
+			<FONT FACE="[% constants.mainfontface %]" SIZE="1">search&nbsp;<B>[% constants.sitename %]</B></FONT><BR>
+				<INPUT TYPE="text" NAME="query">&nbsp;<INPUT TYPE="submit" VALUE=" Go ">
+			</FORM>
+		</TD>
+		<TD BACKGROUND="[% constants.imagedir %]/line-bg.gif" ALIGN="RIGHT"><IMG SRC="[% constants.imagedir %]/line-corner.gif" WIDTH="1" HEIGHT="74" ALT=""></TD>
+	</TR>
+	<TR>
+		<TD BACKGROUND="[% constants.imagedir %]/wl.gif" ALIGN="LEFT"><IMG SRC="[% constants.imagedir %]/pix.gif" WIDTH="11" HEIGHT="11"></TD>
+		<TD BGCOLOR="[% user.bg.1 %]" ALIGN="LEFT" WIDTH="100%"><IMG SRC="[% constants.imagedir %]/slashslogan.gif" WIDTH="300" HEIGHT="20" ALT="[% constants.slogan %]"></TD>
+		<TD BGCOLOR="[% user.bg.1 %]" COLSPAN="2"><IMG SRC="[% constants.imagedir %]/pix.gif" WIDTH="1" HEIGHT="1"></TD>
+		<TD BACKGROUND="[% constants.imagedir %]/wr.gif" ALIGN="RIGHT"><IMG SRC="[% constants.imagedir %]/pix.gif" WIDTH="11" HEIGHT="11"></TD>
+	</TR>
+	<TR><TD BGCOLOR="[% user.bg.3 %]" COLSPAN="5"><IMG SRC="[% constants.imagedir %]/pix.gif" WIDTH="1" HEIGHT="1"></TD></TR>
+</TABLE>
+
+&nbsp;
+
+<TABLE WIDTH="99%" ALIGN="CENTER" CELLPADDING="0" CELLSPACING="0" BORDER="0">
+	<TR><TD>&nbsp;</TD><TD VALIGN="TOP" ALIGN="LEFT">
+
+	<TABLE BORDER="0" WIDTH="100%" CELLPADDING="2" CELLSPACING="0"><TR><TD>
+<P>[% PROCESS useperlmenu %]
+[%- IF user.is_admin; Slash.createMenu('admin'); END %]
+	</TD></TR></TABLE>
+
+<FONT COLOR="[% user.fg.1 %]">
+
+__seclev__
+10000
