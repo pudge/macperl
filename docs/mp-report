@@ -29,18 +29,31 @@ sub main {
 	$pw->{ops} = {
 		add_user	=> [ 1,			\&add_user	],
 		create_user	=> [ 1,			\&create_user	],
+
 		add_config	=> [ $pw->{user}{id},	\&add_config	],
 		create_config	=> [ $pw->{user}{id},	\&create_config	],
+		view_config	=> [ 1,			\&view_config	],
+
 		add_test	=> [ $pw->{user}{id},	\&add_test	],
 		create_test	=> [ $pw->{user}{id},	\&create_test	],
+		view_test	=> [ 1,			\&view_test	],
 		view_tests	=> [ 1,			\&view_tests	],
+
 		default		=> [ 1,			\&default	]
 	};
 
 	$pw->main();
 }
 
-# main functions
+# view data
+sub view_config {
+	my($pw) = @_;
+	my $config = get_config($pw, $pw->{form}{config_id});
+
+	$pw->header("View Configuration $config->{name} ($config->{id})");
+	$pw->process('view_config', { config => $config });
+}
+
 sub view_tests {
 	my($pw) = @_;
 	my $tests = get_tests($pw);
@@ -57,55 +70,7 @@ sub view_tests {
 	});
 }
 
-sub create_test {
-	my($pw) = @_;
-	my(%test, $id, $sth);
-
-	$test{is_tool} = $pw->{form}{is_tool} ? 1 : 0;
-
-	for (qw(test_id config_id status compiler notes results)) {
-		$test{$_} = $pw->{form}{$_};
-	}
-
-	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @test{qw(test_id config_id status compiler is_tool notes results)});
-INSERT INTO	user_tests	(user_id, test_id, config_id, status, compiler, is_tool, notes, results)
-VALUES			(?, ?, ?, ?, ?, ?, ?, ?)
-EOT
-	$test{id} = $sth->{'mysql_insertid'};
-	my $test_id = get_testdesc($pw);
-	$test{test} = $test_id->{$test{test_id}};
-
-	$pw->header('Create Test');
-	$pw->process('create_test', { test => \%test });
-}
-
-sub create_config {
-	my($pw) = @_;
-	my(%config, $id, $sth);
-
-	if (!$pw->{form}{name}) {
-		$pw->error("Configuration must have a name.  Please go back and try again.");
-		return;
-	}
-
-	for (qw(cvs build mwc mpw)) {
-		$config{$_} = $pw->{form}{$_} ? 1 : 0;
-	}
-
-	for (qw(processor ram version name notes results)) {
-		$config{$_} = $pw->{form}{$_};
-	}
-
-	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @config{qw(processor ram version cvs build mwc mpw name notes results)});
-INSERT INTO	configs	(user_id, processor, ram, version, cvs, build, mwc, mpw, name, notes, results)
-VALUES			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-EOT
-	$config{id} = $sth->{'mysql_insertid'};
-
-	$pw->header('Create Configuration');
-	$pw->process('create_config', { config => \%config });
-}
-
+# create records
 sub create_user {
 	my($pw) = @_;
 	my($id, $name, $email, $pass, $sf_match, $sth);
@@ -120,7 +85,7 @@ sub create_user {
 		$pass = md5_hex($pw->{form}{pass1});
 	}
 
-	($name = lc $pw->{form}{user}) =~ s/[^a-zA-Z0-9_.-]+//g;
+	($name = lc $pw->{form}{user}) =~ s/[^a-zA-Z0-9_]+//g;
 	if (!$name) {
 		$pw->error('No user name given.  Please try again.');
 		return;
@@ -149,6 +114,72 @@ EOT
 	$pw->process('create_user');
 }
 
+sub create_config {
+	my($pw) = @_;
+	my(%config, $id, $sth);
+
+	if (!$pw->{form}{name}) {
+		$pw->error("Configuration must have a name.  Please go back and try again.");
+		return;
+	}
+
+	for (qw(cvs build mwc mpw)) {
+		$config{$_} = $pw->{form}{$_} ? 1 : 0;
+	}
+
+	for (qw(processor version name notes results)) {
+		$config{$_} = $pw->{form}{$_};
+	}
+
+	($config{ram} = $pw->{form}{ram}) =~ s/\D//g;
+
+	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @config{qw(processor ram version cvs build mwc mpw name notes results)});
+INSERT INTO	configs	(user_id, processor, ram, version, cvs, build, mwc, mpw, name, notes, results)
+VALUES			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+EOT
+	$config{id} = $sth->{'mysql_insertid'};
+
+	$pw->header('Create Configuration');
+	$pw->process('create_config', { config => \%config });
+}
+
+sub create_test {
+	my($pw) = @_;
+	my(%test, $id, $sth);
+
+	$test{is_tool} = $pw->{form}{is_tool} ? 1 : 0;
+
+	for (qw(test_id config_id status compiler notes results)) {
+		$test{$_} = $pw->{form}{$_};
+	}
+
+	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @test{qw(test_id config_id status compiler is_tool notes results)});
+INSERT INTO	user_tests	(user_id, test_id, config_id, status, compiler, is_tool, notes, results)
+VALUES			(?, ?, ?, ?, ?, ?, ?, ?)
+EOT
+	$test{id} = $sth->{'mysql_insertid'};
+	my $test_id = get_testdesc($pw);
+	$test{test} = $test_id->{$test{test_id}};
+
+	$pw->header('Create Test');
+	$pw->process('create_test', { test => \%test });
+}
+
+# add screens
+sub add_user {
+	my($pw) = @_;
+	$pw->header('Add User');
+	$pw->process('add_user');
+}
+
+sub add_config {
+	my($pw) = @_;
+	$pw->header('Add Configuration');
+	$pw->process('add_config', { map { ($_ => get_param($pw, $_)) }
+		qw( processor version )
+	});
+}
+
 sub add_test {
 	my($pw) = @_;
 	my $config_id = get_configdesc($pw);
@@ -166,20 +197,7 @@ sub add_test {
 	});
 }
 
-sub add_config {
-	my($pw) = @_;
-	$pw->header('Add Configuration');
-	$pw->process('add_config', { map { ($_ => get_param($pw, $_)) }
-		qw( processor version )
-	});
-}
-
-sub add_user {
-	my($pw) = @_;
-	$pw->header('Add User');
-	$pw->process('add_user');
-}
-
+# default
 sub default {
 	my($pw) = @_;
 	$pw->header();
@@ -190,79 +208,75 @@ sub default {
 
 sub login {
 	my($pw) = @_;
-	my $sth;
+	my @data;
 	$pw->{user} = {};
 
 	if ($pw->{form}{op} && $pw->{form}{op} eq 'logout') {
 		return;
 
 	} elsif ($pw->{form}{user} && $pw->{form}{pass}) {
-		$sth = $pw->get_sth(<<'EOT', $pw->{form}{user}, md5_hex($pw->{form}{pass}));
-SELECT	id,user,email,pass,sf_match
-FROM	users
-WHERE	user=? AND pass=?
-EOT
+		@data = $pw->get_dbarray(
+			['id,user,email,pass,sf_match', 'users', 'user=? AND pass=?'],
+			$pw->{form}{user}, md5_hex($pw->{form}{pass})
+		);
 		
 	} else {
 		my($id, $pass) = $pw->get_cookie();
 		return unless $id && $pass;
-		$sth = $pw->get_sth(<<'EOT', $id, $pass);
-SELECT	id,user,email,pass,sf_match
-FROM	users
-WHERE	id=? AND pass=?
-EOT
+		@data = $pw->get_dbarray(
+			['id,user,email,pass,sf_match', 'users', 'id=? AND pass=?'],
+			$id, $pass
+		);
 	}
 
-	@{$pw->{user}}{qw(id user email pass sf_match)} =
-		$sth->fetchrow_array;
+	@{$pw->{user}}{qw(id user email pass sf_match)} = @data;
 }
 
 sub user_exists {
 	my($pw, $user) = @_;
-	my $sth = $pw->get_sth(<<'EOT', $user);
-SELECT	user
-FROM	users
-WHERE	user=?
-EOT
-	return $sth->fetchrow_array;
+	return $pw->get_dbarray(['user', 'users', 'user=?'], $user);
 }
 
 sub get_param {
 	my($pw, $param) = @_;
-	my $sth = $pw->get_sth(<<'EOT', $param);
-SELECT	id,name
-FROM	code_param
-WHERE	type=?
-EOT
-
-	my $data = { 9999 => "Unknown" };
-	while (my $row = $sth->fetchrow_arrayref) {
-		$data->{$row->[0]} = $row->[1];
-	}
+	my $data = $pw->get_dbhashdesc(['id,name', 'code_param', 'type=?'], $param);
+	$data->{9999} = "Unknown";
 	return $data;
 }
 
 sub get_users {
 	my($pw) = @_;
-	my $sth = $pw->get_sth(<<'EOT');
-SELECT		id, user, sf_match
-FROM		users
-EOT
+	return $pw->get_dbhash(['id,user,sf_match', 'users'], 'id');
+}
 
-	my $data = {};
-	while (my $row = $sth->fetchrow_hashref) {
-		$data->{$row->{id}} = $row;
-	}
-	return $data;
+sub get_testdesc {
+	my($pw) = @_;
+	return $pw->get_dbhashdesc(['id,test', 'tests']);
+}
+
+sub get_configdesc {
+	my($pw) = @_;
+	return $pw->get_dbhashdesc(['id,name', 'configs', 'user_id=?'], $pw->{user}{id});
+}
+
+sub get_configsdesc {
+	my($pw) = @_;
+	return $pw->get_dbhashdesc(['id,name', 'configs']);
+}
+
+sub get_config {
+	my($pw, $id) = @_;
+	return $pw->get_dbhash(['*', 'configs', 'id=?'], 'id', $id);
 }
 
 sub get_usertests {
 	my($pw) = @_;
-	my $sth = $pw->get_sth(<<'EOT');
-SELECT		id, user_id, test_id, config_id, status, compiler, is_tool, date
-FROM		user_tests
-ORDER BY	id
-EOT
+	my $sql = $pw->compose_select([
+		'id,user_id,test_id,config_id,status,compiler,is_tool,date',
+		'user_tests', '', 'ORDER BY id'
+	]);
+
+	my $sth = $pw->get_sth($sql);
 
 	my $data = {};
 	while (my $row = $sth->fetchrow_hashref) {
@@ -297,49 +311,6 @@ EOT
 		push @$data, $row;
 	}
 
-	return $data;
-}
-
-sub get_testdesc {
-	my($pw) = @_;
-	my $sth = $pw->get_sth(<<'EOT');
-SELECT		id, test
-FROM		tests
-EOT
-
-	my $data = {};
-	while (my $row = $sth->fetchrow_arrayref) {
-		$data->{$row->[0]} = $row->[1];
-	}
-	return $data;
-}
-
-sub get_configdesc {
-	my($pw) = @_;
-	my $sth = $pw->get_sth(<<'EOT', $pw->{user}{id});
-SELECT	id, name
-FROM	configs
-WHERE	user_id=?
-EOT
-
-	my $data = {};
-	while (my $row = $sth->fetchrow_arrayref) {
-		$data->{$row->[0]} = $row->[1];
-	}
-	return $data;
-}
-
-sub get_configsdesc {
-	my($pw) = @_;
-	my $sth = $pw->get_sth(<<'EOT');
-SELECT	id, name
-FROM	configs
-EOT
-
-	my $data = {};
-	while (my $row = $sth->fetchrow_arrayref) {
-		$data->{$row->[0]} = $row->[1];
-	}
 	return $data;
 }
 
