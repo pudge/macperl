@@ -128,13 +128,13 @@ Dynamic_Ext_Std	=
 Dynamic_Ext_Xtr =
 # this should be rewritten some, eh?
 Static_Lib_Mac	= \
-	ExtUtils:MM_MacOS ExtUtils:Miniperl Config Errno \
-	Mac:Hooks Mac:Pane Mac:LowMem \
-	Mac:AppleEvents:Simple Mac:OSA:Simple \
-	Mac:BuildTools Mac:Apps:Launch Mac:Toolbox \
-	Mac:AETE:App Mac:AETE:Dialect Mac:AETE:Parser \
+	Config Errno ExtUtils:Miniperl ExtUtils:MM_MacOS \
+	Mac:AETE:App Mac:AETE:Dialect \
 	Mac:AETE:Format:Converter Mac:AETE:Format:Dictionary \
-	Mac:AETE:Format:Glue Mac:Glue
+	Mac:AETE:Format:Glue Mac:AETE:Parser \
+	Mac:AppleEvents:Simple Mac:Apps:Launch Mac:BuildTools \
+	Mac:Glue Mac:Hooks Mac:LowMem Mac:OSA:Simple Mac:Pane \
+	Mac:Toolbox Text:ParseWords:Old
 
 ########
 # sync all extensions with both config.sh and macperl/Makefile.mk!
