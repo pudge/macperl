@@ -39,6 +39,7 @@ template=templates/header;misc;light
 template=templates/html-header;misc;default
 template=templates/index;index;default
 template=templates/journal;menu;default
+template=templates/journuserboxes;misc;default
 template=templates/main;404;default
 template=templates/messages;menu;default
 template=templates/msg_email;messages;default
