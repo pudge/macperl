@@ -248,15 +248,29 @@ by any bugs or behavior differences.
 
 =item Archive::Tar 0.22
 
+=item Class::ISA 0.32
+
 =item Compress::Zlib 1.16
 
 =item Convert::BinHex 1.119
 
+=item Digest 1.00
+
+=item Digest::MD5 2.16
+
 =item File::Sort 1.00
+
+=item Filter::Simple 0.77
+
+=item Filter::Util::Call 1.05
 
 =item HTML::Parser 3.25
 
 =item HTML::Tagset 3.03
+
+=item libnet 1.0901
+
+=item List::Util 1.05
 
 =item LWP 5.63
 
@@ -268,9 +282,23 @@ by any bugs or behavior differences.
 
 =item MD5 2.02
 
+=item Memoize 0.66
+
+=item MIME::Base64 2.12
+
 =item MLDBM 2.00
 
 =item Net::Telnet 3.02
+
+=item NEXT 0.50
+
+=item Storable 1.014
+
+=item Switch 2.06
+
+=item Text::Balanced 1.89
+
+=item Time::HiRes 1.20
 
 =item URI 1.18
 
