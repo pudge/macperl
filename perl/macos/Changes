@@ -25,6 +25,27 @@ Version v5.6.1b2
 ----------------
 
 ____________________________________________________________________________
+[ 13615] By: pudge                                 on 2001/12/11  05:09:34
+        Log: Add extra pod to help
+     Branch: maint-5.6/macperl
+	   ! macos/macperl/MacPerl.podhelp
+____________________________________________________________________________
+[ 13614] By: pudge                                 on 2001/12/11  05:08:51
+        Log: Return DoAppleScript errors in $@
+     Branch: maint-5.6/macperl
+	   ! macos/ext/MacPerl/OSA.xs
+____________________________________________________________________________
+[ 13613] By: pudge                                 on 2001/12/11  05:08:19
+        Log: Clear out $^E before each script run
+     Branch: maint-5.6/macperl
+	   ! macos/macperl/MPScript.c
+____________________________________________________________________________
+[ 13612] By: pudge                                 on 2001/12/11  04:58:52
+        Log: Integrate various changes from maint-5.6/perl/.
+     Branch: maint-5.6/macperl
+	  !> op.c pp.c pp_hot.c t/io/pipe.t t/op/cmp.t t/op/misc.t
+	  !> t/op/system_tests util.c win32/perlhost.h win32/win32.c
+____________________________________________________________________________
 [ 13156] By: pudge                                 on 2001/11/21  03:19:09
         Log: Slight doc changes.
      Branch: maint-5.6/macperl

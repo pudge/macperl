@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:27  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:31  neeri
  * Checked into Sourceforge
  *
@@ -240,7 +243,7 @@ state(hand, state=0)
 
 Open a stream to a handle and return it.
 
-NOT DEFINED AT THE MOMENT
+=cut
 
 SysRet
 _open(hand, mode)
