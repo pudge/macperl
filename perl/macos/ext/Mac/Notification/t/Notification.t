@@ -5,6 +5,7 @@ use strict;
 
 BEGIN { plan tests => 10 }
 
+use Mac::Memory;
 use Mac::Notification;
 use Mac::Processes;
 use MacPerl 'DoAppleScript';
@@ -67,6 +68,7 @@ SKIP: {
 	}
 
 	ok(my $notification = NMRec->new(
+		nmSound => Handle->new(-1),
 		nmStr	=> "Please wait a few seconds, I will bring $name to the front.",
 	), 'create notification');
 
