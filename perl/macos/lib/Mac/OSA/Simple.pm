@@ -175,9 +175,7 @@ sub _compile {
     my($text, $comp, $script, $id);
     $self->{SCRIPT} = AECreateDesc('TEXT', $self->{SOURCE}) or
         _mydie() && return;
-# right thing?
-#    $self->{ID} = OSACompile($self->{COMP}, $self->{SCRIPT}, kOSAModeCompileIntoContext) or
-    $self->{ID} = OSACompile($self->{COMP}, $self->{SCRIPT}, 0) or
+    $self->{ID} = OSACompile($self->{COMP}, $self->{SCRIPT}, kOSAModeCompileIntoContext) or
         _mydie() && return;
     $self;
 }
@@ -260,11 +258,6 @@ Mac::OSA::Simple - Simple access to Mac::OSA
     applescript('beep 3');
 
 =head1 DESCRIPTION
-
-    **MAJOR CHANGE**
-    Scripting component in osa_script and compile_osa_script
-    is now the first parameter, not the second.
-    Now the script text is second.
 
 You can access scripting components via the tied hash
 C<%ScriptComponents> which is automatically exported.  Components are
@@ -381,6 +374,33 @@ existing resource!
 =back
 
 
+=head2 Script Context
+
+Scripts compiled by this module now compile scripts as
+I<script contexts>, which, in part, means they can maintain state
+information.  For example:
+
+	use Mac::OSA::Simple;
+	my $script = compile_applescript(<<'SCRIPT') or die $^E;
+	property foo: 20
+	set foo to foo + 1
+	SCRIPT
+	print $script->execute, "\n" for 0..2;
+
+Returns:
+	21
+	22
+	23
+
+Whereas in previous versions of this module, it would have returned:
+	21
+	21
+	21
+
+For a script that on disk, to maintain state information
+in the saved version, remember to call C<$script->save(LIST)>.
+
+
 =head1 TODO
 
 Work on error handling.  We don't want to die when a toolbox function
@@ -400,6 +420,11 @@ Should C<run_osa_script> and C<execute> take arguments?  If so, how?
 =head1 HISTORY
 
 =over 4
+
+=item v1.01, Tuesday, January 22, 2002
+
+Save scripts as script contexts.  (Bart Lateur)
+
 
 =item v1.00, Tuesday, January 22, 2002
 
