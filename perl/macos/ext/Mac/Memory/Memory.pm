@@ -1,6 +1,6 @@
 =head1 NAME
 
-MacOS Memory Manager
+Mac::Memory - MacOS Memory Manager
 
 Provide the MacPerl interface to the memory management routines in the MacOS.
 
