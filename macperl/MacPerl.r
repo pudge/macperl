@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.3  2001/02/23 23:33:06  pudge
+Update versions
+
 Revision 1.2  2001/01/30 05:16:53  pudge
 Update versions
 
@@ -174,15 +177,15 @@ include "MacPerl.rsrc" 'icm#'(265);
 include "MacPerl.rsrc" 'icm#'(266);
 
 resource 'vers' (1) {
-	0x05, 0x61, development, 0x01, verUS,
-	"5.6.1d1",
+	0x05, 0x61, development, 0x02, verUS,
+	"5.6.1d2",
 	"MacPerl - ported by Matthias Neeracher."
 	};
 
 resource 'vers' (2) {
-	0x05, 0x61, development, 0x01, verUS,
-	"5.6.1d1",
-	"Perl 5.6.1d1 (2001-02-23)"
+	0x05, 0x61, development, 0x02, verUS,
+	"5.6.1d2",
+	"Perl 5.6.1d2 (2001-03-20)"
 	};
 
 resource 'STR#' (CreditID) {

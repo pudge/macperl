@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2001/02/23 23:34:04  pudge
+ * Add xsubpp.patch; update versions; fix missing fp.h for SC/MrC
+ *
  * Revision 1.2  2001/01/30 05:26:09  pudge
  * Update versions
  *
@@ -46,15 +49,15 @@
 include "Perl.rsrc";
 
 resource 'vers' (1) {
-	0x05, 0x61, development, 0x01, verUS,
-	"5.6.1d1",
+	0x05, 0x61, development, 0x02, verUS,
+	"5.6.1d2",
 	"Perl - ported by Matthias Neeracher."
 	};
 
 resource 'vers' (2) {
-	0x05, 0x61, development, 0x01, verUS,
-	"5.6.1d1",
-	"Perl 5.6.1d1 (2001-02-23)"
+	0x05, 0x61, development, 0x02, verUS,
+	"5.6.1d2",
+	"Perl 5.6.1d2 (2001-03-20)"
 	};
 
 resource 'DLOG' (2001)	{
@@ -256,7 +259,7 @@ resource 'cmdo' (128) {
 			},
 			notDependent {}, VersionDialog {
 				VersionString {
-					"5.6.1d1"
+					"5.6.1d2"
 				},
 				"Perl by Larry Wall <larry@wall.org>\n"
 				"MPW port by Matthias Neeracher <neeri@iis.ee.ethz.ch>\n"
