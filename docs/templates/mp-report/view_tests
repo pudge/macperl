@@ -1,37 +1,42 @@
 </p>
 
 <p>
-Look around, click around, have fun.
+Look around, click around, have fun.  They key below describes the status of each user test,
+and an average of tests is calculated to get the status of each test program.  So if a test
+is marked OK, feel free to test it anyway, because we want to make sure it is OK.
+Please read the test guidelines (not yet available :-).
 </p>
 
+<table><tr>[% FOR st = status.keys.nsort %]
+	<td class="[% PROCESS get_status st => st %]">[% status.$st %]</td>[% END %]
+</tr></table>
+
 <table border="0" cellpadding="4">
-	<tr class="mp">
+	<tr class="na">
 		<th>Test Name</th>
 		<th>User</th>
 		<th>Config</th>
 		<th>Compiler</th>
-		<th>Status</th>
 		<th>Date</th>
 	</tr>
 
 [% FOR test = tests %]
-	<tr class="[% PROCESS status status => test.status %]">
-		<td><strong>
+	<tr class="[% PROCESS get_status st => test.status %]">
+		<td>
 <a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/~checkout~/perl/t/[% test.test %].t?cvsroot=macperl" name="[% test.test %]">[% test.test %]</a>
-		</strong></td>
-		<td colspan="5">&nbsp;</td>
+		</td>
+		<td colspan="4">&nbsp;</td>
 	</tr>
 	[% FOR user_test = user_tests.${test.id};
 		myuser = users.${user_test.user_id};
 	%]
-	<tr class="[% PROCESS status status => user_test.status %]">
+	<tr class="[% PROCESS get_status st => user_test.status %]">
 		<td>&nbsp;</td>
 		<td>[% IF myuser.sf_match %]
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
 		[% ELSE; myuser.name; END %]</td>
 		<td>[% configs.${user_test.config_id} %]</td>
 		<td>[% compiler.${user_test.compiler} %]</td>
-		<td>[% user_test.status %]</td>
 		<td>[% user_test.date %]</td>
 	</tr>
 [% END ; END %]

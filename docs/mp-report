@@ -1,5 +1,4 @@
 #!/usr/bin/perl -w
-# $Id$
 
 use lib "../perl/lib";
 use strict;
@@ -10,6 +9,7 @@ use Template;
 my($constants, $dbh, $user, $form, $vu, $cgi, $template, %T, %ops);
 
 {
+	$constants->{Id}		= '$Id$';
 	$constants->{virtual_user}	= "macperl";
 	$constants->{cookie_name}	= "report_user";
 	$constants->{cookie_path}	= "/";
@@ -53,13 +53,9 @@ sub main {
 		$op = 'default';
 	}
 
-	header();
-
 	# dispatch of op
 	$ops{$op}[FUNCTION]->();
-
 	footer();
-
 }
 
 # main functions
@@ -67,13 +63,14 @@ sub view_tests {
 	my $tests = get_tests();
 	my $user_tests = get_usertests();
 
+	header('View Tests');
 	process('view_tests', {
 		tests		=> $tests,
 		user_tests	=> $user_tests,
 		configs		=> get_configsdesc(),
 		users		=> get_users(),
 		map { ($_ => get_param($_)) }
-			qw( compiler )
+			qw( compiler status )
 	});
 }
 
@@ -93,6 +90,8 @@ EOT
 	$test{id} = $sth->{'mysql_insertid'};
 	my $test_id = get_testdesc();
 	$test{test} = $test_id->{$test{test_id}};
+
+	header('Create Test');
 	process('create_test', { test => \%test });
 }
 
@@ -117,6 +116,8 @@ INSERT INTO	configs	(user_id, processor, ram, version, cvs, build, mwc, mpw, nam
 VALUES			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 EOT
 	$config{id} = $sth->{'mysql_insertid'};
+
+	header('Create Configuration');
 	process('create_config', { config => \%config });
 }
 
@@ -157,9 +158,9 @@ EOT
 		email		=> $email,
 		pass		=> $pass,
 		sf_match	=> $sf_match,
-		'new'		=> 1
 	} if $id;
 
+	header('Create User');
 	process('create_user');
 }
 
@@ -171,31 +172,34 @@ sub add_test {
 		return;
 	}
 
+	header('Add Test');
 	process('add_test', {
 		config_id	=> $config_id,
 		test_id		=> $test_id,
 		map { ($_ => get_param($_)) } qw( status compiler )
 	});
-
 }
 
 sub add_config {
+	header('Add Configuration');
 	process('add_config', { map { ($_ => get_param($_)) }
 		qw( processor version )
 	});
 }
 
 sub add_user {
+	header('Add User');
 	process('add_user');
 }
 
 sub default {
+	header();
 	process('notes');
 }
 
 sub header {
 	print $cgi->header(prep_cookie());
-	process('header');
+	process('header', { title => $_[0] });
 }
 
 sub footer {
@@ -374,6 +378,7 @@ sub process {
 		env  => { map { lc, $ENV{$_} } keys %ENV },
 		user => $user,
 		form => $form,
+		constants => $constants,
 		ref $data ? %$data : ()
 	};
 	$template->process($name, $data);
@@ -388,6 +393,7 @@ sub get_sth {
 
 sub error {
 	my($error) = @_;
+	header('Error');
 	process('error', { err => $error });
 }
 

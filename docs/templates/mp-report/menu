@@ -7,7 +7,7 @@
 	| <a href="[% env.script_name %]?op=logout">Logout</a>
 	[% END %]
 ]</p>
-[% IF !user.id || user.new %]<p class="menu">
+[% IF !user.id %]<p class="menu">
 	<form action="[% env.script_name %]" method="POST">
 		User: <input type="text"     name="user"    size="12" maxlength="32"><br />
 		Pass: <input type="password" name="pass"    size="12" maxlength="32"><br />

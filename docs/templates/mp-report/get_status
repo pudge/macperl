@@ -1,0 +1,14 @@
+[% SWITCH st;
+	CASE 13;
+		"good";
+	CASE 14;
+		"ngood";
+	CASE 15;
+		"bad";
+	CASE 16;
+		"na";
+	CASE 9999;
+		"neutral";
+	CASE;
+		"neutral";
+END %]
