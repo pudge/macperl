@@ -41,19 +41,40 @@
 <p>
 These are the install procedures for
 <a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.
-These procedures assume some familiarity with MPW and Mac OS, and
-at least some understanding of compilers and Perl.  They also assume
-that nothing is currently installed (make the appropriate adjustments
-for your setup).  Send feedback
-to the <a href="http://lists.perl.org/">macperl-porters</a> list,
+Please send feedback to the <a href="http://lists.perl.org/">macperl-porters</a> list,
 and <a href="http://sourceforge.net/bugs/?func=addbug&amp;group_id=7940">submit bugs
 at SourceForge</a>.
 </p>
+
+
+<h2>Notes</h2>
+
+<p>
+To build MacPerl, you will need a Mac and plenty of RAM.  The build goes
+fine with my PowerBook G3/400 with 256MB, but has some problems on my
+iBook 333 with 128MB.  Sometimes MPW runs out of memory, and I need to
+restart MPW -- or the machine -- to continue.
+</p>
+
+<p>
+You will also need a working knowledge of Mac OS and MPW,
+the Macintosh Programmer's Workshop.  If you don't know MPW,
+you can mostly pick it up along the way if you have any familiarity
+with command lines.
+</p>
+
+<p>
+For now, some of the smaller tools, and shared libraries, cannot be built
+with an SC/MrC-only build, and there is no CFM68K support.
+</p>
+
 
 <h2>Ingredients</h2>
 
 <p>Some version numbers are noted.  These are the recommended versions
 for building with.</p>
+
+<p>Hm.  Should I just put dmake, patch, sfio, db, XL, AE, IC in one big archive?</p>
 
 <ul>
 	<li>The following packages are provided at
@@ -109,10 +130,14 @@ for building with.</p>
 		"Macintosh HD:macperl:" is not.  This will be your main build
 		folder.</p></li>
 	
-	<li><p>For the db, XML, IC, MoreFiles, and AEGizmos distributions, either
-		put the folders or aliases to them in the newly created
-		<i>MacPerl</i> folder.  For the db distribution, rename it to <i>db</i>
-		or make an alias of that name.</p></li>
+	<li><p>Make sure that the db, XL, MoreFiles, and AEGizmos distributions
+		are in the <i>MacPerl</i> folder, and that each is named exactly
+		as <i>db</i>, <i>XL</i>, <i>MoreFiles</i>, <i>AEGizmos</i>,
+		respectively (aliases may work, too).</p>
+		
+		<p>For IC, move the <i>APIs</i> folder (or an alias to it)
+		from inside the IC distribution and put it in the MacPerl folder,
+		and rename it <i>IC</i>.</p></li>
 
 	<li><p>Unpack the GUSI and sfio distributions.  If using SC/MrC, unpack
 		the STLport distribution into the same location as where
@@ -147,7 +172,8 @@ for building with.</p>
 		change the preferences there for the compilers you will
 		be using.  If using SC/MrC, also open
 		<i>:macperl:perl:macos:MacPerlConfig.mk</i> and remove
-		"UnPreload" from the "miniperl" and "perl" targets.</p></li>
+		"UnPreload" from the "miniperl" and "perl" targets.
+		Hm, need to talk about dynamic stuff, too.</p></li>
 
 	<li><p>Change directory in MPW to <i>:macperl:perl:macos:</i> and
 		execute <tt>buildprogram all</tt>.  This could take up
