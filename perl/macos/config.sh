@@ -6,17 +6,9 @@
 # instead choose to run each of the .SH files by yourself, or "Configure -S".
 #
 
+# MACPERL USERS:
 # DO NOT MAKE A CHANGE HERE WITHOUT MAKING CORRESPONDING CHANGE IN config.h!
 # (yes, this should be done automatically)
-
-# perladmin
-# ARCHNAME / myarchname
-# extensions
-# install*
-# mydomain
-# myhostname
-# osvers
-# startperl ?
 
 # Package name      : perl5
 # Source directory  : /usr/src/maintperl
@@ -425,7 +417,7 @@ emacs=''
 eunicefix=':'
 exe_ext=''
 expr='expr'
-extensions=''
+extensions='B ByteLoader Data/Dumper DB_File Devel/DProf Devel/Peek DynaLoader Fcntl File/Glob IO NDBM_File Opcode POSIX Socket Sys/Hostname attrs re'
 fflushNULL='define'
 fflushall='undef'
 find=''
@@ -647,7 +639,7 @@ old_pthread_create_joinable=''
 optimize=''
 orderlib=''
 osname='MacOS'
-osvers=''
+osvers='9.1'
 otherlibdirs=' '
 package='perl5'
 pager=''
@@ -656,7 +648,7 @@ patchlevel='6'
 path_sep=','
 perl5='perl'
 perl=''
-perladmin=''
+perladmin='pudge@pobox.com'
 perllibs=''
 perlpath=''
 pg=''
@@ -740,9 +732,9 @@ spackage='Perl5'
 spitshell=''
 src=''
 ssizetype='ssize_t'
-startperl='Perl -Sx \"{0}\" {\"Parameters\"}; Exit {Status}\n#!perl'
+startperl="Perl -Sx \"{0}\" {\"Parameters\"}; Exit {Status}\n#!perl"
 startsh=''
-static_ext=' '
+static_ext='B ByteLoader Data/Dumper DB_File Devel/DProf Devel/Peek DynaLoader Fcntl File/Glob IO NDBM_File Opcode POSIX Socket Sys/Hostname attrs re'
 stdchar='char'
 stdio_base=''
 stdio_bufsiz=''
