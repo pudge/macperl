@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:28  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:32  neeri
  * Checked into Sourceforge
  *
@@ -152,14 +155,21 @@ MODULE = Mac::Processes	PACKAGE = Mac::Processes
 =item LaunchApplication LAUNCHPARAMS
 
 The LaunchApplication function launches the application from the specified file
-and returns the process serial number, preferred partition size, and minimum
-partition size if the application is successfully launched.
-Returns zero on failure.
+and returns the process serial number if the application is successfully launched.
+Returns undef on failure.
 
 =cut
-MacOSRet
+ProcessSerialNumber
 LaunchApplication(LaunchParams)
 	LaunchParam LaunchParams
+    CODE:
+	if (gMacPerl_OSErr = LaunchApplication(LaunchParams)) {
+        XSRETURN_UNDEF;
+    }
+	RETVAL = LaunchParams->launchProcessSN;
+	OUTPUT:
+	RETVAL
+
 
 =item LaunchDeskAccessory PFILESPEC, PDANAME
 
