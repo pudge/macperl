@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.2  2001/10/03 19:23:16  pudge
+Sync with perforce maint-5.6/macperl
+
 Revision 1.1  2000/11/30 08:37:29  neeri
 Sources & Resources
 
@@ -43,6 +46,8 @@ Revision 0.1  1993/05/29  00:00:00  neeri
 Compiles correctly
 
 *********************************************************************/
+
+#include <stdio.h>
 
 #include "MPUtils.h"
 #include "MPWindow.h"

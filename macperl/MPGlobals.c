@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.2  1999/01/24 05:14:00  neeri
 Various tweaks made in 1998
 
@@ -33,5 +36,7 @@ Compiles correctly
 *********************************************************************/
 
 #define EXTERN 
+
+#include <stdio.h>
 
 #include "MPGlobals.h"

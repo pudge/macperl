@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.2  1997/08/08 16:57:54  neeri
 MacPerl 5.1.4b1
 
@@ -31,6 +34,8 @@ Revision 0.1  1993/05/29  00:00:00  neeri
 Compiles correctly
 
 *********************************************************************/
+
+#include <stdio.h>
 
 #include <OSUtils.h>
 #include <Resources.h>

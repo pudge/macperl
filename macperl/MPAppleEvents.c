@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.3  2001/10/22 19:28:01  pudge
+Sync with perforce
+
 Revision 1.2  2001/04/03 06:51:37  neeri
 Alias code was messing up double clicks from the finder (MacPerl bug #409948)
 
@@ -50,6 +53,8 @@ Revision 0.1  1993/05/29  00:00:00  neeri
 Compiles correctly
 
 *********************************************************************/
+
+#include <stdio.h>
 
 #include <AppleEvents.h>
 #include <LowMem.h>

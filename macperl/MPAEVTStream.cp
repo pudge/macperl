@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.3  2001/04/28 23:28:01  neeri
+Need to register MPAEVTStreamDevice (MacPerl Bug #418932)
+
 Revision 1.2  2000/12/22 08:35:45  neeri
 PPC, MrC, and SC builds work
 
@@ -12,6 +15,8 @@ Revision 1.1  1997/06/23 17:10:30  neeri
 Checked into CVS
 
 *********************************************************************/
+
+#include <stdio.h>
 
 #define GUSI_SOURCE
 #define GUSI_INTERNAL

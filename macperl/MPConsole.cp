@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.9  2001/12/19 21:58:12  pudge
+Make -sane, -raw, etc. work in console.
+
 Revision 1.8  2001/12/17 06:23:13  neeri
 Fix crashes on 68K exit (MacPerl Bug #490013)
 
@@ -54,6 +57,8 @@ Revision 0.1  1993/08/14  00:00:00  neeri
 Remember rectangles	
 
 *********************************************************************/
+
+#include <stdio.h>
 
 #define GUSI_SOURCE
 #define GUSI_INTERNAL

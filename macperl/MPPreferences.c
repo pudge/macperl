@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.8  2001/04/24 05:11:32  pudge
+Remove extra : at end of TMPDIR in prefs
+
 Revision 1.7  2001/01/30 05:17:22  pudge
 Temp. change to pref file name
 
@@ -43,6 +46,8 @@ Revision 0.1  1993/12/08  00:00:00  neeri
 Separated from MPUtils
 
 *********************************************************************/
+
+#include <stdio.h>
 
 #include "MPPreferences.h"
 #include "MPUtils.h"

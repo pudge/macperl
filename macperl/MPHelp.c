@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.4  1998/04/07 01:46:39  neeri
 MacPerl 5.2.0r4b1
 
@@ -27,6 +30,11 @@ Revision 0.1  1993/08/17  00:00:00  neeri
 Use Application directory
 
 *********************************************************************/
+
+#include <stdio.h>
+
+// ignore CGBase.h int types
+#define _STDINT_H_
 
 #include "MPHelp.h"
 #include "MPConsole.h"

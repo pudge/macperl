@@ -4,6 +4,9 @@ File		:	MPPseudoFile.cp	-	Pseudo files for GUSI
 Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.2  1997/08/08 16:58:04  neeri
 MacPerl 5.1.4b1
 
@@ -14,6 +17,8 @@ Revision 1.1  1994/02/27  23:05:08  neeri
 Initial revision
 
 *********************************************************************/
+
+#include <stdio.h>
 
 #define GUSI_SOURCE
 #define GUSI_INTERNAL
