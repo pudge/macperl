@@ -1,19 +1,20 @@
 Perl -Sx "{0}"; Exit {Status}
-#!perl
+#!perl -w
 
+use strict;
 use Text::ParseWords;
 use Mac::AppleEvents;
 
-$line = MacPerl::Ask("Command line to execute:") 
-	or exit 0;
+my $applescript = 0;
+my $line = MacPerl::Ask("Command line to execute:") or exit 0;
 
-$line =~ s/\\/\\\\/g;
+my @cooked = &quotewords('\s+', 0, $line);
+my @raw = &quotewords('\s+', 0, $line);
+my @done;
 
-@cooked = &quotewords('\s+', 0, $line);
-@raw = &quotewords('\s+', 0, $line);
-
-for $cooked (@cooked) {
-	$raw = shift @raw;
+for my $cooked (@cooked) {
+	my $raw = shift @raw;
+	# really, Å is not used anymore ...
 	if ($cooked !~ /[*?Å]/ ||Ê$raw =~ /['"\\]/) {
 		push(@done, $cooked);
 	} else {
@@ -21,30 +22,30 @@ for $cooked (@cooked) {
 	}
 }
 
-if ($done[0] eq "perl") {
+if ($done[0] =~ /^(?:mac)?perl$/i) {
 	shift @done;
 }
 
-# $args = "{\"" . join("\", \"", map { s/(["'])/\\$1/g; $_ } @done) . "\"}";
-# 
-# MacPerl::DoAppleScript qq{
-# 	tell the current application
-# 		ignoring application responses
-# 			do script $args
-# 		end ignoring
-# 	end tell
-# }
-# 
-# $args = "[Ò" . join("Ó, Ò", @done) . "Ó]";
+# default to Apple events, but can do it in AppleScript
+# if someone wants to ...
+if ($applescript) {
+	# was `$line =~ s/\\/\\\\/g;` at top, moved down here
+	my $args = "{\"" . join("\", \"", map { s/\\/\\\\/g; s/(["'])/\\$1/g; $_ } @done) . "\"}";
+	MacPerl::DoAppleScript <<"	EOS";
+tell the current application
+	ignoring application responses
+		do script $args
+	end ignoring
+end tell
+	EOS
+} else {
+	my $args = '[' . join(',', map { 'TEXT(@)' } 1..@done ) . ']';
+	my $evt = AEBuildAppleEvent("misc", "dosc", typeApplSignature, "McPL", 0, 0,
+		"'----': $args", @done) or die $^E;
+	my $rep = AESend($evt, kAENoReply) or die $^E;
 
-
-$args = '[' . join(',', map { 'TEXT(@)' } 1..@done ) . ']';
-
-$evt = AEBuildAppleEvent("misc", "dosc", typeApplSignature, "McPL", 0, 0,
-	"'----': $args", @done) or die $^E;
-$rep = AESend($evt, kAENoReply) or die $^E;
-
-AEDisposeDesc $evt;
-AEDisposeDesc $rep;
+	AEDisposeDesc $evt;
+	AEDisposeDesc $rep;
+}
 
 __END__
