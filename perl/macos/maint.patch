@@ -1,64 +1,3 @@
-diff -ru :perl:ext:File:Glob:Glob.pm :perl.new:ext:File:Glob:Glob.pm
---- :perl:ext:File:Glob:Glob.pm	Tue Apr  3 17:05:05 2001
-+++ :perl.new:ext:File:Glob:Glob.pm	Fri Apr 13 09:45:15 2001
-@@ -25,6 +25,7 @@
-     GLOB_CSH
-     GLOB_ERR
-     GLOB_ERROR
-+    GLOB_LIMIT
-     GLOB_MARK
-     GLOB_NOCASE
-     GLOB_NOCHECK
-@@ -44,6 +45,7 @@
-         GLOB_CSH
-         GLOB_ERR
-         GLOB_ERROR
-+        GLOB_LIMIT
-         GLOB_MARK
-         GLOB_NOCASE
-         GLOB_NOCHECK
-@@ -57,7 +59,7 @@
-     ) ],
- );
- 
--$VERSION = '0.991';
-+$VERSION = '1.0';
- 
- sub import {
-     my $i = 1;
-@@ -241,6 +243,15 @@
- 
- Force bsd_glob() to return an error when it encounters a directory it
- cannot open or read.  Ordinarily bsd_glob() continues to find matches.
-+
-+=item C<GLOB_LIMIT>
-+
-+Make bsd_glob() return an error (GLOB_NOSPACE) when the pattern expands
-+to a size bigger than the system constant C<ARG_MAX> (usually found in
-+limits.h).  If your system does not define this constant, bsd_glob() uses
-+C<sysconf(_SC_ARG_MAX)> or C<_POSIX_ARG_MAX> where available (in that
-+order).  You can inspect these values using the standard C<POSIX>
-+extension.
- 
- =item C<GLOB_MARK>
- 
-diff -ru :perl:ext:File:Glob:Glob.xs :perl.new:ext:File:Glob:Glob.xs
---- :perl:ext:File:Glob:Glob.xs	Wed Apr  4 20:43:12 2001
-+++ :perl.new:ext:File:Glob:Glob.xs	Fri Apr 13 09:45:23 2001
-@@ -69,6 +69,12 @@
-     case 'K':
- 	break;
-     case 'L':
-+	if (strEQ(name, "GLOB_LIMIT"))
-+#ifdef GLOB_LIMIT
-+	    return GLOB_LIMIT;
-+#else
-+	    goto not_there;
-+#endif
- 	break;
-     case 'M':
- 	if (strEQ(name, "GLOB_MARK"))
-diff -ru :perl:ext:File:Glob:bsd_glob.c :perl.new:ext:File:Glob:bsd_glob.c
 --- :perl:ext:File:Glob:bsd_glob.c	Tue Apr  3 17:05:05 2001
 +++ :perl.new:ext:File:Glob:bsd_glob.c	Mon Apr 16 23:39:49 2001
 @@ -32,6 +32,9 @@
@@ -755,7 +694,6 @@ diff -ru :perl:ext:File:Glob:bsd_glob.c :perl.new:ext:File:Glob:bsd_glob.c
  }
  
  #ifdef GLOB_DEBUG
-diff -ru :perl:ext:File:Glob:bsd_glob.h :perl.new:ext:File:Glob:bsd_glob.h
 --- :perl:ext:File:Glob:bsd_glob.h	Tue Mar 20 14:28:43 2001
 +++ :perl.new:ext:File:Glob:bsd_glob.h	Fri Apr 13 09:44:56 2001
 @@ -30,6 +30,7 @@
@@ -775,7 +713,64 @@ diff -ru :perl:ext:File:Glob:bsd_glob.h :perl.new:ext:File:Glob:bsd_glob.h
  
  #define	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
  #define	GLOB_ABEND	(-2)	/* Unignored error. */
-diff -ru :perl:gv.c :perl.new:gv.c
+--- :perl:ext:File:Glob:Glob.pm	Tue Apr  3 17:05:05 2001
++++ :perl.new:ext:File:Glob:Glob.pm	Fri Apr 13 09:45:15 2001
+@@ -25,6 +25,7 @@
+     GLOB_CSH
+     GLOB_ERR
+     GLOB_ERROR
++    GLOB_LIMIT
+     GLOB_MARK
+     GLOB_NOCASE
+     GLOB_NOCHECK
+@@ -44,6 +45,7 @@
+         GLOB_CSH
+         GLOB_ERR
+         GLOB_ERROR
++        GLOB_LIMIT
+         GLOB_MARK
+         GLOB_NOCASE
+         GLOB_NOCHECK
+@@ -57,7 +59,7 @@
+     ) ],
+ );
+ 
+-$VERSION = '0.991';
++$VERSION = '1.0';
+ 
+ sub import {
+     my $i = 1;
+@@ -241,6 +243,15 @@
+ 
+ Force bsd_glob() to return an error when it encounters a directory it
+ cannot open or read.  Ordinarily bsd_glob() continues to find matches.
++
++=item C<GLOB_LIMIT>
++
++Make bsd_glob() return an error (GLOB_NOSPACE) when the pattern expands
++to a size bigger than the system constant C<ARG_MAX> (usually found in
++limits.h).  If your system does not define this constant, bsd_glob() uses
++C<sysconf(_SC_ARG_MAX)> or C<_POSIX_ARG_MAX> where available (in that
++order).  You can inspect these values using the standard C<POSIX>
++extension.
+ 
+ =item C<GLOB_MARK>
+ 
+--- :perl:ext:File:Glob:Glob.xs	Wed Apr  4 20:43:12 2001
++++ :perl.new:ext:File:Glob:Glob.xs	Fri Apr 13 09:45:23 2001
+@@ -69,6 +69,12 @@
+     case 'K':
+ 	break;
+     case 'L':
++	if (strEQ(name, "GLOB_LIMIT"))
++#ifdef GLOB_LIMIT
++	    return GLOB_LIMIT;
++#else
++	    goto not_there;
++#endif
+ 	break;
+     case 'M':
+ 	if (strEQ(name, "GLOB_MARK"))
 --- :perl:gv.c	Wed Mar 28 23:39:08 2001
 +++ :perl.new:gv.c	Wed Apr 11 20:01:56 2001
 @@ -1033,7 +1033,12 @@
@@ -792,7 +787,6 @@ diff -ru :perl:gv.c :perl.new:gv.c
  		{
  		    continue;
  		}
-diff -ru :perl:lib:Devel:SelfStubber.pm :perl.new:lib:Devel:SelfStubber.pm
 --- :perl:lib:Devel:SelfStubber.pm	Mon Feb  5 23:52:30 2001
 +++ :perl.new:lib:Devel:SelfStubber.pm	Fri Apr 13 09:46:05 2001
 @@ -3,7 +3,8 @@
@@ -805,7 +799,6 @@ diff -ru :perl:lib:Devel:SelfStubber.pm :perl.new:lib:Devel:SelfStubber.pm
  
  # Use as
  # perl -e 'use Devel::SelfStubber;Devel::SelfStubber->stub(MODULE_NAME,LIB)'
-diff -ru :perl:lib:ExtUtils:Install.pm :perl.new:lib:ExtUtils:Install.pm
 --- :perl:lib:ExtUtils:Install.pm	Mon Feb  5 23:52:31 2001
 +++ :perl.new:lib:ExtUtils:Install.pm	Mon Apr 16 17:56:51 2001
 @@ -120,7 +120,6 @@
@@ -825,7 +818,6 @@ diff -ru :perl:lib:ExtUtils:Install.pm :perl.new:lib:ExtUtils:Install.pm
  
  	}, ".");
  	chdir($cwd) or Carp::croak("Couldn't chdir to $cwd: $!");
-diff -ru :perl:lib:ExtUtils:Installed.pm :perl.new:lib:ExtUtils:Installed.pm
 --- :perl:lib:ExtUtils:Installed.pm	Mon Feb  5 23:52:31 2001
 +++ :perl.new:lib:ExtUtils:Installed.pm	Mon Apr 16 17:57:28 2001
 @@ -8,7 +8,28 @@
@@ -941,7 +933,6 @@ diff -ru :perl:lib:ExtUtils:Installed.pm :perl.new:lib:ExtUtils:Installed.pm
  
  return(bless($self, $class));
  }
-diff -ru :perl:lib:File:Basename.pm :perl.new:lib:File:Basename.pm
 --- :perl:lib:File:Basename.pm	Tue Feb 13 22:26:15 2001
 +++ :perl.new:lib:File:Basename.pm	Mon Apr 23 19:52:50 2001
 @@ -182,6 +182,7 @@
@@ -952,10 +943,17 @@ diff -ru :perl:lib:File:Basename.pm :perl.new:lib:File:Basename.pm
    }
    elsif ($fstype =~ /^AmigaOS/i) {
      ($dirpath,$basename) = ($fullname =~ /(.*[:\/])?(.*)/s);
-diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 --- :perl:lib:File:Find.pm	Mon Feb  5 23:52:34 2001
-+++ :perl.new:lib:File:Find.pm	Mon Apr 23 20:55:30 2001
-@@ -98,7 +98,7 @@
++++ :perl.new:lib:File:Find.pm	Sat May  5 16:10:08 2001
+@@ -1,5 +1,6 @@
+ package File::Find;
+-use 5.005_64;
++use warnings;
++use 5.6.0;
+ require Exporter;
+ require Cwd;
+ 
+@@ -98,7 +99,7 @@
  C<follow_skip==0> causes File::Find to die if any file is about to be
  processed a second time.
  C<follow_skip==2> causes File::Find to ignore any duplicate files and
@@ -964,7 +962,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  
  
  =item C<no_chdir>
-@@ -184,6 +184,45 @@
+@@ -184,6 +185,80 @@
  might cause very unpleasant surprises, since you delete or change files
  in an unknown directory.
  
@@ -980,7 +978,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +
 +=item *   
 +
-+The path separator is ':', not '/' and the current directory is denoted 
++The path separator is ':', not '/', and the current directory is denoted 
 +as ':', not '.'. You should be careful about specifying relative pathnames. 
 +While a full path always begins with a volume name, a relative pathname 
 +should always begin with a ':'.  If specifying a volume name only, a 
@@ -997,12 +995,47 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +
 +=item *   
 +
-+The invisible file "Icon\015" is ignored.
++The default C<untaint_pattern> (see above) on Mac OS is set to  
++C<qr|^(.+)$|s>. Note that the parentheses are vital.
 +
 +=item *   
 +
-+The default C<untaint_pattern> (see above) on Mac OS is set to  
-+C<qr|^(.+)$|s>. Note that the parantheses are vital.
++The invisible system file "Icon\015" is ignored. While this file may 
++appear in every directory, there are some more invisible system files 
++on every volume, which are all located at the volume root level (i.e. 
++"MacintoshHD:"). These system files are B<not> excluded automatically. 
++Your filter may use the following code to recognize invisible files or 
++directories (requires Mac::Files):
++
++ use Mac::Files;
++
++ # invisible():  returns 1 if file/directory is invisible,  
++ # 0 if it's visible or undef if an error occured
++
++ sub invisible($) { 
++   my $file = shift;
++   my ($fileCat, $fileInfo); 
++   my $invisible_flag =  1 << 14; 
++
++   if ( $fileCat = FSpGetCatInfo($file) ) {
++     if ($fileInfo = $fileCat->ioFlFndrInfo() ) {
++       return (($fileInfo->fdFlags & $invisible_flag) && 1);
++     }
++   }
++   return undef;
++ }
++
++Generally, invisible files are system files, unless an odd application 
++decides to use invisible files for it's own purposes. To distinguish 
++such files from system files, you have to look at the B<type> and B<creator> 
++file attributes. The MacPerl built-in functions C<GetFileInfo(FILE)> and 
++C<SetFileInfo(CREATOR, TYPE, FILES)> offer access to these attributes 
++(see MacPerl.pm for details).
++
++Files that appear on the desktop actually reside in an (hidden) directory
++named "Desktop Folder" on the particular disk volume. Note that, although
++all desktop files appear to be on the same "virtual" desktop, each disk 
++volume actually maintains its own "Desktop Folder" directory.
 +
 +=back
 +
@@ -1010,7 +1043,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  
  =cut
  
-@@ -193,8 +232,10 @@
+@@ -193,8 +268,10 @@
  
  use strict;
  my $Is_VMS;
@@ -1021,7 +1054,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  
  my %SLnkSeen;
  my ($wanted_callback, $avoid_nlink, $bydepth, $no_chdir, $follow,
-@@ -204,7 +245,7 @@
+@@ -204,7 +281,7 @@
  sub contract_name {
      my ($cdir,$fn) = @_;
  
@@ -1030,7 +1063,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  
      $cdir = substr($cdir,0,rindex($cdir,'/')+1);
  
-@@ -219,25 +260,84 @@
+@@ -219,25 +296,83 @@
      return $abs_name;
  }
  
@@ -1064,10 +1097,9 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +    }
 +    else {
 +
-+	# $fn may be a valid full path (volume name),
-+	# without leading ':'
-+	# $fn may be a valid full path or a file, without leading ':'
-+	if (-e $fn) { # valid directory/file
++	# $fn may be a valid path to a directory or file or (dangling)
++	# symlink, without a leading ':'
++	if ( (-e $fn) || (-l $fn) ) {
 +	    if ($fn =~ /^[^:]+:/) { # a volume name like DataHD:*
 +		return $fn; # $fn is already an absolut path
 +	    }
@@ -1094,7 +1126,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +	$AbsName = $Name; 
 +
 +	# (simple) check for recursion
-+	if ($Base =~ /^$AbsName/) { # recursion
++	if ( ( $Base =~ /^$AbsName/) && (-d $AbsName) ) { # recursion
 +	    return undef;
 +	}
      }
@@ -1126,7 +1158,16 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  	}
      }
      return $AbsName;
-@@ -323,55 +423,87 @@
+@@ -275,7 +410,7 @@
+     }
+ 
+     if ($full_check && $SLnkSeen{$DEV, $INO}++) {
+-	if ($follow_skip < 1) {
++	if ( ($follow_skip < 1) || ((-d _) && ($follow_skip < 2)) ) {
+ 	    die "$AbsName encountered a second time";
+ 	}
+ 	else {
+@@ -323,55 +458,87 @@
  
      Proc_Top_Item:
      foreach my $TOP (@_) {
@@ -1249,7 +1290,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  		my $abs_dir_save = $abs_dir;
  		$abs_dir = $1 if $abs_dir =~ m|$untaint_pat|;
  		unless (defined $abs_dir) {
-@@ -382,20 +514,20 @@
+@@ -382,20 +549,20 @@
  			next Proc_Top_Item;
  		    }
  		}
@@ -1279,7 +1320,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
      }
  }
  
-@@ -414,12 +546,21 @@
+@@ -414,12 +581,21 @@
      my ($subcount,$sub_nlink);
      my $SE= [];
      my $dir_name= $p_dir;
@@ -1301,11 +1342,11 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 -     
 -    unless ($no_chdir or $p_dir eq '.') {
 +
-+    unless ($no_chdir or ($p_dir eq $File::Find::current_dir) ) {
++    unless ( $no_chdir || ($p_dir eq $File::Find::current_dir) ) {
  	my $udir = $p_dir;
  	if ($untaint) {
  	    $udir = $1 if $p_dir =~ m|$untaint_pat|;
-@@ -437,46 +578,65 @@
+@@ -437,46 +613,61 @@
  	    return;
  	}
      }
@@ -1315,7 +1356,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
      push @Stack,[$CdLvl,$p_dir,$dir_rel,-1]  if  $bydepth;
  
 +    if ($Is_MacOS) {
-+	$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
++	$p_dir = $dir_pref;
 +    }
 +
      while (defined $SE) {
@@ -1324,7 +1365,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 -            $name= $dir_name;
 -            $_= ($no_chdir ? $dir_name : $dir_rel );
 +	    $dir= $p_dir; # $File::Find::dir 
-+	    $name= $dir_name; # $File::Find::dir 
++	    $name= $dir_name; # $File::Find::name 
 +	    $_= ($no_chdir ? $dir_name : $dir_rel ); # $_
  	    # prune may happen here
 -            $prune= 0;
@@ -1351,9 +1392,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +			    die "directory ($p_dir) $dir_rel is still tainted";
 +			}
 +			else {
-+			    die "directory ("
-+				. ($p_dir ne '/' ? $p_dir : '')
-+				. "/) $dir_rel is still tainted";
++			    die "directory (" . ($p_dir ne '/' ? $p_dir : '') . "/) $dir_rel is still tainted";
 +			}
  		    }
  		}
@@ -1366,9 +1405,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +		    warn "Can't cd to ($p_dir) $udir: $!\n";
 +		}
 +		else {
-+		    warn "Can't cd to ("
-+			. ($p_dir ne '/' ? $p_dir : '')
-+			. "/) $udir: $!\n";
++		    warn "Can't cd to (" . ($p_dir ne '/' ? $p_dir : '') . "/) $udir: $!\n";
 +		}
  		next;
  	    }
@@ -1388,7 +1425,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  	    warn "Can't opendir($dir_name): $!\n";
  	    next;
  	}
-@@ -488,10 +648,10 @@
+@@ -488,10 +679,10 @@
  	if ($nlink == 2 && !$avoid_nlink) {
  	    # This dir has no subdirectories.
  	    for my $FN (@filenames) {
@@ -1402,7 +1439,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  		{ &$wanted_callback }; # protect against wild "next"
  	    }
  
-@@ -501,7 +661,7 @@
+@@ -501,7 +692,7 @@
  	    $subcount = $nlink - 2;
  
  	    for my $FN (@filenames) {
@@ -1411,7 +1448,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  		if ($subcount > 0 || $avoid_nlink) {
  		    # Seen all the subdirs?
  		    # check for directoriness.
-@@ -514,8 +674,8 @@
+@@ -514,8 +705,8 @@
  			push @Stack,[$CdLvl,$dir_name,$FN,$sub_nlink];
  		    }
  		    else {
@@ -1422,7 +1459,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  			{ &$wanted_callback }; # protect against wild "next"
  		    }
  		}
-@@ -531,32 +691,65 @@
+@@ -531,32 +722,65 @@
  	while ( defined ($SE = pop @Stack) ) {
  	    ($Level, $p_dir, $dir_rel, $nlink) = @$SE;
  	    if ($CdLvl > $Level && !$no_chdir) {
@@ -1433,7 +1470,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +		if ($Is_MacOS) {
 +		    $tmp = (':' x ($CdLvl-$Level)) . ':';
 +		}
-+		else{
++		else {
 +		    $tmp = join('/',('..') x ($CdLvl-$Level));
 +		}
 +		die "Can't cd to $dir_name" . $tmp
@@ -1485,7 +1522,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +		$name = $dir_name;
 +		if ($Is_MacOS) {
 +		    if ($dir_rel eq ':') { # must be the top dir, where we started
-+			$name =~ s|:$||;
++			$name =~ s|:$||; # $File::Find::name
 +			$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
 +		    }
 +		    $dir = $p_dir; # $File::Find::dir
@@ -1510,7 +1547,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  	}
      }
  }
-@@ -570,21 +763,31 @@
+@@ -570,21 +794,31 @@
  #  chdir (if not no_chdir) to dir
  
  sub _find_dir_symlnk($$$) {
@@ -1549,18 +1586,18 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  	my $udir = $dir_loc;
  	if ($untaint) {
  	    $udir = $1 if $dir_loc =~ m|$untaint_pat|;
-@@ -605,6 +808,10 @@
+@@ -605,6 +839,10 @@
  
      push @Stack,[$dir_loc,$pdir_loc,$p_dir,$dir_rel,-1]  if  $bydepth;
  
 +    if ($Is_MacOS) {
-+	$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
++	$p_dir = $dir_pref;
 +    }
 +
      while (defined $SE) {
  
  	unless ($bydepth) {
-@@ -619,19 +826,19 @@
+@@ -619,19 +857,19 @@
  		    next;
  		}
  	    }
@@ -1588,7 +1625,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  	    my $udir = $dir_loc;
  	    if ($untaint) {
  		$udir = $1 if $dir_loc =~ m|$untaint_pat|;
-@@ -650,10 +857,14 @@
+@@ -650,10 +888,14 @@
  	    }
  	}
  
@@ -1605,7 +1642,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  	    warn "Can't opendir($dir_loc): $!\n";
  	    next;
  	}
-@@ -661,21 +872,21 @@
+@@ -661,21 +903,21 @@
  	closedir(DIR);
  
  	for my $FN (@filenames) {
@@ -1632,7 +1669,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  		{ &$wanted_callback }; # protect against wild "next"
  	    }
  	}
-@@ -684,37 +895,57 @@
+@@ -684,37 +926,57 @@
      continue {
  	while (defined($SE = pop @Stack)) {
  	    ($dir_loc, $pdir_loc, $p_dir, $dir_rel, $byd_flag) = @$SE;
@@ -1668,7 +1705,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 -                last;
 -            }
 +	    if ($Is_MacOS) {
-+		# $pdir always has a trailing ':', except for the starting dir,
++		# $p_dir always has a trailing ':', except for the starting dir,
 +		# where $dir_rel == ':'
 +		$dir_name = "$p_dir$dir_rel";
 +		$dir_pref = "$dir_name:";
@@ -1705,7 +1742,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
 +			$name =~ s|/\.$||;
 +		    }
 +		    $dir = $p_dir; # $File::Find::dir
-+		    $_ = ($no_chdir ? $dir_name : $dir_rel);
++		    $_ = ($no_chdir ? $dir_name : $dir_rel); # $_
 +		    if ( substr($_,-2) eq '/.' ) {
 +			s|/\.$||;
 +		    }
@@ -1721,7 +1758,7 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  	}
      }
  }
-@@ -727,7 +958,7 @@
+@@ -727,7 +989,7 @@
  	    $wanted->{follow_skip} = 1 unless defined $wanted->{follow_skip};
  	}
  	if ( $wanted->{untaint} ) {
@@ -1730,7 +1767,20 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  		unless defined $wanted->{untaint_pattern};
  	    $wanted->{untaint_skip} = 0 unless defined $wanted->{untaint_skip};
  	}
-@@ -751,11 +982,25 @@
+@@ -740,22 +1002,38 @@
+ 
+ sub find {
+     my $wanted = shift;
++    %SLnkSeen= (); # clear hash first
+     _find_opt(wrap_wanted($wanted), @_);
+     %SLnkSeen= ();  # free memory
+ }
+ 
+ sub finddepth {
+     my $wanted = wrap_wanted(shift);
++    %SLnkSeen= (); # clear hash first
+     $wanted->{bydepth} = 1;
+     _find_opt($wanted, @_);
      %SLnkSeen= ();  # free memory
  }
  
@@ -1757,9 +1807,40 @@ diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
  
  $File::Find::dont_use_nlink = 1
      if $^O eq 'os2' || $^O eq 'dos' || $^O eq 'amigaos' || $^O eq 'MSWin32' ||
-Only in :perl:lib:Pod:Text: Overstrike.pm
-Only in :perl.new:lib:Text: Overstrike.pm
-diff -ru :perl:perl.c :perl.new:perl.c
+--- :perl:op.c	Sat Apr  7 16:59:38 2001
++++ :perl.new:op.c	Fri May  4 18:14:11 2001
+@@ -1352,31 +1352,6 @@
+ 	PL_modcount++;
+ 	return o;
+     case OP_CONST:
+-        if (o->op_private & (OPpCONST_BARE) && 
+-                !(type == OP_GREPSTART || type == OP_ENTERSUB || type == OP_REFGEN)) {
+-            SV *sv = ((SVOP*)o)->op_sv;
+-            GV *gv;
+-
+-            /* Could be a filehandle */
+-            if (gv = gv_fetchpv(SvPV_nolen(sv), FALSE, SVt_PVIO)) {
+-                OP* gvio = newUNOP(OP_RV2GV, 0, newGVOP(OP_GV, 0, gv));
+-                op_free(o);
+-                o = gvio;
+-            } else {
+-                /* OK, it's a sub */
+-                OP* enter;
+-                gv = gv_fetchpv(SvPV_nolen(sv), TRUE, SVt_PVCV);
+-
+-                enter = newUNOP(OP_ENTERSUB,0, 
+-                        newUNOP(OP_RV2CV, 0, 
+-                            newGVOP(OP_GV, 0, gv)
+-                        ));
+-                enter->op_private |= OPpLVAL_INTRO;
+-                op_free(o);
+-                o = enter;
+-            }
+-            break;
+-        }
+ 	if (!(o->op_private & (OPpCONST_ARYBASE)))
+ 	    goto nomod;
+ 	if (PL_eval_start && PL_eval_start->op_type == OP_CONST) {
 --- :perl:perl.c	Wed Mar 21 23:01:06 2001
 +++ :perl.new:perl.c	Fri Apr 20 14:15:01 2001
 @@ -3087,6 +3087,9 @@
@@ -1772,7 +1853,6 @@ diff -ru :perl:perl.c :perl.new:perl.c
  	}
      }
  }
-diff -ru :perl:regexec.c :perl.new:regexec.c
 --- :perl:regexec.c	Wed Mar 21 23:01:42 2001
 +++ :perl.new:regexec.c	Fri Apr 13 09:45:57 2001
 @@ -385,18 +385,17 @@
@@ -1810,23 +1890,191 @@ diff -ru :perl:regexec.c :perl.new:regexec.c
  	}
  	/* Match is anchored, but substr is not anchored wrt beg-of-str. */
  	s = strpos;
-diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
---- :perl:t:lib:filefind.t	Mon Feb  5 23:54:27 2001
-+++ :perl.new:t:lib:filefind.t	Mon Apr 23 20:58:00 2001
-@@ -6,7 +6,11 @@
+--- :perl:t:base:term.t	Mon Feb  5 23:54:21 2001
++++ :perl.new:t:base:term.t	Fri Apr 27 18:04:35 2001
+@@ -14,8 +14,9 @@
+ # check "" interpretation
+ 
+ $x = "\n";
+-# 10 is ASCII/Iso Latin, 21 is EBCDIC.
++# 10 is ASCII/Iso Latin, 13 in Mac OS, 21 is EBCDIC.
+ if ($x eq chr(10) ||
++    ($^O eq 'MacOS' && $x eq chr(13)) ||
+     ($Config{ebcdic} eq 'define' && $x eq chr(21))) {print "ok 1\n";}
+ else {print "not ok 1\n";}
+ 
+@@ -42,7 +43,7 @@
+ 
+ # check <> pseudoliteral
+ 
+-open(try, "/dev/null") || open(try,"nla0:") || (die "Can't open /dev/null.");
++open(try, "/dev/null") || open(try,"Dev:Null") || open(try,"nla0:") || (die "Can't open /dev/null.");
+ if (<try> eq '') {
+     print "ok 6\n";
+ }
+--- :perl:t:comp:cpp.t	Mon Feb  5 23:54:22 2001
++++ :perl.new:t:comp:cpp.t	Sun Apr 29 09:10:37 2001
+@@ -8,7 +8,7 @@
+ }
+ 
+ use Config;
+-if ( $^O eq 'MSWin32' or
++if ( $^O eq 'MSWin32' or $^O eq 'MacOS' or
+      ($Config{'cppstdin'} =~ /\bcppstdin\b/) and
+      ( ! -x $Config{'binexp'} . "/cppstdin") ) {
+     print "1..0 # Skip: \$Config{cppstdin} unavailable\n";
+--- :perl:t:comp:multiline.t	Mon Feb  5 23:54:22 2001
++++ :perl.new:t:comp:multiline.t	Fri Apr 27 18:02:00 2001
+@@ -36,7 +36,9 @@
+ 
+ if ($count == 7) {print "ok 3\n";} else {print "not ok 3\n";}
+ 
+-$_ = ($^O eq 'MSWin32') ? `type Comp.try` : `cat Comp.try`;
++$_ = ($^O eq 'MSWin32') ? `type Comp.try`
++    : ($^O eq 'MacOS') ? `catenate Comp.try`
++    : `cat Comp.try`;
+ 
+ if (/.*\n.*\n.*\n$/) {print "ok 4\n";} else {print "not ok 4\n";}
+ 
+--- :perl:t:comp:require.t	Tue Mar 20 14:31:33 2001
++++ :perl.new:t:comp:require.t	Fri May  4 18:19:22 2001
+@@ -2,7 +2,7 @@
  
  BEGIN {
      chdir 't' if -d 't';
--    @INC = '../lib';
-+    if ($^O eq 'MacOS') { 
-+        @INC = qw(: ::lib ::macos:lib); 
-+    } else {
-+        @INC = '../lib';
-+    }
+-    @INC = '.';
++    @INC = $^O eq 'MacOS' ? ':' : '.';
+     push @INC, '../lib';
  }
  
- if ( $symlink_exists ) { print "1..117\n"; }
-@@ -14,24 +18,41 @@
+--- :perl:t:comp:script.t	Mon Feb  5 23:54:23 2001
++++ :perl.new:t:comp:script.t	Fri Apr 27 18:03:38 2001
+@@ -4,7 +4,8 @@
+ 
+ print "1..3\n";
+ 
+-$PERL = ($^O eq 'MSWin32') ? '.\perl' : './perl';
++$PERL = ($^O eq 'MSWin32') ? '.\perl'
++    : ($^O eq 'MacOS') ? $^X : './perl';
+ $x = `$PERL -le "print 'ok';"`;
+ 
+ if ($x eq "ok\n") {print "ok 1\n";} else {print "not ok 1\n";}
+--- :perl:t:lib:anydbm.t	Mon Feb  5 23:54:23 2001
++++ :perl.new:t:lib:anydbm.t	Fri May  4 18:18:10 2001
+@@ -29,7 +29,7 @@
+ if (! -e $Dfile) {
+ 	($Dfile) = <Op_dbmx*>;
+ }
+-if ($Is_Dosish) {
++if ($Is_Dosish || $^O eq 'MacOS') {
+     print "ok 2 # Skipped: different file permission semantics\n";
+ }
+ else {
+--- :perl:t:lib:autoloader.t	Mon Feb  5 23:54:24 2001
++++ :perl.new:t:lib:autoloader.t	Sun Apr 29 09:08:53 2001
+@@ -2,7 +2,13 @@
+ 
+ BEGIN {
+     chdir 't' if -d 't';
+-    $dir = "auto-$$";
++    if ($^O eq 'MacOS') {
++	$dir = ":auto-$$";
++	$sep = ":";
++    } else {
++	$dir = "auto-$$";
++	$sep = "/";
++    }
+     @INC = $dir;
+     push @INC, '../lib';
+ }
+@@ -11,10 +17,10 @@
+ 
+ # First we must set up some autoloader files
+ mkdir $dir, 0755            or die "Can't mkdir $dir: $!";
+-mkdir "$dir/auto", 0755     or die "Can't mkdir: $!";
+-mkdir "$dir/auto/Foo", 0755 or die "Can't mkdir: $!";
++mkdir "$dir${sep}auto", 0755     or die "Can't mkdir: $!";
++mkdir "$dir${sep}auto${sep}Foo", 0755 or die "Can't mkdir: $!";
+ 
+-open(FOO, ">$dir/auto/Foo/foo.al") or die;
++open(FOO, ">$dir${sep}auto${sep}Foo${sep}foo.al") or die;
+ print FOO <<'EOT';
+ package Foo;
+ sub foo { shift; shift || "foo" }
+@@ -22,7 +28,7 @@
+ EOT
+ close(FOO);
+ 
+-open(BAR, ">$dir/auto/Foo/bar.al") or die;
++open(BAR, ">$dir${sep}auto${sep}Foo${sep}bar.al") or die;
+ print BAR <<'EOT';
+ package Foo;
+ sub bar { shift; shift || "bar" }
+@@ -30,7 +36,7 @@
+ EOT
+ close(BAR);
+ 
+-open(BAZ, ">$dir/auto/Foo/bazmarkhian.al") or die;
++open(BAZ, ">$dir${sep}auto${sep}Foo${sep}bazmarkhian.al") or die;
+ print BAZ <<'EOT';
+ package Foo;
+ sub bazmarkhianish { shift; shift || "baz" }
+@@ -90,7 +96,7 @@
+ print "ok 9\n";
+ 
+ # test recursive autoloads
+-open(F, ">$dir/auto/Foo/a.al") or die;
++open(F, ">$dir${sep}auto${sep}Foo${sep}a.al") or die;
+ print F <<'EOT';
+ package Foo;
+ BEGIN { b() }
+@@ -99,7 +105,7 @@
+ EOT
+ close(F);
+ 
+-open(F, ">$dir/auto/Foo/b.al") or die;
++open(F, ">$dir${sep}auto${sep}Foo${sep}b.al") or die;
+ print F <<'EOT';
+ package Foo;
+ sub b { print "ok 10\n"; }
+@@ -111,12 +117,12 @@
+ # cleanup
+ END {
+ return unless $dir && -d $dir;
+-unlink "$dir/auto/Foo/foo.al";
+-unlink "$dir/auto/Foo/bar.al";
+-unlink "$dir/auto/Foo/bazmarkhian.al";
+-unlink "$dir/auto/Foo/a.al";
+-unlink "$dir/auto/Foo/b.al";
+-rmdir "$dir/auto/Foo";
+-rmdir "$dir/auto";
++unlink "$dir${sep}auto${sep}Foo${sep}foo.al";
++unlink "$dir${sep}auto${sep}Foo${sep}bar.al";
++unlink "$dir${sep}auto${sep}Foo${sep}bazmarkhian.al";
++unlink "$dir${sep}auto${sep}Foo${sep}a.al";
++unlink "$dir${sep}auto${sep}Foo${sep}b.al";
++rmdir "$dir${sep}auto${sep}Foo";
++rmdir "$dir${sep}auto";
+ rmdir "$dir";
+ }
+--- :perl:t:lib:filefind.t	Mon Feb  5 23:54:27 2001
++++ :perl.new:t:lib:filefind.t	Sat May  5 16:10:01 2001
+@@ -3,35 +3,56 @@
+ 
+ my %Expect;
+ my $symlink_exists = eval { symlink("",""); 1 };
++my $warn_msg;
+ 
+ BEGIN {
+     chdir 't' if -d 't';
+     @INC = '../lib';
++
++    $SIG{'__WARN__'} = sub { $warn_msg = $_[0]; warn "# $_[0]"; }
+ }
+ 
+-if ( $symlink_exists ) { print "1..117\n"; }
++if ( $symlink_exists ) { print "1..167\n"; }
+ else                   { print "1..61\n"; }
  
  use File::Find;
  
@@ -1866,6 +2114,7 @@ diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
 +      rmdir ':fb';
 +      chdir '::';
 +      rmdir ':for_find';
++
 +    } else {
 +      unlink 'fa/fa_ord','fa/fsl','fa/faa/faa_ord',
 +         'fa/fab/fab_ord','fa/fab/faba/faba_ord','fb/fb_ord','fb/fba/fba_ord';
@@ -1903,7 +2152,7 @@ diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
    }
    Check($OK);
    delete $Expect{$n};
-@@ -87,111 +110,211 @@
+@@ -87,111 +110,353 @@
    s#\.$## if ($^O eq 'VMS' && $_ ne '.');
    my $i = rindex($_,'/');
    my $OK = exists($Expect{$_});
@@ -2013,10 +2262,14 @@ diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
 -           'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
 -  %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
 -                 'fb' => 1, 'fb/fba' => 1);
++sub simple_wanted {
++  print "# \$File::Find::dir => '$File::Find::dir'\n";
++  print "# \$_ => '$_'\n";
++}
++
++
 +if ($^O eq 'MacOS') {
- 
--  File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},'fa' );
--  Check( scalar(keys %Expect) == 0 );
++
 +    MkDir( 'for_find',0770 );
 +    CheckDie(chdir(for_find));
 +    MkDir( 'fa',0770 );
@@ -2024,7 +2277,6 @@ diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
 +    touch(':fb:fb_ord');
 +    MkDir( ':fb:fba',0770  );
 +    touch(':fb:fba:fba_ord');
-+
 +    CheckDie( symlink(':fb',':fa:fsl') ) if $symlink_exists;
 +    touch(':fa:fa_ord');
 +
@@ -2112,6 +2364,74 @@ diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
 +                     ':fb' => 1, ':fb:fba' => 1);
 +      File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},':fa' );
 +      Check( scalar(keys %Expect) == 0 );
++
++      # tests below added by Thomas Wegner, 25-04-2001
++
++      print "# check dangling symbolic links\n";
++      MkDir( 'dangling_dir',0770 );
++      CheckDie( symlink('dangling_dir','dangling_dir_sl') );
++      rmdir 'dangling_dir';
++      touch('dangling_file');
++      CheckDie( symlink('dangling_file',':fa:dangling_file_sl') );
++      unlink 'dangling_file';
++
++      %Expect=(':' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
++               'faa' => 1, 'faa_ord' => 1);
++      %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
++                     'fb' => 1, 'fba' => 1);	  
++      File::Find::find( {wanted => \&d_wanted, follow => 1}, 'dangling_dir_sl', ':fa' );
++      Check( $warn_msg =~ m|dangling_dir_sl is a dangling symbolic link| );	  
++      unlink ':fa:dangling_file_sl', 'dangling_dir_sl';
++
++      print "# check recursion\n";
++      CheckDie( symlink(':fa:faa',':fa:faa:faa_sl') );
++      undef $@;
++      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1},':fa' ); };
++      print "# Died: $@";
++      Check( $@ =~ m|:for_find:fa:faa:faa_sl is a recursive symbolic link| );	  
++      unlink 'faa_sl'; 
++      chdir ':::'; # chdir '../..';
++
++      print "# check follow_skip (file)\n";
++      CheckDie( symlink(':fa:fa_ord',':fa:fa_ord_sl') ); # symlink to a file
++      undef $@;
++      eval {File::Find::finddepth( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},':fa' );};
++      print "# Died: $@";
++      Check( $@ =~ m|:for_find:fa:fa_ord encountered a second time| );
++      chdir '::'; # chdir '..';
++
++      %Expect=(':' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
++               'faa' => 1, 'faa_ord' => 1);
++      %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
++                     'fb' => 1, 'fba' => 1);	   
++      File::Find::finddepth( {wanted => \&d_wanted, follow => 1, follow_skip => 1},':fa' );
++      Check( scalar(keys %Expect) == 0 );
++      unlink ':fa:fa_ord_sl';
++
++      print "# check follow_skip (directory)\n";
++      CheckDie( symlink(':fa:faa',':fa:faa_sl') ); # symlink to a directory
++      undef $@;
++      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},':fa' );};
++      print "# Died: $@";
++      Check( $@ =~ m|:for_find:fa:faa: encountered a second time| );
++      chdir '::'; # chdir '..';
++
++      undef $@;
++      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 1},':fa' );};
++      print "# Died: $@";
++      Check( $@ =~ m|:for_find:fa:faa: encountered a second time| );
++      chdir '::'; # chdir '..';	  
++
++      %Expect=(':' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
++               'faa' => 1, 'faa_ord' => 1);
++      %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
++                     'fb' => 1, 'fba' => 1);	   
++      File::Find::find( {wanted => \&d_wanted, follow => 1, follow_skip => 2},':fa' );
++      Check( scalar(keys %Expect) == 0 );
++      unlink ':fa:faa_sl';	  
 +    }
 +
 +} else {
@@ -2210,11 +2530,227 @@ diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
 +                     'fb' => 1, 'fb/fba' => 1);
 +      File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},'fa' );
 +      Check( scalar(keys %Expect) == 0 );
++
++      # tests below added by Thomas Wegner, 25-04-2001
++
++      print "# check dangling symbolic links\n";
++      MkDir( 'dangling_dir',0770 );
++      CheckDie( symlink('dangling_dir','dangling_dir_sl') );
++      rmdir 'dangling_dir';
++      touch('dangling_file');
++      CheckDie( symlink('dangling_file','fa/dangling_file_sl') );
++      unlink 'dangling_file';
++
++      %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
++               'faa' => 1, 'faa_ord' => 1);
++      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, 'fa/fab' => 1, 'fa/fab/faba' => 1, 
++                     'fb' => 1, 'fb/fba' => 1);
++      File::Find::find( {wanted => \&d_wanted, follow => 1}, 'dangling_dir_sl', 'fa' );
++      Check( $warn_msg =~ m|dangling_dir_sl is a dangling symbolic link| );	  
++      unlink 'fa/dangling_file_sl', 'dangling_dir_sl';
++
++      print "# check recursion\n";
++      CheckDie( symlink('fa/faa','fa/faa/faa_sl') );
++      undef $@;
++      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1},'fa' ); };
++      print "# Died: $@";
++      Check( $@ =~ m|for_find/fa/faa/faa_sl is a recursive symbolic link| );	  
++      unlink 'faa_sl'; 
++      chdir '../..';
++      
++      print "# check follow_skip (file)\n";
++      CheckDie( symlink('fa/fa_ord','fa/fa_ord_sl') ); # symlink to a file
++      undef $@;
++      eval {File::Find::finddepth( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},'fa' );};
++      print "# Died: $@";
++      Check( $@ =~ m|for_find/fa/fa_ord encountered a second time| );
++      chdir '..';
++      
++      %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
++               'faa' => 1, 'faa_ord' => 1);
++      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, 'fa/fab' => 1, 'fa/fab/faba' => 1, 
++                     'fb' => 1, 'fb/fba' => 1);	   
++      File::Find::finddepth( {wanted => \&d_wanted, follow => 1, follow_skip => 1},'fa' );
++      Check( scalar(keys %Expect) == 0 );
++      unlink 'fa/fa_ord_sl';
++
++      print "# check follow_skip (directory)\n";
++      CheckDie( symlink('fa/faa','fa/faa_sl') ); # symlink to a directory
++      undef $@;
++      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},'fa' );};
++      print "# Died: $@";
++      Check( $@ =~ m|for_find/fa/faa encountered a second time| );
++      chdir '..';
++
++      undef $@;
++      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 1},'fa' );};
++      print "# Died: $@";
++      Check( $@ =~ m|for_find/fa/faa encountered a second time| );
++      chdir '..';
++
++      %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
++               'faa' => 1, 'faa_ord' => 1);
++      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, 'fa/fab' => 1, 'fa/fab/faba' => 1, 
++                     'fb' => 1, 'fb/fba' => 1);		   
++      File::Find::find( {wanted => \&d_wanted, follow => 1, follow_skip => 2},'fa' );
++      Check( scalar(keys %Expect) == 0 );
++      unlink 'fa/faa_sl';
+ 
+-  File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},'fa' );
+-  Check( scalar(keys %Expect) == 0 );
 +    }
  }
  
  print "# of cases: $case\n";
-diff -ru :perl:t:op:pat.t :perl.new:t:op:pat.t
+--- :perl:t:op:anonsub.t	Mon Mar 12 17:30:39 2001
++++ :perl.new:t:op:anonsub.t	Fri May  4 18:18:03 2001
+@@ -4,6 +4,7 @@
+ @INC = '../lib';
+ $Is_VMS = $^O eq 'VMS';
+ $Is_MSWin32 = $^O eq 'MSWin32';
++$Is_MacOS = $^O eq 'MacOS';
+ $ENV{PERL5LIB} = "../lib" unless $Is_VMS;
+ 
+ $|=1;
+@@ -25,11 +26,13 @@
+     open TEST, ">$tmpfile";
+     print TEST "$prog\n";
+     close TEST;
+-    my $results = $Is_VMS ?
+-                  `MCR $^X "-I[-.lib]" $switch $tmpfile 2>&1` :
+-		      $Is_MSWin32 ?  
+-			  `.\\perl -I../lib $switch $tmpfile 2>&1` :
+-			      `./perl $switch $tmpfile 2>&1`;
++    print my $results = $Is_VMS ?
++		`MCR $^X "-I[-.lib]" $switch $tmpfile 2>&1` :
++		  $Is_MSWin32 ?
++		    `.\\perl -I../lib $switch $tmpfile 2>&1` :
++		      $Is_MacOS ?  
++			`$^X -I::lib $switch $tmpfile` :
++			  `./perl $switch $tmpfile 2>&1`;
+     my $status = $?;
+     $results =~ s/\n+$//;
+     # allow expected output to be written as if $prog is on STDIN
+--- :perl:t:op:closure.t	Mon Feb  5 23:54:32 2001
++++ :perl.new:t:op:closure.t	Fri Apr 27 17:50:20 2001
+@@ -465,6 +465,7 @@
+ 	    open CMD, ">$cmdfile"; print CMD $code; close CMD;
+ 	    my $cmd = (($^O eq 'VMS') ? "MCR $^X"
+ 		       : ($^O eq 'MSWin32') ? '.\perl'
++		       : ($^O eq 'MacOS') ? $^X
+ 		       : './perl');
+ 	    $cmd .= " -w $cmdfile 2>$errfile";
+ 	    if ($^O eq 'VMS' or $^O eq 'MSWin32') {
+--- :perl:t:op:defins.t	Mon Feb  5 23:54:32 2001
++++ :perl.new:t:op:defins.t	Fri Apr 27 17:53:37 2001
+@@ -12,16 +12,17 @@
+ }
+ 
+ $wanted_filename = $^O eq 'VMS' ? '0.' : '0';
++$saved_filename = $^O eq 'MacOS' ? ':0' : './0';
+     
+ print "not " if $warns;
+ print "ok 1\n";
+ 
+-open(FILE,">./0");
++open(FILE,">$saved_filename");
+ print FILE "1\n";
+ print FILE "0";
+ close(FILE);
+ 
+-open(FILE,"<./0");
++open(FILE,"<$saved_filename");
+ my $seen = 0;
+ my $dummy;
+ while (my $name = <FILE>)
+@@ -63,7 +64,7 @@
+ print "ok 5\n";
+ close FILE;
+ 
+-opendir(DIR,'.');
++opendir(DIR,($^O eq 'MacOS' ? ':' : '.'));
+ $seen = 0;
+ while (my $name = readdir(DIR))
+  {
+@@ -116,7 +117,7 @@
+ print "not " unless $seen;
+ print "ok 11\n";
+ 
+-unlink("./0");
++unlink($saved_filename);
+ 
+ my %hash = (0 => 1, 1 => 2);
+ 
+--- :perl:t:op:die_exit.t	Mon Feb  5 23:54:32 2001
++++ :perl.new:t:op:die_exit.t	Fri Apr 27 17:58:13 2001
+@@ -15,7 +15,7 @@
+     exit 0;
+ }
+ 
+-my $perl = -e '../perl' ? '../perl' : -e './perl' ? './perl' : 'perl';
++my $perl = -e '../perl' ? '../perl' : -e './perl' ? './perl' : -e $^X ? $^X : 'perl';
+ 
+ use strict;
+ 
+--- :perl:t:op:exec.t	Mon Feb  5 23:54:32 2001
++++ :perl.new:t:op:exec.t	Fri May  4 18:18:18 2001
+@@ -11,6 +11,12 @@
+     exit(0);
+ }
+ 
++if ($^O eq 'MacOS') {
++    # XXX the system tests could be written to use ./perl and so work on Win32
++    print "1..0 # Mostly useless tests for Mac OS\n";
++    exit(0);
++}
++
+ print "1..8\n";
+ 
+ if ($^O ne 'os2') {
+--- :perl:t:op:goto.t	Mon Feb  5 23:54:33 2001
++++ :perl.new:t:op:goto.t	Fri May  4 18:18:35 2001
+@@ -29,7 +29,7 @@
+ print "#2\t:$foo: == 4\n";
+ if ($foo == 4) {print "ok 2\n";} else {print "not ok 2\n";}
+ 
+-$PERL = ($^O eq 'MSWin32') ? '.\perl' : './perl';
++$PERL = ($^O eq 'MSWin32') ? '.\perl' : ($^O eq 'MacOS') ? $^X : './perl';
+ $CMD = qq[$PERL -e "goto foo;" 2>&1 ];
+ $x = `$CMD`;
+ 
+--- :perl:t:op:misc.t	Mon Feb  5 23:54:34 2001
++++ :perl.new:t:op:misc.t	Sat May  5 16:10:29 2001
+@@ -18,6 +18,7 @@
+ END { while($tmpfile && unlink $tmpfile){} }
+ 
+ $CAT = (($^O eq 'MSWin32') ? '.\perl -e "print <>"' : 'cat');
++$CAT = (($^O eq 'MSWin32') ? '.\perl -e "print <>"' : ($^O eq 'MacOS') ? 'catenate' : 'cat');
+ 
+ for (@prgs){
+     my $switch;
+@@ -34,6 +35,8 @@
+ 
+     if ($^O eq 'MSWin32') {
+       $results = `.\\perl -I../lib $switch $tmpfile 2>&1`;
++    } elsif ($^O eq 'MacOS') {
++      $results = `$^X -I::lib $switch $tmpfile`;
+     }
+     else {
+       $results = `./perl $switch $tmpfile 2>&1`;
+--- :perl:t:op:pack.t	Mon Feb  5 23:54:34 2001
++++ :perl.new:t:op:pack.t	Fri Apr 27 18:02:14 2001
+@@ -43,7 +43,7 @@
+ print +($x = unpack("%32B*", "Now is the time for all good blurfl")) == $sum
+ 	? "ok 7\n" : "not ok 7 $x\n";
+ 
+-open(BIN, "./perl") || open(BIN, "./perl.exe") 
++open(BIN, "./perl") || open(BIN, "./perl.exe") || open(BIN, $^X) 
+     || die "Can't open ../perl or ../perl.exe: $!\n";
+ sysread BIN, $foo, 8192;
+ close BIN;
 --- :perl:t:op:pat.t	Thu Mar 15 18:03:22 2001
 +++ :perl.new:t:op:pat.t	Fri Apr 13 09:45:41 2001
 @@ -4,7 +4,7 @@
@@ -2256,3 +2792,125 @@ diff -ru :perl:t:op:pat.t :perl.new:t:op:pat.t
 +	print "ok " . $test++ . "\n";
 +    }
  }
+--- :perl:t:op:split.t	Mon Feb  5 23:54:35 2001
++++ :perl.new:t:op:split.t	Fri Apr 27 18:04:03 2001
+@@ -47,6 +47,7 @@
+ # Does assignment to a list imply split to one more field than that?
+ if ($^O eq 'MSWin32') { $foo = `.\\perl -D1024 -e "(\$a,\$b) = split;" 2>&1` }
+ elsif ($^O eq 'VMS')  { $foo = `./perl "-D1024" -e "(\$a,\$b) = split;" 2>&1` }
++elsif ($^O eq 'MacOS'){ $foo = `$^X "-D1024" -e "(\$a,\$b) = split;"` }
+ else                  { $foo = `./perl -D1024 -e '(\$a,\$b) = split;' 2>&1` }
+ print $foo =~ /DEBUGGING/ || $foo =~ /SV = (VOID|IV\(3\))/ ? "ok 11\n" : "not ok 11\n";
+ 
+--- :perl:t:op:write.t	Mon Feb  5 23:54:37 2001
++++ :perl.new:t:op:write.t	Fri Apr 27 18:04:45 2001
+@@ -2,7 +2,8 @@
+ 
+ print "1..9\n";
+ 
+-my $CAT = ($^O eq 'MSWin32') ? 'type' : 'cat';
++my $CAT = ($^O eq 'MSWin32') ? 'type'
++	: ($^O eq 'MacOS') ? 'catenate' : 'cat';
+ 
+ format OUT =
+ the quick brown @<<
+--- :perl:t:pragma:strict.t	Mon Feb  5 23:54:39 2001
++++ :perl.new:t:pragma:strict.t	Sat May  5 16:11:16 2001
+@@ -17,7 +17,7 @@
+ 
+ my @prgs = () ;
+ 
+-foreach (sort glob("pragma/strict-*")) {
++foreach (sort glob($^O eq 'MacOS' ? ":pragma:strict-*" : "pragma/strict-*")) {
+ 
+     next if /(~|\.orig|,v)$/;
+ 
+@@ -54,6 +54,7 @@
+ 	while (@files > 2) {
+ 	    my $filename = shift @files ;
+ 	    my $code = shift @files ;
++	    $code =~ s|\./abc|:abc|g if $^O eq 'MacOS';
+     	    push @temps, $filename ;
+ 	    open F, ">$filename" or die "Cannot open $filename: $!\n" ;
+ 	    print F $code ;
+@@ -61,12 +62,15 @@
+ 	}
+ 	shift @files ;
+ 	$prog = shift @files ;
++	$prog =~ s|\./abc|:abc|g if $^O eq 'MacOS';
+     }
+     open TEST, ">$tmpfile";
+     print TEST $prog,"\n";
+     close TEST;
+     my $results = $Is_MSWin32 ?
+                   `.\\perl -I../lib $switch $tmpfile 2>&1` :
++                  $^O eq 'MacOS' ?
++                  `$^X -I::lib $switch $tmpfile` :
+                   `./perl $switch $tmpfile 2>&1`;
+     my $status = $?;
+     $results =~ s/\n+$//;
+@@ -74,6 +78,8 @@
+     $results =~ s/tmp\d+/-/g;
+     $results =~ s/\n%[A-Z]+-[SIWEF]-.*$// if $Is_VMS;  # clip off DCL status msg
+     $expected =~ s/\n+$//;
++    $expected =~ s|(\./)?abc\.pm|:abc.pm|g if $^O eq 'MacOS';
++    $expected =~ s|./abc|:abc|g if $^O eq 'MacOS';
+     my $prefix = ($results =~ s/^PREFIX\n//) ;
+     if ( $results =~ s/^SKIPPED\n//) {
+ 	print "$results\n" ;
+--- :perl:t:pragma:sub_lval.t	Mon Feb  5 23:54:39 2001
++++ :perl.new:t:pragma:sub_lval.t	Sun May  6 01:25:07 2001
+@@ -430,18 +430,20 @@
+ print "# '$newvar'.\nnot " unless $newvar eq "12";
+ print "ok 47\n";
+ 
+-# Testing DWIM of foo = bar;
+-sub foo : lvalue {
+-    $a;
+-}
+-$a = "not ok 48\n";
+-foo = "ok 48\n";
+-print $a;
+-
+-open bar, ">nothing" or die $!; 
+-bar = *STDOUT;
+-print bar "ok 49\n";
+-unlink "nothing";
++## Testing DWIM of foo = bar;
++#sub foo : lvalue {
++#    $a;
++#}
++#$a = "not ok 48\n";
++#foo = "ok 48\n";
++#print $a;
++#
++#open bar, ">nothing" or die $!; 
++#bar = *STDOUT;
++#print bar "ok 49\n";
++#unlink "nothing";
++print "ok 48\n";
++print "ok 49\n";
+ 
+ {
+ my %hash; my @array;
+--- :perl:t:pod:find.t	Mon Apr  9 08:16:32 2001
++++ :perl.new:t:pod:find.t	Sun May  6 01:25:34 2001
+@@ -30,7 +30,8 @@
+ print "### searching $lib_dir\n";
+ my %pods = pod_find("$lib_dir");
+ my $result = join(",", sort values %pods);
+-print "### found $result\n";
++my $printresult = join("\n### ", sort values %pods);
++print "### found $printresult\n";
+ my $compare = join(',', qw(
+     Checker
+     Find
+@@ -93,7 +94,7 @@
+ print "### found $result\n";
+ 
+ if ($^O eq 'VMS') { # privlib is perl_root:[lib] unfortunately
+-    $compare = "/lib/pod/perlfunc.pod";
++    $compare = "/pod/perlfunc.pod";
+     $result = VMS::Filespec::unixify($result);
+     $result =~ s/perl_root\///i;
+     $result =~ s/^\.\.//;  # needed under `mms test`
