@@ -51,7 +51,7 @@ at SourceForge</a>.
 
 <p>
 To build MacPerl, you will need a Mac and plenty of RAM.  The build goes
-fine with my PowerBook G3/400 with 256MB, and on my iBook 333 with 128MB RAM.
+fine with a PowerBook G3/400 with 256MB, and on a iBook 333 with 128MB RAM.
 </p>
 
 <p>
@@ -62,7 +62,7 @@ with command lines.
 </p>
 
 <p>
-For now, some of the smaller tools, and shared libraries, cannot be built
+For now, the x2p translators cannot be built
 with an SC/MrC-only build, and there is no CFM68K support.
 </p>
 
@@ -72,6 +72,16 @@ with an SC/MrC-only build, and there is no CFM68K support.
 <p>
 Some version numbers are noted.  These are the minimum
 recommended versions for building with.
+</p>
+
+<p>
+<a href="http://www.aladdinsys.com/expander/">Stuffit Expander</a>
+is the recommended way to unpack the files below.  It should
+handle the .sit, .tar.gz, and any other files necessary for
+this build.  However, you should consider selecting
+the "Convert text files to Macintosh format ... When a file is
+known to contain text" option, so the STLport and perl-5.6.0
+archives will be properly unpacked.
 </p>
 
 <ul>
@@ -97,7 +107,7 @@ recommended versions for building with.
 		CodeWarrior compilers for MPW</strong> (Pro 5 recommended; MWC68K 2.3.2 build 79, MWCPPC 2.3.2 build 75) 
 		<em>or</em> of the <strong>MPW C/C++ compilers</strong>
 		(SC 8.8.4f1, MrC 4.1.0f1c1)
-		<sup><a href="#" onmouseover="set_status(1);" onclick="return no_click(1);">1</a></sup>
+		<sup><a href="#" onmouseover="return set_status(1);" onclick="return no_click(1);">1</a></sup>
 	</li>
 
 	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=20742">MacPerl and the perl MPW tool</a></strong>
@@ -116,17 +126,20 @@ recommended versions for building with.
 
 <ol>
 	<li><p>Unpack the macperl_build_libs.sit archive, which will create
-		a folder called <em>macperl</em>.  Put it in a location
-		such that the path to the directory has
-		no whitespace or odd characters in it.  So "HD:macperl:" is fine, but
-		"Macintosh HD:macperl:" is not.  Yes, you may need to change your
-		hard drive's name.  Sorry.  :-)  My location preference is
-		"HD:src:", and then everything gets put in there.
+		a folder called "macperl".  Feel free to change its name
+		(I use "macperl_src").  Put it in a location such that the
+		path to the directory has no whitespace or odd characters
+		in it.  So "HD:macperl_src:" is fine (and is what I will be
+		using for the directions below), but
+		"Macintosh HD:macperl_src:" is not.  Yes, you may need to
+		change your hard drive's name.  Sorry.  :-)
 		This will be your main build folder.</p></li>
 
 	<li><p>Unpack and install MPW.  The easiest way to do this is to get
 		the single MPW-GM image from Apple's site, mount the image,
-		and drag the folder in the image to your drive.</p></li>
+		and drag the folder in the image to your drive.  It can
+		be anywhere on your system, but you may wish to keep it
+		in "HD:macperl_src:" for convenience.</p></li>
 
 	<li><p>Copy the patch and dmake tools, and the startup.mk file from
 		the dmake distribution, to the MPW <em>Tools</em> folder.
@@ -140,25 +153,27 @@ recommended versions for building with.
 		libraries with the ones in the Pro5 distribution.  If using SC/MrC,
 		unpack the STLport distribution into the same location as where
 		the GUSI distribution is unpacked, so each folder is
-		within the same enclosing folder.</p></li>
+		within the same enclosing folder.  They can
+		be anywhere on your system, but you may wish to keep them
+		in "HD:macperl_src:" for convenience.</p></li>
 
 	<li><p>Give the <em>MPW Shell</em> application plenty of RAM (I
 		gave it 30MB) and make sure you have plenty of extra RAM
 		while the app is running (another 30MB might be sufficient).
-		<sup><a href="#" onmouseover="set_status(2);" onclick="return no_click(2);">2</a></sup>
+		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 		Then run the application.  If you wish, create a new document to
 		work in.</p></li>
 
 	<li><p>Change directory (using the "directory" command) in MPW to the
 		GUSI directory, and run the <em>GUSI_Install.MPW</em> script.
-		<sup><a href="#" onmouseover="set_status(3);" onclick="return no_click(3);">3</a></sup></p><pre>
-			directory "Bourque:macperl:GUSI_215"
+		<sup><a href="#" onmouseover="return set_status(3);" onclick="return no_click(3);">3</a></sup></p><pre>
+			directory "HD:macperl_src:GUSI_215:"
 			GUSI_Install.MPW</pre>
 		
 		<p>If using STLport (SC/MrC builds), also run the
 		<em>STLport_Install.MPW</em> script here.</p></li>
 
-	<li><p>Change directory to the sfio directory, and execute the
+	<li><p>Change directory to the "HD:macperl_src:Sfio_04Aug99:", and execute the
 		<em>Sfio_Install.MPW</em> script.</p></li>
 
 	<li><p>If using the Metrowerks compilers, execute the
@@ -167,23 +182,22 @@ recommended versions for building with.
 	<li><p>If not already installed, install MacPerl, and the perl MPW tool.
 		The main MacPerl distribution must be installed for
 		the perl MPW tool to have access to the Perl library.
-		To install the MPW tool, see the documentation that
+		To install the perl MPW tool, see the documentation that
 		comes with it.</p></li>
 
 	<li><p>Unpack the perl-5.6.0 archive.  Change the folder name to
-		<em>perl</em> and drop it in the working folder with
+		"perl" and drop it in "HD:macperl_src:" with
 		everything else.</p></li>
 
-	<li><p>Unpack the MacPerl source kit.  Put the <em>macperl</em>
-		folder inside the working directory with everything
-		else.  Put the <em>macos</em> folder inside the
-		<em>perl</em> folder created in the previous step.</p></li>
+	<li><p>Unpack the MacPerl source kit.  Put the "macperl"
+		folder inside "HD:macperl_src:".  Put the "macos" folder inside
+		"HD:macperl_src:perl:".</p></li>
 
 	<li><p>Change directory to the macos directory and apply the patch.</p><pre>
-		directory "Bourque:macperl:perl:macos:"
+		directory "HD:macperl_src:perl:macos:"
 		patch &lt; MacPerl.patch</pre></li>
 
-	<li><p>Open <em>:macperl:perl:macos:MacPerlConfig.mk</em> and
+	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
 		change the preferences there for the compilers you will
 		be using.  (CodeWarrior is 68K/PPC, Apple is SC/MrC.)</p></li>
 
@@ -191,12 +205,12 @@ recommended versions for building with.
 		be executed, or execute the MPW startup files
 		manually.</p></li>
 
-	<li><p>Change directory in MPW to <em>:macperl:perl:macos:</em> and
+	<li><p>Change directory in MPW to "HD:macperl_src:perl:macos:" and
 		execute <tt>buildprogram all</tt>.  This could take up
 		to an hour, and will build all of the MPW tools
 		and perl modules for the compilers you chose.</p></li>
 
-	<li><p>Change directory in MPW to <em>:macperl:macos:</em> and
+	<li><p>Change directory in MPW to "HD:macperl_src:macos:" and
 		execute <tt>buildprogram all</tt>.  This will build
 		the MacPerl application and supporting files.</p></li>
 
