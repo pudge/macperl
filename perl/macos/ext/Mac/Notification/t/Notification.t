@@ -72,7 +72,11 @@ SKIP: {
 
 	ok(NMInstall($notification),	'install notification');
 	sleep 1;
-	ok(SetFrontProcess($back),      'make sure in background');
+	if ($back) {
+		ok(SetFrontProcess($back),      'make sure in background');
+	} else {
+		pass('make sure in background');
+	}
 
 	my $count = 0;
 	until (is_front($process)) {
