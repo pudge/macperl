@@ -1,0 +1,106 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+
+Monday, June 7, 1999
+
+THIS IS ALPHA CODE AND IS SUBJECT TO CHANGE OR CRASH YOUR COMPUTER IN
+THE 
+MEANTIME.  I'm not just saying that, I mean it.
+
+Note: gluenotes.pod is deprecated now.  All current documentation is
+in this file and the Mac::Glue POD.
+
+Please read this README.  Mac::Glue is not self-explanatory.  Some
+assembly is required.
+
+
+WHAT THIS IS
+- ------------
+
+It is an architecture for using Apple event terminology in MacPerl.
+It is cool.
+It is very unfinished.
+
+
+
+GETTING STARTED
+- ---------------
+
+NOTE: some of the modules installed by cpan-mac and this distribution
+might be older than versions you have installed (though in most
+cases, that's unlikely).  If you install modules on your own often,
+peruse the blib directory for modules you might not want to overwrite
+ones you have installed.
+
+Install the cpan-mac distribution (0.22 is the latest version) if you
+haven't already.  In your Preferences, set site_perl as a libraries
+path
+(so it will come before your main MacPerl lib directory).
+
+Put the modules where they belong.  Everything need that doesn't come
+with MacPerl or cpan-mac is here, including updated modules
+Mac::AppleEvents::Simple, Mac::AppleEvents & Mac::Memory
+(including shared libraries), Mac::AETE, and Mac::Glue itself.
+
+For reference, Mac::Memory has a bug fixed in Handle::get, where a
+null
+descriptor record would return garbled data.  Mac::AppleEvents has its
+constants inlined, and has three functions added: AEPutKey,
+AEPutKeyDesc,
+and AEGetKey.  See the POD in Mac::AppleEvents::Simple and Mac::Glue
+for
+their changes.
+
+The best way to install all this is with the installme program from
+the cpan-mac distribution.  However, because we install our own new
+ExtUtils::MM_MacOS and AutoSplit modules, you will need to run
+installme
+on this distribution TWICE.  Kinda lame, but oh well.  cpan-mac can
+be found at:
+
+    http://www.perl.com/authors/id/CNANDOR/
+
+This will put everything in the right place, and autosplit where
+necessary, and make life simple.  HOWEVER, you might want to back up
+old modules and files that are being installed here, because the
+existing files in the site_perl directory will be deleted if they
+exist.
+
+This is not an official release of any of the extra modules included
+with this distribution (like Mac::AppleEvents and Mac::AETE).
+
+After installing, you need to run the gluedialect program and then the
+gluescriptadds program.
+
+Then, for each application you want to script, drop it on the gluemac
+droplet.  Applications should not be running, in general, when dropped
+on the droplet (though in some cases it will work anyway, and in some
+cases the droplet will launch the application for you to get the
+needed
+information).  First program you should drop on the droplet is
+probably
+the Finder.  For each example script in this distribution you want to
+try, run the applications through the droplet first.
+
+
+PLAYING
+- -------
+
+Seems to be pretty stable so far.  Please play and read the notes
+and feed back to macperl-modules (see http://www.macperl.org/
+for more details).  Feel free to send any feedback, including
+patched, to the list.
+
+- -- 
+Chris Nandor          mailto:pudge@pobox.com         http://pudge.net/
+%PGPKey = ('B76E72AD', [1024, '0824090B CE73CA10  1FF77F13 8180B6B6'])
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGPfreeware 6.0.2i for non-commercial use
+Comment: Bwahahahaha!
+
+iQCVAwUBN1wnzihcZja3bnKtAQHcVgP/Wr2po05V99WU0powxt9BRL633DCObQK2
++93EKlPYipMFhjnXuDyswUnXWjdpwLDlQ0Me0H4iV/Je+QrcXYCVA1P4WRxJpMzb
+ABxJDfEo+c4IgwJ2P58fyg37X0NVj9gthTURdjxH+80qAFjxdsuB4uYD/xqYkmLd
+EDL71jSMzUI=
+=AhFT
+-----END PGP SIGNATURE-----

@@ -1,0 +1,10 @@
+#!perl -wl
+use Mac::Glue;
+$f = new Mac::Glue 'Finder';
+
+$window = $f->obj(window => 1);
+
+$f->open($f->prop('startup disk'));
+$f->clean_up($window);
+$f->close($window);
+__END__
