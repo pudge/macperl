@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.15  2001/07/08 05:08:13  pudge
+#  Fix makefile for building and installing bundled libs
+#
 #  Revision 1.14  2001/04/17 03:59:58  pudge
 #  Minor version/config changes
 #
@@ -321,10 +324,10 @@ MPGlobals.c.68K.o	:	MPGlobals.h
 
 "HTML Help" 		:	MacPerl.help
 #	BuildHelpIndex	"HTML Help" MacPerl.help
-#	BuildLibraryIndex "MacPerl Help" :lib:
+#	BuildLibraryIndex "MacPerl Help" $(PERL_SRC)lib:
 "MacPerl Help" 		:	MacPerl.podhelp
-#	BuildHelpIndex	"MacPerl Help" MacPerl.podhelp
-#	BuildLibraryIndex "MacPerl Help" :lib:
+	BuildHelpIndex	"MacPerl Help" MacPerl.podhelp
+	BuildLibraryIndex "MacPerl Help" $(PERL_SRC)lib:
 
 MacPerlTest.Script	:	MakeMacPerlTest
 	MakeMacPerlTest ¶
