@@ -5523,52 +5523,9 @@ pascal OSErr Text2FSSpec(
 	return AECreateDesc(typeFSS, (Ptr) &spec, sizeof(FSSpec), result);
 }
 
-static OSErr UnresolveAliasPath(short index, AliasHandle alias, FSSpec * spec)
-{
-	OSErr err;
-	Str63	component;
-	
-	if (GetAliasInfo(alias, index, component) || !component[0])
-		return 0; 	/* End of recursion */
-	else if (err = UnresolveAliasPath(index+1, alias, spec))
-		return err;	/* Some error */
-	else
-		return GUSIFSpDown(spec, component);
-}
-
-static OSErr UnresolveAlias(AliasHandle alias, FSSpec * spec)
-{
-	OSErr err;
-	Str63	vName;
-	
-	if (err = GetAliasInfo(alias, asiVolumeName, vName))
-		return err;
-	vName[++vName[0]] = ':';
-	if (err = FSMakeFSSpec(0, 0, vName, spec))
-		return err;
-	else
-		return UnresolveAliasPath(0, alias, spec);
-}
-
-pascal OSErr Alias2FSSpec(
-	const AEDesc * desc, 
-	DescType to, long refCon, AEDesc * result)
-{
-	OSErr			err;
-	Boolean		changed;
-	FSSpec		spec;
-	
-	if (UnresolveAlias((AliasHandle) desc->dataHandle, &spec))
-		/* Definitely not an intact alias, but maybe recoverable */
-		if (err = ResolveAlias(nil, (AliasHandle) desc->dataHandle, &spec, &changed))
-			return err;
-	
-	return AECreateDesc(typeFSS, (Ptr) &spec, sizeof(FSSpec), result);
-}
-
 /* -----------------------------------------------------------------------
 		Name: 			InitAppleEvents
-		Purpose:		Initialise the AppleEvent despatch table
+		Purpose:		Initialise the AppleEvent dispatch table
 	 -----------------------------------------------------------------------**/
 
 #if !defined(powerc) && !defined(__powerc)
@@ -5682,7 +5639,4 @@ pascal void InitAppleEvents(void)
 	AEInstallCoercionHandler(typeObjectSpecifier,typeMyItemProp,  (AECoercionHandlerUPP)NewAECoerceDescProc(CoerceObjToAnything),0,true,false);
 
 	AEInstallCoercionHandler(typeChar,typeFSS,  (AECoercionHandlerUPP)NewAECoercePtrProc(Text2FSSpec),0,false,false);
-		/*now install the appropriate edition manager events*/
-	if (AEGetCoercionHandler(typeAlias, typeFSS, &handler, &refCon, &isDesc, true))
-		AEInstallCoercionHandler(typeAlias, typeFSS,  (AECoercionHandlerUPP)NewAECoerceDescProc(Alias2FSSpec),0,true,false);
 } /* InitAppleEvents */
