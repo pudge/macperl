@@ -2,7 +2,7 @@
 
    Skip some tests that fail on UFS (Randal Schwartz)
 
-   undef DEBUG for the sake of gcc 3.3
+   undef DEBUG for the sake of gcc 3.3 (perl's DEBUG conflicts with Mac's)
 
    Add notes about Mac OS X 10.3
 
