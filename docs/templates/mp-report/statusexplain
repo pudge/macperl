@@ -16,7 +16,9 @@ set to the right directory, and run the script.</p><li>
 
 <li><p>From MPW, change directory to the <em>:perl:t:</em> directory,
 then run <tt>::macos:MacPerlTests.cmd</tt>.  It will run all tests thought
-to be working properly, and report the results.</p><li>
+to be working properly, and report the results.  If testing from the
+precompiled distribution instead of your own compiled source tree, you
+will need to make an alias from <em>:MPW:perl</em> to <em>:macos:perl</em>.</p><li>
 
 <li><p>Feel free to report the results on any test, but focus on reporting
 results for tests that should work but don't, or ones that don't work.
