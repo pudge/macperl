@@ -1,0 +1,16 @@
+v0.02, 9 December 2002
+
+* Addition of Mac::AppleEvents and Mac::OSA
+  (Mac::AppleEvents::Simple and Mac::OSA::Simple not yet fully
+  supported; needs some porting)
+
+* Added back Pick/Answer/Ask to MacPerl (code from Gero Herrmann)
+
+* Added GetProcessPID and GetProcessForPID to Mac::Processes
+
+* Cleaned up some of the tests
+
+
+v0.01, 13 November 2002
+
+* Initial release
