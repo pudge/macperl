@@ -59,7 +59,8 @@ SKIP: {
 	is(ResolveAlias($alias), $alias_path,                        "ResolveAlias");	
 
     SKIP: {
-	skip "NewAliasMinimalFromFullPath requires HFS-style path", 2 if $^O ne 'MacOS';
+#	skip "Mac::Files Aliases", 2;
+
 	ok($alias = NewAliasMinimalFromFullPath($alias_path),        "NewAliasMinimalFromFullPath");
 	is(ResolveAlias($alias), $alias_path,                        "ResolveAlias");
     }

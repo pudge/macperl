@@ -1608,7 +1608,7 @@ if ($^O ne 'MacOS') {
 	no warnings 'redefine'; 
 	require Mac::Path::Util;
 	*NewAliasMinimalFromFullPath = sub {
-		NAMFFP(Mac::Path::Util->new($_[0], Mac::Path::Util::DARWIN())->mac_path);
+		NAMFFP(Mac::Path::Util->new($_[0], { type => Mac::Path::Util::DARWIN() })->mac_path);
 	}
 }
 
