@@ -8,6 +8,16 @@ __END__
 
 MacPerl Readme
 
+=head1 BETA NOTES
+
+The included Shuck is now in testing with new features.  Do NOT load
+perltoc, it will crash you.  Thomas Wegner is developing it; please
+see L<http://sf.net/projects/shuck/> for more details and bug reports.
+
+There are bugs in MacPerl.  Please see L<http://dev.macperl.org/> for
+more information on MacPerl, including bug reports.
+
+
 =head1 SYNOPSIS
 
 Welcome to MacPerl, the application that implements perl,
@@ -54,11 +64,10 @@ as your MacPerl application.
 =item *
 
 A recent version of Internet Config, or the Internet control panel
-shipped with recent versions of Mac OS.
+shipped with recent versions of Mac OS.  Internet Config is available
+in many places online, and at:
 
-[Currently, Internet Config is not shipped with MacPerl; this can
-be remedied if necessary.  Please let me know if you find it to be
-necessary.]
+	ftp://ftp.stairways.com/other/internetconfig-202.sit
 
 =item *
 
@@ -167,4 +176,4 @@ by Ramon M. Felciano.
 
 =head1 DATE
 
-Last modified 2001.11.19.
+Last modified 2002.01.07.

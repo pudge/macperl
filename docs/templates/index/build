@@ -57,7 +57,7 @@ just download the perl and MacPerl source kits and take it from there.
 You should upgrade GUSI if it has changed since your last build.
 <b>Note:</b> if you don't already have it, you will need to
 upgrade your db library to
-<a href="http://dev.macperl.org/files/macperl_build_libs/db_185h.sit.bin">db_185h</a>
+<a href="http://dev.macperl.org/files/macperl_build_libs/db_185g.sit.bin">db_185g</a>
 and your XL to
 <a href="http://dev.macperl.org/files/macperl_build_libs/XL_16.bin">XL_16</a>
 for MacPerl 5.6.1b2 (or re-fetch all of the
@@ -93,8 +93,8 @@ will be properly unpacked.
 		set up especially for the build, so if you get the
 		individual packages you might have some broken paths.</li>
 
-	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7941&amp;release_id=44793">GUSI 2</a></strong>
-		(GUSI_219 or later; get the Pro5 libs in addition if using CodeWarrior
+	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7941&amp;release_id=68677">GUSI 2</a></strong>
+		(GUSI_221 or later; get the Pro5 libs in addition if using CodeWarrior
 		Pro 5)</li>
 
 	<li><strong><a href="http://developer.apple.com/tools/mpw-tools/">MPW</a></strong>,
@@ -116,7 +116,7 @@ will be properly unpacked.
 	</li>
 
 	<li>
-		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=62191">MacPerl 5.6.1 source kit</a></strong>
+		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=68835">MacPerl 5.6.1b3 source kit</a></strong>
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 	</li>
 </ul>
@@ -158,9 +158,15 @@ will be properly unpacked.
 		be anywhere on your system, but you may wish to keep them
 		in "HD:macperl_src:" for convenience.</p></li>
 
+	<li><p>Change <tt>inttypes.h</tt> in GUSI to <tt>#define __cinttypes__</tt> if
+		you are using Metrowerks (<tt>#ifdef __MWERKS__</tt>).  Remove
+		the <tt>#ifdef __MWERKS__/#include &lt;stdint.h&gt;/#else/#endif</tt>
+		included in GUSI 2.2.1.</p></li>
+
 	<li><p>Give the <em>MPW Shell</em> application plenty of RAM (I
 		gave it 30MB) and make sure you have plenty of extra RAM
-		while the app is running (another 30MB might be sufficient).
+		while the app is running (another 30MB might be sufficient, though
+		you might need 80MB free or so just to compile toke.c).
 		<sup><a href="#" onmouseover="return set_status(3);" onclick="return no_click(3);">3</a></sup>
 		Then run the application.  If you wish, create a new document to
 		work in.</p></li>
@@ -168,7 +174,7 @@ will be properly unpacked.
 	<li><p>Change directory (using the "directory" command) in MPW to the
 		GUSI directory, and run the <em>GUSI_Install.MPW</em> script.
 		<sup><a href="#" onmouseover="return set_status(4);" onclick="return no_click(4);">4</a></sup></p><pre>
-			directory "HD:macperl_src:GUSI_219:"
+			directory "HD:macperl_src:GUSI_221:"
 			GUSI_Install.MPW</pre>
 		
 		<p>If using STLport (SC/MrC builds), also run the
