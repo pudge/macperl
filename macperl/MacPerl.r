@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.15  2002/03/01 04:50:28  pudge
+Update resources
+
 Revision 1.14  2002/03/01 04:46:08  pudge
 Update resources
 
@@ -187,9 +190,9 @@ include "MacPerl.rsrc" 'ICN#'(387);
 include "MacPerl.rsrc" 'ICN#'(388);
 include "MacPerl.rsrc" 'ICN#'(389);
 include "MacPerl.rsrc" 'PICT'(128);
-/*include "MacPerl.rsrc" 'PICT'(129);*/
+include "MacPerl.rsrc" 'PICT'(129);
 include "MacPerl.rsrc" 'PICT'(130);
-include "MacPerl.rsrc" 'PICT'(131);
+/*include "MacPerl.rsrc" 'PICT'(131);*/
 include "MacPerl.rsrc" 'snd '(128);
 include "MacPerl.rsrc" 'snd '(129);
 include "MacPerl.rsrc" 'icl4'(129);
