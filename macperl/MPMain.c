@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.3  2001/04/28 23:28:01  neeri
+Need to register MPAEVTStreamDevice (MacPerl Bug #418932)
+
 Revision 1.2  2000/12/22 08:35:45  neeri
 PPC, MrC, and SC builds work
 
@@ -1275,7 +1278,7 @@ void MainEvent(Boolean busy, long sleep, RgnHandle rgn)
 		HandleEvent(&myEvent);
 		
 	if (gQuitting && gRunningPerl)
-		Perl_my_exit(-128);
+		MacPerl_Exit(-128);
 }
 
 pascal long VoodooChile(Size cbNeeded)
