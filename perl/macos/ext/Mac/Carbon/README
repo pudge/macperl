@@ -10,12 +10,11 @@ README - Carbon API for perl on Mac OS X
 
 =head1 SYNOPSIS
 
-This is B<not release-quality> software.  It is still in development, and
-not recommend for use in a production environment.
-
 Mac::Carbon is a collection of perl modules for accessing the Carbon API
 under Mac OS X.  It is a port of the Toolbox modules written by Matthias
 Neeracher for MacPerl.
+
+This is B<not release-quality> software.  It is still in development.
 
 Part of the current strategy is to make Mac::Carbon the intersection of
 the old and new Mac OS APIs.  We will not be adding new functionality
@@ -24,6 +23,43 @@ Mac::Carbon stabilizes.
 
 See the documentation in L<Mac::Carbon> for more implementation details,
 bugs, etc.
+
+=head1 DESCRIPTION
+
+This version represents a major step forward for Mac::Carbon, with many of
+the TODO items checked off, including:
+
+=over 4
+
+=item *
+
+Mac::InternetConfig added
+
+=item *
+
+GUSI-emulation API able to handle FSSpecs for files that don't exist
+
+=item *
+
+Find apps with LaunchServices by creator, bundle ID, or name, instead
+of FSpDTGetAPPL
+
+=item *
+
+Open resource files in data fork, not just resource fork
+
+=item *
+
+Support for Mac::AppleEvents::Simple and Mac::Glue
+
+=back
+
+There are also many bugfixes and other enhancements included.  See F<Changes>
+for details.
+
+There are still some bugs, one unimplemented extension (SpeechRecognition),
+and a bunch of tests that need to be written before the distribution
+becomes "release-quality."  Help wanted.
 
 
 =head1 HELP ME
@@ -41,11 +77,10 @@ and building, please do coordinate with me before spending much time on it.
 =head2 Mac OS
 
 These modules all build under Mac OS, but it is recommended you build them
-as a part of MacPerl itself, or at least under the MacPerl source.  See
-http://dev.macperl.org/ for more information.
+as a part of MacPerl itself, or at least under the MacPerl source
+(version 5.6.1 or greater).  See http://dev.macperl.org/ for more information.
 
-Under Mac OS, the full Mac OS API is available, not just the Carbon-compatible
-routines.
+Under Mac OS, extra non-Carbon-compatible routines are available.
 
 =head2 Mac OS X
 
@@ -63,7 +98,7 @@ though the tests should all pass.
 Don't run the test suite on a remote computer (such as via ssh, instead
 of via the Terminal).  It requires user feedback in some cases, and in general
 it is best to be there when you run the tests.  Maybe in the future this
-can be addressed.
+can be addressed (patches welcome).
 
 
 =head1 BUILDING
@@ -86,6 +121,7 @@ modules are:
 	Mac::Components
 	Mac::Files
 	Mac::Gestalt
+	Mac::InternetConfig
 	Mac::Memory
 	Mac::MoreFiles
 	Mac::Notification
@@ -97,16 +133,14 @@ modules are:
 	Mac::Types
 	MacPerl
 
-Coming next, hopefully (to be distributed separately on the CPAN
-and SourceForge.net):
+Distributed separately on the CPAN and SourceForge.net (either now or soon):
 
 	Mac::AppleEvents::Simple
 	Mac::OSA::Simple
 	Mac::Glue
 
-And, possibly:
+And, coming soon, possibly:
 
-	Mac::InternetConfig
 	Mac::SpeechRecognition
 
 There are currently no plans for the other (GUI) modules, including:

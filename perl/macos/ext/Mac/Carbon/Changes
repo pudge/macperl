@@ -1,3 +1,43 @@
+* v0.50, x April 2003
+
+   Mac::InternetConfig added (tests !!!)
+
+   GUSI fixes
+     - Fix bug with GUSIFSp* routines not accepting paths where files
+       do not exist
+     - Make GUSIFSpDown work
+     - Add new "GUSIFS2FullPath" and "GUSIPath2FS" (for lack of better
+       names) for dealing with FSRefs
+     - Add FSRef to typemap
+
+   Launching apps
+     - Add LSFindApplicationForInfo to Mac::Processes for finding
+       applications on Mac OS X (by creator, bundle ID, or name)
+     - Make %Mac::MoreFiles::Application find paths to apps using
+       LSFindApplicationForInfo for Mac OS X
+
+   Open resource files from data forks
+     - Add FSCreateResourceFile and FSOpenResourceFile to
+       Mac::Resources for creating/opening resource files from data
+       fork instead of resource fork
+     - Remove resource/data fork workaround from Sound.t
+
+   More constants
+     - Add AERegistry.h type* constants to Mac::AppleEvents
+     - Add file access permissions constants to Mac::Files
+     - Add Finder flag constants to Mac::Files
+
+   Add -fpascal-strings to ccflags, for compatibility with some of the
+   GUSI API (tested with gcc2 and gcc3 under Mac OS X 10.2).
+
+   Fix segfault for NULL descriptor in new AEDesc
+
+   Add lots of tests for Mac::Files
+
+   Fix the two-arg form of FSpGetCatInfo(FILE, INDEX)
+
+   Add option for MacPerl::{Ask,Answer,Pick} to be text-based on Mac OS X
+
 * v0.05, 6 March 2003
 
    Bad values for kCreateFolder and kDontCreateFolder (Ken Williams)
@@ -6,17 +46,17 @@
 
    Make AppleEvents with LD=c++ (required for Dec 2002 Dev Tools)
 
-   Added a bunch of Carbon-specific constants for Mac::Files
+   Add a bunch of Carbon-specific constants for Mac::Files
 
-   Modified Mac::Speech (Peter N Lewis)
+   Modify Mac::Speech (Peter N Lewis)
      - GetVoiceDesciption and NewSpeechChannel use default voice
        if no parameter given
      - %Voice hash returns default voice if key is false (undef, '', 0)
      - Added accessor methods for VoiceDescription and VoiceSpec structures
 
-   Added Str63 type to typemap
+   Add Str63 type to typemap
 
-   Cleaned up distribution a little
+   Clean up distribution a little
 
 
 * v0.03, 17 December 2002
@@ -45,11 +85,11 @@
    (Mac::AppleEvents::Simple and Mac::OSA::Simple not yet fully
    supported; needs some porting)
 
-   Added back Pick/Answer/Ask to MacPerl (code from Gero Herrmann)
+   Add back Pick/Answer/Ask to MacPerl (code from Gero Herrmann)
 
-   Added GetProcessPID and GetProcessForPID to Mac::Processes
+   Add GetProcessPID and GetProcessForPID to Mac::Processes
 
-   Cleaned up some of the tests
+   Clean up some of the tests
 
 
 * v0.01, 13 November 2002
