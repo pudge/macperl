@@ -56,10 +56,10 @@ The Test::More module is required for running tests.
 
 The separate Mac::Errors module is not required, but is highly recommended.
 
-Building these modules has been tested successfully on Mac OS X 10.2.x,
-with perl 5.6.0/5.6.1/5.8.0, with both gcc2 and gcc3.  It is expected to
-work on Mac OS X 10.1.x (the binary distribution of the modules has
-been verified to work on that version of the OS).
+Building these modules has been tested successfully on Mac OS X 10.1 and 10.2,
+with perl 5.6.0/5.6.1/5.8.0, with both gcc2 and gcc3.  Some tests fail on
+UFS ([GS]etFileInfo in MacPerl.t).  There are a lot of warnings on 10.1,
+though the tests should all pass.
 
 The modules will compile and test remotely (such as via ssh, instead of
 via the Terminal), but some of the tests might not run properly, and
