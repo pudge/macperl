@@ -1,0 +1,12 @@
+<ul>
+<li>"OK" means nothing needs to be done to the test to make it work.</li>
+<li>"Some porting needed" means the test just needs a few changes to make it work
+with MacPerl, but that MacPerl itself is fine, and a
+<a href="http://sourceforge.net/tracker/?func=add&amp;group_id=7940&amp;atid=307940">patch
+should be submitted</a> (but don't do it if you can't, don't want to, don't have time
+etc., as long as you describe the problem well).</li>
+<li>"Major porting needed" means that either MacPerl needs to be fixed, or
+the test needs major rewriting.  If MacPerl needs to be fixed, a
+<a href="http://sourceforge.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">bug
+report should be submitted</a>.</li>
+</ul>

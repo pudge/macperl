@@ -8,6 +8,8 @@ Please read the test guidelines (not yet available ... does someone want to
 write something up?).
 </p>
 
+[% INCLUDE statusexplain %]
+
 <table border="0" cellpadding="4">
 	<tr class="na"><td colspan="5"><table><tr>[% FOR st = status.keys.nsort %]
 	<td class="[% PROCESS get_status st => st %]">[% status.$st %]</td>[% END %]
@@ -35,7 +37,7 @@ write something up?).
 		<td align="right"><a href="[% env.script_name %]?op=view_test&amp;test_id=[% user_test.id %]">*</a></td>
 		<td>[% IF myuser.sf_match %]
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
-		[% ELSE; myuser.name; END %]</td>
+		[% ELSE; myuser.user; END %]</td>
 		<td>
 <a href="[% env.script_name %]?op=view_config&amp;config_id=[% user_test.config_id %]">[% FILTER strip_literal ; configs.${user_test.config_id} ; END %]</a>
 		</td>

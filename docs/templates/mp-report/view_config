@@ -11,7 +11,7 @@ just for testing purposes.
         <td valign="top" width="200">User:</td>
         <td>[% IF myuser.sf_match %]
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
-        [% ELSE; myuser.name; END %]</td>
+        [% ELSE; myuser.user; END %]</td>
 </tr><tr>
 	<td valign="top">Configuration name:</td>
 	<td>[% FILTER strip_literal ; config.name ; END %]</td>
