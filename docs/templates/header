@@ -18,7 +18,9 @@
 [% END %]<p>
 
 <a href="http://sourceforge.net/projects/macperl/">
-	<img src="http://sourceforge.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="*" />
+	<img src="http://sourceforge.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="[ SourceForge ]" />
 </a>
 
-<img src="/MacPerl.gif" width="32" height="32" alt="*" />
+<a href="http://macperl.sourceforge.net/">
+	<img src="/MacPerl.gif" width="32" height="32" alt="[ MacPerl ]" />
+</a>
