@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2001/03/22 04:29:31  pudge
+ * Update version
+ *
  * Revision 1.3  2001/02/23 23:34:04  pudge
  * Add xsubpp.patch; update versions; fix missing fp.h for SC/MrC
  *
@@ -43,22 +46,11 @@
 #define SystemSevenOrLater 1
 
 #include "SysTypes.r"		/* To get system types */
-#include "Types.r"			/* To get general types */
-#include "Cmdo.r"			/* For commando interface */
+#include "Types.r"		/* To get general types */
+#include "Cmdo.r"		/* For commando interface */
 
 include "Perl.rsrc";
-
-resource 'vers' (1) {
-	0x05, 0x61, development, 0x02, verUS,
-	"5.6.1d2",
-	"Perl - ported by Matthias Neeracher."
-	};
-
-resource 'vers' (2) {
-	0x05, 0x61, development, 0x02, verUS,
-	"5.6.1d2",
-	"Perl 5.6.1d2 (2001-03-20)"
-	};
+#include "MPVersion.r";
 
 resource 'DLOG' (2001)	{
 	{  0,   0, 150, 400},
@@ -259,10 +251,10 @@ resource 'cmdo' (128) {
 			},
 			notDependent {}, VersionDialog {
 				VersionString {
-					"5.6.1d2"
+					MPVersionStr
 				},
 				"Perl by Larry Wall <larry@wall.org>\n"
-				"MPW port by Matthias Neeracher <neeri@iis.ee.ethz.ch>\n"
+				"MPW port by Matthias Neeracher <neeracher@mac.com>\n"
 				"and Tim Endres <time@ice.com>\n",
 				0
 			},

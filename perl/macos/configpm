@@ -283,12 +283,14 @@ my %preconfig;
 	local $^W;
 	my $inst = $ENV{MACPERL} . "site_perl:";
 	my $arch = $MacPerl::Architecture;
+	my $cc   = $MacPerl::Compiler;
 
 	%extra = (
 		installsitelib		=> $inst,
 		installsitearch		=> "$inst$arch:",
 		archname		=> $arch,
 		myarchname		=> $arch,
+		cc			=> $cc,
 	);	
 }
 

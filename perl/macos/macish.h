@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.7  2001/03/30 21:59:38  pudge
+Add basic support for kill, which does nothing
+
 Revision 1.6  2001/03/20 02:40:25  pudge
 Add times() and struct tms
 
@@ -35,14 +38,26 @@ First build released to public
 
 extern char * sys_errlist[];
 
+/* For now we get compiler this way, until we can
+   find a better way */
 #if TARGET_CPU_PPC
-#define ARCHNAME "MacPPC"
+#  define	ARCHNAME	"MacPPC"
+#  if defined(__MRC__)
+#    define	CC		"MrC"
+#  else
+#    define	CC		"MWCPPC"
+#  endif
 #else
-#if TARGET_RT_MAC_CFM
-#define ARCHNAME "MacCFM68K"
-#else
-#define ARCHNAME "Mac68K"
-#endif
+#  if TARGET_RT_MAC_CFM
+#    define	ARCHNAME	"MacCFM68K"
+#  else
+#    define	ARCHNAME	"Mac68K"
+#  endif
+#  if defined(__SC__)
+#    define	CC		"SC"
+#  else
+#    define	CC		"MWC68K"
+#  endif
 #endif
 
 #ifndef MP_EXT

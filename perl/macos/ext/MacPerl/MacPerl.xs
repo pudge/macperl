@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:34  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.1  2000/05/14 21:45:04  neeri
  * First build released to public
  *
@@ -36,16 +39,6 @@
 #include <Resources.h>
 #include <LowMem.h>
 
-
-#if TARGET_CPU_PPC
-#define ARCHITECTURE "MacPPC"
-#else
-#if TARGET_RT_MAC_CFM
-#define ARCHITECTURE "MacCFM68K"
-#else
-#define ARCHITECTURE "Mac68K"
-#endif
-#endif
 
 /* Shamelessly borrowed from Apple's includes. Sorry */
 
@@ -725,10 +718,11 @@ MP_Volumes()
 BOOT:
 	{
 		extern int	StandAlone;
-		VersRecHndl	vers 		= (VersRecHndl) GetResource('vers', 1);
-		int 			versLen	= *(*vers)->shortVersion;
-		SV *			version	= get_sv("MacPerl::Version", TRUE | GV_ADDMULTI);
-		SV *			arch		= get_sv("MacPerl::Architecture", TRUE | GV_ADDMULTI);
+		VersRecHndl	vers 	= (VersRecHndl) GetResource('vers', 1);
+		int 		versLen	= *(*vers)->shortVersion;
+		SV *		version	= get_sv("MacPerl::Version", TRUE | GV_ADDMULTI);
+		SV *		arch	= get_sv("MacPerl::Architecture", TRUE | GV_ADDMULTI);
+		SV *		cc	= get_sv("MacPerl::Compiler", TRUE | GV_ADDMULTI);
 
 		HLock((Handle) vers);
 		memcpy(gMacPerlScratch, (char *)(*vers)->shortVersion+1, versLen);
@@ -740,6 +734,9 @@ BOOT:
 		sv_setpv(version, gMacPerlScratch);
 		SvREADONLY_on(version);
 		
-		sv_setpv(arch, ARCHITECTURE);
+		sv_setpv(arch, ARCHNAME);
 		SvREADONLY_on(arch);
+
+		sv_setpv(cc, CC);
+		SvREADONLY_on(cc);
 	}
