@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2002/01/23 05:44:42  pudge
+ * Update whitespace etc., from Thomas
+ *
  * Revision 1.2  2000/09/09 22:18:27  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -31,9 +34,20 @@
 
 #undef pad
 
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#define file_type fileType
+#define file_creator fileCreator
+#define post_creator postCreator
+#define creator_app_name creatorAppName
+#define post_app_name postAppName
+#define MIME_type MIMEType
+#define entry_name entryName
+#else
 #include <InternetConfig.h>
 #include <GUSIFileSpec.h>
 #include <Components.h>
+#endif
 
 static SV * MakeHndSV(Handle hdl)
 {
@@ -194,6 +208,9 @@ ICGeneralFindConfigFile(inst, search_prefs=1, can_create=0, ...)
 	FSSpec		spec;
 	ICDirSpec	spex[8];
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::InternetConfig::ICGeneralFindConfigFile unsupported in Carbon");
+#else
 	count = 0;
 	for (i=3; i<items; ++i)
 		if (!GUSIPath2FSp((char *) SvPV_nolen(ST(i)), &spec) && !GUSIFSpDown(&spec, "\p")) {
@@ -202,6 +219,7 @@ ICGeneralFindConfigFile(inst, search_prefs=1, can_create=0, ...)
 			++count;
 		}
 	RETVAL = ICGeneralFindConfigFile(inst, search_prefs, can_create, count, (ICDirSpecArrayPtr) spex);
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -215,9 +233,21 @@ state will be unaffected.
 
 =cut
 
+#ifndef MACOS_TRADITIONAL
+
 MacOSRet
 ICChooseConfig(inst)
 	ICInstance	inst;
+	CODE:
+	croak("Usage: Mac::InternetConfig::ICChooseConfig unsupported in Carbon");
+
+#else
+
+MacOSRet
+ICChooseConfig(inst)
+	ICInstance	inst;
+
+#endif
 
 =item ICChooseNewConfig INST
 
@@ -229,12 +259,24 @@ state will be unaffected.
 
 =cut
 
+#ifndef MACOS_TRADITIONAL
+
+MacOSRet
+ICChooseNewConfig(inst)
+	ICInstance	inst;
+	CODE:
+	croak("Usage: Mac::InternetConfig::ICChooseNewConfig unsupported in Carbon");
+
+#else
+
 MacOSRet
 ICChooseNewConfig(inst)
 	ICInstance	inst;
 
+#endif
+
 =item ICGetConfigName INST, LONGNAME
- 
+
 =item ICGetConfigName INST
 
 Requires IC 1.2.
@@ -273,6 +315,9 @@ Handle
 ICGetConfigReference(inst)
 	ICInstance	inst;
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::InternetConfig::ICGeneralFindConfigFile unsupported in Carbon");
+#else
 	if (!(RETVAL = NewHandle(0))) {
 		XSRETURN_UNDEF;
 	}
@@ -280,6 +325,7 @@ ICGetConfigReference(inst)
 		DisposeHandle(RETVAL);
 		XSRETURN_UNDEF;
 	}
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -303,7 +349,11 @@ ICSetConfigReference(inst, ref, flags=0)
 	Handle		ref;
 	long		flags;
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::InternetConfig::ICGeneralFindConfigFile unsupported in Carbon");
+#else
 	RETVAL = ICSetConfigReference(inst, (ICConfigRefHandle) ref, flags);
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -340,9 +390,13 @@ ComponentInstance
 ICGetComponentInstance(inst)
 	ICInstance	inst;
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::InternetConfig::ICGetComponentInstance unsupported in Carbon");
+#else
 	if (gMacPerl_OSErr = ICGetComponentInstance(inst, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -414,7 +468,7 @@ Returns icPermErr if current attr is locked, new attr is locked.
 =cut 
 
 MacOSRet
-ICSetPref(inst, key, value, attr=ICattr_no_change)
+ICSetPref(inst, key, value, attr=(unsigned long)(kICAttrNoChange))
 	ICInstance	inst;
 	Str255		key;
 	SV *		value;
@@ -807,7 +861,3 @@ found:
 	}
 	OUTPUT:
 	RETVAL
-
-=back
-
-=cut

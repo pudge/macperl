@@ -3,9 +3,6 @@
 
 Mac::InternetConfig - Interface to Peter Lewis' and Quinns Internet Config system
 
-=head1 SYNOPSIS
-
-
 =head1 DESCRIPTION
 
 Access to the original Internet Config documentation is essential for proper use 
@@ -24,7 +21,7 @@ BEGIN {
 	use vars qw(
 		$VERSION @ISA @EXPORT @EXPORT_OK 
 		%RawInternetConfig %InternetConfig %InternetConfigMap $ICInstance);
-	$VERSION = '1.00';
+	$VERSION = '1.01';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		ICStart
@@ -357,12 +354,12 @@ bootstrap Mac::InternetConfig;
 
 sub ICFindConfigFile {
 	my($inst, @folders) = @_;
-	ICGeneralFindConfigFile($inst, 1, 0, @folders);
+	ICGeneralFindConfigFile($inst, 1, 0, @folders) if $^O eq 'MacOS';
 }
 
 sub ICFindUserConfigFile {
 	my($inst, @folders) = @_;
-	ICGeneralFindConfigFile($inst, 0, 0, @folders);
+	ICGeneralFindConfigFile($inst, 0, 0, @folders) if $^O eq 'MacOS';
 }
 
 package Mac::InternetConfig::_Raw;
@@ -381,7 +378,7 @@ sub TIEHASH {
 	my($package) = @_;
 	
 	my($enum) = 0;
-	ICFindConfigFile($ICInstance);
+	ICFindConfigFile($ICInstance) if $^O eq 'MacOS';
 	
 	bless \$enum, $package;
 }
@@ -500,14 +497,12 @@ sub DELETE {
 sub FIRSTKEY {
 	my($my) = @_;
 	
-	$my->{'index'} = 0;
-	
+	$my->{'index'} = 1;
 	return scalar(ICGetIndMapEntry($ICInstance, $my->{entries}, $my->{'index'}));
 }
 
 sub NEXTKEY {
 	my($my) = @_;
-	
 	return scalar(ICGetIndMapEntry($ICInstance, $my->{entries}, ++$my->{'index'}));
 }
 
@@ -723,13 +718,13 @@ Access the Internet Config file map to:
 
 =over 4
 
-=item 
+=item filename
 
 Determine the file type and creator for a newly created file:
 
     $map = $InternetConfigMap{"output.html"};	
 
-=item
+=item type/creator
 
 Determine the extension to use for some type/creator combination:
 
@@ -759,25 +754,34 @@ Return list of creator ID and name for helper app assigned
 to PROTOCOL.  Returns only creator ID in scalar context.
 Returns undef on error.
 
+=back
+
 =cut
 
 sub GetURL {
-    my $url = shift or return;
-	ICGeneralFindConfigFile($ICInstance);
-    ICLaunchURL($ICInstance, 0, $url);
+	my $url = shift or return;
+	ICGeneralFindConfigFile($ICInstance) if $^O eq 'MacOS';
+	ICLaunchURL($ICInstance, 0, $url);
 }
 
 sub GetICHelper {
-    my $proto    = shift or return;
-    my $helper   = $InternetConfig{kICHelper() . $proto} or return;
-    my $app_id   = substr($helper, 0, 4);
-    my $app_name = substr($helper, 5, ord(substr($helper, 4, 1)));
-    return wantarray ? ($app_id, $app_name) : $app_id;
+	my $proto    = shift or return;
+	my $helper   = $InternetConfig{kICHelper() . $proto} or return;
+	my $app_id   = substr($helper, 0, 4);
+	my $app_name = substr($helper, 5, ord(substr($helper, 4, 1)));
+	return wantarray ? ($app_id, $app_name) : $app_id;
 }
 
 END {
 	ICStop($ICInstance);
 }
+
+=head1 AUTHOR
+
+Written by Matthias Ulrich Neeracher E<lt>neeracher@mac.comE<gt>.
+Currently maintained by Chris Nandor E<lt>pudge@pobox.comE<gt>.
+
+=cut
 
 1;
 
