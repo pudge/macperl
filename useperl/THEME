@@ -7,6 +7,7 @@ include_theme=slashcode
 #misc
 #tasks
 #portald-site
+image=images/print.gif
 template=templates/admin;menu;default
 template=templates/currentAdminUsers;misc;default
 template=templates/data;misc;default
