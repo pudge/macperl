@@ -22,6 +22,10 @@ while (<>) {
 		}
 	}
 }
+if ($script) {
+	$tests{$script}{num}   = $num;
+	$tests{$script}{tests} = [@tests];
+}
 
 for my $script (sort keys %tests) {
 	my @not    = grep {

@@ -31,6 +31,13 @@ require Exporter;
 
 $Too_Big = 1024 * 1024 * 2;
 
+my $macfiles;
+if ($^O eq 'MacOS') {
+	$macfiles = eval { require Mac::MoreFiles };
+	warn 'Mac::MoreFiles could not be loaded; using non-native syscopy'
+		if $^W;
+}
+
 sub _catname {
     my($from, $to) = @_;
     if (not defined &basename) {
@@ -40,7 +47,7 @@ sub _catname {
 
     if ($^O eq 'MacOS') {
 	# a partial dir name that's valid only in the cwd (e.g. 'tmp')
-	$to = ':' . $to if $to =~ /^[^:]+$/;
+	$to = ':' . $to if $to !~ /:/;
     }
 
     return File::Spec->catfile($to, basename($from));
@@ -208,8 +215,7 @@ unless (defined &syscopy) {
 	    return 0 unless @_ == 2;
 	    return Win32::CopyFile(@_, 1);
 	};
-    } elsif ($^O eq 'MacOS') {
-	require Mac::MoreFiles;
+    } elsif ($macfiles) {
 	*syscopy = sub {
 	    my($from, $to) = @_;
 	    my($dir, $toname);
@@ -313,6 +319,9 @@ structure.  For Unix systems, this is equivalent to the simple
 C<copy> routine.  For VMS systems, this calls the C<rmscopy>
 routine (see below).  For OS/2 systems, this calls the C<syscopy>
 XSUB directly. For Win32 systems, this calls C<Win32::CopyFile>.
+
+On Mac OS (Classic), C<syscopy> calls C<Mac::MoreFiles::FSpFileCopy>,
+if available.
 
 =head2 Special behaviour if C<syscopy> is defined (OS/2, VMS and Win32)
 

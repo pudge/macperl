@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C
 
 $Log$
+Revision 1.9  2002/01/04 03:34:45  pudge
+Modifications for universal headers 3.4
+
 Revision 1.8  2001/12/19 22:51:42  pudge
 Reset $^E each script
 
@@ -622,6 +625,7 @@ pascal Boolean RunScript(ArgExtractor extractor, void * data)
 	gRunningPerl 	=  true;
 	gMacPerl_Quit	=	0;
 	gMacPerl_OSErr	=	0;
+	gMacPerl_ErrorFormat	= 1;
 	
 	ShowWindowStatus();
 	

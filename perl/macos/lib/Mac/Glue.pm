@@ -40,7 +40,7 @@ use vars qw(
 #=============================================================================#
 # $Id$
 ($REVISION) 	= ' $Revision$ ' =~ /\$Revision:\s+([^\s]+)/;
-$VERSION	= '1.01';
+$VERSION	= '1.02';
 @ISA		= 'Exporter';
 @EXPORT		= ();
 $RESERVED	= 'REPLY|SWITCH|MODE|PRIORITY|TIMEOUT|RETOBJ|ERRORS|CALLBACK|CLBK_ARG';
@@ -1018,6 +1018,7 @@ sub _open_others {
 		# maybe add a new file type for glues?  i can do that now,
 		# because i am special or something.
 		for (readdir DIR) {
+			next if -d;
 			next if $_ eq "Icon\015";
 			next if /\.pod$/;
 			tie my %db, 'MLDBM', $_, O_RDONLY or confess "Can't tie '$_': $!";
@@ -1932,6 +1933,10 @@ Add dynamic fetching of glues?
 
 =over 4
 
+=item v1.02, Tuesday, May 7, 2002
+
+Skip directories when opening dialect/OSAX glues.
+
 =item v1.01, Tuesday, January 15, 2002
 
 Clean up a bit for 5.6.
@@ -2209,4 +2214,4 @@ Interapplication Communication.
 
 =head1 VERSION
 
-v1.01, Tuesday, January 15, 2002
+v1.02, Wednesday, May 7, 2002

@@ -683,7 +683,7 @@ double Perl_atof(const char *s)
 }
 #endif
 
-const char * MacPerl_CanonDir(const char * dir, char * buf)
+const char * MacPerl_CanonDir(const char * dir, char * buf, Boolean is_file)
 {
 	char * out = buf;
 	char * slash;
@@ -723,7 +723,7 @@ const char * MacPerl_CanonDir(const char * dir, char * buf)
 		memcpy(out, dir, slash-dir);
 		out += slash-dir;
 		*out++ = ':';
-		for (;;) {
+		while (*slash == '/') {
 			while (*++slash == '/')
 				;
 			if (slash[0] == '.') {
@@ -748,7 +748,7 @@ nomoreslashes:
 done:
 	strcpy(out, dir);
 	out += strlen(out);
-	if (out[-1] != ':')
+	if (!is_file && out[-1] != ':')
 		*out++ = ':';
 	*out = 0;
 
@@ -821,6 +821,7 @@ void MacPerl_ClearAsyncTasks()
 		Dequeue(elem, &sMacPerlAsyncQueue);
 	}
 }
+
 
 /*
  * Asynchronous tasks come in handy to exit gracefully from the middle of a script
