@@ -3,7 +3,7 @@ use File::Spec::Functions 'devnull';
 use Test::More;
 use strict;
 
-BEGIN { plan tests => 10 }
+BEGIN { plan tests => 11 }
 
 use Mac::Memory;
 use Mac::Notification;
@@ -11,10 +11,10 @@ use Mac::Processes;
 use MacPerl 'DoAppleScript';
 
 SKIP: {
-	skip "Set MAC_CARBON_GUI in env to run tests", 10
+	skip "Set MAC_CARBON_GUI in env to run tests", 11
 		unless $ENV{MAC_CARBON_GUI};
 
-	my($process, $name);
+	my($process, $name, $back);
 	if ($^O eq 'MacOS') {
 		$name = 'MacPerl';
 		$process = GetCurrentProcess();
@@ -59,6 +59,7 @@ SKIP: {
 				last;
 			}
 		}
+		$back = GetFrontProcess();
 		ok(NMRemove($notification),	'remove notification');
 	} else {
 		ok(1, "$name is in background") for 1..3;
@@ -70,15 +71,18 @@ SKIP: {
 	), 'create notification');
 
 	ok(NMInstall($notification),	'install notification');
+	sleep 1;
+	ok(SetFrontProcess($back),      'make sure in background');
 
 	my $count = 0;
 	until (is_front($process)) {
 		sleep 1;
-		last if ++$count >= 5;
+		last if ++$count >= 3;
 	}
 
 	ok(NMRemove($notification),	'remove notification');
-
+	sleep 1;
+#	ok(SetFrontProcess($process),   'switching back');
 	ok(my $lp = new LaunchParam(
 		launchAppSpec		=> $Mac::Processes::Process{$process}->processAppSpec,
 		launchControlFlags	=> launchContinue(),
