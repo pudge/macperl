@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.12  2002/03/01 04:26:00  pudge
+ * Bump version to ... wait for it ... 5.6.1r1!
+ *
  * Revision 1.11  2002/01/23 05:46:04  pudge
  * Bump version
  *
@@ -41,10 +44,10 @@
  *
  */
 
-#define MPVersionStr	"5.6.1r1"
+#define MPVersionStr	"5.6.1r2"
 #define MPRevision	0x05
 #define MPVersion	0x61
-#define MPBuild		0x01
+#define MPBuild		0x02
 #define MPState		release
 #define MPCopyright	"ported by Matthias Neeracher, maintained by Chris Nandor"
 #define MPDate		$$Format("%4.4d-%2.2d-%2.2d", $$Year,  $$Month, $$Day)
