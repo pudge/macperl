@@ -10,13 +10,16 @@ macperlbook - Perl book information
 
 =head1 DESCRIPTION
 
-I<MacPerl: Power and Ease> combines essential information for beginning programmers and programmers new to Perl with more advanced Macintosh-specific information.
+I<MacPerl: Power and Ease> combines essential information for beginning
+programmers and programmers new to Perl with more advanced Macintosh-specific
+information.
 
 	MacPerl: Power and Ease
 	ISBN 1-881957-32-2
 	MSRP US$ 40.00
 
-You can order the MacPerl book from Prime Time Freeware, or at a fine technical or professional bookstore near you.
+You can order the MacPerl book from Prime Time Freeware, or at a fine technical
+or professional bookstore near you.
 
 	Prime Time Freeware
 	370 Altair Way, Suite 150

@@ -10,12 +10,13 @@ MacPerl Readme
 
 =head1 BETA NOTES
 
-The included Shuck is now in testing with new features.  Do NOT load
-perltoc, it will crash you.  Thomas Wegner is developing it; please
-see L<http://sf.net/projects/shuck/> for more details and bug reports.
+The included Shuck is now in testing with new features.  It has been
+stable for a while now, but please test it.  Thomas Wegner is developing it;
+please see L<http://sf.net/projects/shuck/> for more details and bug reports.
 
-There are bugs in MacPerl.  Please see L<http://dev.macperl.org/> for
-more information on MacPerl, including bug reports.
+This is a B<release candidate>.  All major known bugs are fixed.
+Please see L<http://dev.macperl.org/> for more information on MacPerl,
+including for submitting new bug reports.
 
 
 =head1 SYNOPSIS
@@ -25,64 +26,35 @@ the programming language and environment, on Mac OS (Classic).
 If you are running perl under Mac OS X, you don't want to be here
 (unless you are in the Classic environment under Mac OS X).
 
+
 =head1 DESCRIPTION
 
 Please read the READMEs that come with MacPerl, but ignore the
 installation instructions presented in the main README; they do not
 apply to the Mac OS port of perl.
 
+
 =head2 System Requirements
 
-MacPerl 5.6 requires System 7.5 or above, and 8MB RAM.
-You will be much better off with 64MB RAM, System 8.1,
-and a PowerPC Macintosh.
+MacPerl 5.6 requires Mac OS 8.1 or above, either 68040 or PowerPC,
+and 12MB RAM.  64MB or more RAM is recommended for using certain
+modules and programs.
 
-=head2 Installing
+CarbonLib 1.0.4 or greater is also required.  Mac OS 8.1 also
+requires the Navigation extension, included with CarbonLib 1.0.4.
+All versions of CarbonLib may be downloaded from Apple for free.
 
-MacPerl is installed by running the installer, and then setting up
-the Online Help as described below.
+ <URL:ftp://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/
+  English-North_American/Macintosh/System/Other_System/>
 
-To install the MPW perl tool, additionally follow the instructions
-in F<Install.MPW_Perl>.
+ <URL:http://www.info.apple.com/support/downloads.html>
 
-=head2 Online Help
+You may also wish to increase MacPerl's memory allocation to as much
+as 30MB, 60MB, or more, depending on what you're using it for.
 
-There are two portions to the MacPerl documentation.  The first
-is this README, along with the rest of the READMEs, licenses, and
-manuals in the MacPerl F<Documentation> directory.
+For using just the MPW tool, Mac OS 7.5.5 and 68030 should be sufficient,
+though some of the Mac:: modules might not work.
 
-The other is the considerable amount of POD-based online help
-that comes with Perl.  For this help to work, make sure you have:
-
-=over 4
-
-=item *
-
-F<MacPerl Help>, the F<pod> folder, and F<Shuck> in the same folder
-as your MacPerl application.
-
-=item *
-
-A recent version of Internet Config, or the Internet control panel
-shipped with recent versions of Mac OS.  Internet Config is available
-in many places online, and at:
-
-	ftp://ftp.stairways.com/other/internetconfig-202.sit
-
-=item *
-
-Set up Internet Config (or the Internet control panel) with a helper
-for "http", set to your web browser of choice, and the a helper for
-"pod", set to F<Shuck>, the POD reader distributed with MacPerl.
-
-=back
-
-=head2 Mailing list
-
-There are several MacPerl mailing lists covering various aspects of
-MacPerl.  See the Perl mailing lists site for more information.
-
-	http://lists.perl.org/
 
 =head2 Distribution
 
@@ -91,34 +63,45 @@ others:
 
 	http://dev.macperl.org/
 	http://www.cpan.org/ports/mac/
-	ftp://ftp.cpan.org/CPAN/ports/mac/
+	ftp://ftp.cpan.org/pub/CPAN/ports/mac/
 
 MacPerl is avaiable on all the CPAN sites.  Find the CPAN mirror near you:
 
 	http://mirror.cpan.org/
 
-MacPerl is distributed in several forms.  The source is available
-in a single archive.  The compiled, prepared distribution of MacPerl
-is available in two forms, a web-based installer that allows you to
-choose which pieces to download as-needed, and a large installer with
-everything in it.  The web-based installer is recommended, as it
-only downloads the components you need.
+MacPerl is distributed in two forms: a web installer (about 400K) and
+a full installer (around 20MB).  The web installer is recommended,
+as it only downloads the components you need.
 
-   MacPerl-5.6.1b1_web.bin
-   MacPerl-5.6.1b1_full.bin
-   ^       ^    ^^ ^    ^
-   MacPerl |    || |    MacBinary Suffix ("bin")
+
+   MacPerl-5.6.1r1_web.bin
+   MacPerl-5.6.1r1_full.bin
+           ^    ^^ ^    ^
+           |    || |    MacBinary Suffix ("bin")
            |    || Distribution Component (web", "full")
            |    |Build Number ("1")
            |    Type ("d"evelopment, "a"lpha, "b"eta, "r"elease)
            Perl Version ("5.6.1")
 
-The web and full installers give the following options
-(and variations on the themes):
+
+Both the web and full installers are self-updating as new versions
+of MacPerl are released; they will fetch and install only changed
+files, so you don't need to download everything anew.
+
+
+=head2 Installing
+
+MacPerl is installed by running the installer, selecting an
+option, and then setting up the Online Help as described below.
+
+To install the MPW perl tool, additionally follow the instructions
+in F<Install.MPW_Perl>.
+
+The following installation options are available:
 
 =over 4
 
-=item Easy Install
+=item Easy Install / Basic Install
 
 This installs the application (for your platform), the
 documentation, and the library.  This will be the option
@@ -133,9 +116,60 @@ selected as well, by default.
 
 =item Developer Kit
 
-This installs the source and the SYM files for debugging.
+This installs all the source and the SYM files for debugging.
 
 =back
+
+
+=head2 Online Help
+
+There are two portions to the MacPerl documentation.  The first
+is this README, along with the rest of the READMEs, licenses, and
+manuals in the MacPerl F<Documentation> directory.
+
+The other is the considerable amount of POD-based online help
+that comes with Perl.  For this help to work, make sure you have:
+
+=over 4
+
+=item *
+
+F<MacPerl Help>, the F<pod> folder, the F<lib> folder, and F<Shuck>
+in the same folder as your MacPerl application.
+
+=item *
+
+A recent version of Internet Config, or the Internet control panel
+shipped with recent versions of Mac OS.  Internet Config is available
+in many places online, and at:
+
+	ftp://ftp.stairways.com/other/internetconfig-202.sit
+
+=item *
+
+Set up Internet Config (or the Internet control panel) with a helper
+for "http", set to your web browser of choice, and a helper for
+"pod", set to F<Shuck>, the POD reader distributed with MacPerl.
+
+=back
+
+Once it is set up, open Shuck and look under the "Go" menu, or
+MacPerl under the "Help" menu, and select various documentation
+pages (including Various->macperlbook for information on the
+MacPerl book).
+
+To look up information on specific words in Shuck, select
+Go->LookupÉ.  In MacPerl, highlight a word and select
+Help->Perl Help or double-click it.
+
+
+=head2 Mailing list
+
+There are several MacPerl mailing lists covering various aspects of
+MacPerl.  See the Perl mailing lists site for more information.
+
+	http://lists.perl.org/
+
 
 =head2 Building
 
@@ -148,16 +182,28 @@ available.  These are linked to from the development site at
 http://dev.macperl.org/. Go to that site for all things having to
 do with MacPerl development.
 
+
 =head1 CONTACT
 
 Please send your bug reports, patches, and feature requests for MacPerl
 to the MacPerl development site at http://dev.macperl.org/.  Also head
 over there for the latest source and links to other sites.
 
+
 =head1 CREDITS
 
 Perl was ported to Mac OS by Matthias Neeracher E<lt>neeracher@mac.comE<gt>.
 The port is maintained by Chris Nandor E<lt>pudge@pobox.comE<gt>.
+
+Much of MacPerl is made possible via GUSI, the POSIX library for Mac OS,
+also by Matthias Neeracher.
+
+	http://sf.net/projects/gusi/
+
+Shuck is written by Matthias Neeracher, and is maintained by Thomas
+Wegner E<lt>wegner_thomas@yahoo.comE<gt>.
+
+	http://sf.net/projects/shuck/
 
 The installer for MacPerl was created using Installer VISE from MindVision
 Software. For more information on Installer VISE, contact: 
@@ -176,4 +222,4 @@ by Ramon M. Felciano.
 
 =head1 DATE
 
-Last modified 2002.01.07.
+Last modified 2002.02.07.
