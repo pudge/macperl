@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2001/04/17 03:53:44  pudge
+ * Minor version/config changes, plus sync with maint-5.6/perl
+ *
  * Revision 1.4  2001/03/22 04:29:31  pudge
  * Update version
  *
@@ -51,6 +54,18 @@
 
 include "Perl.rsrc";
 #include "MPVersion.r";
+
+resource 'vers' (1) {
+	MPRevision, MPVersion, MPState, MPBuild, verUS,
+	MPVersionStr,
+	"Perl - ported by Matthias Neeracher."
+	};
+
+resource 'vers' (2) {
+	MPRevision, MPVersion, MPState, MPBuild, verUS,
+	MPVersionStr,
+	"Perl " MPVersionStr " (" MPDate ")"
+	};
 
 resource 'DLOG' (2001)	{
 	{  0,   0, 150, 400},
