@@ -181,7 +181,8 @@ sub kFemale ()                     {          2; }
 
 =head1 AUTHOR
 
-Matthias Ulrich Neeracher neeracher@mac.com
+Written by Matthias Ulrich Neeracher E<lt>neeracher@mac.comE<gt>.
+Currently maintained by Chris Nandor E<lt>pudge@pobox.comE<gt>.
 
 =cut
 

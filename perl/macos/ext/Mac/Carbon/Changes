@@ -1,16 +1,21 @@
-v0.03, xx December 2002
+v0.03, 17 December 2002
 
 * Fix AEDesc->data bug, remove debugging code (oops)
 
-* Refactor Makefile.PLs, now use distributed xsubpp (brian d foy)
-  instead of system xsubpp, and auto-generate $module.pod from
-  POD in $module.pm and $module.xs; $module.c files no longer included
+* Refactor Makefile.PLs
+  - use common.pl for Makefile.PLs to share
+  - now use distributed xsubpp (brian d foy) instead of system xsubpp
+  - $module.c files no longer included
+  - auto-generate $module.pod (and manpages) from POD in $module.pm
+    and $module.xs
 
-* Fix POD in bunch places
+* Fix POD in many places
 
 * Require 5.006 in the base Makefile.PL (just in case)
 
-* Make work with gcc2 on Mac OS X 10.2
+* Make build work with gcc2 on Mac OS X 10.1 and 10.2
+
+* Make build work with UFS
 
 
 v0.02, 9 December 2002

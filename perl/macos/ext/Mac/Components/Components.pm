@@ -161,9 +161,9 @@ sub registerComponentAfterExisting () {          4; }
 
 =head1 AUTHOR
 
-Matthias Ulrich Neeracher neeracher@mac.com "Programs"
-
-Bob Dalgleish bob.dalgleish@sasknet.sk.ca "Documentation"
+Written by Matthias Ulrich Neeracher E<lt>neeracher@mac.comE<gt>,
+documentation by Bob Dalgleish E<lt>bob.dalgleish@sasknet.sk.caE<gt>.
+Currently maintained by Chris Nandor E<lt>pudge@pobox.comE<gt>.
 
 =cut
 1;

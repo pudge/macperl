@@ -135,10 +135,9 @@ MacPerl is mostly implemented in F<macish.c> / F<macish.h>.
 
 =head1 AUTHOR
 
-The original Mac Toolbox modules were written by Matthias Neeracher
-E<lt>neeracher@mac.comE<gt>.  Mac::Glue and the Simple modules were
-written by Chris Nandor E<lt>pudge@pobox.comE<gt>.  Mac::Carbon
-is currently maintained by Chris Nandor.
+The Mac Toolbox modules were written by Matthias Neeracher
+E<lt>neeracher@mac.comE<gt>.  They are currently maintained by Chris
+Nandor E<lt>pudge@pobox.comE<gt>.
 
 
 =head1 VERSION
