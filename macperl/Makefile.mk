@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.8  2001/01/23 05:31:47  neeri
+#  Make Droplet and Font LDEF buildable with SC (Tasks 24870, 24872)
+#
 #  Revision 1.7  2001/01/16 21:01:42  pudge
 #  Minor changes
 #
@@ -266,12 +269,8 @@ macperl.exp: ::perl:perl.stubsymbols
 	echo __nw__FUl >>macperl.exp
 	echo __dl__FPv >>macperl.exp
 
-MacPerl : MacPerl.PPC MacPerl.68K MacPerl.MrC MacPerl.SC
-	Duplicate -y MacPerl.PPC MacPerl
-	Echo 'Include "MacPerl.68K" '¶''CODE'¶'';'	¶
-		  'Include "MacPerl.68K" '¶''DATA'¶'';'	¶
-		| Rez -a -c McPL -t APPL -o MacPerl
-	$(MACPERL_SRC)UnPreload MacPerl
+MacPerl : MacPerl.{$(MACPERL_BUILD_APPL)}
+	$(MACPERL_SRC)FatBuild MacPerl $(MACPERL_INST_APPL_PPC) $(MACPERL_INST_APPL_68K)
 
 ":Obj:FontLDEF.rsrc.68K" : MPFontLDEF.c.68K.o
 	$(RsrcLink68K) -t rsrc -c RSED -rt LDEF=128 -o :Obj:FontLDEF.rsrc.68K 	¶
