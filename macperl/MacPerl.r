@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.13  2002/02/07 16:16:31  pudge
+Update resources
+
 Revision 1.12  2002/01/04 05:07:10  pudge
 GUSI template
 
@@ -181,7 +184,7 @@ include "MacPerl.rsrc" 'ICN#'(387);
 include "MacPerl.rsrc" 'ICN#'(388);
 include "MacPerl.rsrc" 'ICN#'(389);
 include "MacPerl.rsrc" 'PICT'(128);
-include "MacPerl.rsrc" 'PICT'(129);
+include "MacPerl.rsrc" 'PICT'(128)	as 'PICT'(129);
 include "MacPerl.rsrc" 'PICT'(130);
 include "MacPerl.rsrc" 'PICT'(131);
 include "MacPerl.rsrc" 'snd '(128);
