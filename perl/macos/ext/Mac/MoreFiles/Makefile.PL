@@ -19,7 +19,8 @@ if ($^O eq 'darwin') {
 	# we only compile these separately for Mac OS X right now, so
 	# we keep them in a separate directory and copy them in when needed
 	require File::Copy;
-	File::Copy::copy($_, '.') for <$src/*.c>;
+	opendir my $dh, $src or die $!;
+	File::Copy::copy($_, '.') for map { "$src/$_" } grep { /\.c$/ } readdir($dh);
 	# all our C_FILES are generated or copied into place
 	$args{'clean'}          = { FILES => '$(C_FILES)' };
 
