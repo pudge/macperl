@@ -1597,6 +1597,16 @@ sub UnmountVol 	{	_UnmountVol(&_VolumeID);	}
 sub Eject	{	_Eject     (&_VolumeID);	}
 sub FlushVol 	{	_FlushVol  (&_VolumeID);	}
 
+#if ($^O ne 'MacOS') {
+#	*NAMFFP = *NewAliasMinimalFromFullPath{CODE};
+#	no strict 'refs';
+#	no warnings 'redefine'; 
+#	require Mac::Path::Util;
+#	*NewAliasMinimalFromFullPath = sub {
+#		NAMFFP(Mac::Path::Util->new($_[0])->mac_path);
+#	}
+#}
+
 =include Files.xs
 
 =head1 AUTHOR

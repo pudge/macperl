@@ -6,10 +6,10 @@ use warnings;
 use lib "../blib/arch";
 use lib "../blib/lib";
 
-BEGIN { plan tests => 56 }
+BEGIN { plan tests => 53 }
 
 use File::Basename;
-use File::Spec::Functions qw(catdir catfile splitdir);
+use File::Spec::Functions qw(catdir catfile splitdir tmpdir);
 use Mac::Files;
 use MacPerl 'MakePath';
 
@@ -24,11 +24,9 @@ SKIP: {
 #	skip "Mac::Files", 55;
 
 	# 0
-	ok(my $dir = FindFolder(kOnSystemDisk, kDesktopFolderType),  "FindFolder");
-	like($dir, qr/Desktop/,                                      "Check name");
-	ok(-d $dir,                                                  "Is a folder");
+	my $dir = tmpdir();
 
-	# 3
+	# 0
 	my $dir1  = catdir($dir, "f" . ("o" x 30));
 	my $file1 = catdir($dir1, "a");
 	push @rm_dirs,  $dir1;
@@ -41,14 +39,14 @@ SKIP: {
 	ok(FSpCreate($file1, $creator, $type),                       "FSpCreate");
 	ok(-f $file1,                                                "file exists");
 
-	# 7
+	# 4
 	ok(my $ci    = FSpGetCatInfo($dir1),                         "FSpGetCatInfo");
 	ok(my $file2 = FSMakeFSSpec($ci->ioVRefNum, $ci->ioDrDirID, "b"), "FSMakeFSSpec");
 	push @rm_files, MakePath($file2);
 	ok(FSpCreate($file2, $creator, $type),                       "FSpCreate");
 	ok(-f MakePath($file2),                                      "file exists");
 
-	# 11
+	# 8
 	my @stat = stat $dir1;
 	my $ntime = time + 3600;
 	my $x = $ci->ioDrMdDat;
@@ -65,7 +63,7 @@ SKIP: {
 	ok( (($x == $y) || ($x == $y + 1) || ($x == $y - 1)),        "check ioDrMdDat");
 	ok( (($x == $z) || ($x == $z + 1) || ($x == $z - 1)),        "check ioDrMdDat");
 
-	# 17
+	# 14
 	ok(my $fi = FSpGetFInfo($file1),                             "FSpGetFInfo");
 	is($fi->fdType, $type,                                       "check fdType");
 	is($fi->fdCreator, $creator,                                 "check fdCreator");
@@ -74,7 +72,7 @@ SKIP: {
 	ok($fi = FSpGetFInfo($file1),                                "FSpGetFInfo");
 	is($fi->fdCreator, $creator1,                                "check fdCreator");
 
-	# 24
+	# 21
 	ok($ci = FSpGetCatInfo($file1),                              "FSpGetCatInfo");
 	is($ci->ioFlAttrib & kioFlAttribLocked, 0,                   "! kioFlAttribLocked");
 	ok(FSpSetFLock($file1),                                      "FSpSetFLock");
@@ -84,13 +82,13 @@ SKIP: {
 	ok($ci = FSpGetCatInfo($file1),                              "FSpGetCatInfo");
 	is($ci->ioFlAttrib & kioFlAttribLocked, 0,                   "! kioFlAttribLocked");
 
-	# 32
+	# 29
 	my $file3 = catfile($dir1, "c");
 	push @rm_files, $file3;
 	ok(FSpRename($file1, "c"),                                   "FSpRename");
 	ok(-e $file3,                                                "file exists");
 
-	# 34
+	# 31
 	my $dir2  = catdir($dir1, "f" . ("o" x 30));
 	my $file4 = catfile($dir2, "c");
 	push @rm_dirs,  $dir2;
@@ -100,7 +98,7 @@ SKIP: {
 	ok(FSpCatMove($file3, $dir2),                                "FSpCatMove");
 	ok(-f $file4,                                                "file exists");
 
-	# 38
+	# 35
 	ok(open(my $fh1, ">", MakePath($file2)),                     "open file");
 	ok(open(my $fh2, "> $file4"),                                "open file");
 	ok(print($fh1 "foo\n"),                                      "print value");
@@ -110,7 +108,7 @@ SKIP: {
 
 	ok(FSpExchangeFiles($file2, $file4),                         "FSpExchangeFiles");
 
-	# 45
+	# 42
 	ok(open($fh1, "<", MakePath($file2)),                        "open file");
 	ok(open($fh2, "< $file4"),                                   "open file");
 	is(scalar <$fh1>, "bar\n",                                   "check value");
@@ -118,7 +116,7 @@ SKIP: {
 	ok(close($fh1),                                              "close file");
 	ok(close($fh2),                                              "close file");
 
-	# 51
+	# 48
 	ok(FSpDelete($file2),                                        "FSpDelete");
 	ok(!FSpDelete($file2),                                       "FSpDelete");
 	ok(FSpDelete($file4),                                        "FSpDelete");

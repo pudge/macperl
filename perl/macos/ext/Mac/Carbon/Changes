@@ -1,6 +1,10 @@
-* v0.50, x April 2003
+* v0.51, 7 April 2003
 
-   Mac::InternetConfig added (tests !!!)
+   Fix some new tests that didn't work well under root
+
+* v0.50, 6 April 2003
+
+   Mac::InternetConfig added
 
    GUSI fixes
      - Fix bug with GUSIFSp* routines not accepting paths where files

@@ -3,7 +3,7 @@ use Test::More;
 use strict;
 use warnings;
 
-BEGIN { plan tests => 16 }
+BEGIN { plan tests => 14 }
 
 use File::Spec::Functions qw(catfile);
 use Mac::Files;
@@ -19,7 +19,6 @@ SKIP: {
 	# 3
 	ok(my $catinfo = FSpGetCatInfo($dir),                        "CatInfo");
 	ok(my $dinfo = $catinfo->ioDrUsrWds,                         "DInfo");
-	ok($dinfo->frFlags & kHasBeenInited,                         "kHasBeenInited");
 	is($dinfo->frFlags & kIsInvisible, 0,                        "! kIsInvisible");
 
 	opendir my $dh, $dir or die $!;
@@ -32,16 +31,15 @@ SKIP: {
 	}
 	closedir $dh;
 
-	# 7
+	# 6
 	ok($catinfo = FSpGetCatInfo(catfile($dir, $file)),           "CatInfo");
 	ok(my $finfo = FSpGetFInfo(catfile($dir, $file)),            "FInfo");
 	is($catinfo->ioFlFndrInfo->fdType,    $finfo->fdType,        "fdType");
 	is($catinfo->ioFlFndrInfo->fdCreator, $finfo->fdCreator,     "fdCreator");
 	is($catinfo->ioFlFndrInfo->fdFlags,   $finfo->fdFlags,       "fdFlags");
-	ok($finfo->fdFlags & kHasBeenInited,                         "kHasBeenInited");
 	is($finfo->fdFlags & kIsInvisible, 0,                        "! kIsInvisible");
 
-	# 14
+	# 12
 	ok($catinfo = FSpGetCatInfo($dir, $index),                   "CatInfo");
 	is($catinfo->ioNamePtr, $file,                               "ioNamePtr");
 }
