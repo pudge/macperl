@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/11/13 02:04:53  pudge
+ * Aieeeeee!  Big ol' Carbon update.
+ *
  * Revision 1.3  2001/09/02 00:38:40  pudge
  * Sync with perforce
  *
@@ -38,7 +41,7 @@
 #include "../Carbon.h"
 #endif
 #include <Types.h>
-#include <QuickDraw.h>
+#include <Quickdraw.h>
 #include <Dialogs.h>
 #include <Lists.h>
 #ifdef MACOS_TRADITIONAL

@@ -22,7 +22,7 @@
 #endif
 #include <Types.h>
 #include <Notification.h>
-#include <QuickDraw.h>
+#include <Quickdraw.h>
 #include <Resources.h>
 #include <Icons.h>
 
