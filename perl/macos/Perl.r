@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.8  2002/01/23 05:45:39  pudge
+ * Update text
+ *
  * Revision 1.7  2001/10/03 19:31:55  pudge
  * Sync with perforce maint-5.6/macperl
  *
@@ -61,6 +64,92 @@
 include "Perl.rsrc";
 #define MPAppName "perl"
 #include "MPVersion.r";
+
+
+/************* Custom Standard File Choose Folder Dialog *********************/
+
+resource 'DLOG' (193, "Std File CustomGetFolder", purgeable) {
+	{45, 25, 257, 368},
+	dBoxProc,
+	invisible,
+	noGoAway,
+	0x0,
+	193,
+	"",
+	noAutoCenter
+};
+
+
+resource 'DITL' (193, "Std File CustomGetFolder", purgeable) {
+	{	/* array DITLarray: 11 elements */
+		/* [1] */
+		{141, 244, 161, 334},
+		Button {
+			enabled,
+			"Open"
+		},
+		/* [2] */
+		{110, 244, 130, 334},
+		Button {
+			enabled,
+			"Cancel"
+		},
+		/* [3] */
+		{0, 0, 0, 0},
+		HelpItem {
+			disabled,
+			HMScanhdlg {
+				-6042
+			}
+		},
+		/* [4] */
+		{16, 235, 32, 337},
+		UserItem {
+			enabled
+		},
+		/* [5] */
+		{40, 244, 60, 334},
+		Button {
+			enabled,
+			"Eject"
+		},
+		/* [6] */
+		{68, 244, 88, 334},
+		Button {
+			enabled,
+			"Desktop"
+		},
+		/* [7] */
+		{63, 12, 193, 230},
+		UserItem {
+			enabled
+		},
+		/* [8] */
+		{40, 12, 59, 230},
+		UserItem {
+			enabled
+		},
+		/* [9] */
+		{99, 243, 100, 335},
+		Picture {
+			disabled,
+			11
+		},
+		/* [10] */
+		{171, 244, 191, 334},
+		Button {
+			enabled,
+			"Directory"
+		},
+		/* [11] */
+		{14, 29, 34, 214},
+		Button {
+			enabled,
+			"Select Current Directory:"
+		}
+	}
+};
+
 
 resource 'DLOG' (2001)	{
 	{  0,   0, 150, 400},
