@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.8  2003/04/06 22:30:29  pudge
+ * Add GUSIFS2FullPath and GUSIPath2FS; do some cleanup
+ *
  * Revision 1.7  2003/03/17 06:15:56  pudge
  * A go at fixing the problems with the GUSI routines, so that if a path doesn't exist, we try to get the directory instead; still need some cleanup and a lot of testing
  *
@@ -185,6 +188,13 @@ static OSErr GUSIFSpDown(FSSpec * spec, ConstStr31Param name)
 		gMacPerl_OSErr = FSMakeFSSpec(
 			pb->dirInfo.ioVRefNum, pb->dirInfo.ioDrDirID, path, spec
 		);
+
+		// is directory, and no name given
+		if ((pb->dirInfo.ioFlAttrib & 0x10) && (*name == 0)) {
+			spec->parID = pb->dirInfo.ioDrDirID;
+			spec->name[0] = 0;
+		}
+
 		if (gMacPerl_OSErr == fnfErr)
 			gMacPerl_OSErr = noErr;
 	}
@@ -201,7 +211,7 @@ static OSErr GUSIFSpDown(FSSpec * spec, ConstStr31Param name)
 static char * GUSIFSp2FullPath(const FSSpec * spec)
 {
 	FSRef		ref;
-	char *		name     = malloc(255);
+	char *		name     = malloc(256);
 	UInt8 *		path     = malloc(2*PATH_MAX); // to be safe
 	UInt32		pathSize = 2*PATH_MAX;
 
