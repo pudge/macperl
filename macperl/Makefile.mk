@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.6  2001/01/13 05:58:43  neeri
+#  Automatically create Obj folder, fix libraries for MPDroplet.code
+#
 #  Revision 1.5  2001/01/09 21:44:59  pudge
 #  Add more extensions
 #
@@ -36,11 +39,6 @@
 #  Checked into CVS
 #
 
-# Bourque:Prog:Metrowerks:Metrowerks CodeWarrior:MSL:MSL_C++:MSL_Common:Include
-
-OldMW68KLibraries	= "Bourque:Prog:Metrowerks:MPW:MPW:Libraries:OldMW68KLibraries:"
-CWANSIInc	=	{{CWANSIIncludes}},"Bourque:Prog:Metrowerks:Metrowerks CodeWarrior:MSL:MSL_C++:MSL_Common:Include:"
-
 PERL_SRC 	= ::perl:
 MACPERL_SRC	= $(PERL_SRC)macos:
 
@@ -55,9 +53,9 @@ SFIO		= "{{SFIO}}"
 GUSI		= "{{GUSI}}"
 MoreFiles	= ::MoreFiles:
 
-COpt += -i $(MACPERL_SRC) -i $(PERL_SRC) -i ::db:include: -i ::IC: -i ::AEGizmos:include
+COpt += -i $(MACPERL_SRC) -i $(PERL_SRC) -i $(DB)include: -i ::IC: -i $(AEGizmos)Headers:
 ApplRez 		= 	Rez -a -t APPL -c McPL
-ApplMWLOpt		=	${LOpt} -xm application -d
+ApplMWLOpt		=	${LOpt} -xm application -d -warn
 ApplLink68K		=	MWLink68K ${ApplMWLOpt} -model far
 ApplLinkPPC		=	MWLinkPPC ${ApplMWLOpt} 
 ApplMPWLOpt		=	${LOpt} -t APPL -w -mf 
@@ -87,7 +85,7 @@ MacPerlSources	=		\
 .SOURCE.c : $(MACPERL_SRC)
 .SOURCE.h : $(MACPERL_SRC)
 
-.INIT : Obj
+.INIT : Obj MPExt
 
 PerlSources = runperl.c
 
@@ -264,7 +262,7 @@ macperl.exp: ::perl:perl.stubsymbols
 	echo __nw__FUl >>macperl.exp
 	echo __dl__FPv >>macperl.exp
 
-MacPerl : MacPerl.PPC MacPerl.68K
+MacPerl : MacPerl.PPC MacPerl.68K MacPerl.MrC MacPerl.SC
 	Duplicate -y MacPerl.PPC MacPerl
 	Echo 'Include "MacPerl.68K" '¶''CODE'¶'';'	¶
 		  'Include "MacPerl.68K" '¶''DATA'¶'';'	¶
@@ -305,9 +303,12 @@ MPDroplet.code : MPDrop.c.68K.o
 
 MPDroplet : ":MacPerl Extensions:Droplet"	
 
-":MacPerl Extensions:Droplet" : MPDroplet.code MPDroplet.r MPExtension.r MacPerl.rsrc
+":MacPerl Extensions:Droplet" : MPExt MPDroplet.code MPDroplet.r MPExtension.r MacPerl.rsrc
 	Rez -t McPp -c McPL -o ":MacPerl Extensions:Droplet" MPDroplet.r
-		
+
+MPExt :
+	NewFolder "MacPerl Extensions"
+
 Distr : all
 	Distribute MacPerl.distr Mac_Perl_510r2_appl.sit
 
