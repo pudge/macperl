@@ -4,6 +4,7 @@ Str255			T_STR255
 Str63			T_STR255
 OSType			T_OSTYPE
 FSSpec			T_FSSPEC
+FSRef			T_FSREF
 Handle			T_PTROBJ
 Ptr			T_PTROBJ
 RawPtr			T_IV
@@ -20,6 +21,7 @@ NumVersion		T_RECORDOBJ
 Fixed			T_FIXED
 Boolean			T_IV
 time_t			T_NV
+CFStringRef		T_CFSTRINGREF
 INPUT
 T_MACOSRET
 	$var NOT IMPLEMENTED
@@ -46,8 +48,15 @@ T_FSSPEC
 		croak(\"$var is not a valid file specification\");
 	else
 		0
+T_FSREF
+	if (GUSIPath2FS((char *) SvPV_nolen($arg), &$var))
+		croak(\"$var is not a valid file specification\");
+	else
+		0
 T_FIXED
 	$var = X2Fix(SvNV($arg))
+T_CFSTRINGREF
+	$var = CFStringCreateWithCString(NULL, (char *) SvPV_nolen($arg), kCFStringEncodingISOLatin1);
 OUTPUT
 T_MACOSRET
 	sv_setiv($arg, (IV)!(gMacPerl_OSErr = (short)($var)));
@@ -71,5 +80,9 @@ T_RECORDOBJ
 	sv_setref_pvn($arg, \"${ntype}\", (void*)&$var, sizeof($ntype));
 T_FSSPEC
 	sv_setpv($arg, GUSIFSp2FullPath(&$var));
+T_FSREF
+	sv_setpv($arg, GUSIFS2FullPath(&$var));
 T_FIXED
 	sv_setnv($arg, Fix2X($var));
+T_CFSTRINGREF
+	$var NOT IMPLEMENTED
