@@ -1605,8 +1605,8 @@ nothing in the core.
 
 	    Zero(&utbuf, sizeof utbuf, char);
 #ifdef BIG_TIME
-	    utbuf.actime = (Time_t)SvNVx(*++mark);	/* time accessed */
-	    utbuf.modtime = (Time_t)SvNVx(*++mark);	/* time modified */
+	    utbuf.actime = (Time_t)(Big_time_t)SvNVx(*++mark);	/* time accessed */
+	    utbuf.modtime = (Time_t)(Big_time_t)SvNVx(*++mark);	/* time modified */
 #else
 	    utbuf.actime = (Time_t)SvIVx(*++mark);	/* time accessed */
 	    utbuf.modtime = (Time_t)SvIVx(*++mark);	/* time modified */

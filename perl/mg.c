@@ -566,7 +566,7 @@ Perl_magic_get(pTHX_ SV *sv, MAGIC *mg)
 	break;
     case '\024':		/* ^T */
 #ifdef BIG_TIME
- 	sv_setnv(sv, PL_basetime);
+ 	sv_setnv(sv, (Big_time_t)PL_basetime);
 #else
 	sv_setiv(sv, (IV)PL_basetime);
 #endif
@@ -1698,7 +1698,7 @@ Perl_magic_set(pTHX_ SV *sv, MAGIC *mg)
 	break;
     case '\024':	/* ^T */
 #ifdef BIG_TIME
-	PL_basetime = (Time_t)(SvNOK(sv) ? SvNVX(sv) : sv_2nv(sv));
+	PL_basetime = (Time_t)(Big_time_t)(SvNOK(sv) ? SvNVX(sv) : sv_2nv(sv));
 #else
 	PL_basetime = (Time_t)(SvIOK(sv) ? SvIVX(sv) : sv_2iv(sv));
 #endif

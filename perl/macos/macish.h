@@ -81,6 +81,8 @@ void MacPerl_Exit(int status);
 #undef PerlProc_exit
 #define PerlProc_exit(s)	my_exit((s))
 
+#define Big_time_t	unsigned long
+
 /* These defined following should be defined in 5.8 in config.h */
 #define HAS_USLEEP
 #define HAS_UALARM

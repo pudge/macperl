@@ -2606,9 +2606,9 @@ PP(pp_stat)
 	PUSHs(sv_2mortal(newSViv(PL_statcache.st_size)));
 #endif
 #ifdef BIG_TIME
-	PUSHs(sv_2mortal(newSVnv(PL_statcache.st_atime)));
-	PUSHs(sv_2mortal(newSVnv(PL_statcache.st_mtime)));
-	PUSHs(sv_2mortal(newSVnv(PL_statcache.st_ctime)));
+	PUSHs(sv_2mortal(newSVnv((Big_time_t)PL_statcache.st_atime)));
+	PUSHs(sv_2mortal(newSVnv((Big_time_t)PL_statcache.st_mtime)));
+	PUSHs(sv_2mortal(newSVnv((Big_time_t)PL_statcache.st_ctime)));
 #else
 	PUSHs(sv_2mortal(newSViv(PL_statcache.st_atime)));
 	PUSHs(sv_2mortal(newSViv(PL_statcache.st_mtime)));
@@ -4054,7 +4054,7 @@ PP(pp_time)
 {
     dSP; dTARGET;
 #ifdef BIG_TIME
-    XPUSHn( time(Null(Time_t*)) );
+    XPUSHn( (Big_time_t)time(Null(Time_t*)) );
 #else
     XPUSHi( time(Null(Time_t*)) );
 #endif
@@ -4122,7 +4122,7 @@ PP(pp_gmtime)
 	(void)time(&when);
     else
 #ifdef BIG_TIME
-	when = (Time_t)SvNVx(POPs);
+	when = (Time_t)(Big_time_t)SvNVx(POPs);
 #else
 	when = (Time_t)SvIVx(POPs);
 #endif

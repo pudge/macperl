@@ -2214,6 +2214,9 @@ char *strcpy(), *strcat();
 #endif
 #endif /* ! STANDARD_C */
 
+#if defined(BIG_TIME) && !defined(Big_time_t)
+#define Big_time_t Time_t
+#endif
 
 #ifdef I_MATH
 #    include <math.h>
