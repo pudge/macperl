@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.16  2001/07/08 17:48:52  pudge
+#  Enable MacPerl help
+#
 #  Revision 1.15  2001/07/08 05:08:13  pudge
 #  Fix makefile for building and installing bundled libs
 #
@@ -124,7 +127,7 @@ ObjectsMrC 		= {$(MacPerlSources) $(PerlSources)}.MrC.o
 
 Static_Ext_Xtr =	\
 	Compress:Zlib:Zlib Digest:MD5:MD5 HTML:Parser:Parser \
-	MIME:Base64:Base64 Storable:Storable
+	MIME:Base64:Base64 Storable:Storable List:Util:Util
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= \
