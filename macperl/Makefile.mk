@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.2  2000/12/22 08:35:45  neeri
+#  PPC, MrC, and SC builds work
+#
 #  Revision 1.1  2000/12/07 08:52:13  neeri
 #  PPC app compiles and sort of runs
 #
@@ -157,48 +160,51 @@ MacPerlLibMrC	= 	\
 			"$(XL)"XL.MrC.Lib								\
 			"{{SharedLibraries}}AppleScriptLib"
 
-MacPerlLib68K	=					\
-	"$(GUSI)Lib:GUSIDispatch.Lib.68K"	\
-	$(SFIO)lib:sfio.Lib.68K	\
-	"$(OldMW68KLibraries)ANSIFa(N/4i/8d)C.68K.Lib"	\
-	"$(AEGizmos)AEGizmos4Perl.Lib.68K"		\
-	"{{MW68KLibraries}}MathLib68K Fa(4i_8d).Lib"	\
-	"$(GUSI)Lib:SfioGUSI.Lib.68K"		\
-	"{{MW68KLibraries}}MacOS.Lib"			\
-	"$(IC)ICGlueFar.o"			\
-	"{{MW68KLibraries}}AEObjectSupportLib.o"	\
-	"$(OldMW68KLibraries)CPlusPlus.lib"		\
-	"$(OldMW68KLibraries)MPWRuntime.68K.Lib"		\
-	"$(GUSI)Lib:CursorCtl.Lib.68K"	\
-	"{{MW68KLibraries}}QTVR.MW.c.o"	\
-	"{{MW68KLibraries}}ToolLibs.o"			\
-	"{{MW68KLibraries}}PLStringFuncs.glue.lib"	\
-	"$(DB)Sfiodb.Lib.68K"			\
-	"$(XL)XL.Lib.68K"			\
-	"{{MW68KLibraries}}OSACompLib.o"
-
+MacPerlLib68K	=											\
+			"$(GUSI)lib:GUSI_Sfio.68K.Lib"					\
+			"$(GUSI)lib:GUSI_Core.68K.Lib"					\
+			"{{MW68KLibraries}}MSL MPWRuntime.68K.Lib"		\
+			"{{MW68KLibraries}}MSL Runtime68K.Lib"			\
+			"{{Libraries}}AEObjectSupportLib.o"				\
+			"{{Libraries}}IntEnv.o"							\
+			"{{Libraries}}ToolLibs.o"						\
+			"{{MW68KLibraries}}MacOS.Lib"					\
+			"{{MW68KLibraries}}MSL C.68K MPW(NL_4i_8d).Lib"	\
+			"{{MW68KLibraries}}MSL C++.68K (4i_8d).Lib"		\
+			"{{MW68KLibraries}}MathLib68K (4i_8d).Lib"		\
+			$(SFIO)lib:sfio.68K.Lib							\
+			"{{Libraries}}Navigation.far.o"					\
+			"{{Libraries}}OpenTransportApp.o"				\
+			"{{Libraries}}OpenTransport.o"					\
+			"{{Libraries}}OpenTptInet.o"					\
+			-s Libraries									\
+			"$(AEGizmos)AEGizmos4Perl.Lib.68K"				\
+			"$(DB)lib:db.Sfio.68K.Lib"						\
+			"$(XL)"XL.68K.Lib								\
+			"{{Libraries}}OSACompLib.o"						\
+			"$(IC)ICGlueFar.o"		
 
 MacPerlLibSC	=	\
-	"$(GUSI)lib:GUSI_Sfio.SC.Lib"					\
-	"$(GUSI)lib:GUSI_Core.SC.Lib"					\
-	"$(SFIO)lib:sfio.SC.Lib"						\
-	"{{CLibraries}}CPlusLib.far.o"					\
-	"{{CLibraries}}StdCLib.far.o"					\
-	"{{Libraries}}MacRuntime.o"						\
-	"{{Libraries}}Interface.o"						\
-	"{{Libraries}}IntEnv.far.o"						\
-	"{{Libraries}}MathLib.far.o"					\
-	"{{Libraries}}ToolLibs.far.o"					\
-	"{{CLibraries}}IOStreams.far.o"					\
-	"{{Libraries}}AEObjectSupportLib.o"				\
-	"{{Libraries}}Navigation.far.o"					\
-	"{{Libraries}}OpenTransport.o"					\
-	"{{Libraries}}OpenTransportApp.o"				\
-	"{{Libraries}}OpenTptInet.o"					\
-	"$(AEGizmos)AEGizmos4Perl.Lib.SC"				\
-	"$(DB)lib:db.Sfio.SC.Lib"						\
-	"$(IC)ICGlueFar.o"								\
-	"$(XL)"XL.SC.Lib
+			"$(GUSI)lib:GUSI_Sfio.SC.Lib"					\
+			"$(GUSI)lib:GUSI_Core.SC.Lib"					\
+			"$(SFIO)lib:sfio.SC.Lib"						\
+			"{{CLibraries}}CPlusLib.far.o"					\
+			"{{CLibraries}}StdCLib.far.o"					\
+			"{{Libraries}}MacRuntime.o"						\
+			"{{Libraries}}Interface.o"						\
+			"{{Libraries}}IntEnv.far.o"						\
+			"{{Libraries}}MathLib.far.o"					\
+			"{{Libraries}}ToolLibs.far.o"					\
+			"{{CLibraries}}IOStreams.far.o"					\
+			"{{Libraries}}AEObjectSupportLib.o"				\
+			"{{Libraries}}Navigation.far.o"					\
+			"{{Libraries}}OpenTransport.o"					\
+			"{{Libraries}}OpenTransportApp.o"				\
+			"{{Libraries}}OpenTptInet.o"					\
+			"$(AEGizmos)AEGizmos4Perl.Lib.SC"				\
+			"$(DB)lib:db.Sfio.SC.Lib"						\
+			"$(IC)ICGlueFar.o"								\
+			"$(XL)"XL.SC.Lib
 
 all	: MacPerl "MacPerl Help" MacPerlTest.Script MPDroplet
 
