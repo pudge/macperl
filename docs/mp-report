@@ -54,7 +54,7 @@ sub view_config {
 	$pw->header("View Configuration #$config->{id}");
 	$pw->process('view_config', {
 		config		=> $config,
-		myuser          => $user,
+		myuser		=> $user,
 		map { ($_ => get_param($pw, $_)) }
 			qw ( processor version )
 	});
@@ -70,8 +70,8 @@ sub view_test {
 	$pw->process('view_test', {
 		test		=> $test,
 		config		=> $config,
-		myuser          => $user,
-		tests           => get_testdesc($pw),
+		myuser		=> $user,
+		tests		=> get_testdesc($pw),
 		map { ($_ => get_param($pw, $_)) }
 			qw ( compiler status )
 	});

@@ -13,34 +13,34 @@ just for testing purposes.
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
         [% ELSE; myuser.name; END %]</td>
 </tr><tr>
-	<td>Configuration name:</td>
+	<td valign="top">Configuration name:</td>
 	<td>[% FILTER strip_literal ; config.name ; END %]</td>
 </tr><tr>
-	<td>Processor:</td>
+	<td valign="top">Processor:</td>
 	<td>[% processor.${config.processor} %]</td>
 </tr><tr>
-	<td>RAM (MB):</td>
+	<td valign="top">RAM (MB):</td>
 	<td>[% config.ram %]</td>
 </tr><tr>
-	<td>Version:</td>
+	<td valign="top">Version:</td>
 	<td>[% version.${config.version} %]</td>
 </tr><tr>
-	<td>Was this a CVS checkout?</td>
+	<td valign="top">Was this a CVS checkout?</td>
 	<td>[% config.cvs ? "Yes" : "No" %]</td>
 </tr><tr>
-	<td>Was this MacPerl built on this machine?</td>
+	<td valign="top">Was this MacPerl built on this machine?</td>
 	<td>[% config.build ? "Yes" : "No" %]</td>
 </tr><tr>
-	<td>The compiler sets used:</td>
+	<td valign="top">The compiler sets used:</td>
 	<td>
 		[% IF config.mwc; "MWC68K/MWCPPC (CodeWarrior)"; END %]
 		[% IF config.mwc && config.mpw; "<br />"; END %]
 		[% IF config.mpw; "SC/MrC (Apple MPW)"; END %]
 	</td>
 </tr><tr>
-	<td>Additional configuration notes:</td>
+	<td valign="top">Additional configuration notes:</td>
 	<td>[% FILTER strip_literal ; config.notes ; END %]</td>
 </tr><tr>
-	<td>Results:</td>
+	<td valign="top">Results:</td>
 	<td>[% FILTER strip_code ; config.results ; END %]</td>
 </tr></table>

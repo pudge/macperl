@@ -1,11 +1,3 @@
-[% BLOCK select %]
-	<td>[% label %]:</td>
-	<td><select name="[% name %]">
-[% FOR id = data.keys.nsort %]		<option value="[% FILTER strip_attribute ; id ; END %]">[% data.$id %]</option>
-[% END %]
-	</select></td>
-
-[% END %]
 Please fill out the information below to enter results for a test.
 </p>
 
@@ -21,7 +13,7 @@ in the notes).
 <form action="[% env.script_name %]" method="post">
 
 <table border="0" cellpadding="6"><tr>
-	<td>Test:</td>
+	<td valign="top">Test:</td>
 	<td><select name="test_id">
 [% FOR test = test_id %]		<option value="[% test.id %]">[% test.test %]</option>
 [% END %]
@@ -33,13 +25,13 @@ in the notes).
 </tr><tr>
 [% PROCESS select label => "Status", name => "status", data => status %]
 </tr><tr>
-	<td>Is this test using the MPW tool (else assume the application is used)?</td>
+	<td valign="top">Is this test using the MPW tool (else assume the application is used)?</td>
 	<td><input type="checkbox" name="is_tool" /></td>
 </tr><tr>
-	<td>Enter any notes:</td>
+	<td valign="top">Enter any notes:</td>
 	<td><textarea name="notes"   cols="50" rows="10"></textarea></td>
 </tr><tr>
-	<td>Enter the test output (including the command you invoked it with,
+	<td valign="top">Enter the test output (including the command you invoked it with,
 	if using the MPW tool):</td>
 	<td><textarea name="results" cols="50" rows="20"></textarea></td>
 </tr></table>
