@@ -6,6 +6,10 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.10  2004/05/11 05:28:26  pudge
+ * Eliminate a number of memory leaks due to lack of disposal of Handles,
+ * due to changes for Mac OS X.
+ *
  * Revision 1.9  2003/10/28 05:53:58  pudge
  * Add Carbon compat. notes; revert to AESend for AESend instead of AESendMessage
  *
@@ -127,7 +131,6 @@ data(desc, newData=0)
 		}
 
 		descLen = AEGetDescDataSize(&desc);
-		DisposeHandle(RETVAL);
 		RETVAL = NewHandle(descLen);
 		AEFail(AEGetDescData(&desc, *RETVAL, descLen));
 #endif
