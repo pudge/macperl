@@ -11,7 +11,7 @@ use Mac::Resources;
 use Mac::Sound;
 
 SKIP: {
-	skip "Mac::Sound Beeps", 4;
+#	skip "Mac::Sound Beeps", 4;
 
 	my $vol = GetDefaultOutputVolume();
 	ok(defined($vol),			'get current volume');
