@@ -33,7 +33,7 @@
 	[% dot %]<a href="http://sf.net/project/showfiles.php?group_id=7940">Downloads</a><br />
 	[% dot %]<a href="http://dev.macperl.org/files/">Related Files</a><br />
 	[% dot %]<a href="/?build">Build Instructions</a><br />
-	[% dot %]<a href="/?build.#cvs">CVS</a>
+	[% dot %]<a href="/?build#cvs">CVS</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/macperl/">Browse</a> ]
 			<br />&nbsp; &nbsp; &nbsp;( <!-- CVS|commit -->1502 / <!-- CVS|add -->966 )
 			<br />
