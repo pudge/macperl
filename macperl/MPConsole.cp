@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.2  2000/12/22 08:35:45  neeri
+PPC, MrC, and SC builds work
+
 Revision 1.5  1999/01/24 05:08:22  neeri
 Adjustments to event/port handling
 
@@ -107,7 +110,7 @@ public:
 
 class MPConsoleDevice : public GUSIDevice {
 public:
-	virtual bool					Want(GUSIFileToken & file);
+	virtual bool				Want(GUSIFileToken & file);
 	virtual GUSISocket * 		open(GUSIFileToken & file, int flags);
 	
 	static MPConsoleDevice *	Instance();
@@ -701,7 +704,9 @@ static int EmulateStty(FILE * tempFile, char * command)
 void InitConsole()
 {
 	GUSIDeviceRegistry::Instance()->AddDevice(MPConsoleDevice::Instance());
-
+	
+	GUSISetHook(GUSI_SpinHook, (GUSIHook)MPConsoleSpin);
+	
 #if NOT_YET
 	AddWriteEmulationProc("stty", EmulateStty);
 #endif
