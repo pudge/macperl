@@ -6,6 +6,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.4  1998/04/14 19:46:38  neeri
 MacPerl 5.2.0r4b2
 
@@ -663,7 +666,7 @@ pascal OSErr DoExternalEditor(const AppleEvent * event, AppleEvent * reply, long
 		}
 		HSetState((Handle) gExternalFiles, state);
 		if (refCon != 2) {
-			Munger((Handle) gExternalFiles, i*sizeof(FSSpec), nil, 2*sizeof(FSSpec), nil, 0);
+			Munger((Handle) gExternalFiles, (i<<1)*sizeof(FSSpec), nil, 2*sizeof(FSSpec), nil, 0);
 			if (!--gExternalFileCount) {
 				DisposeHandle((Handle) gExternalFiles);
 				gExternalFiles = 0;
