@@ -113,7 +113,9 @@ dist:
 
 .PHONY : Objects68K ObjectsPPC ObjectsSC ObjectsMrC
 
-Objects68K: Obj $(Objects68K)
-ObjectsPPC: Obj $(ObjectsPPC)
-ObjectsSC: 	Obj $(ObjectsSC)
-ObjectsMrC: Obj $(ObjectsMrC)
+ProcessPL :: $(NOOP)
+
+Objects68K: Obj ProcessPL $(Objects68K)
+ObjectsPPC: Obj ProcessPL $(ObjectsPPC)
+ObjectsSC:  Obj ProcessPL $(ObjectsSC)
+ObjectsMrC: Obj ProcessPL $(ObjectsMrC)
