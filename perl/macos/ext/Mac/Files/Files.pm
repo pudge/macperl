@@ -15,7 +15,7 @@ use base 'DynaLoader';
 use base 'Exporter';
 use vars qw(@EXPORT %EXPORT_TAGS $VERSION);
 
-$VERSION = '1.04';
+$VERSION = '1.05';
 @EXPORT = qw(
 	FSpGetCatInfo
 	FSpSetCatInfo
@@ -156,13 +156,13 @@ Constants for createFolder parameter of FindFolder().
 
 =cut
 
-sub kCreateFolder () { true }
+sub kCreateFolder () { 1 }
 
 =item kDontCreateFolder
 
 =cut
 
-sub kDontCreateFolder () { false }
+sub kDontCreateFolder () { 0 }
 
 =back
 

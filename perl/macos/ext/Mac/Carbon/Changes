@@ -1,3 +1,7 @@
+* v0.05, 6 March 2003
+
+   Bad values for kCreateFolder and kDontCreateFolder (Ken Williams)
+
 * v0.04, 6 March 2003
 
    Make AppleEvents with LD=c++ (required for Dec 2002 Dev Tools)
