@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.15  2001/03/22 04:23:58  pudge
+#  Misc. updates
+#
 #  Revision 1.14  2001/03/20 02:34:06  pudge
 #  Add in missing extensions
 #
@@ -380,8 +383,8 @@ perl.MrC:	:PLib:Perl.MrC.Lib :PLib:PerlLib.MrC.Lib perlmain.c.MrC.o preplibrary 
 	$(LinkMrC) -@export perl.exp -fragname Perl -o perl.MrC ¶
 		:Obj:perlmain.c.MrC.o $(LibFilesMrC) ¶
 		:PLib:Perl.MrC.Lib $(Static_Ext_AutoInit_MrC) $(MoLibsMrC)
-perl.PPC::	Perl.r Perl.rsrc 
-	Rez $(ROptions) -a -c 'MPS ' -t MPST Perl.r -o perl.PPC
+perl.MrC::	Perl.r Perl.rsrc 
+	Rez $(ROptions) -a -c 'MPS ' -t MPST Perl.r -o perl.MrC
 
 PerlStub:	perl.exp
 	MakeStub -d perl.exp -o PerlStub -arch fat -fragname Perl -p
