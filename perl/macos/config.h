@@ -13,6 +13,9 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.8  2001/05/05 20:32:41  pudge
+Prepare for 5.6.1a2, mostly updates to tests, and File::Find, and latest changes from main repository
+
 Revision 1.7  2001/03/20 02:38:55  pudge
 Fixes for STDIO and TIMES
 
@@ -2906,7 +2909,7 @@ First build released to public
  *	function used to generate normalized random numbers.
  *	Values include 15, 16, 31, and 48.
  */
-#define Drand01()		(rand()/(RAND_MAX+1))	/**/
+#define Drand01()		(rand() / 32768.0)	/**/
 #define Rand_seed_t		unsigned int		/**/
 #define seedDrand01(x)		srand((Rand_seed_t)x)	/**/
 #define RANDBITS		15		/**/
