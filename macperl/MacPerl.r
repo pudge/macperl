@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.7  2001/09/02 00:41:01  pudge
+Sync with perforce
+
 Revision 1.6  2001/04/17 03:59:58  pudge
 Minor version/config changes
 
@@ -184,6 +187,18 @@ include "MacPerl.rsrc" 'icm#'(257);
 include "MacPerl.rsrc" 'icm#'(264);
 include "MacPerl.rsrc" 'icm#'(265);
 include "MacPerl.rsrc" 'icm#'(266);
+
+include "Perl.rsrc" 'CURS' (146);
+include "Perl.rsrc" 'CURS' (144);
+include "Perl.rsrc" 'CURS' (145);
+include "Perl.rsrc" 'CURS' (147);
+include "Perl.rsrc" 'CURS' (148);
+include "Perl.rsrc" 'CURS' (160);
+include "Perl.rsrc" 'CURS' (161);
+include "Perl.rsrc" 'CURS' (162);
+include "Perl.rsrc" 'CURS' (163);
+include "Perl.rsrc" 'acur' (0);
+include "Perl.rsrc" 'acur' (128);
 
 #include "MPVersion.r";
 
