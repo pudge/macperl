@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.7  2001/03/30 21:59:38  pudge
+Add basic support for kill, which does nothing
+
 Revision 1.6  2001/03/22 04:19:32  pudge
 Add prototypes for execv and execvp
 
@@ -98,7 +101,6 @@ Pid_t (getpid)()
 int (execv)(const char * file, char * const * argv)
 {
 	dTHX;
-	
 	Perl_croak(aTHX_ "execv() not implemented on the Macintosh");
 	
 	errno = EINVAL;
@@ -109,7 +111,6 @@ int (execv)(const char * file, char * const * argv)
 int (execvp)(const char * path, char * const * argv)
 {
 	dTHX;
-	
 	Perl_croak(aTHX_ "execvp() not implemented on the Macintosh");
 	
 	errno = EINVAL;
@@ -120,8 +121,13 @@ int (execvp)(const char * path, char * const * argv)
    get fork emulation */
 int kill(Pid_t pid, int sig)
 {
-    errno = EINVAL;
-    return -1;
+	if (sig != 0) {
+		dTHX;
+		Perl_croak(aTHX_ PL_no_func, "Unsupported function kill");
+	}
+
+	errno = EINVAL;
+	return -1;
 }
 
 
