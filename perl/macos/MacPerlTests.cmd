@@ -6,7 +6,6 @@ echo ""
 
 perl -le 'symlink "::macos:perl", ":perl" unless -e ":perl"'
 
-# weird bug in GUSI for opening file instead of directory
 # set up environment
 set -e MACPERL ""
 set -e PERL5LIB ""
