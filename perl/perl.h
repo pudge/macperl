@@ -1626,7 +1626,7 @@ typedef struct ptr_tbl PTR_TBL_t;
 #   endif
 #endif
 
-#if defined(OS2)
+#if defined(OS2) || defined(MACOS_TRADITIONAL)
 #  include "iperlsys.h"
 #endif
 
@@ -1684,6 +1684,10 @@ typedef struct ptr_tbl PTR_TBL_t;
 
 #ifndef PERL_SYS_INIT3
 #  define PERL_SYS_INIT3(argvp,argcp,envp) PERL_SYS_INIT(argvp,argcp)
+#endif
+
+#ifndef PERL_WRITE_MSG_TO_CONSOLE
+#  define PERL_WRITE_MSG_TO_CONSOLE(io, msg, len) PerlIO_write(io, msg, len)
 #endif
 
 #ifndef MAXPATHLEN
@@ -1943,7 +1947,7 @@ typedef I32 (*filter_t) (pTHXo_ int, SV *, int);
 #define FILTER_DATA(idx)	   (AvARRAY(PL_rsfp_filters)[idx])
 #define FILTER_ISREADER(idx)	   (idx >= AvFILLp(PL_rsfp_filters))
 
-#if !defined(OS2)
+#if !defined(OS2) && !defined(MACOS_TRADITIONAL)
 #  include "iperlsys.h"
 #endif
 #include "regexp.h"
