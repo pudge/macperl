@@ -28,7 +28,7 @@ BEGIN {
 	use Mac::AppleEvents;
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.03';
+	$VERSION = '1.04';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		OSALoad
@@ -65,6 +65,9 @@ BEGIN {
 		OSAGetScriptingComponentFromStored
 		OSAGenericToRealID
 		OSARealToGenericID
+
+		OSAGetProperty
+		OSASetProperty
 		
 		kOSAComponentType
 		kOSAGenericScriptingComponentSubtype
@@ -106,6 +109,7 @@ BEGIN {
 		kOSAModeDontStoreParent
 		kOSAModeDispatchToDirectObject
 		kOSAModeDontGetDataForArguments
+		kOSAModeDontDefine
 		kOSAScriptResourceType
 		typeOSAGenericStorage
 		kOSAErrorNumber
@@ -260,6 +264,8 @@ sub kOSASupportsEventHandling ()   {     0x0100; }
 
 =item kOSAModeDontGetDataForArguments
 
+=item kOSAModeDontDefine
+
 Mode flags.
 
 =cut
@@ -276,6 +282,7 @@ sub kOSAModeDisplayForHumans ()    { 0x00000008; }
 sub kOSAModeDontStoreParent ()     { 0x00010000; }
 sub kOSAModeDispatchToDirectObject () { 0x00020000; }
 sub kOSAModeDontGetDataForArguments () { 0x00040000; }
+sub kOSAModeDontDefine ()          { 0x00000001; }
 
 
 =item kOSAErrorNumber

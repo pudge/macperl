@@ -5,7 +5,9 @@ AppleEvents/Makefile.PL
 AppleEvents/PerlAEUtils.cp
 AppleEvents/PerlAEUtils.h
 AppleEvents/eg/AEReceiver.eg
+AppleEvents/eg/AEReceiver2.eg
 AppleEvents/eg/AESender.eg
+AppleEvents/eg/AESender2.eg
 Carbon.h
 Carbon.pm
 Changes
@@ -82,6 +84,7 @@ OSA/Makefile.PL
 OSA/OSA.pm
 OSA/OSA.xs
 OSA/eg/AppleScript.eg
+OSA/eg/AppleScript2.eg
 OSA/eg/Frontier.eg
 OSA/eg/Record.eg
 OSA/typemap

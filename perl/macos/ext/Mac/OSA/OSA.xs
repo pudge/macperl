@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2003/06/25 04:37:50  pudge
+ * OK, a better solution
+ *
  * Revision 1.4  2003/06/25 02:22:21  pudge
  * Fix OSADoEvent, bump version
  *
@@ -208,6 +211,49 @@ OSAGetScriptInfo(scriptingComponent, scriptID, selector)
 	OSType 				selector
 	CODE:
 	if (gMacPerl_OSErr = (short) OSAGetScriptInfo(scriptingComponent, scriptID, selector, &RETVAL)) {
+		XSRETURN_UNDEF;
+	}
+	OUTPUT:
+	RETVAL
+
+=item OSASetProperty SCRIPTINGCOMPONENT, MODEFLAGS, SCRIPTID, VARIABLENAME, SCRIPTVALUEID
+
+The OSASetProperty function sets the value of a script property in a specified script.
+VARIABLENAME is an AEDesc.
+
+=cut
+OSAError
+OSASetProperty(scriptingComponent, modeFlags, contextID, variableName, scriptValueID)
+	ComponentInstance scriptingComponent
+	long 					modeFlags
+	OSAID					contextID
+	AEDesc				variableName
+	OSAID 				scriptValueID
+	CODE:
+	if (gMacPerl_OSErr = (short) OSASetProperty(scriptingComponent, modeFlags, contextID, &variableName, scriptValueID)) {
+		XSRETURN_UNDEF;
+	}
+	OUTPUT:
+	RETVAL
+
+=item OSAGetProperty SCRIPTINGCOMPONENT, MODEFLAGS, SCRIPTID, VARIABLENAME
+
+The OSAGetProperty function gets the value of a script property in a specified script.
+VARIABLENAME is an AEDesc.  Returns an AEDesc.
+
+=cut
+AEDesc
+OSAGetProperty(scriptingComponent, modeFlags, contextID, variableName)
+	ComponentInstance scriptingComponent
+	long 					modeFlags
+	OSAID					contextID
+	AEDesc				variableName
+	CODE:
+	OSAID					scriptValueID;
+	if (gMacPerl_OSErr = (short) OSAGetProperty(scriptingComponent, modeFlags, contextID, &variableName, &scriptValueID)) {
+		XSRETURN_UNDEF;
+	}
+	if (gMacPerl_OSErr = (short) OSACoerceToDesc(scriptingComponent, scriptValueID, typeObjectSpecifier, kOSAModeNull, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

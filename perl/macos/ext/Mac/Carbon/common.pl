@@ -67,47 +67,25 @@ if ($^O ne 'MacOS' && -e $XS) {
 	}
 }
 
-# use the right xsubpp for this perl
 if ($^O ne 'MacOS') {
-	*MY::test = sub { "test ::\n\t\@\$(NOOP)" };
+	package MY;
 
-	*MY::tool_xsubpp = sub {
+	# don't execute tests from the sub-dirs themselves
+	sub test { "test ::\n\t\@\$(NOOP)" };
+
+	# use the right xsubpp for this perl
+	sub tool_xsubpp {
 		my($self) = shift;
+		my $return = $self->SUPER::tool_xsubpp;
 
-		return '' unless $self->needs_linking;
-
-		my($xsdir)  = File::Spec->catdir('..', 'xsubpps');
-
-		my(@tmdeps) = File::Spec->catdir(
-			$self->{PERL_LIB}, 'ExtUtils', 'typemap'
-		);
-
-		if ($self->{TYPEMAPS}){
-			foreach my $typemap (@{$self->{TYPEMAPS}}){
-				if (! -f  $typemap){
-					warn "Typemap $typemap not found.\n";
-				} else {
-					push(@tmdeps, $typemap);
-				}
-			}
-		}
-
-		push @tmdeps, 'typemap' if -f 'typemap';
-		my @tmargs = map "-typemap $_", @tmdeps;
-
-		unshift @tmargs, $self->{XSOPT} if exists $self->{XSOPT};
-
+		my $xsdir  = File::Spec->catdir(File::Spec->updir, 'xsubpps');
 		my $xsubpp = $] >= 5.008 ? 'xsubpp-5.8.0' : 'xsubpp-5.6.1';
 
-		$self->{XSPROTOARG} ||= '';
+		$return =~ s/^(XSUBPPDIR\s*=\s*).+$/$1$xsdir/m;
+		# $return =~ s/^(XSUBPP\s*=\s*).+$/$1\$(XSUBPPDIR)\$(DFSEP)$xsubpp/m;
+		# DFSEP not defined in older MakeMakers, and we know this is right anyway
+		$return =~ s/^(XSUBPP\s*=\s*).+$/$1\$(XSUBPPDIR)\/$xsubpp/m;
 
-		return <<"HERE";
-XSUBPPDIR = $xsdir
-XSUBPP = \$(XSUBPPDIR)/$xsubpp
-XSPROTOARG = $self->{XSPROTOARG}
-XSUBPPDEPS = @tmdeps \$(XSUBPP)
-XSUBPPARGS = @tmargs
-XSUBPP_EXTRA_ARGS =
-HERE
+		return $return;
 	};
 }

@@ -1,3 +1,9 @@
+* v0.72, 9 March 2005
+
+   Fix Makefile to work with latest ExtUtils::MakeMaker beta. (Michael Schwern)
+
+   Add OSAGetProperty/OSASetProperty to Mac::OSA.
+
 * v0.71, 19 February 2005
 
    Fix some more memory leaks, in the ported GUSI routines.  Well, technically,
