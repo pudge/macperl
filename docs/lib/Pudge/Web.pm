@@ -34,16 +34,18 @@ use constant FUNCTION	=> 1;
 sub new {
 	my($class, %args) = @_;
 	return unless $class;
-	return bless {
+	my $self = bless {
 		cgi	=> CGI->new,
 		%args
-	}, $class; 
+	}, $class;
+	$self->connect;
+	return $self;
 }
 
 sub initdata {
 	my($self) = @_;
 	$self->{form} = $self->{cgi}->Vars;
-	main::login();	# maybe put in Pudge::Web?
+	main::login($self);	# maybe put in Pudge::Web?
 }
 
 sub main {

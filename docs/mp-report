@@ -194,7 +194,7 @@ sub login {
 	my $sth;
 	$pw->{user} = {};
 
-	if ($pw->{form}{op} eq 'logout') {
+	if ($pw->{form}{op} && $pw->{form}{op} eq 'logout') {
 		return;
 
 	} elsif ($pw->{form}{user} && $pw->{form}{pass}) {
@@ -219,8 +219,8 @@ EOT
 }
 
 sub user_exists {
-	my($pw) = @_;
-	my $sth = $pw->get_sth(<<'EOT', $_[0]);
+	my($pw, $user) = @_;
+	my $sth = $pw->get_sth(<<'EOT', $user);
 SELECT	user
 FROM	users
 WHERE	user=?
@@ -229,8 +229,7 @@ EOT
 }
 
 sub get_param {
-	my($pw) = @_;
-	my($param) = @_;
+	my($pw, $param) = @_;
 	my $sth = $pw->get_sth(<<'EOT', $param);
 SELECT	id,name
 FROM	code_param
