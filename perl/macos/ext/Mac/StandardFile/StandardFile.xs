@@ -16,7 +16,7 @@
 #include "XSUB.h"
 #include <Types.h>
 #include <StandardFile.h>
-#include <TFileSpec.h>
+#include <GUSIFileSpec.h>
 
 typedef struct {
 	SV *	fileFilter;
@@ -34,7 +34,7 @@ static pascal Boolean CallFileFilter(CatInfo pb, SFProcs * procs)
 {
 	Boolean	res;
 	
-	dSP;
+	dXSARGS;
 	ENTER;
 	SAVETMPS;
 	
@@ -64,7 +64,7 @@ pascal short CallDlgHook(short item, DialogPtr theDialog, SFProcs * procs)
 {
 	short	res;
 	
-	dSP;
+	dXSARGS;
 	ENTER;
 	SAVETMPS;
 	
@@ -91,7 +91,7 @@ pascal Boolean CallModalFilter(DialogPtr theDialog, EventRecord *theEvent, short
 	Boolean	res;
 	int		count;
 	
-	dSP;
+	dXSARGS;
 	ENTER;
 	SAVETMPS;
 	
@@ -121,7 +121,7 @@ pascal Boolean CallModalFilter(DialogPtr theDialog, EventRecord *theEvent, short
 
 pascal void CallActivate(DialogPtr theDialog, short itemNo, Boolean activating, SFProcs * procs)
 {
-	dSP;
+	dXSARGS;
 	
 	PUSHMARK(sp);
 	XS_XPUSH(GrafPtr, theDialog);
@@ -250,7 +250,7 @@ Display a more sophisticated dialog for a new file.
 
 =cut
 StandardFileReply
-CustomPutFile(prompt, defaultName, dlgID, where, dlgHook=&sv_undef, filterProc=&sv_undef, activate=&sv_undef, ...)
+CustomPutFile(prompt, defaultName, dlgID, where, dlgHook=&PL_sv_undef, filterProc=&PL_sv_undef, activate=&PL_sv_undef, ...)
 	Str255	prompt
 	Str255	defaultName
 	short	dlgID
@@ -300,7 +300,7 @@ Display a more sophisticated dialog for an existing file.
 
 =cut
 StandardFileReply
-CustomGetFile(fileFilter, typeList, dlgID, where, dlgHook=&sv_undef, filterProc=&sv_undef, activate=&sv_undef, ...)
+CustomGetFile(fileFilter, typeList, dlgID, where, dlgHook=&PL_sv_undef, filterProc=&PL_sv_undef, activate=&PL_sv_undef, ...)
 	SV *	fileFilter
 	SV *	typeList
 	short	dlgID

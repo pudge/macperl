@@ -25,7 +25,7 @@
 static pascal void PerlIntercept(
 	QTVRInstance qtvr, QTVRInterceptRecord msg, SV * proc, Boolean * cancel)
 {
-	dSP;
+	dXSARGS;
 	
 	ENTER;
 	SAVETMPS;
@@ -126,7 +126,7 @@ QTVRGetQTVRInstance(qtvrTrack, mc)
 	Track			qtvrTrack
 	ComponentInstance	mc
 	CODE:
-	if (gLastMacOSErr = QTVRGetQTVRInstance(&RETVAL, qtvrTrack, mc)) {
+	if (gMacPerl_OSErr = QTVRGetQTVRInstance(&RETVAL, qtvrTrack, mc)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -208,7 +208,7 @@ QTVRFloatPoint
 QTVRGetViewCenter(qtvr)
 	QTVRInstance	qtvr
 	CODE:
-	if (gLastMacOSErr = QTVRGetViewCenter(qtvr, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetViewCenter(qtvr, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -231,7 +231,7 @@ QTAtomContainer
 QTVRGetVRWorld(qtvr)
 	QTVRInstance	qtvr
 	CODE:
-	if (gLastMacOSErr = QTVRGetVRWorld(qtvr, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetVRWorld(qtvr, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -272,7 +272,7 @@ QTVRPtToHotSpotID(qtvr, pt)
 	QTVRInstance	qtvr
 	Point			pt
 	CODE:
-	if (gLastMacOSErr = QTVRPtToHotSpotID(qtvr, pt, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRPtToHotSpotID(qtvr, pt, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -287,7 +287,7 @@ QTVRGetNodeInfo(qtvr, nodeID)
 	QTVRInstance	qtvr
 	U32				nodeID
 	CODE:
-	if (gLastMacOSErr = QTVRGetNodeInfo(qtvr, nodeID, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetNodeInfo(qtvr, nodeID, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -391,7 +391,7 @@ QTVRMouseEnter(qtvr, pt, w)
 	Point			pt
 	GrafPtr			w
 	CODE:
-	if (gLastMacOSErr = QTVRMouseEnter(qtvr, pt, &RETVAL, w)) {
+	if (gMacPerl_OSErr = QTVRMouseEnter(qtvr, pt, &RETVAL, w)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -407,7 +407,7 @@ QTVRMouseWithin(qtvr, pt, w)
 	Point	pt
 	GrafPtr	w
 	CODE:
-	if (gLastMacOSErr = QTVRMouseWithin(qtvr, pt, &RETVAL, w)) {
+	if (gMacPerl_OSErr = QTVRMouseWithin(qtvr, pt, &RETVAL, w)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -435,7 +435,7 @@ QTVRMouseDown(qtvr, pt, when, modifiers, w)
 	U16	modifiers
 	GrafPtr	w
 	CODE:
-	if (gLastMacOSErr = QTVRMouseDown(qtvr, pt, when, modifiers, &RETVAL, w)) {
+	if (gMacPerl_OSErr = QTVRMouseDown(qtvr, pt, when, modifiers, &RETVAL, w)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -451,7 +451,7 @@ QTVRMouseStillDown(qtvr, pt, w)
 	Point	pt
 	GrafPtr	w
 	CODE:
-	if (gLastMacOSErr = QTVRMouseStillDown(qtvr, pt, &RETVAL, w)) {
+	if (gMacPerl_OSErr = QTVRMouseStillDown(qtvr, pt, &RETVAL, w)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -467,7 +467,7 @@ QTVRMouseUp(qtvr, pt, w)
 	Point	pt
 	GrafPtr	w
 	CODE:
-	if (gLastMacOSErr = QTVRMouseUp(qtvr, pt, &RETVAL, w)) {
+	if (gMacPerl_OSErr = QTVRMouseUp(qtvr, pt, &RETVAL, w)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -574,7 +574,7 @@ QTVRGetViewState(qtvr, viewStateType)
 	QTVRInstance	qtvr
 	QTVRViewStateType	viewStateType
 	CODE:
-	if (gLastMacOSErr = QTVRGetViewState(qtvr, viewStateType, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetViewState(qtvr, viewStateType, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -607,7 +607,7 @@ QTVRGetAnimationSetting(qtvr, setting)
 	QTVRInstance	qtvr
 	QTVRObjectAnimationSetting	setting
 	CODE:
-	if (gLastMacOSErr = QTVRGetAnimationSetting(qtvr, setting, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetAnimationSetting(qtvr, setting, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -632,7 +632,7 @@ QTVRGetControlSetting(qtvr, setting)
 	QTVRInstance	qtvr
 	QTVRControlSetting	setting
 	CODE:
-	if (gLastMacOSErr = QTVRGetControlSetting(qtvr, setting, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetControlSetting(qtvr, setting, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -710,7 +710,7 @@ QTVRGetImagingProperty(qtvr, imagingMode, imagingProperty)
 	QTVRImagingMode	imagingMode
 	U32	imagingProperty
 	CODE:
-	if (gLastMacOSErr = QTVRGetImagingProperty(qtvr, imagingMode, imagingProperty, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetImagingProperty(qtvr, imagingMode, imagingProperty, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -795,7 +795,7 @@ QTVRPtToAngles(qtvr, pt)
 		float panAngle;
 		float tiltAngle;
 		
-		if (gLastMacOSErr = QTVRPtToAngles(qtvr, pt, &panAngle, &tiltAngle)) {
+		if (gMacPerl_OSErr = QTVRPtToAngles(qtvr, pt, &panAngle, &tiltAngle)) {
 			XSRETURN_EMPTY;
 		}
 		XS_XPUSH(float, panAngle);
@@ -817,7 +817,7 @@ QTVRCoordToAngles(qtvr, coord)
 		float panAngle;
 		float tiltAngle;
 		
-		if (gLastMacOSErr = QTVRCoordToAngles(qtvr, &coord, &panAngle, &tiltAngle)) {
+		if (gMacPerl_OSErr = QTVRCoordToAngles(qtvr, &coord, &panAngle, &tiltAngle)) {
 			XSRETURN_EMPTY;
 		}
 		XS_XPUSH(float, panAngle);
@@ -834,7 +834,7 @@ QTVRAnglesToCoord(qtvr, panAngle, tiltAngle)
 	float	panAngle
 	float	tiltAngle
 	CODE:
-	if (gLastMacOSErr = QTVRAnglesToCoord(qtvr, panAngle, tiltAngle, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRAnglesToCoord(qtvr, panAngle, tiltAngle, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -886,7 +886,7 @@ QTVRWrapAndConstrain(qtvr, kind, value)
 	short	kind
 	float	value
 	CODE:
-	if (gLastMacOSErr = QTVRWrapAndConstrain(qtvr, kind, value, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRWrapAndConstrain(qtvr, kind, value, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -968,7 +968,7 @@ QTVRGetInteractionProperty(qtvr, property)
 			float	v_f;
 		}		val;
 		
-		if (gLastMacOSErr = QTVRGetInteractionProperty(qtvr, property, &val)) {
+		if (gMacPerl_OSErr = QTVRGetInteractionProperty(qtvr, property, &val)) {
 			XSRETURN_UNDEF;
 		}
 		switch (property & 0x7FFFFFFF) {
@@ -1013,7 +1013,7 @@ QTVRGetViewingLimits(qtvr, kind)
 		float minValue;
 		float maxValue;
 		
-		if (gLastMacOSErr = QTVRGetViewingLimits(qtvr, kind, &minValue, &maxValue)) {
+		if (gMacPerl_OSErr = QTVRGetViewingLimits(qtvr, kind, &minValue, &maxValue)) {
 			XSRETURN_EMPTY;
 		}
 		XS_XPUSH(float, minValue);
@@ -1043,7 +1043,7 @@ QTVRGetConstraints(qtvr, kind)
 		float minValue;
 		float maxValue;
 		
-		if (gLastMacOSErr = QTVRGetConstraints(qtvr, kind, &minValue, &maxValue)) {
+		if (gMacPerl_OSErr = QTVRGetConstraints(qtvr, kind, &minValue, &maxValue)) {
 			XSRETURN_EMPTY;
 		}
 		XS_XPUSH(float, minValue);
@@ -1069,7 +1069,7 @@ U16
 QTVRGetAvailableResolutions(qtvr)
 	QTVRInstance	qtvr
 	CODE:
-	if (gLastMacOSErr = QTVRGetAvailableResolutions(qtvr, &RETVAL)) {
+	if (gMacPerl_OSErr = QTVRGetAvailableResolutions(qtvr, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -1092,7 +1092,7 @@ QTVRGetCacheMemInfo(qtvr, resolution, cacheDepth)
 		long	suggestedCacheBytes;
 		long	fullCacheBytes;
 		
-		if (gLastMacOSErr = QTVRGetCacheMemInfo(qtvr, resolution, cacheDepth, &minCacheBytes, &suggestedCacheBytes, &fullCacheBytes)) {
+		if (gMacPerl_OSErr = QTVRGetCacheMemInfo(qtvr, resolution, cacheDepth, &minCacheBytes, &suggestedCacheBytes, &fullCacheBytes)) {
 			XSRETURN_EMPTY;
 		}
 		XS_XPUSH(long, minCacheBytes);
@@ -1115,7 +1115,7 @@ QTVRGetCacheSettings(qtvr)
 		short	cacheDepth;
 		short	cacheSize;
 		
-		if (gLastMacOSErr = QTVRGetCacheSettings(qtvr, &resolution, &cacheDepth, &cacheSize)) {
+		if (gMacPerl_OSErr = QTVRGetCacheSettings(qtvr, &resolution, &cacheDepth, &cacheSize)) {
 			XSRETURN_EMPTY;
 		}
 		XS_XPUSH(U16, resolution);

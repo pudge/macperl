@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:30  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:52:26  neeri
  * MacPerl 5.1.5
  *
@@ -37,7 +40,7 @@ long
 Gestalt(selector)
 	OSType selector
 	CODE:
-	if (gLastMacOSErr = Gestalt(selector, &RETVAL)) {
+	if (gMacPerl_OSErr = Gestalt(selector, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

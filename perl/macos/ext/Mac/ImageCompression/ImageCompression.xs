@@ -29,7 +29,7 @@ MODULE = Mac::ImageCompression	PACKAGE = Mac::ImageCompression
 long
 CodecManagerVersion()
 	CODE:
-	if (gLastMacOSErr = CodecManagerVersion(&RETVAL)) {
+	if (gMacPerl_OSErr = CodecManagerVersion(&RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -65,7 +65,7 @@ GetMaxCompressionSize(src, srcRect, colorDepth, quality, cType, codec, size)
 	CodecType	cType
 	CompressorComponent	codec
 	CODE:
-	if (gLastMacOSErr = 
+	if (gMacPerl_OSErr = 
 		GetMaxCompressionSize(
 			src, srcRect, colorDepth, quality, cType, codec, &RETVAL)
 	) {
@@ -79,7 +79,7 @@ GetCSequenceMaxCompressionSize(seqID, src)
 	long			seqID
 	PixMapHandle	src
 	CODE:
-	if (gLastMacOSErr = GetCSequenceMaxCompressionSize(seqID, src, &RETVAL)) {
+	if (gMacPerl_OSErr = GetCSequenceMaxCompressionSize(seqID, src, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -99,15 +99,15 @@ GetCompressionTime(src, srcRect, colorDepth, cType, codec, spatialQuality=,tempo
 		unsigned long	compressTime;
 		
 		if (items < 7) 
-			gLastMacOSErr = 
+			gMacPerl_OSErr = 
 				GetCompressionTime(
 					src, &srcRect, colorDepth, cType, codec, nil, nil, &compressTime);
 		else
-			gLastMacOSErr = 
+			gMacPerl_OSErr = 
 				GetCompressionTime(
 					src, &srcRect, colorDepth, cType, codec, 
 					&spatialQuality, &temporalQuality, &compressTime);
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_EMPTY;
 		}
 		if (items == 7 && GIMME == G_ARRAY) {
@@ -129,16 +129,16 @@ CompressImage(src, srcRect, quality, cType)
 		SV *					data;
 		long					size;
 		
-		if (gLastMacOSErr = 
+		if (gMacPerl_OSErr = 
 			GetMaxCompressionSize(src, &srcRect, 0, quality, cType, anyCodec, &size)
 		) {
 			XSRETURN_EMPTY;
 		}
 		desc = (ImageDescriptionHandle)NewHandle(sizeof(ImageDescription));
 		data = newSVpv("", size);
-		gLastMacOSErr = 
+		gMacPerl_OSErr = 
 			CompressImage(src, &srcRect, quality, cType, desc, SvPVX(RETVAL));
-		if (!gLastMacOSErr) {
+		if (!gMacPerl_OSErr) {
 			SvLEN_set(data, desc[0]->dataSize);
 			XS_XPUSH(ImageDescriptionHandle, desc);
 			/* We do a copy since the result often shrinks */
@@ -147,7 +147,7 @@ CompressImage(src, srcRect, quality, cType)
 			DisposeHandle((Handle)desc);
 		}
 		SvREFCNT_dec(data);
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_EMPTY;
 		}
 	}
@@ -168,16 +168,16 @@ FCompressImage(src, srcRect, colorDepth, quality, cType, codec, ctable, flags)
 		SV *					data;
 		long					size;
 		
-		if (gLastMacOSErr = 
+		if (gMacPerl_OSErr = 
 			GetMaxCompressionSize(src, &srcRect, colorDepth, quality, cType, codec, &size)
 		) {
 			XSRETURN_EMPTY;
 		}
 		desc = (ImageDescriptionHandle)NewHandle(sizeof(ImageDescription));
 		data = newSVpv("", size);
-		gLastMacOSErr = 
+		gMacPerl_OSErr = 
 			FCompressImage(src, &srcRect, colorDepth, quality, cType, codec, ctable, flags, size, nil, nil, desc, SvPVX(RETVAL));
-		if (!gLastMacOSErr) {
+		if (!gMacPerl_OSErr) {
 			SvLEN_set(data, desc[0]->dataSize);
 			XS_XPUSH(ImageDescriptionHandle, desc);
 			/* We do a copy since the result often shrinks */
@@ -186,7 +186,7 @@ FCompressImage(src, srcRect, colorDepth, quality, cType, codec, ctable, flags)
 			DisposeHandle((Handle)desc);
 		}
 		SvREFCNT_dec(data);
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_EMPTY;
 		}
 	}

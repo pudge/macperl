@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:30  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.5  1998/04/07 01:02:53  neeri
  * MacPerl 5.2.0r4b1
  *
@@ -30,7 +33,7 @@
 #include "XSUB.h"
 #include <Folders.h>
 #include <Files.h>
-#include <TFileSpec.h>
+#include <GUSIFileSpec.h>
 #include <Script.h>
 #include <Errors.h>
 #include <Aliases.h>
@@ -222,7 +225,7 @@ FSpGetCatInfo(file, index=0)
 	FSSpec	file
 	short		index
 	CODE:
-	if ((index && FSpUp(&file)) || !(RETVAL = NewCatInfo())) {
+	if ((index && GUSIFSpUp(&file)) || !(RETVAL = NewCatInfo())) {
 		XSRETURN_UNDEF;
 	}
 	RETVAL->hFileInfo.ioVRefNum 	= file.vRefNum;
@@ -230,7 +233,7 @@ FSpGetCatInfo(file, index=0)
 	RETVAL->hFileInfo.ioFDirIndex = index;
 	if (!index)
 		memcpy(RETVAL->hFileInfo.ioNamePtr, file.name, *file.name+1);
-	if (gLastMacOSErr = PBGetCatInfoSync(RETVAL)) {
+	if (gMacPerl_OSErr = PBGetCatInfoSync(RETVAL)) {
 		free(RETVAL);
 		XSRETURN_UNDEF;
 	}
@@ -266,7 +269,7 @@ FSMakeFSSpec(vRefNum, dirID, fileName)
 	long		dirID
 	Str255	fileName
 	CODE:
-	if (gLastMacOSErr = FSMakeFSSpec(vRefNum, dirID, fileName, &RETVAL)) {
+	if (gMacPerl_OSErr = FSMakeFSSpec(vRefNum, dirID, fileName, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -295,7 +298,7 @@ FSpDirCreate(spec, scriptTag=smSystemScript)
 	FSSpec	&spec
 	char		scriptTag
 	CODE:
-	if (gLastMacOSErr = FSpDirCreate(&spec, scriptTag, &RETVAL))
+	if (gMacPerl_OSErr = FSpDirCreate(&spec, scriptTag, &RETVAL))
 		RETVAL = 0;
 	OUTPUT:
 	RETVAL
@@ -318,7 +321,7 @@ FInfo
 FSpGetFInfo(spec)
 	FSSpec	&spec
 	CODE:
-	if (gLastMacOSErr = FSpGetFInfo(&spec, &RETVAL)) {
+	if (gMacPerl_OSErr = FSpGetFInfo(&spec, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -392,7 +395,7 @@ Handle
 NewAlias(target)
 	FSSpec	&target
 	CODE:
-	gLastMacOSErr = NewAlias(nil, &target, (AliasHandle *)&RETVAL);
+	gMacPerl_OSErr = NewAlias(nil, &target, (AliasHandle *)&RETVAL);
 	OUTPUT:
 	RETVAL
 
@@ -406,7 +409,7 @@ NewAliasRelative(from, target)
 	FSSpec	&from
 	FSSpec	&target
 	CODE:
-	gLastMacOSErr = NewAlias(&from, &target, (AliasHandle *)&RETVAL);
+	gMacPerl_OSErr = NewAlias(&from, &target, (AliasHandle *)&RETVAL);
 	OUTPUT:
 	RETVAL
 
@@ -421,7 +424,7 @@ Handle
 NewAliasMinimal(target)
 	FSSpec	&target
 	CODE:
-	gLastMacOSErr = NewAliasMinimal(&target, (AliasHandle *)&RETVAL);
+	gMacPerl_OSErr = NewAliasMinimal(&target, (AliasHandle *)&RETVAL);
 	OUTPUT:
 	RETVAL
 
@@ -431,7 +434,7 @@ Create a new alias containing only the path name.
 
 =cut
 Handle
-NewAliasMinimalFromFullPath(name, zone=, server=)
+NewAliasMinimalFromFullPath(name, zone=NO_INIT, server=NO_INIT)
 	char *	name
 	Str255	zone
 	Str255	server
@@ -440,7 +443,7 @@ NewAliasMinimalFromFullPath(name, zone=, server=)
 		server[0] = 0;
 	if (items < 2)
 		zone[0] = 0;
-	gLastMacOSErr = 
+	gMacPerl_OSErr = 
 		NewAliasMinimalFromFullPath(strlen(name), name, zone, server, (AliasHandle *)&RETVAL);
 	OUTPUT:
 	RETVAL
@@ -455,7 +458,7 @@ UpdateAlias(target, alias)
 	FSSpec	target
 	Handle	alias
 	CODE:
-	if (gLastMacOSErr = UpdateAlias(nil, &target, (AliasHandle) alias, &RETVAL)) {
+	if (gMacPerl_OSErr = UpdateAlias(nil, &target, (AliasHandle) alias, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -473,7 +476,7 @@ UpdateAliasRelative(from, target, alias)
 	FSSpec	&target
 	Handle	alias
 	CODE:
-	if (gLastMacOSErr = UpdateAlias(&from, &target, (AliasHandle) alias, &RETVAL)) {
+	if (gMacPerl_OSErr = UpdateAlias(&from, &target, (AliasHandle) alias, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -493,9 +496,9 @@ ResolveAlias(alias)
 		FSSpec	target;
 		Boolean	changed;
 		
-		gLastMacOSErr = ResolveAlias(nil, (AliasHandle) alias, &target, &changed);
+		gMacPerl_OSErr = ResolveAlias(nil, (AliasHandle) alias, &target, &changed);
 		
-		if (gLastMacOSErr)  {
+		if (gMacPerl_OSErr)  {
 			XSRETURN_EMPTY;
 		} 
 		XS_XPUSH(FSSpec, target);
@@ -520,9 +523,9 @@ ResolveAliasRelative(from, alias)
 		FSSpec	target;
 		Boolean	changed;
 		
-		gLastMacOSErr = ResolveAlias(&from, (AliasHandle) alias, &target, &changed);
+		gMacPerl_OSErr = ResolveAlias(&from, (AliasHandle) alias, &target, &changed);
 		
-		if (gLastMacOSErr)  {
+		if (gMacPerl_OSErr)  {
 			XSRETURN_EMPTY;
 		} 
 		XS_XPUSH(FSSpec, target);
@@ -541,7 +544,7 @@ GetAliasInfo(alias, index)
 	Handle	alias
 	short 	index
 	CODE:
-	if (gLastMacOSErr = GetAliasInfo((AliasHandle) alias, index, RETVAL)) {
+	if (gMacPerl_OSErr = GetAliasInfo((AliasHandle) alias, index, RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -602,10 +605,10 @@ FindFolder(vRefNum, folderType, createFolder=0)
 	OSType 	folderType
 	Boolean 	createFolder
 	CODE:
-	if (gLastMacOSErr = FindFolder(vRefNum, folderType, createFolder, &RETVAL.vRefNum, &RETVAL.parID)) {
+	if (gMacPerl_OSErr = FindFolder(vRefNum, folderType, createFolder, &RETVAL.vRefNum, &RETVAL.parID)) {
 		XSRETURN_UNDEF;
 	}
-	FSpUp(&RETVAL);
+	GUSIFSpUp(&RETVAL);
 	OUTPUT:
 	RETVAL
  

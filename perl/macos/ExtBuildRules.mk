@@ -25,17 +25,17 @@ INST_LIBDIR			= $(PERL_INST)$(ROOTEXT)
 INST_AUTODIR_PPC	= $(PERL_INST)MacPPC:auto:$(FULLEXT):
 INST_DYNAMIC_PPC 	= $(INST_AUTODIR_PPC)$(BASEEXT)
 
-AUTOSPLITFILE	= $(PERL) -I$(MACPERL_LIB) -I$(PERL_LIB) -e 'use AutoSplit; AutoSplit::autosplit($$ARGV[0], $$ARGV[1], 0, 1, 1) ;'
-LNS				= $(PERL) -e 'symlink($$ARGV[0], $$ARGV[1])'
-MKPATH			= $(PERL) -I$(MACPERL_LIB) -I$(PERL_LIB) -e 'use File::Path; mkpath(\@ARGV, 1);'
-FILTER			= $(PERL) -e '$$pat = shift @ARGV; print "\"", join("\"\n\"", grep(/$$pat/, @ARGV)), "\"\n";'
-NFILTER			= $(PERL) -e '$$pat = shift @ARGV; print "\"", join("\"\n\"", grep($$_ !~ /$$pat/, @ARGV)), "\"\n";'
-XSUBPP			= $(PERL_LIB)ExtUtils:xsubpp
-XSUBPPARGS		= $(TYPEMAPS:^"-typemap ") $(XSPROTOARG)
-CP              = Duplicate -y 
-RM_F			= $(MACPERL_SRC)SafeDel
-RM_RF			= $(MACPERL_SRC)SafeDel
-MV			    = Rename -y
+AUTOSPLITFILE	:= $(PERL) -I$(MACPERL_LIB) -I$(PERL_LIB) -e 'use AutoSplit; AutoSplit::autosplit($$ARGV[0], $$ARGV[1], 0, 1, 1) ;'
+LNS				:= $(PERL) -e 'symlink($$ARGV[0], $$ARGV[1])'
+MKPATH			:= $(PERL) -I$(MACPERL_LIB) -I$(PERL_LIB) -e 'use File::Path; mkpath(\@ARGV, 1);'
+FILTER			:= $(PERL) -e '$$pat = shift @ARGV; print "\"", join("\"\n\"", grep(/$$pat/, @ARGV)), "\"\n";'
+NFILTER			:= $(PERL) -e '$$pat = shift @ARGV; print "\"", join("\"\n\"", grep($$_ !~ /$$pat/, @ARGV)), "\"\n";'
+XSUBPP			:= $(PERL_LIB)ExtUtils:xsubpp
+XSUBPPARGS		:= $(TYPEMAPS:^"-typemap ") $(XSPROTOARG)
+CP              := Duplicate -y 
+RM_F			:= $(MACPERL_SRC)SafeDel
+RM_RF			:= $(MACPERL_SRC)SafeDel
+MV			    := Rename -y
 
 SOURCE 		*= $(BASEEXT).c $(MORE_SRC)
 MODULES		*= $(BASEEXT).pm $(MORE_MODS)
@@ -44,8 +44,8 @@ Objects68K		=  {$(SOURCE)}.68K.o
 ObjectsPPC		=  {$(SOURCE)}.PPC.o
 ObjectsSC		=  {$(SOURCE)}.SC.o
 ObjectsMrC		=  {$(SOURCE)}.MrC.o
-Libraries68K	=  `$(FILTER) 68K $(LDLOADLIBS)` `$(NFILTER) '68K|PPC' $(LDLOADLIBS)`
-LibrariesPPC	=  `$(FILTER) PPC $(LDLOADLIBS)` `$(NFILTER) '68K|PPC' $(LDLOADLIBS)`
+Libraries68K	:=	$(MACLIBS_68K) $(MACLIBS_ALL_68K) 
+LibrariesPPC	:=  $(MACLIBS_PPC) $(MACLIBS_ALL_PPC) $(MACLIBS_SHARED)  
 
 %.c .PRECIOUS : %.xs
 	Set Echo 1
@@ -66,11 +66,13 @@ install_dynamic_debug: install_dynamic
 	Duplicate -y $(BASEEXT).shlb.$(MACPERL_INST_EXT_PPC).xSYM $(INST_DYNAMIC).xSYM
 
 DYNAMIC_STDLIBS_PPC		*= 							\
-	$(PERL_SRC)PerlStub 							\
-	{{SharedLibraries}}InterfaceLib 					\
-	{{SharedLibraries}}MathLib 						\
-	"$(OldMWPPCLibraries)"ShLibRuntime.Lib 			\
-	"$(OldMWPPCLibraries)ANSI (NL) C.PPC.Lib"	
+	"$(MACPERL_SRC)PerlStub" 						\
+	"{{SharedLibraries}}InterfaceLib"				\
+	"{{SharedLibraries}}MathLib"					\
+	"{{MWPPCLibraries}}MSL ShLibRuntime.Lib" 		\
+	"{{MWPPCLibraries}}MSL RuntimePPC.Lib"			\
+	"{{MWPPCLibraries}}MSL C.PPC (NL).Lib"			\
+	"{{MWPPCLibraries}}MSL C++.PPC (NL).Lib"
 
 $(BASEEXT).Lib.68K : Objects68K
 	$(Lib68K) -o $(BASEEXT).Lib.68K :Obj:{$(Objects68K)}

@@ -764,14 +764,15 @@ sub XS_PUSH_handler
     	print "\tEXTEND(sp, 1);\n";
     } 
     print "\t++sp;\n";
-    generate_output($type, 0, "($value)", "*sp", 1);
+    &generate_output($type, 0, "($value)", "*sp", 1);
     "";
 }
 
 sub XS_OUTPUT_handler
 {
     my($type, $value, $arg) = @_;
-    generate_output($type, 0, "($value)", 0, 0, $arg);
+    
+    &generate_output($type, 0, "($value)", 0, 0, $arg);
     "";
 }
 
@@ -1812,7 +1813,7 @@ EOF
 	print "\tXSprePUSH;" if $c and not $prepush_done;
 	print "\tEXTEND(SP,$c);\n" if $c;
 	$xsreturn += $c;
-	generate_output($var_types{$_}, $num++, $_, 0, 1) for @in_out;
+	&generate_output($var_types{$_}, $num++, $_, 0, 1) for @in_out;
 
 	# do cleanup
 	process_keyword("CLEANUP|ALIAS|PROTOTYPE") ;
@@ -2004,16 +2005,20 @@ sub output_init {
     }
 }
 
+sub line_directive
+{
+    # work out the line number
+    my $line_no = $line_no[@line_no - @line -1] ;
+ 
+    return "#line $line_no \"$filename\"\n" ;
+}
+
 sub Warn
 {
     # work out the line number
     my $line_no = $line_no[@line_no - @line -1] ;
  
-    if ($^O eq "MacOS") {
-   	print STDERR "File '$filename'; Line $line_no # @_\n" ;
-    } else {
-   	print STDERR "@_ in $filename, line $line_no\n" ;
-    }
+    print STDERR "@_ in $filename, line $line_no\n" ;
 }
 
 sub blurt 
@@ -2165,7 +2170,7 @@ sub generate_output {
 		warn $@   if  $@;
 		print "\tSvSETMAGIC($arg);\n" if $do_setmagic;
 	    }
-	    elsif ($arg =~ /^ST\(\d+\)$/) {
+	    else {
 		eval "XS_process qq\a$expr\a";
 		warn $@   if  $@;
 		print "\tSvSETMAGIC($arg);\n" if $do_setmagic;

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:33  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.3  1998/04/07 01:03:11  neeri
  * MacPerl 5.2.0r4b1
  *
@@ -27,26 +30,26 @@
 #include <Resources.h>
 
 #define ResErrorReturn	\
-	if (gLastMacOSErr = ResError()) {	\
+	if (gMacPerl_OSErr = ResError()) {	\
 		XSRETURN_UNDEF;						\
 	} else {							\
 		XSRETURN_YES;						\
 	}
 
 #define ResErrorCheck						\
-	if (gLastMacOSErr = ResError()) {	\
+	if (gMacPerl_OSErr = ResError()) {	\
 		XSRETURN_UNDEF;						\
 	} else 0 	
 
 #define ResErrorCheckRetval				\
 	if (RETVAL == -1) {						\
-		gLastMacOSErr = ResError();		\
+		gMacPerl_OSErr = ResError();		\
 		XSRETURN_UNDEF;						\
 	} else 0
 
 #define ResErrorCheckRetvalNULL			\
 	if (!RETVAL) {								\
-		gLastMacOSErr = ResError();		\
+		gMacPerl_OSErr = ResError();		\
 		XSRETURN_UNDEF;						\
 	} else 0
 
@@ -825,7 +828,7 @@ ReadPartialResource(theResource, offset, count)
 	long	count
 	CODE:
 	RETVAL = newSV(count);
-	ReadPartialResource(theResource, offset, SvPV(RETVAL, na), count);
+	ReadPartialResource(theResource, offset, SvPV_nolen(RETVAL), count);
 	ResErrorCheck;
 	OUTPUT:
 	RETVAL

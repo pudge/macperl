@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:33  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.3  1997/11/18 00:53:23  neeri
  * MacPerl 5.1.5
  *
@@ -24,7 +27,7 @@
 #include "XSUB.h"
 #include <Types.h>
 #include <Memory.h>
-#include <TFileSpec.h>
+#include <GUSIFileSpec.h>
 #include <SpeechRecognition.h>
 
 #ifdef __CFM68K__
@@ -150,7 +153,7 @@ extern pascal OSErr SRProcessEnd(SRRecognizer recognizer, Boolean failed)
  THREEWORDINLINE(0x303C, 0x031E, 0xAA56);
 #endif
 
-#define SpeechFail(error)	if (gLastMacOSErr = (error)) { XSRETURN_UNDEF; } else 0
+#define SpeechFail(error)	if (gMacPerl_OSErr = (error)) { XSRETURN_UNDEF; } else 0
 
 MODULE = Mac::SpeechRecognition	PACKAGE = Mac::SpeechRecognition
 
@@ -232,7 +235,7 @@ SRSetProperty(srObject, selector, property)
 			propSize 	= 4;
 			break;
 		case kSRLMObjType:
-			memcpy(buf, SvPV(property, na), propSize = 4);
+			memcpy(buf, SvPV_nolen(property), propSize = 4);
 			break;
 		case kSRRejectedWord:
 		case kSRLanguageModelFormat:
@@ -245,12 +248,12 @@ SRSetProperty(srObject, selector, property)
 			propSize 	= 4;
 			break;
 		case kSRReadAudioFSSpec:
-			Path2FSSpec((char *) SvPV(property,na), (FSSpec *)buf);
+			GUSIPath2FSp((char *) SvPV_nolen(property), (FSSpec *)buf);
 			propSize = sizeof(FSSpec);
 			break;
 		case kSRListenKeyName:
 		case kSRKeyWord:
-			CopyC2PStr(SvPV(property,na), (StringPtr) buf);
+			MacPerl_CopyC2P(SvPV_nolen(property), (StringPtr) buf);
 			propSize = *buf+1;
 			break;
 		case kSRTEXTFormat:
@@ -359,7 +362,7 @@ SRGetProperty(srObject, selector)
 			sv_setref_pv(ST(0), "SRSpeechObject", (void*)*(SRSpeechObject *)buf);
 			break;
 		case kSRReadAudioFSSpec:
-			sv_setpv(ST(0), FSp2FullPath((FSSpec *)buf));
+			sv_setpv(ST(0), GUSIFSp2FullPath((FSSpec *)buf));
 			break;
 		case kSRListenKeyName:
 		case kSRKeyWord:

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:29  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:52:17  neeri
  * MacPerl 5.1.5
  *
@@ -27,8 +30,8 @@ typedef EventRecord	* ToolboxEvent;
 
 static void WipeFilter(void)
 {
-	gFilterEvent= nil;
-	gFilterMenu	= nil;
+	gMacPerl_FilterEvent= nil;
+	gMacPerl_FilterMenu	= nil;
 }
 
 static void FilterEvent(ToolboxEvent ev)
@@ -65,7 +68,7 @@ static void FilterEvent(ToolboxEvent ev)
 MODULE = Mac::Events	PACKAGE = ToolboxEvent
 
 BOOT:
-gFilterEvent= FilterEvent;
+gMacPerl_FilterEvent= FilterEvent;
 atexit(WipeFilter);
 
 =head2 Structures
@@ -237,4 +240,4 @@ WaitNextEvent(sleep=-1, rgn=nil)
 	long		sleep
 	RgnHandle	rgn
 	CODE:
-	(*gWaitEvent)(false, sleep, rgn);
+	(*gMacPerl_WaitEvent)(false, sleep, rgn);

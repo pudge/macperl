@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 01:48:18  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.3  1999/06/03 19:22:05  pudge
  * Add AEPutKey, AEPutKeyDesc, AEGetKeyDesc functions.  Inline constant subroutines.
  *
@@ -32,7 +35,7 @@
 typedef int 	SysRet;
 typedef long	SysRetLong;
 
-#define AEFail(error)	if (gLastMacOSErr = (error)) { XSRETURN_UNDEF; } else 0
+#define AEFail(error)	if (gMacPerl_OSErr = (error)) { XSRETURN_UNDEF; } else 0
 
 MODULE = Mac::AppleEvents	PACKAGE = AEDesc
 

@@ -1,8 +1,9 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'LINKTYPE'	=> 'static dynamic',
-	 TYPEMAPS   => '::Components:typemap ::Movies:typemap ::QuickDraw:typemap',
-    XSPROTOARG => '-noprototypes', 		# XXX remove later?
-   'LIBS'	=> ['"{{MWPPCLibraries}}"QuickTimeVRLib QTVRDummyCFM68KLib'],   # e.g., '-lm' 
+	NAME				=> q(Mac::QuickTimeVR),
+    'LINKTYPE'			=> 'static dynamic',
+	 TYPEMAPS   		=> '::Components:typemap ::Movies:typemap ::QuickDraw:typemap',
+    XSPROTOARG 			=> '-noprototypes', 		# XXX remove later?
+   'MACLIBS_ALL_PPC'	=> '"{{SharedLibraries}}"QuickTimeVRLib',   # e.g., '-lm' 
 );

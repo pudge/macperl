@@ -16,14 +16,15 @@ MAKE	 	= BuildProgram
 
 #
 # We try to support both CodeWarrior MPW Include models
-# 
+#
+CInc		=	
 MWCInc		= 	-nosyspath -convertpaths -nodefaults -i : -i :: -i {{SFIO}}include: -i {{GUSI}}include: -i "$(CWANSIInc)" -i "{{CIncludes}}"
 MPWInc		= 	-i : -i :: -i {{SFIO}}include: -i {{GUSI}}include: -i "{{CIncludes}}"
 COpt		=	-d MACOS_TRADITIONAL $(DOpt) -sym on
 Opt68K		=	-model far -mc68020 -mbg on
 OptPPC		=	-tb on
-MWCOpt		=	${COpt} ${MWCInc} 
-MPWOpt		=	${COpt} ${MPWInc} -includes unix -w 2,3,6,7,35,29
+MWCOpt		=	${COpt} ${MWCInc} ${CInc} 
+MPWOpt		=	${COpt} ${MPWInc} ${CInc} -includes unix -w 2,3,6,7,35,29
 MPWCpOpt	=	-ER -bool on 
 C68K		=	MWC68K ${MWCOpt} ${Opt68K}
 CPPC		=	MWCPPC ${MWCOpt} ${OptPPC}
@@ -43,6 +44,7 @@ LinkPPC		=	MWLinkPPC ${MWLOpt}
 MPWLOpt		=	${LOpt} -c 'MPS ' -t MPST -w -mf 
 LinkSC		=	Link ${MPWLOpt}  -model far
 LinkMrC		= 	PPCLink ${MPWLOpt}
+SharedLibPPC=	MWLinkPPC -xm sharedlibrary -sym on -msg nodup
 
 #
 # Directories

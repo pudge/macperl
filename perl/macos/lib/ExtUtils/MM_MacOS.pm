@@ -385,24 +385,6 @@ sub init_others {	# --- Initialize Other Attributes
 	$self = $ExtUtils::MakeMaker::Parent[-1];
     }
 
-    # Compute LDLOADLIBS from $self->{LIBS}
-    # Lets look at $self->{LIBS} carefully: It may be an anon array, a string or
-    # undefined. In any case we turn it into an anon array:
-
-    # May check $Config{libs} too, thus not empty.
-    $self->{LIBS}=[''] unless $self->{LIBS};
-
-    $self->{LIBS}=[$self->{LIBS}] if ref \$self->{LIBS} eq SCALAR;
-    my($libs);
-    foreach $libs ( @{$self->{LIBS}} ){
-	$libs =~ s/^\s*(.*\S)\s*$/$1/; # remove leading and trailing whitespace
-	# Any Mac library will start with :, { or $(. 
-	if ($libs =~ /^\"?(?::|\{|\$\()/){
-	    $self->{LDLOADLIBS} = $libs;
-	    last;
-	}
-    }
-
     if ( !$self->{OBJECT} ) {
 	# init_dirscan should have found out, if we have C files
 	$self->{OBJECT} = "";
@@ -642,7 +624,7 @@ sub constants {
     for $tmp (qw/
 	      NAME DISTNAME NAME_SYM VERSION VERSION_SYM XS_VERSION
 	      INST_LIB INST_ARCHLIB PERL_LIB PERL_SRC MACPERL_SRC MACPERL_LIB PERL FULLPERL
-	      XSPROTOARG LDLOADLIBS SOURCE TYPEMAPS
+	      XSPROTOARG MACLIBS_68K MACLIBS_PPC MACLIBS_SC MACLIBS_PPC MACLIBS_ALL_68K MACLIBS_ALL_PPC MACLIBS_SHARED SOURCE TYPEMAPS
 	      / ) {
 	next unless defined $self->{$tmp};
 	push @m, "$tmp = $self->{$tmp}\n";

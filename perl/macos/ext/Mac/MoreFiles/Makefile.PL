@@ -1,8 +1,9 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-	'NAME'     => 'Mac::MoreFiles',
+	NAME		=> q(Mac::MoreFiles),
     'LINKTYPE' => ['static', 'dynamic'],
-    'LIBS'	=> ['"{{MWPPCLibraries}}"PLStringFuncsPPC.lib'],   # e.g., '-lm' 
-	'OBJECT'   => 'MF.c DirectoryCopy.c FileCopy.c FSpCompat.c FullPath.c IterateDirectory.c MoreDesktopMgr.c MoreFiles.c MoreFilesExtras.c Search.c'
+    XSPROTOARG 	=> '-noprototypes', 		# XXX remove later?
+	 'INC'		=> '-i "$(PERL_SRC):MoreFiles:C Headers:"',
+	OBJECT		=> 'MF.c'
 );

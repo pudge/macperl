@@ -26,7 +26,7 @@ CallLDEF(
 	SV * 	ldef;
 	Handle 	cells;
 	
-	dSP;
+	dXSARGS;
 	
 	ldef = (SV *) lHandle[0]->userHandle;
 	
@@ -103,7 +103,7 @@ STRUCT ** ListHandle
 		if (STRUCT[0]->listDefProc == sLDEF) 
 			XS_OUTPUT(SV *, (SV *)STRUCT[0]->userHandle, $arg);
 		else
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 	Rect			dataBounds;
 	Handle			cells;
 	short			maxIndex;

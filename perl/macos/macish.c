@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.2  2000/08/21 08:22:04  neeri
+Build tweaks & forgotten files
+
 Revision 1.1  2000/08/14 01:48:17  neeri
 Checked into Sourceforge
 
@@ -743,3 +746,13 @@ done:
 	return buf;
 }
 
+void MacPerl_WaitEvent(Boolean busy, long sleep, RgnHandle rgn) 
+{
+	EventRecord ev;
+	
+	if (WaitNextEvent(highLevelEventMask, &ev, (sleep==-1 ? 0 : sleep), rgn)) {
+		if (ev.what == kHighLevelEvent) {
+			AEProcessAppleEvent(&ev);	/* Ignore errors */
+		}
+	}
+}

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:29  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.4  1998/04/07 01:02:47  neeri
  * MacPerl 5.2.0r4b1
  *
@@ -222,8 +225,8 @@ ModalDialog(modalFilter=0)
 	SV *	modalFilter
 	CODE:
 	{
-		Boolean saveInModalDialog = gInModalDialog;
-		gInModalDialog	= true;
+		Boolean saveInModalDialog = gMacPerl_InModalDialog;
+		gMacPerl_InModalDialog	= true;
 		if (modalFilter) {
 			SV * saveModalFilter = sModalFilter;
 			sModalFilter = modalFilter;
@@ -231,7 +234,7 @@ ModalDialog(modalFilter=0)
 			sModalFilter = saveModalFilter;
 		} else
 			ModalDialog(&uDefaultModalFilter, &RETVAL);
-		gInModalDialog	= saveInModalDialog;
+		gMacPerl_InModalDialog	= saveInModalDialog;
 	}
 	OUTPUT:
 	RETVAL

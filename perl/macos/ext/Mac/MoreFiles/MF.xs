@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:31  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:52:46  neeri
  * MacPerl 5.1.5
  *
@@ -22,7 +25,7 @@
 #include <Types.h>
 #include <Memory.h>
 #include <Files.h>
-#include <TFileSpec.h>
+#include <GUSIFileSpec.h>
 #include "MoreFiles.h"
 #include "FileCopy.h"
 #include "IterateDirectory.h"
@@ -37,7 +40,7 @@ static SV * newMortalFSSpec(short vRefNum, long dirID, ConstStr255Param name)
 	spec.parID		= dirID;
 	memcpy(spec.name, name, *name+1);
 	
-	return sv_2mortal(newSVpv(FSp2FullPath(&spec), 0));
+	return sv_2mortal(newSVpv(GUSIFSp2FullPath(&spec), 0));
 }
 
 static SV * gMFProc;
@@ -93,7 +96,7 @@ static pascal void MFIterateFilter(const CInfoPBRec * const cpbPtr,
 				cpbPtr->hFileInfo.ioVRefNum, 
 				cpbPtr->hFileInfo.ioFlParID, 
 				cpbPtr->hFileInfo.ioNamePtr));
-	XPUSHs(yourDataPtr);
+	XPUSHs(yourDataPtr); 
 	PUTBACK;
 	
 	perl_call_sv(gMFProc, G_SCALAR);
@@ -249,10 +252,10 @@ FSpDTGetAPPL(volume, creator)
 	CODE:
 	vol = SvPV(volume, len);
 	if (len && vol[len-1] == ':')
-		CopyC2PStr(vol, (vName = volName));
+		MacPerl_CopyC2P(vol, (vName = volName));
 	else
 		vRefNum = SvIV(volume);
-	if (gLastMacOSErr = FSpDTGetAPPL(vName, vRefNum, creator, &RETVAL)) {
+	if (gMacPerl_OSErr = FSpDTGetAPPL(vName, vRefNum, creator, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -282,7 +285,7 @@ Str255
 FSpDTGetComment(spec)
 	FSSpec	&spec
 	CODE:
-	if (gLastMacOSErr = FSpDTGetComment(&spec, RETVAL)) {
+	if (gMacPerl_OSErr = FSpDTGetComment(&spec, RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

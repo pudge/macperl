@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.2  2000/08/21 08:22:04  neeri
+Build tweaks & forgotten files
+
 Revision 1.1  2000/08/14 01:48:17  neeri
 Checked into Sourceforge
 
@@ -18,7 +21,7 @@ First build released to public
 
 #define sys_nerr	80
 
-char * sys_errlist[];
+extern char * sys_errlist[];
 
 #if TARGET_CPU_PPC
 #define ARCHNAME "MacPPC"
@@ -38,6 +41,7 @@ char * sys_errlist[];
 MP_EXT char				gMacPerl_AlwaysExtract							MP_INIT(false);
 MP_EXT char				gMacPerl_SyntaxError;
 MP_EXT char				gMacPerl_MustPrime;
+MP_EXT char				gMacPerl_InModalDialog							MP_INIT(false);
 MP_EXT short			gMacPerl_OSErr;
 MP_EXT char 			gMacPerl_PseudoFileName[256];
 MP_EXT int				gMacPerl_Quit;
@@ -49,7 +53,17 @@ MP_EXT int				gMacPerl_Quit;
 #include <Files.h>
 
 MP_EXT Handle	gMacPerl_Reply;
-MP_EXT void  	(*gMacPerl_HandleEvent)(EventRecord * ev)			MP_INIT(nil);
+MP_EXT void  	(*gMacPerl_HandleEvent)(EventRecord * ev)				MP_INIT(nil);
+MP_EXT void		(*gMacPerl_FilterEvent)(EventRecord * ev)				MP_INIT(nil);
+MP_EXT Boolean	(*gMacPerl_FilterMenu)(long menuSelection)			MP_INIT(nil);
+void MacPerl_WaitEvent(Boolean busy, long sleep, RgnHandle rgn);
+MP_EXT void		(*gMacPerl_WaitEvent)(Boolean busy, long sleep, RgnHandle rgn)	
+																						MP_INIT(MacPerl_WaitEvent);
+
+typedef OSErr	MacOSRet;
+typedef Handle	HandleRet;
+typedef Ptr		RawPtr;
+typedef Ptr		PtrRet;
 #endif
 
 typedef int (*MacPerl_EmulationProc)(void *, char *);

@@ -8,7 +8,7 @@ RealFSSpec		T_REALFSSPEC
 
 INPUT
 T_REALFSSPEC
-	Path2FSSpec((char *) SvPV($arg,na), &$var);
+	GUSIPath2FSp((char *) SvPV_nolen($arg), &$var);
 OUTPUT
 T_REALFSSPEC
-	sv_setpv($arg, FSp2Encoding(&$var));
+	sv_setpv($arg, GUSIFSp2Encoding(&$var));

@@ -1,7 +1,8 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'LINKTYPE'	=> 'static dynamic',
-    XSPROTOARG => '-noprototypes', 		# XXX remove later?
-    'LIBS'	=> ['"{{MWPPCLibraries}}"SpeechRecognitionLib'],   # e.g., '-lm' 
+	NAME			=> q(Mac::SpeechRecognition),
+    'LINKTYPE'		=> 'static dynamic',
+    XSPROTOARG 		=> '-noprototypes', 		# XXX remove later?
+    MACLIBS_SHARED	=> '"{{SharedLibraries}}"SpeechRecognitionLib',   # e.g., '-lm' 
 );

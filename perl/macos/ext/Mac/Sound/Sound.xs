@@ -126,7 +126,7 @@ SndNewChannel(synth, init, callback=0)
 	SV *	callback
 	CODE:
 	RETVAL = nil;
-	if (gLastMacOSErr = SndNewChannel(&RETVAL, synth, init, nil)) {
+	if (gMacPerl_OSErr = SndNewChannel(&RETVAL, synth, init, nil)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -153,7 +153,7 @@ SndControl(id, cmd)
 	SndCommand &cmd
 	CODE:
 	RETVAL = cmd;
-	if (gLastMacOSErr = SndControl(id, &RETVAL)) {
+	if (gMacPerl_OSErr = SndControl(id, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -191,7 +191,7 @@ SCStatus
 SndChannelStatus(chan)
 	SndChannel	chan
 	CODE:
-	if (gLastMacOSErr = SndChannelStatus(chan, sizeof(RETVAL), &RETVAL)) {
+	if (gMacPerl_OSErr = SndChannelStatus(chan, sizeof(RETVAL), &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -200,7 +200,7 @@ SndChannelStatus(chan)
 SMStatus
 SndManagerStatus()
 	CODE:
-	if (gLastMacOSErr = SndManagerStatus(sizeof(RETVAL), &RETVAL)) {
+	if (gMacPerl_OSErr = SndManagerStatus(sizeof(RETVAL), &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -232,7 +232,7 @@ NumVersion
 MACEVersion()
 
 void
-Comp3to1(inBuffer, inState=, numChannels=1, whichChannel=1)
+Comp3to1(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	SV *			inBuffer
 	StateBlock		inState
 	unsigned long	numChannels
@@ -243,7 +243,7 @@ Comp3to1(inBuffer, inState=, numChannels=1, whichChannel=1)
 		SV *			outBuffer = newSVpv("", cnt / 3);
 		StateBlock		outState;
 		Comp3to1(
-			SvPV(inBuffer, na), SvPV(outBuffer, na), cnt, 
+			SvPV_nolen(inBuffer), SvPV_nolen(outBuffer), cnt, 
 			(items > 1) ? &inState : nil, &outState, numChannels, whichChannel);
 		PUSHs(sv_2mortal(outBuffer));
 		if (GIMME == G_ARRAY) {
@@ -252,7 +252,7 @@ Comp3to1(inBuffer, inState=, numChannels=1, whichChannel=1)
 	}
 
 void
-Exp1to3(inBuffer, inState=, numChannels=1, whichChannel=1)
+Exp1to3(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	SV *			inBuffer
 	StateBlock		inState
 	unsigned long	numChannels
@@ -263,7 +263,7 @@ Exp1to3(inBuffer, inState=, numChannels=1, whichChannel=1)
 		SV *			outBuffer = newSVpv("", cnt*6);
 		StateBlock		outState;
 		Exp1to3(
-			SvPV(inBuffer, na), SvPV(outBuffer, na), cnt, 
+			SvPV_nolen(inBuffer), SvPV_nolen(outBuffer), cnt, 
 			(items > 1) ? &inState : nil, &outState, numChannels, whichChannel);
 		PUSHs(sv_2mortal(outBuffer));
 		if (GIMME == G_ARRAY) {
@@ -272,7 +272,7 @@ Exp1to3(inBuffer, inState=, numChannels=1, whichChannel=1)
 	}
 
 void
-Comp6to1(inBuffer, inState=, numChannels=1, whichChannel=1)
+Comp6to1(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	SV *			inBuffer
 	StateBlock		inState
 	unsigned long	numChannels
@@ -283,7 +283,7 @@ Comp6to1(inBuffer, inState=, numChannels=1, whichChannel=1)
 		SV *			outBuffer = newSVpv("", cnt / 6);
 		StateBlock		outState;
 		Comp6to1(
-			SvPV(inBuffer, na), SvPV(outBuffer, na), cnt, 
+			SvPV_nolen(inBuffer), SvPV_nolen(outBuffer), cnt, 
 			(items > 1) ? &inState : nil, &outState, numChannels, whichChannel);
 		PUSHs(sv_2mortal(outBuffer));
 		if (GIMME == G_ARRAY) {
@@ -292,7 +292,7 @@ Comp6to1(inBuffer, inState=, numChannels=1, whichChannel=1)
 	}
 
 void
-Exp1to6(inBuffer, inState=, numChannels=1, whichChannel=1)
+Exp1to6(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	SV *			inBuffer
 	StateBlock		inState
 	unsigned long	numChannels
@@ -303,7 +303,7 @@ Exp1to6(inBuffer, inState=, numChannels=1, whichChannel=1)
 		SV *			outBuffer = newSVpv("", cnt * 6);
 		StateBlock		outState;
 		Exp1to6(
-			SvPV(inBuffer, na), SvPV(outBuffer, na), cnt, 
+			SvPV_nolen(inBuffer), SvPV_nolen(outBuffer), cnt, 
 			(items > 1) ? &inState : nil, &outState, numChannels, whichChannel);
 		PUSHs(sv_2mortal(outBuffer));
 		if (GIMME == G_ARRAY) {
@@ -314,7 +314,7 @@ Exp1to6(inBuffer, inState=, numChannels=1, whichChannel=1)
 long
 GetSysBeepVolume()
 	CODE:
-	if (gLastMacOSErr = GetSysBeepVolume(&RETVAL)) {
+	if (gMacPerl_OSErr = GetSysBeepVolume(&RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -327,7 +327,7 @@ SetSysBeepVolume(level)
 long
 GetDefaultOutputVolume()
 	CODE:
-	if (gLastMacOSErr = GetDefaultOutputVolume(&RETVAL)) {
+	if (gMacPerl_OSErr = GetDefaultOutputVolume(&RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -341,7 +341,7 @@ long
 GetSoundHeaderOffset(sndHandle)
 	Handle	sndHandle
 	CODE:
-	if (gLastMacOSErr = GetSoundHeaderOffset((SndListHandle)sndHandle, &RETVAL)) {
+	if (gMacPerl_OSErr = GetSoundHeaderOffset((SndListHandle)sndHandle, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -360,7 +360,7 @@ GetCompressionInfo(compressionID, format, numChannels, sampleSize)
 	short	numChannels
 	short	sampleSize
 	CODE:
-	if (gLastMacOSErr = 
+	if (gMacPerl_OSErr = 
 		GetCompressionInfo(
 			compressionID, format, numChannels, sampleSize, &RETVAL)
 	) {
@@ -429,7 +429,7 @@ Str255
 GetCompressionName(compressionType)
 	OSType	compressionType
 	CODE:
-	if (gLastMacOSErr = GetCompressionName(compressionType, RETVAL)) {
+	if (gMacPerl_OSErr = GetCompressionName(compressionType, RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -491,7 +491,7 @@ SndRecord(filterProc, corner, quality)
 	CODE:
 	{
 		RETVAL = nil;
-		if (gLastMacOSErr = 
+		if (gMacPerl_OSErr = 
 			SndRecord(nil, corner, quality, (SndListHandle *)&RETVAL)
 		) {
 			XSRETURN_UNDEF;
@@ -528,7 +528,7 @@ SPBGetIndexedDevice(count)
 		Str255	name;
 		Handle 	icon;
 		
-		if (gLastMacOSErr = SPBGetIndexedDevice(count, name, &icon)) {
+		if (gMacPerl_OSErr = SPBGetIndexedDevice(count, name, &icon)) {
 			XSRETURN_UNDEF;
 		}
 		XS_PUSH(Str255, name);
@@ -544,7 +544,7 @@ SPBOpenDevice(deviceName, permission)
 	Str255	deviceName
 	short	permission
 	CODE:
-	if (gLastMacOSErr = SPBOpenDevice(deviceName, permission, &RETVAL)) {
+	if (gMacPerl_OSErr = SPBOpenDevice(deviceName, permission, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -589,7 +589,7 @@ SPBGetRecordingStatus(inRefNum)
 		unsigned long totalMsecsToRecord;
 		unsigned long numberOfMsecsRecorded;
 		
-		if (gLastMacOSErr = 
+		if (gMacPerl_OSErr = 
 			SPBGetRecordingStatus(
 				inRefNum, &recordingStatus, &meterLevel,
 				&totalSamplesToRecord, &numberOfSamplesRecorded,
@@ -625,7 +625,7 @@ long
 SPBMillisecondsToBytes(inRefNum)
 	long	inRefNum
 	CODE:
-	if (gLastMacOSErr = SPBMillisecondsToBytes(inRefNum, &RETVAL)) {
+	if (gMacPerl_OSErr = SPBMillisecondsToBytes(inRefNum, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -635,7 +635,7 @@ long
 SPBBytesToMilliseconds(inRefNum)
 	long	inRefNum
 	CODE:
-	if (gLastMacOSErr = SPBBytesToMilliseconds(inRefNum, &RETVAL)) {
+	if (gMacPerl_OSErr = SPBBytesToMilliseconds(inRefNum, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -651,7 +651,7 @@ SetupSndHeader(sndHandle, numChannels, sampleRate, sampleSize, compressionType, 
 	short	baseNote
 	unsigned long	numBytes
 	CODE:
-	if (gLastMacOSErr = 
+	if (gMacPerl_OSErr = 
 		SetupSndHeader(
 			(SndListHandle)sndHandle, numChannels, sampleRate, sampleSize, 
 			compressionType, baseNote, numBytes, &RETVAL)

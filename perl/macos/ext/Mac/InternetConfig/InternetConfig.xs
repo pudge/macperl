@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:31  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.3  1998/04/07 01:02:55  neeri
  * MacPerl 5.2.0r4b1
  *
@@ -25,8 +28,8 @@
 
 #undef pad
 
-#include <ICAPI.h>
-#include <TFileSpec.h>
+#include <InternetConfig.h>
+#include <GUSIFileSpec.h>
 #include <Components.h>
 
 static SV * MakeHndSV(Handle hdl)
@@ -139,7 +142,7 @@ ICInstance
 ICStart(creator='McPL')
 	OSType	creator;
 	CODE:
-	if (gLastMacOSErr = ICStart(&RETVAL, creator)) {
+	if (gMacPerl_OSErr = ICStart(&RETVAL, creator)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -190,7 +193,7 @@ ICGeneralFindConfigFile(inst, search_prefs=1, can_create=0, ...)
 	CODE:
 	count = 0;
 	for (i=3; i<items; ++i)
-		if (!Path2FSSpec((char *) SvPV(ST(i),na), &spec) && !FSpDown(&spec, "\p")) {
+		if (!GUSIPath2FSp((char *) SvPV_nolen(ST(i)), &spec) && !GUSIFSpDown(&spec, "\p")) {
 			spex[count].vRefNum = spec.vRefNum;
 			spex[count].dirID	= spec.parID;
 			++count;
@@ -248,7 +251,7 @@ ICGetConfigName(inst, longname=0)
 	ICInstance	inst;
 	Boolean		longname;
 	CODE:
-	if (gLastMacOSErr = ICGetConfigName(inst, longname, RETVAL)) {
+	if (gMacPerl_OSErr = ICGetConfigName(inst, longname, RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -270,7 +273,7 @@ ICGetConfigReference(inst)
 	if (!(RETVAL = NewHandle(0))) {
 		XSRETURN_UNDEF;
 	}
-	if (gLastMacOSErr = ICGetConfigReference(inst, (ICConfigRefHandle) RETVAL)) {
+	if (gMacPerl_OSErr = ICGetConfigReference(inst, (ICConfigRefHandle) RETVAL)) {
 		DisposeHandle(RETVAL);
 		XSRETURN_UNDEF;
 	}
@@ -315,7 +318,7 @@ long
 ICGetSeed(inst)
 	ICInstance	inst;
 	CODE:
-	if (gLastMacOSErr = ICGetSeed(inst, &RETVAL)) {
+	if (gMacPerl_OSErr = ICGetSeed(inst, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -334,7 +337,7 @@ ComponentInstance
 ICGetComponentInstance(inst)
 	ICInstance	inst;
 	CODE:
-	if (gLastMacOSErr = ICGetComponentInstance(inst, (Ptr *)&RETVAL)) {
+	if (gMacPerl_OSErr = ICGetComponentInstance(inst, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -381,8 +384,8 @@ ICGetPref(inst, key)
 	Handle	pref;
 	PPCODE:
 	pref = NewHandle(0);
-	gLastMacOSErr = ICFindPrefHandle(inst, key, &attr, pref);
-	if (!gLastMacOSErr) 
+	gMacPerl_OSErr = ICFindPrefHandle(inst, key, &attr, pref);
+	if (!gMacPerl_OSErr) 
 		if (GIMME != G_ARRAY) {
 			XPUSHs(sv_2mortal(MakeHndSV(pref)));
 		} else {
@@ -439,7 +442,7 @@ long
 ICCountPref(inst)
 	ICInstance	inst;
 	CODE:
-	if (gLastMacOSErr = ICCountPref(inst, &RETVAL)) {
+	if (gMacPerl_OSErr = ICCountPref(inst, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -460,7 +463,7 @@ ICGetIndPref(inst, n)
 	ICInstance	inst;
 	long		n;
 	CODE:
-	if (gLastMacOSErr = ICGetIndPref(inst, n, RETVAL)) {
+	if (gMacPerl_OSErr = ICGetIndPref(inst, n, RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -557,8 +560,8 @@ ICParseURL(ic, hint, sv, start=-1, end=-1)
 		end	  = len;
 	} else if (end == -1) 
 		end   = start;
-	gLastMacOSErr = ICParseURL(ic, hint, data, len, &start, &end, url);
-	if (!gLastMacOSErr) 
+	gMacPerl_OSErr = ICParseURL(ic, hint, data, len, &start, &end, url);
+	if (!gMacPerl_OSErr) 
 		if (GIMME != G_ARRAY) {
 			XPUSHs(sv_2mortal(MakeHndSV(url)));
 		} else {
@@ -605,8 +608,8 @@ ICLaunchURL(ic, hint, sv, start=-1, end=-1)
 		end	  = len;
 	} else if (end == -1) 
 		end   = start;
-	gLastMacOSErr = ICLaunchURL(ic, hint, data, len, &start, &end);
-	if (!gLastMacOSErr) 
+	gMacPerl_OSErr = ICLaunchURL(ic, hint, data, len, &start, &end);
+	if (!gMacPerl_OSErr) 
 		if (GIMME != G_ARRAY) {
 			XPUSHs(sv_2mortal(newSViv(1)));
 		} else {
@@ -624,7 +627,7 @@ ICMapFilename(inst, filename)
 	ICInstance		inst	
 	Str255 			filename
 	CODE:
-	if (gLastMacOSErr = ICMapFilename(inst, filename, &RETVAL)) {
+	if (gMacPerl_OSErr = ICMapFilename(inst, filename, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -637,7 +640,7 @@ file and returns the most appropriate C<ICMapEntry>.
 
 =cut
 ICMapEntry
-ICMapTypeCreator(inst, fType, fCreator, filename=)
+ICMapTypeCreator(inst, fType, fCreator, filename=NO_INIT)
 	ICInstance 	inst
 	OSType 		fType
 	OSType 		fCreator
@@ -645,7 +648,7 @@ ICMapTypeCreator(inst, fType, fCreator, filename=)
 	CODE:
 	if (items < 4)
 		filename[0] = 0;
-	if (gLastMacOSErr = ICMapTypeCreator(inst, fType, fCreator, filename, &RETVAL)) {
+	if (gMacPerl_OSErr = ICMapTypeCreator(inst, fType, fCreator, filename, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -662,7 +665,7 @@ ICMapEntriesFilename(inst, entries, filename)
 	Handle			entries
 	Str255 			filename
 	CODE:
-	if (gLastMacOSErr = ICMapEntriesFilename(inst, entries, filename, &RETVAL)) {
+	if (gMacPerl_OSErr = ICMapEntriesFilename(inst, entries, filename, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -675,7 +678,7 @@ file and returns the most appropriate C<ICMapEntry>.
 
 =cut
 ICMapEntry
-ICMapEntriesTypeCreator(inst, entries, fType, fCreator, filename=)
+ICMapEntriesTypeCreator(inst, entries, fType, fCreator, filename=NO_INIT)
 	ICInstance 	inst
 	Handle		entries
 	OSType 		fType
@@ -684,7 +687,7 @@ ICMapEntriesTypeCreator(inst, entries, fType, fCreator, filename=)
 	CODE:
 	if (items < 5)
 		filename[0] = 0;
-	if (gLastMacOSErr = ICMapEntriesTypeCreator(inst, entries, fType, fCreator, filename, &RETVAL)) {
+	if (gMacPerl_OSErr = ICMapEntriesTypeCreator(inst, entries, fType, fCreator, filename, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -700,7 +703,7 @@ ICCountMapEntries(inst, entries)
 	ICInstance 	inst
 	Handle 		entries
 	CODE:
-	if (gLastMacOSErr = ICCountMapEntries(inst, entries, &RETVAL)) {
+	if (gMacPerl_OSErr = ICCountMapEntries(inst, entries, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -724,7 +727,7 @@ ICGetIndMapEntry(inst, entries, ndx)
 		long		pos;
 		ICMapEntry	entry;
 		
-		if (gLastMacOSErr = ICGetIndMapEntry(inst, entries, ndx, &pos, &entry)) {
+		if (gMacPerl_OSErr = ICGetIndMapEntry(inst, entries, ndx, &pos, &entry)) {
 			XSRETURN_EMPTY;
 		}
 		XS_XPUSH(long, pos);
@@ -742,7 +745,7 @@ ICGetMapEntry(inst, entries, pos)
 	Handle 		entries
 	long 		pos
 	CODE:
-	if (gLastMacOSErr = ICGetMapEntry(inst, entries, pos, &RETVAL)) {
+	if (gMacPerl_OSErr = ICGetMapEntry(inst, entries, pos, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

@@ -1,8 +1,9 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'LINKTYPE'	=> 'static dynamic',
-	 TYPEMAPS   => '::QuickDraw:typemap',
-    XSPROTOARG => '-noprototypes', 		# XXX remove later?
-   'LIBS'	=> ['"{{MWPPCLibraries}}"SoundLib'],   # e.g., '-lm' 
+	NAME			=> q(Mac::Sound),
+    'LINKTYPE'		=> 'static dynamic',
+	 TYPEMAPS   	=> '::QuickDraw:typemap',
+    XSPROTOARG 		=> '-noprototypes', 		# XXX remove later?
+   'MACLIBS_SHARED'	=> '"{{SharedLibraries}}"SoundLib',   # e.g., '-lm' 
 );

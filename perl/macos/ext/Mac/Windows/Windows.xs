@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:34  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.4  1998/04/07 01:03:21  neeri
  * MacPerl 5.2.0r4b1
  *
@@ -43,7 +46,7 @@ CallWDEF(short varCode, WindowPeek win, short message, long param)
 {
 	SV * 	wdef;
 	
-	dSP;
+	dXSARGS;
 	
 	wdef = ((PerlWDEFDataHdl)win->dataHandle)[0]->wdef;
 	
@@ -188,7 +191,7 @@ STRUCT * GrafPtr
 			sv_setsv($arg, ((PerlWDEFDataHdl)STRUCT->dataHandle)[0]->wdef);
 			HUnlock(STRUCT->dataHandle);
 		} else
-			$arg = &sv_undef;
+			$arg = &PL_sv_undef;
 	Handle			titleHandle;
 		READ_ONLY
 	short			titleWidth;

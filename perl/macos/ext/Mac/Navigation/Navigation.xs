@@ -329,7 +329,7 @@ long
 count(reply)
 	NavReplyRecord	reply
 	CODE:
-	if (gLastMacOSErr = AECountItems(&reply->selection, &RETVAL)) {
+	if (gMacPerl_OSErr = AECountItems(&reply->selection, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -350,7 +350,7 @@ file(reply, index)
 		DescType	type;
 		Size		sz;
 		
-		if (gLastMacOSErr = 
+		if (gMacPerl_OSErr = 
 			AEGetNthPtr(
 				&reply->selection, index, typeFSS, 
 				&kw, &type, &RETVAL, sizeof(FSSpec), &sz)
@@ -374,7 +374,7 @@ object(reply, index)
 	{
 		AEKeyword	kw;
 		
-		if (gLastMacOSErr = 
+		if (gMacPerl_OSErr = 
 			AEGetNthDesc(&reply->selection, index, typeWildCard, &kw, &RETVAL)
 		) {
 			XSRETURN_UNDEF;
@@ -432,7 +432,7 @@ NavLibraryVersion()
 NavDialogOptions
 NavGetDefaultDialogOptions()
 	CODE:
-	if (gLastMacOSErr = NavGetDefaultDialogOptions(&RETVAL)) {
+	if (gMacPerl_OSErr = NavGetDefaultDialogOptions(&RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -463,7 +463,7 @@ NavGetFile(defaultLocation, dialogOptions, typeList, eventProc=0, previewProc=0,
 		hooks.previewProc	= previewProc;
 		hooks.filterProc	= filterProc;
 		
-		gLastMacOSErr = NavGetFile(l, RETVAL=NewReply(), &dialogOptions, 
+		gMacPerl_OSErr = NavGetFile(l, RETVAL=NewReply(), &dialogOptions, 
 			(eventProc	 && SvTRUE(eventProc) ? &uPerlEventProc 	: nil),
 			(previewProc && SvTRUE(previewProc) ? &uPerlPreviewProc	: nil),
 			(filterProc	 && SvTRUE(filterProc) ? &uPerlFilterProc  : nil),
@@ -472,7 +472,7 @@ NavGetFile(defaultLocation, dialogOptions, typeList, eventProc=0, previewProc=0,
 		if (l)
 			AEDisposeDesc(l);
 			
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}
@@ -501,14 +501,14 @@ NavPutFile(defaultLocation, dialogOptions, fileType, fileCreator, eventProc=0)
 			l = nil;
 		hooks.eventProc 	= eventProc;
 		
-		gLastMacOSErr = NavPutFile(l, RETVAL=NewReply(), &dialogOptions, 
+		gMacPerl_OSErr = NavPutFile(l, RETVAL=NewReply(), &dialogOptions, 
 			(eventProc	 && SvTRUE(eventProc) ? &uPerlEventProc 	: nil),
 			fileType, fileCreator, (NavCallBackUserData)&hooks);
 		
 		if (l)
 			AEDisposeDesc(l);
 			
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}
@@ -530,7 +530,7 @@ NavAskSaveChanges(dialogOptions, action, eventProc=0)
 	
 		hooks.eventProc 	= eventProc;
 		
-		if (gLastMacOSErr = NavAskSaveChanges(&dialogOptions, action, &RETVAL,
+		if (gMacPerl_OSErr = NavAskSaveChanges(&dialogOptions, action, &RETVAL,
 			(eventProc	 && SvTRUE(eventProc) ? &uPerlEventProc 	: nil),
 			(NavCallBackUserData)&hooks)
 		) {
@@ -554,7 +554,7 @@ NavCustomAskSaveChanges(dialogOptions, eventProc)
 	
 		hooks.eventProc 	= eventProc;
 		
-		if (gLastMacOSErr = NavCustomAskSaveChanges(&dialogOptions, &RETVAL,
+		if (gMacPerl_OSErr = NavCustomAskSaveChanges(&dialogOptions, &RETVAL,
 			(eventProc	 && SvTRUE(eventProc) ? &uPerlEventProc 	: nil),
 			(NavCallBackUserData)&hooks)
 		) {
@@ -578,7 +578,7 @@ NavAskDiscardChanges(dialogOptions, eventProc)
 	
 		hooks.eventProc 	= eventProc;
 		
-		if (gLastMacOSErr = NavAskDiscardChanges(&dialogOptions, &RETVAL,
+		if (gMacPerl_OSErr = NavAskDiscardChanges(&dialogOptions, &RETVAL,
 			(eventProc	 && SvTRUE(eventProc) ? &uPerlEventProc 	: nil),
 			(NavCallBackUserData)&hooks)
 		) {
@@ -613,7 +613,7 @@ NavChooseFile(defaultLocation, dialogOptions, typeList, eventProc=0, previewProc
 		hooks.previewProc	= previewProc;
 		hooks.filterProc	= filterProc;
 		
-		gLastMacOSErr = NavChooseFile(l, RETVAL=NewReply(), &dialogOptions, 
+		gMacPerl_OSErr = NavChooseFile(l, RETVAL=NewReply(), &dialogOptions, 
 			(eventProc	&& SvTRUE(eventProc)	? &uPerlEventProc 	: nil),
 			(previewProc&& SvTRUE(previewProc) ? &uPerlPreviewProc	: nil),
 			(filterProc	&& SvTRUE(filterProc) ? &uPerlFilterProc  : nil),
@@ -622,7 +622,7 @@ NavChooseFile(defaultLocation, dialogOptions, typeList, eventProc=0, previewProc
 		if (l)
 			AEDisposeDesc(l);
 			
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}
@@ -651,7 +651,7 @@ NavChooseFolder(defaultLocation, dialogOptions, eventProc=0, filterProc=0)
 		hooks.eventProc 	= eventProc;
 		hooks.filterProc	= filterProc;
 		
-		gLastMacOSErr = NavChooseFolder(l, RETVAL=NewReply(), &dialogOptions, 
+		gMacPerl_OSErr = NavChooseFolder(l, RETVAL=NewReply(), &dialogOptions, 
 			(eventProc	 && SvTRUE(eventProc) ? &uPerlEventProc 	: nil),
 			(filterProc	 && SvTRUE(filterProc) ? &uPerlFilterProc  : nil),
 			(NavCallBackUserData)&hooks);
@@ -659,7 +659,7 @@ NavChooseFolder(defaultLocation, dialogOptions, eventProc=0, filterProc=0)
 		if (l)
 			AEDisposeDesc(l);
 			
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}
@@ -688,7 +688,7 @@ NavChooseVolume(defaultLocation, dialogOptions, eventProc=0, filterProc=0)
 		hooks.eventProc 	= eventProc;
 		hooks.filterProc	= filterProc;
 		
-		gLastMacOSErr = NavChooseVolume(l, RETVAL=NewReply(), &dialogOptions, 
+		gMacPerl_OSErr = NavChooseVolume(l, RETVAL=NewReply(), &dialogOptions, 
 			(eventProc	&& SvTRUE(eventProc)  ? &uPerlEventProc 	: nil),
 			(filterProc && SvTRUE(filterProc) ? &uPerlFilterProc  : nil),
 			(NavCallBackUserData)&hooks);
@@ -696,7 +696,7 @@ NavChooseVolume(defaultLocation, dialogOptions, eventProc=0, filterProc=0)
 		if (l)
 			AEDisposeDesc(l);
 			
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}
@@ -725,7 +725,7 @@ NavChooseObject(defaultLocation, dialogOptions, eventProc=0, filterProc=0)
 		hooks.eventProc 	= eventProc;
 		hooks.filterProc	= filterProc;
 		
-		gLastMacOSErr = NavChooseObject(l, RETVAL=NewReply(), &dialogOptions, 
+		gMacPerl_OSErr = NavChooseObject(l, RETVAL=NewReply(), &dialogOptions, 
 			(eventProc	&& SvTRUE(eventProc)  ? &uPerlEventProc 	: nil),
 			(filterProc && SvTRUE(filterProc) ? &uPerlFilterProc  : nil),
 			(NavCallBackUserData)&hooks);
@@ -733,7 +733,7 @@ NavChooseObject(defaultLocation, dialogOptions, eventProc=0, filterProc=0)
 		if (l)
 			AEDisposeDesc(l);
 			
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}
@@ -760,14 +760,14 @@ NavNewFolder(defaultLocation, dialogOptions, eventProc=0)
 			l = nil;
 		hooks.eventProc 	= eventProc;
 		
-		gLastMacOSErr = NavNewFolder(l, RETVAL=NewReply(), &dialogOptions, 
+		gMacPerl_OSErr = NavNewFolder(l, RETVAL=NewReply(), &dialogOptions, 
 			(eventProc  && SvTRUE(eventProc)	? &uPerlEventProc 	: nil),
 			(NavCallBackUserData)&hooks);
 		
 		if (l)
 			AEDisposeDesc(l);
 			
-		if (gLastMacOSErr) {
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}

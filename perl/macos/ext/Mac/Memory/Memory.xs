@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:31  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.4  1999/06/04 16:01:31  pudge
  * Fixed Handle::get again.  Added version number (1.20).
  *
@@ -33,7 +36,7 @@ typedef int	SysRet;
 
 #define MemErrorReturn	\
 	ST(0) = sv_newmortal();					\
-	if (!(gLastMacOSErr = MemError()))	\
+	if (!(gMacPerl_OSErr = MemError()))	\
 		sv_setiv(ST(0), 1);
 
 MODULE = Mac::Memory	PACKAGE = Handle
@@ -63,7 +66,7 @@ new(package,data=0)
 	if (data) {
 		STRLEN	len;
 		Ptr		ptr	=	SvPV(data, len);
-		if (gLastMacOSErr = PtrToHand(ptr, &RETVAL, len)) {
+		if (gMacPerl_OSErr = PtrToHand(ptr, &RETVAL, len)) {
 			XSRETURN_UNDEF;
 		}
 	} else
@@ -237,7 +240,7 @@ state(hand, state=0)
 
 Open a stream to a handle and return it.
 
-=cut
+NOT DEFINED AT THE MOMENT
 
 SysRet
 _open(hand, mode)
@@ -462,25 +465,25 @@ PtrRet
 NewPtr(byteCount)
 	long	byteCount
 	CLEANUP:
-	gLastMacOSErr = MemError();
+	gMacPerl_OSErr = MemError();
 
 PtrRet
 NewPtrSys(byteCount)
 	long	byteCount
 	CLEANUP:
-	gLastMacOSErr = MemError();
+	gMacPerl_OSErr = MemError();
 
 PtrRet
 NewPtrClear(byteCount)
 	long	byteCount
 	CLEANUP:
-	gLastMacOSErr = MemError();
+	gMacPerl_OSErr = MemError();
 
 PtrRet
 NewPtrSysClear(byteCount)
 	long	byteCount
 	CLEANUP:
-	gLastMacOSErr = MemError();
+	gMacPerl_OSErr = MemError();
 
 =item MaxBlock
 
@@ -609,8 +612,8 @@ TempNewHandle(logicalSize)
 	long	logicalSize
 	CODE:
 	{
-		RETVAL = TempNewHandle(logicalSize, &gLastMacOSErr);
-		if (gLastMacOSErr) {
+		RETVAL = TempNewHandle(logicalSize, &gMacPerl_OSErr);
+		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
 	}
@@ -820,7 +823,7 @@ long
 GetPtrSize(p)
 	Ptr	p
 	CLEANUP:
-	gLastMacOSErr = MemError();
+	gMacPerl_OSErr = MemError();
 
 =item SetPtrSize PTR, NEWSIZE
 
@@ -975,7 +978,7 @@ char
 HGetState(h)
 	Handle	h
 	CLEANUP:
-	if (gLastMacOSErr = MemError())
+	if (gMacPerl_OSErr = MemError())
 		RETVAL = 0;
 
 =item HSetState HANDLE, STATE
@@ -1003,7 +1006,7 @@ Handle
 HandToHand(theHndl)
 	Handle	&theHndl
 	CODE:
-	if (gLastMacOSErr = HandToHand(&theHndl)) {
+	if (gMacPerl_OSErr = HandToHand(&theHndl)) {
 		XSRETURN_UNDEF;
 	} else {
 		RETVAL = theHndl;
@@ -1025,7 +1028,7 @@ PtrToHand(srcPtr, size)
 	Ptr		srcPtr
 	long		size
 	CODE:
-	if (gLastMacOSErr = PtrToHand(srcPtr, &RETVAL, size)) {
+	if (gMacPerl_OSErr = PtrToHand(srcPtr, &RETVAL, size)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

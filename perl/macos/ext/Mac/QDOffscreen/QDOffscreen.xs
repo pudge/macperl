@@ -34,9 +34,9 @@ NewGWorld(PixelDepth, boundsRect, cTable=nil, aGDevice=nil, flags=0)
 	GDHandle	aGDevice
 	long	flags
 	CODE:
-	gLastMacOSErr =
+	gMacPerl_OSErr =
 		NewGWorld(&RETVAL, PixelDepth, &boundsRect, cTable, aGDevice, flags);
-	if (gLastMacOSErr) { 
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:

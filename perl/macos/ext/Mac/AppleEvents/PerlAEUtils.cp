@@ -5,12 +5,17 @@ Author	:	Matthias Neeracher
 Language	:	Metrowerks C++
 
 $Log$
+Revision 1.1  2000/08/14 01:48:18  neeri
+Checked into Sourceforge
+
 Revision 1.1  1997/04/07 20:49:09  neeri
 Synchronized with MacPerl 5.1.4a1
 
 *********************************************************************/
 
 #define MAC_CONTEXT
+
+#define EOF 	-1
 
 #include "EXTERN.h"
 #include "perl.h"
@@ -143,7 +148,7 @@ Boolean PAEDoNextParam(char ** formscan, SV * sv)
 	case 0:
 		return false;
 	case 1:
-		vPushArgs(4, (AEDesc *)SvPV((SV*)SvRV(sv), na));
+		vPushArgs(4, (AEDesc *)SvPV_nolen((SV*)SvRV(sv)));
 		break;
 	case 2:
 		ptr = SvPV(sv, length);

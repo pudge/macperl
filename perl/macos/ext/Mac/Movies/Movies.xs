@@ -38,7 +38,7 @@ pascal Boolean ActionFilter(ComponentInstance mc, short *action, void *params)
 {
 	Boolean result;
 	
-	dSP ;
+	dXSARGS ;
 
 	ENTER ;
 	SAVETMPS;
@@ -461,8 +461,8 @@ long
 GetMovieCompositeBufferFlags(theMovie)
 	Movie	theMovie
 	CODE:
-	gLastMacOSErr = GetMovieCompositeBufferFlags(theMovie, &RETVAL);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = GetMovieCompositeBufferFlags(theMovie, &RETVAL);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -1279,8 +1279,8 @@ MatrixRecord
 GetTrackDisplayMatrix(theTrack)
 	Track	theTrack
 	CODE:
-	gLastMacOSErr = GetTrackDisplayMatrix(theTrack, &RETVAL);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = GetTrackDisplayMatrix(theTrack, &RETVAL);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -1290,8 +1290,8 @@ Handle
 GetTrackSoundLocalizationSettings(theTrack)
 	Track	theTrack
 	CODE:
-	gLastMacOSErr = GetTrackSoundLocalizationSettings(theTrack, &RETVAL);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = GetTrackSoundLocalizationSettings(theTrack, &RETVAL);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -1590,11 +1590,11 @@ AddMediaSample(theMedia, dataIn, inOffset, size, durationPerSample, sampleDescri
 	long	numberOfSamples
 	short	sampleFlags
 	CODE:
-	gLastMacOSErr = 
+	gMacPerl_OSErr = 
 		AddMediaSample(
 			theMedia, dataIn, inOffset, size, durationPerSample, 
 			sampleDescriptionH, numberOfSamples, sampleFlags, &RETVAL);
-	if (gLastMacOSErr) { 
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -1614,11 +1614,11 @@ AddMediaSampleReference(theMedia, dataOffset, size, durationPerSample, sampleDes
 	long	numberOfSamples
 	short	sampleFlags
 	CODE:
-	gLastMacOSErr = 
+	gMacPerl_OSErr = 
 		AddMediaSampleReference(
 			theMedia, dataOffset, size, durationPerSample, 
 			sampleDescriptionH, numberOfSamples, sampleFlags, &RETVAL);
-	if (gLastMacOSErr) { 
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -1632,10 +1632,10 @@ AddMediaSampleReferences(theMedia, sampleDescriptionH, numberOfSamples, sampleRe
 	long	numberOfSamples
 	SampleReferencePtr	sampleRefs
 	CODE:
-	gLastMacOSErr = 
+	gMacPerl_OSErr = 
 		AddMediaSampleReferences(
 			theMedia, sampleDescriptionH, numberOfSamples, sampleRefs, &RETVAL);
-	if (gLastMacOSErr) { 
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -1656,7 +1656,7 @@ GetMediaSample(theMedia, dataOut, maxSizeToGrow, size, time, sampleTime, duratio
 	long *	numberOfSamples
 	short *	sampleFlags
 	PPCODE:
-	gLastMacOSErr = 
+	gMacPerl_OSErr = 
 	
 
 MacOSRet
@@ -1879,8 +1879,8 @@ AddEmptyTrackToMovie(srcTrack, dstMovie, dataRef, dataRefType)
 	Handle	dataRef
 	OSType	dataRefType
 	CODE:
-	gLastMacOSErr = AddEmptyTrackToMovie(srcTrack, dstMovie, dataRef, dataRefType, &RETVAL);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = AddEmptyTrackToMovie(srcTrack, dstMovie, dataRef, dataRefType, &RETVAL);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -1946,8 +1946,8 @@ AddTrackReference(theTrack, refTrack, refType)
 	Track	refTrack
 	OSType	refType
 	CODE:
-	gLastMacOSErr = AddTrackReference(theTrack, refTrack, refType, &RETVAL);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = AddTrackReference(theTrack, refTrack, refType, &RETVAL);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -2016,11 +2016,11 @@ ConvertFileToMovieFile(inputFile, outputFile, creator, scriptTag, flags=0, userC
 	ComponentInstance	userComp
 	long	refCon
 	CODE:
-	gLastMacOSErr = 
+	gMacPerl_OSErr = 
 		ConvertFileToMovieFile(
 			&inputFile, &outputFile, creator, scriptTag, &RETVAL, flags, 
 			userComp, 0, refCon);
-	if (gLastMacOSErr) { 
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -2041,11 +2041,11 @@ ConvertMovieToFile(theMovie, onlyTrack, outputFile, fileType, creator, scriptTag
 	long	flags
 	ComponentInstance	userComp
 	CODE:
-	gLastMacOSErr = 
+	gMacPerl_OSErr = 
 		ConvertMovieToFile(
 			theMovie, onlyTrack, &outputFile, fileType, creator, scriptTag, 
 			&RETVAL, flags, userComp);
-	if (gLastMacOSErr) { 
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -2239,8 +2239,8 @@ RemoveUserDataText(theUserData, udType, index, itlRegionTag)
 UserData
 NewUserData()
 	CODE:
-	gLastMacOSErr = NewUserData(&RETVAL);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = NewUserData(&RETVAL);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -2262,8 +2262,8 @@ UserData
 NewUserDataFromHandle(h)
 	Handle	h
 	CODE:
-	gLastMacOSErr = NewUserDataFromHandle(h, &RETVAL);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = NewUserDataFromHandle(h, &RETVAL);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -2343,7 +2343,7 @@ GetMovieNextInterestingTime(theMovie, interestingTimeFlags, mediaTypes, time, ra
 		short		numMediaTypes;
 		
 		if (numMediaTypes = SvCUR(mediaTypes) >> 2) {
-			PtrToHand(SvPV(mediaTypes, na), (Handle *)&theMediaTypes, numMediaTypes << 2);
+			PtrToHand(SvPV_nolen(mediaTypes), (Handle *)&theMediaTypes, numMediaTypes << 2);
 			HLock((Handle)theMediaTypes);
 			GetMovieNextInterestingTime(theMovie, interestingTimeFlags, 
 				numMediaTypes, *theMediaTypes, time, rate,
@@ -2374,10 +2374,10 @@ CreateMovieFile(fileSpec, creator, scriptTag, createMovieFileFlags)
 		short	resRefNum;
 		Movie	newmovie;
 		
-		gLastMacOSErr = 
+		gMacPerl_OSErr = 
 			CreateMovieFile(
 				&fileSpec, creator, scriptTag, createMovieFileFlags, &resRefNum, &newmovie);
-		if (gLastMacOSErr) { 
+		if (gMacPerl_OSErr) { 
 			XSRETURN_UNDEF; 
 		}
 		EXTEND(sp, 2);
@@ -2394,8 +2394,8 @@ OpenMovieFile(fileSpec, permission=fsRdPerm)
 	FSSpec 	&fileSpec
 	SInt8			permission
 	CODE:
-	gLastMacOSErr = OpenMovieFile(&fileSpec, &RETVAL, permission);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = OpenMovieFile(&fileSpec, &RETVAL, permission);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	OUTPUT:
@@ -2437,10 +2437,10 @@ NewMovieFromFile(resRefNum, resId, newMovieFlags)
 		Str255	resName;
 		Boolean	dataRefWasChanged;
 		
-		gLastMacOSErr = 
+		gMacPerl_OSErr = 
 			NewMovieFromFile(
 				&theMovie, resRefNum, &resId, resName, newMovieFlags, &dataRefWasChanged);
-		if (gLastMacOSErr) { 
+		if (gMacPerl_OSErr) { 
 			XSRETURN_UNDEF; 
 		}
 		XS_XPUSH(Movie, theMovie);	
@@ -2465,9 +2465,9 @@ NewMovieFromHandle(h, newMovieFlags)
 		Movie 	theMovie;
 		Boolean	dataRefWasChanged;
 		
-		gLastMacOSErr = 
+		gMacPerl_OSErr = 
 			NewMovieFromHandle(&theMovie, h, newMovieFlags, &dataRefWasChanged);
-		if (gLastMacOSErr) { 
+		if (gMacPerl_OSErr) { 
 			XSRETURN_UNDEF; 
 		}
 		XS_XPUSH(Movie, theMovie);	
@@ -2490,10 +2490,10 @@ NewMovieFromDataFork(fRefNum, fileOffset, newMovieFlags)
 		Movie 	theMovie;
 		Boolean	dataRefWasChanged;
 		
-		gLastMacOSErr = 
+		gMacPerl_OSErr = 
 			NewMovieFromDataFork(
 				&theMovie, fRefNum, fileOffset, newMovieFlags, &dataRefWasChanged);
-		if (gLastMacOSErr) { 
+		if (gMacPerl_OSErr) { 
 			XSRETURN_UNDEF; 
 		}
 		XS_XPUSH(Movie, theMovie);	
@@ -2537,8 +2537,8 @@ AddMovieResource(theMovie, resRefNum, resId, resName)
 	short  &resId
 	Str255	resName
 	CODE:
-	gLastMacOSErr = AddMovieResource(theMovie, resRefNum, &resId, resName);
-	if (gLastMacOSErr) { 
+	gMacPerl_OSErr = AddMovieResource(theMovie, resRefNum, &resId, resName);
+	if (gMacPerl_OSErr) { 
 		XSRETURN_UNDEF; 
 	}
 	RETVAL = resId;
@@ -2559,7 +2559,7 @@ UpdateMovieResource(theMovie, resRefNum, resId, ...)
 		Str255	resName;
 		
 		if (items > 3) {
-			memcpy(resName+1, SvPV(ST(3), na), SvCUR(ST(3)));
+			memcpy(resName+1, SvPV_nolen(ST(3)), SvCUR(ST(3)));
 			RETVAL = UpdateMovieResource(theMovie, resRefNum, resId, resName);
 		} else
 			RETVAL = UpdateMovieResource(theMovie, resRefNum, resId, nil);
@@ -3774,7 +3774,7 @@ MCDoAction(mc, action, ...)
 			param = &rate;
 			break;
 		}
-		if (gLastMacOSErr = (OSErr)MCDoAction(mc, action, param)) {
+		if (gMacPerl_OSErr = (OSErr)MCDoAction(mc, action, param)) {
 			XSRETURN_EMPTY;
 		}
 		switch (action) {
@@ -3868,7 +3868,7 @@ Rect
 MCGetControllerBoundsRect(mc)
 	ComponentInstance	mc
 	CODE:
-	if (gLastMacOSErr = (OSErr)MCGetControllerBoundsRect(mc, &RETVAL)) {
+	if (gMacPerl_OSErr = (OSErr)MCGetControllerBoundsRect(mc, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -4073,7 +4073,7 @@ long
 MCGetControllerInfo(mc)
 	ComponentInstance	mc
 	CODE:
-	if (gLastMacOSErr = (OSErr)MCGetControllerInfo(mc, &RETVAL)) {
+	if (gMacPerl_OSErr = (OSErr)MCGetControllerInfo(mc, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -4101,7 +4101,7 @@ MCGetClip(mc)
 		RgnHandle	theClip;
 		RgnHandle 	movieClip;
 		
-		if (gLastMacOSErr = (OSErr)MCGetClip(mc, &theClip, &movieClip)) {
+		if (gMacPerl_OSErr = (OSErr)MCGetClip(mc, &theClip, &movieClip)) {
 			XSRETURN_EMPTY;
 		}
 		XS_PUSH(RgnHandle, theClip);
@@ -4119,7 +4119,7 @@ MCDrawBadge(mc, movieRgn)
 	ComponentInstance	mc
 	RgnHandle	movieRgn
 	CODE:
-	if (gLastMacOSErr = (OSErr)MCDrawBadge(mc, movieRgn, &RETVAL)) {
+	if (gMacPerl_OSErr = (OSErr)MCDrawBadge(mc, movieRgn, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -4167,7 +4167,7 @@ MCPtInController(mc, thePt)
 	ComponentInstance	mc
 	Point	thePt
 	CODE:
-	if (gLastMacOSErr = (OSErr)MCPtInController(mc, thePt, &RETVAL)) {
+	if (gMacPerl_OSErr = (OSErr)MCPtInController(mc, thePt, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

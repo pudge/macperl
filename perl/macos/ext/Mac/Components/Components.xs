@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:30:19  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:52:09  neeri
  * MacPerl 5.1.5
  *
@@ -33,15 +36,15 @@ static ComponentDescription * MakeComponentDesc(
 	static ComponentDescription	desc;
 	
 	if (SvTRUE(componentType))
-		desc.componentType = *(OSType *)SvPV(componentType, na);
+		desc.componentType = *(OSType *)SvPV_nolen(componentType);
 	else 
 		desc.componentType = 0;
 	if (SvTRUE(componentSubType))
-		desc.componentSubType = *(OSType *)SvPV(componentSubType, na);
+		desc.componentSubType = *(OSType *)SvPV_nolen(componentSubType);
 	else 
 		desc.componentSubType = 0;
 	if (SvTRUE(componentManufacturer))
-		desc.componentManufacturer = *(OSType *)SvPV(componentManufacturer, na);
+		desc.componentManufacturer = *(OSType *)SvPV_nolen(componentManufacturer);
 	else 
 		desc.componentManufacturer = 0;
 	desc.componentFlags		= componentFlags;
@@ -104,7 +107,7 @@ when there are no more matching components.
 
 =cut
 Component
-FindNextComponent(aComponent, componentType = &sv_undef, componentSubType = &sv_undef, componentManufacturer = &sv_undef, componentFlags = 0, componentFlagsMask = 0)
+FindNextComponent(aComponent, componentType = &PL_sv_undef, componentSubType = &PL_sv_undef, componentManufacturer = &PL_sv_undef, componentFlags = 0, componentFlagsMask = 0)
 	Component		aComponent
 	SV *				componentType
 	SV *				componentSubType
@@ -126,7 +129,7 @@ components that meet the specified search criteria.
 
 =cut
 long
-CountComponents(componentType = &sv_undef, componentSubType = &sv_undef, componentManufacturer = &sv_undef, componentFlags = 0, componentFlagsMask = 0)
+CountComponents(componentType = &PL_sv_undef, componentSubType = &PL_sv_undef, componentManufacturer = &PL_sv_undef, componentFlags = 0, componentFlagsMask = 0)
 	SV *				componentType
 	SV *				componentSubType
 	SV *				componentManufacturer
@@ -157,10 +160,10 @@ GetComponentInfo(aComponent)
 	PPCODE:
 	name = NewEmptyHandle();
 	info = NewEmptyHandle();
-	gLastMacOSErr = GetComponentInfo(aComponent, &desc, name, info, nil);
+	gMacPerl_OSErr = GetComponentInfo(aComponent, &desc, name, info, nil);
 	HLock(name);
 	HLock(info);
-	if (!gLastMacOSErr) 
+	if (!gMacPerl_OSErr) 
 		if (GIMME != G_ARRAY) {
 			XS_XPUSH(Str255, (StringPtr)*name);
 		} else {
@@ -291,7 +294,7 @@ RegisterComponentResourceFile(resRefNum, global)
 	short global
 	CLEANUP:
 	if (RETVAL < 0) {
-		gLastMacOSErr = (short) RETVAL;
+		gMacPerl_OSErr = (short) RETVAL;
 		XSRETURN_UNDEF;
 	}
 

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:33  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.4  1998/04/07 01:03:15  neeri
  * MacPerl 5.2.0r4b1
  *
@@ -125,7 +128,7 @@ extern pascal OSErr UseDictionary(SpeechChannel chan, Handle dictionary)
 
 #endif
 
-#define SpeechFail(error)	if (gLastMacOSErr = (error)) { XSRETURN_UNDEF; } else 0
+#define SpeechFail(error)	if (gMacPerl_OSErr = (error)) { XSRETURN_UNDEF; } else 0
 
 MODULE = Mac::Speech	PACKAGE = Mac::Speech
 

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:32  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:53:10  neeri
  * MacPerl 5.1.5
  *
@@ -22,7 +25,7 @@
 #include <Types.h>
 #include <Memory.h>
 #include <Processes.h>
-#include <TFileSpec.h>
+#include <GUSIFileSpec.h>
 
 typedef LaunchPBPtr			LaunchParam;
 typedef ProcessInfoRecPtr	ProcessInfo;
@@ -176,7 +179,7 @@ LaunchDeskAccessory(pFileSpec, pDAName)
 	FSSpec	spec;
 	FSSpec *	fssp = nil;
 	CODE:
-	if (SvTRUE(pFileSpec) && Path2FSSpec(SvPV(pFileSpec,na), &spec))
+	if (SvTRUE(pFileSpec) && GUSIPath2FSp(SvPV_nolen(pFileSpec), &spec))
 		fssp = &spec;
 	RETVAL = LaunchDeskAccessory(fssp, pDAName);
 	OUTPUT:
@@ -193,7 +196,7 @@ Return C<undef> if an error was detected.
 ProcessSerialNumber
 GetCurrentProcess()
 	CODE:
-	if (gLastMacOSErr = GetCurrentProcess(&RETVAL)) {
+	if (gMacPerl_OSErr = GetCurrentProcess(&RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -209,7 +212,7 @@ Return C<undef> if an error was detected.
 ProcessSerialNumber
 GetFrontProcess()
 	CODE:
-	if (gLastMacOSErr = GetFrontProcess(&RETVAL)) {
+	if (gMacPerl_OSErr = GetFrontProcess(&RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -226,7 +229,7 @@ ProcessSerialNumber
 GetNextProcess(PSN)
 	ProcessSerialNumber	PSN
 	CODE:
-	if (gLastMacOSErr = GetNextProcess(&PSN)) {
+	if (gMacPerl_OSErr = GetNextProcess(&PSN)) {
 		XSRETURN_UNDEF;
 	} else
 		RETVAL = PSN;
@@ -251,7 +254,7 @@ GetProcessInformation(PSN)
 	ProcessSerialNumber	PSN
 	CODE:
 	RETVAL = NewProcessInfo();
-	if (gLastMacOSErr = GetProcessInformation(&PSN, RETVAL)) {
+	if (gMacPerl_OSErr = GetProcessInformation(&PSN, RETVAL)) {
 		free(RETVAL);
 		XSRETURN_UNDEF;
 	} 
@@ -298,7 +301,7 @@ SameProcess(PSN1, PSN2)
 	ProcessSerialNumber	PSN1
 	ProcessSerialNumber	PSN2
 	CODE:
-	if (gLastMacOSErr = SameProcess(&PSN1, &PSN2, &RETVAL)) {
+	if (gMacPerl_OSErr = SameProcess(&PSN1, &PSN2, &RETVAL)) {
 		XSRETURN_UNDEF;
 	} 
 	OUTPUT:

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:32  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.7  1998/11/22 21:21:14  neeri
  * All packed up and no place to go
  *
@@ -107,7 +110,7 @@ STRUCT * GrafPtr
 		if (COLORPORT(STRUCT)) {
 			XS_OUTPUT(PixMapHandle, ((CGrafPtr)STRUCT)->portPixMap, $arg);
 		} else {
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 		}
 	RGBColor						rgbOpColor;					/*color for addPin  subPin and average*/
 		READ_ONLY
@@ -116,7 +119,7 @@ STRUCT * GrafPtr
 			RGBColor	color = GRAFVARS(STRUCT)->rgbOpColor;
 			XS_OUTPUT(RGBColor, color, $arg);
 		} else {
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 		}
 	RGBColor						rgbHiliteColor;				/*color for hiliting*/
 		READ_ONLY
@@ -125,7 +128,7 @@ STRUCT * GrafPtr
 			RGBColor	color = GRAFVARS(STRUCT)->rgbHiliteColor;
 			XS_OUTPUT(RGBColor, color, $arg);
 		} else {
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 		}
 	Fixed412						chExtra;
 		INPUT:
@@ -134,7 +137,7 @@ STRUCT * GrafPtr
 		}
 		OUTPUT:
 		if (!COLORPORT(STRUCT)) {
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 		} else {
 			XS_OUTPUT(Fixed412, ((CGrafPtr)STRUCT)->chExtra, $arg);
 		}
@@ -145,7 +148,7 @@ STRUCT * GrafPtr
 		}
 		OUTPUT:
 		if (!COLORPORT(STRUCT)) {
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 		} else {
 			XS_OUTPUT(Fixed016, ((CGrafPtr)STRUCT)->pnLocHFrac, $arg);
 		}
@@ -175,7 +178,7 @@ STRUCT * GrafPtr
 		READ_ONLY
 		OUTPUT:
 		if (!COLORPORT(STRUCT)) {
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 		} else {
 			XS_OUTPUT(RGBColor, ((CGrafPtr)STRUCT)->rgbFgColor, $arg);
 		}
@@ -183,7 +186,7 @@ STRUCT * GrafPtr
 		READ_ONLY
 		OUTPUT:
 		if (!COLORPORT(STRUCT)) {
-			XS_OUTPUT(SV *, &sv_undef, $arg);
+			XS_OUTPUT(SV *, &PL_sv_undef, $arg);
 		} else {
 			XS_OUTPUT(RGBColor, ((CGrafPtr)STRUCT)->rgbBkColor, $arg);
 		}

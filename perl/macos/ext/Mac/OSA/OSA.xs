@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:32  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:53:06  neeri
  * MacPerl 5.1.5
  *
@@ -49,7 +52,7 @@ OSALoad(scriptingComponent, scriptData, modeFlags)
 	AEDesc				scriptData
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSALoad(scriptingComponent, &scriptData, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSALoad(scriptingComponent, &scriptData, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -71,7 +74,7 @@ OSAStore(scriptingComponent, scriptID, desiredType, modeFlags)
 	OSType	 			desiredType 
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSAStore(scriptingComponent, scriptID, desiredType, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAStore(scriptingComponent, scriptID, desiredType, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -94,7 +97,7 @@ OSAExecute(scriptingComponent, compiledScriptID, contextID, modeFlags)
 	OSAID 				contextID
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSAExecute(scriptingComponent, compiledScriptID, contextID, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAExecute(scriptingComponent, compiledScriptID, contextID, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -117,7 +120,7 @@ OSADisplay(scriptingComponent, scriptValueID, desiredType, modeFlags)
 	OSType 				desiredType
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSADisplay(scriptingComponent, scriptValueID, desiredType, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSADisplay(scriptingComponent, scriptValueID, desiredType, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -142,7 +145,7 @@ OSAScriptError(scriptingComponent, selector, desiredType)
 	OSType 				selector
 	OSType				desiredType
 	CODE:
-	if (gLastMacOSErr = (short) OSAScriptError(scriptingComponent, selector, desiredType, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAScriptError(scriptingComponent, selector, desiredType, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -192,7 +195,7 @@ OSAGetScriptInfo(scriptingComponent, scriptID, selector)
 	OSAID 				scriptID
 	OSType 				selector
 	CODE:
-	if (gLastMacOSErr = (short) OSAGetScriptInfo(scriptingComponent, scriptID, selector, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAGetScriptInfo(scriptingComponent, scriptID, selector, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -211,7 +214,7 @@ AEDesc
 OSAScriptingComponentName(scriptingComponent)
 	ComponentInstance scriptingComponent
 	CODE:
-	if (gLastMacOSErr = (short) OSAScriptingComponentName(scriptingComponent, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAScriptingComponentName(scriptingComponent, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -236,7 +239,7 @@ OSACompile(scriptingComponent, sourceData, modeFlags, previousScriptID = 0)
 	OSAID					previousScriptID
 	CODE:
 	RETVAL = previousScriptID;
-	if (gLastMacOSErr = (short) OSACompile(scriptingComponent, &sourceData, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSACompile(scriptingComponent, &sourceData, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -257,7 +260,7 @@ OSACopyID(scriptingComponent, fromID, toID = 0)
 	OSAID					toID	
 	CODE:
 	RETVAL = toID;
-	if (gLastMacOSErr = (short) OSACopyID(scriptingComponent, fromID, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSACopyID(scriptingComponent, fromID, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -276,7 +279,7 @@ OSAGetSource(scriptingComponent, scriptID, desiredType = 'TEXT')
 	OSAID 				scriptID
 	OSType				desiredType
 	CODE:
-	if (gLastMacOSErr = (short) OSAGetSource(scriptingComponent, scriptID, desiredType, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAGetSource(scriptingComponent, scriptID, desiredType, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -295,7 +298,7 @@ OSACoerceFromDesc(scriptingComponent, scriptData, modeFlags)
 	AEDesc				scriptData
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSACoerceFromDesc(scriptingComponent, &scriptData, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSACoerceFromDesc(scriptingComponent, &scriptData, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -316,7 +319,7 @@ OSACoerceToDesc(scriptingComponent, scriptID, desiredType, modeFlags)
 	OSType 				desiredType
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSACoerceToDesc(scriptingComponent, scriptID, desiredType, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSACoerceToDesc(scriptingComponent, scriptID, desiredType, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -351,7 +354,7 @@ OSAStartRecording(scriptingComponent, compiledScriptToModifyID = 0)
 	OSAID					compiledScriptToModifyID
 	CODE:
 	RETVAL = compiledScriptToModifyID;
-	if (gLastMacOSErr = (short) OSAStartRecording(scriptingComponent, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAStartRecording(scriptingComponent, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -392,7 +395,7 @@ OSALoadExecute(scriptingComponent, scriptData, contextID, modeFlags)
 	OSAID 				contextID
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSALoadExecute(scriptingComponent, &scriptData, contextID, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSALoadExecute(scriptingComponent, &scriptData, contextID, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -416,7 +419,7 @@ OSACompileExecute(scriptingComponent, sourceData, contextID, modeFlags)
 	OSAID 				contextID
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSACompileExecute(scriptingComponent, &sourceData, contextID, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSACompileExecute(scriptingComponent, &sourceData, contextID, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -440,7 +443,7 @@ OSADoScript(scriptingComponent, sourceData, contextID, desiredType, modeFlags)
 	OSType   			desiredType
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSADoScript(scriptingComponent, &sourceData, contextID, desiredType, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSADoScript(scriptingComponent, &sourceData, contextID, desiredType, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -468,7 +471,7 @@ short
 OSAGetCurrentDialect(scriptingComponent)
 	ComponentInstance scriptingComponent	
 	CODE:
-	if (gLastMacOSErr = (short) OSAGetCurrentDialect(scriptingComponent, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAGetCurrentDialect(scriptingComponent, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -485,7 +488,7 @@ AEDesc
 OSAAvailableDialects(scriptingComponent)
 	ComponentInstance scriptingComponent	
 	CODE:
-	if (gLastMacOSErr = (short) OSAAvailableDialects(scriptingComponent, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAAvailableDialects(scriptingComponent, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -506,7 +509,7 @@ OSAGetDialectInfo(scriptingComponent, dialectCode, selector)
 	short 				dialectCode
 	OSType 				selector
 	CODE:
-	if (gLastMacOSErr = (short) OSAGetDialectInfo(scriptingComponent, dialectCode, selector, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAGetDialectInfo(scriptingComponent, dialectCode, selector, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -523,7 +526,7 @@ AEDesc
 OSAAvailableDialectCodeList(scriptingComponent)
 	ComponentInstance scriptingComponent	
 	CODE:
-	if (gLastMacOSErr = (short) OSAAvailableDialectCodeList(scriptingComponent, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAAvailableDialectCodeList(scriptingComponent, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -544,7 +547,7 @@ OSAExecuteEvent(scriptingComponent, theAppleEvent, contextID, modeFlags)
 	OSAID 				contextID
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSAExecuteEvent(scriptingComponent, &theAppleEvent, contextID, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAExecuteEvent(scriptingComponent, &theAppleEvent, contextID, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -568,7 +571,7 @@ OSADoEvent(scriptingComponent, theAppleEvent, contextID, modeFlags)
 	OSAID 				contextID
 	long 					modeFlags
 	CODE:
-	if (gLastMacOSErr = (short) OSADoEvent(scriptingComponent, &theAppleEvent, contextID, modeFlags, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSADoEvent(scriptingComponent, &theAppleEvent, contextID, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -588,7 +591,7 @@ OSAMakeContext(scriptingComponent,contextName, parentContext = 0)
 	AEDesc				contextName
 	OSAID 				parentContext
 	CODE:
-	if (gLastMacOSErr = (short) OSAMakeContext(scriptingComponent, &contextName, parentContext, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAMakeContext(scriptingComponent, &contextName, parentContext, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -609,7 +612,7 @@ OSType
 OSAGetDefaultScriptingComponent(genericScriptingComponent)
 	ComponentInstance	genericScriptingComponent
 	CODE:
-	if (gLastMacOSErr = (short) OSAGetDefaultScriptingComponent(genericScriptingComponent, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAGetDefaultScriptingComponent(genericScriptingComponent, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -645,7 +648,7 @@ OSAGetScriptingComponent(genericScriptingComponent, scriptingSubType)
 	ComponentInstance genericScriptingComponent
 	OSType 				scriptingSubType
 	CODE:
-	if (gLastMacOSErr = (short) OSAGetScriptingComponent(genericScriptingComponent, scriptingSubType, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAGetScriptingComponent(genericScriptingComponent, scriptingSubType, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -664,7 +667,7 @@ OSAGetScriptingComponentFromStored(genericScriptingComponent, scriptData)
 	ComponentInstance genericScriptingComponent
 	AEDesc				scriptData
 	CODE:
-	if (gLastMacOSErr = (short) OSAGetScriptingComponentFromStored(genericScriptingComponent, &scriptData, &RETVAL)) {
+	if (gMacPerl_OSErr = (short) OSAGetScriptingComponentFromStored(genericScriptingComponent, &scriptData, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
@@ -685,7 +688,7 @@ OSAGenericToRealID(genericScriptingComponent, genericScriptID)
 	PREINIT:
 	ComponentInstance	exactScriptingComponent;
 	PPCODE:
-	if (gLastMacOSErr = (short) OSAGenericToRealID(genericScriptingComponent, &genericScriptID, &exactScriptingComponent)) {
+	if (gMacPerl_OSErr = (short) OSAGenericToRealID(genericScriptingComponent, &genericScriptID, &exactScriptingComponent)) {
 		XSRETURN_EMPTY;
 	}
 	XS_XPUSH(OSAID, genericScriptID);
@@ -709,7 +712,7 @@ OSARealToGenericID(genericScriptingComponent, theScriptID, theExactComponent)
 	ComponentInstance theExactComponent
 	CODE:
 	RETVAL = theScriptID;
-	if (gLastMacOSErr = (short) OSARealToGenericID(genericScriptingComponent, &RETVAL, theExactComponent)) {
+	if (gMacPerl_OSErr = (short) OSARealToGenericID(genericScriptingComponent, &RETVAL, theExactComponent)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

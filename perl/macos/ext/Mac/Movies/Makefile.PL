@@ -1,8 +1,9 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'LINKTYPE'	=> 'static dynamic',
-	 TYPEMAPS   => '::Components:typemap ::Events:typemap ::QuickDraw:typemap ::QDOffscreen:typemap ::Menus:typemap',
-    XSPROTOARG => '-noprototypes', 		# XXX remove later?
-   'LIBS'	=> ['"{{MW68KLibraries}}"QuickTimeLib "{{MWPPCLibraries}}"QuickTimeLib'],   # e.g., '-lm' 
+	NAME			=> q(Mac::Movies),
+    'LINKTYPE'		=> 'static dynamic',
+	 TYPEMAPS  		=> '::Components:typemap ::Events:typemap ::QuickDraw:typemap ::QDOffscreen:typemap ::Menus:typemap',
+    XSPROTOARG 		=> '-noprototypes', 		# XXX remove later?
+   	MACLIBS_SHARED	=> '"{{SharedLibraries}}"QuickTimeLib',   # e.g., '-lm' 
 );

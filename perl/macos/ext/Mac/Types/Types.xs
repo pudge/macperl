@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:34  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:53:26  neeri
  * MacPerl 5.1.5
  *
@@ -38,7 +41,7 @@ Debugger(msg=NULL)
 	CODE:
 	if (msg) {
 		Str255 message;
-		CopyC2PStr(SvPV(msg,na), message);
+		MacPerl_CopyC2P(SvPV_nolen(msg), message);
 		DebugStr(message);
 	} else
 		Debugger();

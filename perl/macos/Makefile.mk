@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.2  2000/08/21 08:22:04  neeri
+#  Build tweaks & forgotten files
+#
 #  Revision 1.1  2000/08/14 01:48:17  neeri
 #  Checked into Sourceforge
 #
@@ -46,15 +49,19 @@ MACPERL_SRC	= {$(PWD)}:
 DB			= :::db:
 XL			= :::XL:
 GD			= :ext:GD:libgd:
-AEGizmos	= ::AEGizmos:
-IC 			= ::IC:
+AEGizmos	= :::AEGizmos:
+IC 			= :::IC:
 SFIO		= "{{SFIO}}"
 GUSI		= "{{GUSI}}"
+MoreFiles	= :::MoreFiles:
+
+.SOURCE.c	: "$(MoreFiles)Sources:"
 
 # Add -d LEAKTEST -d DUMPADDR -d MALLOC_LOG as you see fit
 LeakOpt		=	-d LEAKTEST -d DEBUGGING
 
 COpt		+= -d PERL_CORE 
+CInc		+= -i "$(MoreFiles)C Headers:"
 
 YACC = yacc
 
@@ -101,6 +108,7 @@ LibFilesPPC	=	\
 			"{{SharedLibraries}}InterfaceLib"				\
 			$(SFIO)lib:sfio.PPC.Lib							\
 			"{{MWPPCLibraries}}MSL C.PPC MPW(NL).Lib"		\
+			"{{MWPPCLibraries}}MSL C++.PPC (NL).Lib"		\
 			"{{SharedLibraries}}StdCLib"					\
 			"{{SharedLibraries}}MathLib"					\
 			"{{SharedLIbraries}}ThreadsLib"					\
@@ -198,10 +206,12 @@ c1 = $(mallocsrc) av.c scope.c op.c doop.c doio.c dump.c hv.c mg.c perlapi.c
 c2 = perl.c perly.c pp.c pp_hot.c pp_ctl.c pp_sys.c regcomp.c regexec.c xsutils.c
 c3 = gv.c sv.c taint.c toke.c util.c deb.c run.c globals.c perlio.c utf8.c universal.c
 cm = SubLaunch.c crypt.c
+mf = DirectoryCopy.c FileCopy.c FSpCompat.c FullPath.c IterateDirectory.c MoreDesktopMgr.c \
+	MoreFiles.c MoreFilesExtras.c Search.c
 
 c = $(c1) $(c2) $(c3) $(cm)
 cp= $(cpm)
-libc = macish.c icemalloc.c PerlGUSIConfig.cp
+libc = macish.c icemalloc.c PerlGUSIConfig.cp $(mf)
 
 Objects68K = {$(c)}.68K.o
 ObjectsPPC = {$(c)}.PPC.o
@@ -247,7 +257,9 @@ UnPreload:	UnPreload.c.68K.o
 # build problems but that's not obvious to the novice.
 # The Module used here must not depend on Config or any extensions.
 
-miniperl:  Obj PLib UnPreload miniperl.{$(MACPERL_BUILD_TOOL)}
+.INIT : Obj PLib 
+
+miniperl:  UnPreload miniperl.{$(MACPERL_BUILD_TOOL)}
 	Duplicate -y miniperl.$(MACPERL_INST_TOOL_PPC) miniperl
 	Begin
 		Echo 'Include "miniperl.$(MACPERL_INST_TOOL_68K)" '¶''CODE'¶'';'
@@ -306,16 +318,16 @@ preplibrary: miniperl
 
 dynlibrary: perl PerlStub
 	For i in :ext:{$(Dynamic_Ext_Mac)} ::ext:{$(Dynamic_Ext_Std)}
-		directory :ext:{{i}}
+		directory {{i}}
 		Set Echo 0
 		If `Exists Makefile.PL` != ""
 			If `Newer Makefile.PL Makefile.mk` == "Makefile.PL"
-				:::perl -I:::lib -I::::lib Makefile.PL
+				$(MACPERL_SRC)perl -I$(MACPERL_SRC)lib -I$(MACPERL_SRC):lib Makefile.PL
 			End
 		End
 		BuildProgram all
 		BuildProgram install
-		directory :::
+		directory $(MACPERL_SRC)
 		Set Echo 1
 	end
 	Echo > dynlibrary
@@ -356,13 +368,9 @@ perl.PPC::	Perl.r Perl.rsrc
 PerlStub:	perl.exp
 	MakeStub -d perl.exp -o PerlStub -arch fat -fragname Perl -p
 
-perl.exp: miniperl perl.nosym ::global.sym ::pp.sym ::globvar.sym
-	Begin
-		echo "#{code}"
-		BuildExpList -x perl.nosym ::global.sym ::pp.sym
-		echo "#{data}"
-		BuildExpList -x perl.nosym ::globvar.sym
-	End  > perl.exp
+perl.exp: miniperl ::makedef.pl perl.nosym ::global.sym ::pp.sym ::globvar.sym macperl.sym
+	:miniperl ::makedef.pl PLATFORM=MacOS | sort -unique> perl.exp
+
 # Take care to avoid modifying lib/Config.pm without reason
 ":lib:Config.pm": miniperl ":lib:re.pm"
 	:miniperl -I::lib: configpm
@@ -486,5 +494,7 @@ minitest: miniperl
 	$(LibSC) -o :PLib:PerlLib.SC.Lib :Obj:{$(LibObjectsSC)}
 ":PLib:PerlLib.MrC.Lib"	:	$(LibObjectsMRC)	
 	$(LibMrC) -o :PLib:PerlLib.MrC.Lib :Obj:{$(LibObjectsMRC)}
+
+macish.c : macish.h
 
 .INCLUDE : $(MACPERL_SRC)BulkBuildRules.mk

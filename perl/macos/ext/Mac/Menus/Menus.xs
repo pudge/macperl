@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:31  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:52:37  neeri
  * MacPerl 5.1.5
  *
@@ -26,7 +29,7 @@
 
 static void WipeFilter(void)
 {
-	gFilterMenu	= nil;
+	gMacPerl_FilterMenu	= nil;
 }
 
 static Boolean PrepareMenus()
@@ -49,7 +52,7 @@ static Boolean FilterMenu(long menuSelection)
 	if (menuSelection == -1)
 		return PrepareMenus();
 		
-	sprintf(code, "%08X", menuSelection);
+	PerlIO_sprintf(code, 10, "%08X", menuSelection);
 	menus 	= perl_get_hv("Mac::Menus::Menu", 2);
 	(handler = hv_fetch(menus, code, 4, 0))
 		|| (handler	= hv_fetch(menus, code, 8, 0));
@@ -86,7 +89,7 @@ static Boolean FilterMenu(long menuSelection)
 static pascal void CallMDEF(
 	short message, MenuHandle menu, Rect * menuRect, Point hitPt, short * item)
 {
-	dSP ;
+	dXSARGS ;
 
 	ENTER ;
 	SAVETMPS;
@@ -147,7 +150,7 @@ static int		sMDEFRefCount;
 MODULE = Mac::Menus	PACKAGE = Mac::Menus
 
 BOOT:
-gFilterMenu	= FilterMenu;
+gMacPerl_FilterMenu	= FilterMenu;
 atexit(WipeFilter);
 
 STRUCT ** MenuHandle
