@@ -1,0 +1,788 @@
+#!/usr/bin/perl -w
+# $Id$
+
+use lib "../perl/lib";
+use strict;
+use CGI;
+use DBIx::Password;
+use Digest::MD5 'md5_hex';
+use Template;
+my($constants, $dbh, $user, $form, $vu, $cgi, $template, %T, %ops);
+
+{
+	$constants->{virtual_user}	= "macperl";
+	$constants->{cookie_name}	= "report_user";
+	$constants->{cookie_path}	= "/";
+	$constants->{cookie_domain}	= "macperl.sourceforge.net";
+
+	$dbh = DBIx::Password->connect($constants->{virtual_user});
+	END { $dbh->disconnect if $dbh }
+	$cgi = new CGI;
+	$template = new Template;
+
+}
+
+use constant ALLOWED	=> 0;
+use constant FUNCTION	=> 1;
+
+sub main {
+	$form = $cgi->Vars;
+	login();
+
+	# possible value of "op" parameter in form
+	%ops = (
+		add_user	=> [ 1,			\&add_user	],
+		create_user	=> [ 1,			\&create_user	],
+		add_config	=> [ $user->{id},	\&add_config	],
+		create_config	=> [ $user->{id},	\&create_config	],
+		add_test	=> [ $user->{id},	\&add_test	],
+		create_test	=> [ $user->{id},	\&create_test	],
+		view_tests	=> [ 1,			\&view_tests	],
+		default		=> [ 1,			\&default	]
+	);
+
+	# prepare op to proper value if bad value given
+	my $op = $form->{op};
+	if (!$op || !exists $ops{$op} || !$ops{$op}[ALLOWED]) {
+		$op = 'default';
+	}
+
+	header();
+
+	# dispatch of op
+	$ops{$op}[FUNCTION]->();
+
+	footer();
+
+}
+
+# main functions
+sub view_tests {
+	my $tests = get_tests();
+	my $user_tests = get_usertests();
+
+	process('view_tests', {
+		tests		=> $tests,
+		user_tests	=> $user_tests,
+		configs		=> get_configsdesc(),
+		users		=> get_users(),
+		map { ($_ => get_param($_)) }
+			qw( compiler )
+	});
+}
+
+sub create_test {
+	my(%test, $id, $sth);
+
+	$test{is_tool} = $form->{is_tool} ? 1 : 0;
+
+	for (qw(test_id config_id status compiler notes results)) {
+		$test{$_} = $form->{$_};
+	}
+
+	$sth = get_sth(<<'EOT', $user->{id}, @test{qw(test_id config_id status compiler is_tool notes results)});
+INSERT INTO	user_tests	(user_id, test_id, config_id, status, compiler, is_tool, notes, results)
+VALUES			(?, ?, ?, ?, ?, ?, ?, ?)
+EOT
+	$test{id} = $sth->{'mysql_insertid'};
+	my $test_id = get_testdesc();
+	$test{test} = $test_id->{$test{test_id}};
+	process('create_test', { test => \%test });
+}
+
+sub create_config {
+	my(%config, $id, $sth);
+
+	if (!$form->{name}) {
+		error("Configuration must have a name.  Please go back and try again.");
+		return;
+	}
+
+	for (qw(cvs build mwc mpw)) {
+		$config{$_} = $form->{$_} ? 1 : 0;
+	}
+
+	for (qw(processor ram version name notes results)) {
+		$config{$_} = $form->{$_};
+	}
+
+	$sth = get_sth(<<'EOT', $user->{id}, @config{qw(processor ram version cvs build mwc mpw name notes results)});
+INSERT INTO	config	(user_id, processor, ram, version, cvs, build, mwc, mpw, name, notes, results)
+VALUES			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+EOT
+	$config{id} = $sth->{'mysql_insertid'};
+	process('create_config', { config => \%config });
+}
+
+sub create_user {
+	my($id, $name, $email, $pass, $sf_match, $sth);
+
+	if (!$form->{pass1} || !$form->{pass2}) {
+		error('No password given.  Please try again.');
+		return;
+	} elsif ($form->{pass1} ne $form->{pass2}) {
+		error("Passwords do not match.  Please try again.");
+		return;
+	} else {
+		$pass = md5_hex($form->{pass1});
+	}
+
+
+	($name = lc $form->{user}) =~ s/[^a-zA-Z0-9_.-]+//g;
+	if (!$name) {
+		error('No user name given.  Please try again.');
+		return;
+	} elsif (user_exists($name)) {
+		error("Sorry, that user name is already in use.  Please select another.");
+		return;
+	}
+
+	$email = $form->{email};
+	$sf_match = $form->{sf_match} ? 1 : 0;
+
+	$sth = get_sth(<<'EOT', $name, $email, $pass, $sf_match);
+INSERT INTO	users	(user, email, pass, sf_match)
+VALUES			(?, ?, ?, ?)
+EOT
+	$id = $sth->{'mysql_insertid'};
+	$user = {
+		id		=> $id,
+		user		=> $name,
+		email		=> $email,
+		pass		=> $pass,
+		sf_match	=> $sf_match,
+		'new'		=> 1
+	} if $id;
+
+	process('create_user');
+}
+
+sub add_test {
+	my $config_id = get_configdesc();
+	my $test_id   = get_tests();
+	if (! keys %$config_id) {
+		error("Please add a configuration before entering test results.");
+		return;
+	}
+
+	process('add_test', {
+		config_id	=> $config_id,
+		test_id		=> $test_id,
+		map { ($_ => get_param($_)) } qw( status compiler )
+	});
+
+}
+
+sub add_config {
+	process('add_config', { map { ($_ => get_param($_)) }
+		qw( processor version )
+	});
+}
+
+sub add_user {
+	process('add_user');
+}
+
+sub default {
+	process('notes');
+}
+
+sub header {
+	print $cgi->header(prep_cookie());
+	process('header');
+}
+
+sub footer {
+	process('menu');
+	process('footer');
+}
+
+
+# helper functions
+
+sub login {
+	my $sth;
+	$user = {};
+
+	if ($form->{op} eq 'logout') {
+		return;
+
+	} elsif ($form->{user} && $form->{pass}) {
+		$sth = get_sth(<<'EOT', $form->{user}, md5_hex($form->{pass}));
+SELECT	id,user,email,pass,sf_match
+FROM	users
+WHERE	user=? AND pass=?
+EOT
+		
+	} else {
+		my($id, $pass) = get_cookie($cgi);
+		return unless $id && $pass;
+		$sth = get_sth(<<'EOT', $id, $pass);
+SELECT	id,user,email,pass,sf_match
+FROM	users
+WHERE	id=? AND pass=?
+EOT
+	}
+
+	@{$user}{qw(id user email pass sf_match)} =
+		$sth->fetchrow_array;
+}
+
+sub user_exists {
+	my $sth = get_sth(<<'EOT', $_[0]);
+SELECT	user
+FROM	users
+WHERE	user=?
+EOT
+	return $sth->fetchrow_array;
+}
+
+sub get_param {
+	my($param) = @_;
+	my $sth = get_sth(<<'EOT', $param);
+SELECT	id,name
+FROM	code_param
+WHERE	type=?
+EOT
+
+	my $data = { 9999 => "Unknown" };
+	while (my $row = $sth->fetchrow_arrayref) {
+		$data->{$row->[0]} = $row->[1];
+	}
+	return $data;
+}
+
+sub get_users {
+	my $sth = get_sth(<<'EOT');
+SELECT		id, user, sf_match
+FROM		users
+EOT
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_hashref) {
+		$data->{$row->{id}} = $row;
+	}
+	return $data;
+}
+
+sub get_usertests {
+	my $sth = get_sth(<<'EOT');
+SELECT		id, user_id, test_id, config_id, status, compiler, is_tool, date
+FROM		user_tests
+ORDER BY	id
+EOT
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_hashref) {
+		push @{$data->{$row->{test_id}}}, $row;
+	}
+	return $data;
+}
+
+sub get_tests {
+	my $sth = get_sth(<<'EOT');
+SELECT		id, test, status
+FROM		tests
+ORDER BY	test
+EOT
+
+	my $user_tests = get_usertests();
+
+	my $data = [];
+	while (my $row = $sth->fetchrow_hashref) {
+		if (!$row->{status}) {
+			my %rank;
+			for my $tr (@{$user_tests->{$row->{id}}}) {
+				$rank{$tr->{status}}++;
+			}
+			($row->{status}) = sort {
+				$rank{$b} <=> $rank{$a}
+					||
+				    $b <=> $a
+			} keys %rank;
+		}
+		push @$data, $row;
+	}
+
+	return $data;
+}
+
+sub get_testdesc {
+	my $sth = get_sth(<<'EOT');
+SELECT		id, test
+FROM		tests
+EOT
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_arrayref) {
+		$data->{$row->[0]} = $row->[1];
+	}
+	return $data;
+}
+
+sub get_config {
+	my $sth = get_sth(<<'EOT', $user->{id});
+SELECT	id, user_id, processor, ram, version, cvs, build, mwc, mpw, date, name, notes, results
+FROM	config
+WHERE	user_id=?
+EOT
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_hashref) {
+		$data->{$row->{id}} = $row;
+	}
+	return $data;
+}
+
+sub get_configdesc {
+	my $sth = get_sth(<<'EOT', $user->{id});
+SELECT	id, name
+FROM	config
+WHERE	user_id=?
+EOT
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_arrayref) {
+		$data->{$row->[0]} = $row->[1];
+	}
+	return $data;
+}
+
+sub get_configsdesc {
+	my $sth = get_sth(<<'EOT');
+SELECT	id, name
+FROM	config
+EOT
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_arrayref) {
+		$data->{$row->[0]} = $row->[1];
+	}
+	return $data;
+}
+
+sub process {
+	my($name, $data) = @_;
+	my $t = $T{$name} or return;
+
+	if ($t->[0]) {
+		$data = {
+			env  => { map { lc, $ENV{$_} } keys %ENV },
+			user => $user,
+			form => $form,
+			ref $data ? %$data : ()
+		};
+		$template->process(\$t->[1], $data);
+	} else {
+		print $t->[1];
+	}
+}
+
+sub get_sth {
+	my($sql, @params) = @_;
+	my $sth = $dbh->prepare($sql);
+	$sth->execute(@params);
+	return $sth;
+}
+
+sub error {
+	my($error) = @_;
+	process('error', { err => $error });
+}
+
+sub get_cookie {
+	my($cgi) = @_;
+	my $cookie = $cgi->cookie($constants->{cookie_name});
+	if ($cookie) {
+		my($id, $pass) = split /:/, $cookie, 2;
+		return($id, $pass);
+	} else {
+		return;
+	}
+}
+
+sub prep_cookie {
+	my($session) = @_;
+
+	my $val = $user->{id} && $user->{pass}
+		? "$user->{id}:$user->{pass}"
+		: "";
+
+	my %cookie = (
+		-domain	=> $constants->{cookie_domain},
+		-name   => $constants->{cookie_name},
+		-path	=> $constants->{cookie_path},
+		-value	=> $val
+	);
+	
+	$cookie{-expires} = '+6M' unless $session;
+
+	return {
+		-date		=> $cgi->expires(0, 'http'),
+		-set_cookie	=> $cgi->cookie(%cookie)
+	};
+}
+
+%T = (
+	view_tests	=> [1, <<'EOT'],
+[% BLOCK status;
+	SWITCH status;
+		CASE 13;
+			"good";
+		CASE 14;
+			"ngood";
+		CASE 15;
+			"bad";
+		CASE 16;
+			"na";
+		CASE;
+			"na";
+	END;
+END %]
+</p>
+
+<p>
+Look around, click around, have fun.
+</p>
+
+<table border="0" cellpadding="4">
+	<tr class="neutral">
+		<th>Test Name</th>
+		<th>User</th>
+		<th>Config</th>
+		<th>Compiler</th>
+		<th>Status</th>
+		<th>Date</th>
+	</tr>
+
+[% FOR test = tests %]
+	<tr class="[% PROCESS status status => test.status %]">
+		<td><a name="[% test.test %]">[% test.test %]</a></td>
+		<td colspan="5">&nbsp;</td>
+	</tr>
+	[% FOR user_test = user_tests.${test.id};
+		myuser = users.${user_test.user_id};
+	%]
+	<tr class="[% PROCESS status status => user_test.status %]">
+		<td>&nbsp;</td>
+		<td>[% IF myuser.sf_match %]
+<a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
+		[% ELSE; myuser.name; END %]</td>
+		<td>[% configs.${user_test.config_id} %]</td>
+		<td>[% compiler.${user_test.compiler} %]</td>
+		<td>[% user_test.status %]</td>
+		<td>[% user_test.date %]</td>
+	</tr>
+[% END ; END %]
+</table>
+
+EOT
+
+	create_user	=> [1, <<'EOT'],
+The new user [% user.user %] has been created for you.  Please log in
+with that name and your new password.
+</p>
+EOT
+
+	create_config	=> [1, <<'EOT'],
+Configuration "[% config.name %]" (#[% config.id %]) has been added.
+You may now add test results for this configuration.
+</p>
+EOT
+
+	create_test	=> [1, <<'EOT'],
+Test result #[% test.id %] has been added for test [% test.test %].
+Thanks!
+[% IF test.status == 13 %]
+	Glad it worked!
+[% ELSIF test.status == 16 %]
+	One more out of the way.  :-)
+[% ELSE %]
+	Better luck next time.  ;-)  Don't forget to fill out any relevant
+	bug reports or submit patches, if appropriate.
+[% END %]
+</p>
+EOT
+
+	add_test	=> [1, <<'EOT'],
+[% BLOCK select %]
+	<td>[% label %]:</td>
+	<td><select name="[% name %]">
+[% FOR id = data.keys.nsort %]		<option value="[% id %]">[% data.$id %]</option>
+[% END %]
+	</select></td>
+
+[% END %]
+Please fill out the information below to enter results for a test.
+</p>
+
+<p>
+Select a configuration, select a test, select which compiler built
+the perl you are using, select whether or not you are using the MPW tool
+(otherwise application is assumed), and enter in any notes and
+the text of the results you got.  Then select the appropriate
+status of the test (if selected "Unknown", then please explain
+in the notes).
+</p>
+
+<p>
+<form action="[% env.script_name %]" method="POST">
+<input type="hidden" name="op" value="create_test">
+
+<table border="0" cellpadding="6"><tr>
+	<td>Test:</td>
+	<td><select name="test_id">
+[% FOR test = test_id %]		<option value="[% test.id %]">[% test.test %]</option>
+[% END %]
+	</select></td>
+</tr><tr>
+[% PROCESS select label => "Configuration", name => "config_id", data => config_id %]
+</tr><tr>
+[% PROCESS select label => "Compiler", name => "compiler", data => compiler %]
+</tr><tr>
+[% PROCESS select label => "Status", name => "status", data => status %]
+</tr><tr>
+	<td>Is this test using the MPW tool (else assume the application is used)?</td>
+	<td><input type="checkbox" name="is_tool"></td>
+</tr><tr>
+	<td>Enter any notes:</td>
+	<td><textarea name="notes"   cols="50" rows="10"></textarea></td>
+</tr><tr>
+	<td>Enter the test output (including the command you invoked it with,
+	if using the MPW tool):</td>
+	<td><textarea name="results" cols="50" rows="20"></textarea></td>
+</tr></table>
+
+<input type="submit" value="Add Test Results"> <input type="reset" value="Clear Form">
+</form>
+</p>
+EOT
+
+	add_config	=> [1, <<'EOT'],
+[% BLOCK select %]
+	<td>[% label %]:</td>
+	<td><select name="[% name %]">
+[% FOR id = data.keys.nsort %]		<option value="[% id %]">[% data.$id %]</option>
+[% END %]
+	</select></td>
+
+[% END %]
+Please fill out the information below to enter a new configuration
+into the system.
+</p>
+
+<p>
+First, name the configuration (it can be anything that fits in 32
+characters).  You should include what processor you are using,
+how much RAM is on the machine, whether or not you built MacPerl on
+this configuration, and which compiler sets you used.
+</p>
+
+<p>
+Also note what version you built; if you got the source from CVS,
+check the checkbox and select the most recent release before you checked
+out.
+</p>
+
+<p>
+Add any additional notes about the configuration (including machine
+model, CPU speed, and any other relevant information), and then enter
+information about the results of the build, and the usage of it (such
+as: "the build went fine except for these things: ..." and "Application
+and MPW tool ran fine."
+</p>
+
+<p>
+Save discussion of individual tests for the tests section.
+</p>
+
+<p>
+<form action="[% env.script_name %]" method="POST">
+<input type="hidden" name="op" value="create_config">
+
+<table border="0" cellpadding="6"><tr>
+	<td>Configuration name:</td>
+	<td><input type="text" name="name" size="32" maxlength="32"></td>	
+</tr><tr>
+[% PROCESS select label => "Processor", name => "processor", data => processor %]
+</tr><tr>
+	<td>RAM (MB):</td>
+	<td><input type="text" name="ram" size="6" maxlength="6"></td>
+</tr><tr>
+[% PROCESS select label => "Version", name => "version", data => version %]
+</tr><tr>
+	<td>Was this a CVS checkout?</td>
+	<td><input type="checkbox" name="cvs"></td>
+</tr><tr>
+	<td>Was this MacPerl built on this machine?</td>
+	<td><input type="checkbox" name="build" checked></td>
+</tr><tr>
+	<td>Select the compiler sets used:</td>
+	<td>
+		<input type="checkbox" name="mwc" checked> MWC686/MWCPPC (CodeWarrior)<br />
+		<input type="checkbox" name="mpw" checked> SC/MrC (Apple MPW)
+	</td>
+</tr><tr>
+	<td>Enter additional configuration notes:</td>
+	<td><textarea name="notes"   cols="50" rows="10"></textarea></td>
+</tr><tr>
+	<td>Enter any results:</td>
+	<td><textarea name="results" cols="50" rows="20"></textarea></td>
+</tr></table>
+
+<input type="submit" value="Create Configuration"> <input type="reset" value="Clear Form">
+</form>
+</p>
+EOT
+
+	add_user	=> [1, <<'EOT'],
+Please enter a user name, your email address (which will not be shown,
+but will be used in case I need to contact you directly), your chosen
+password (twice for verification), and select the checkbox for whether
+or not your chosen user name is the same as your user name on SoureForge.
+</p>
+<p>
+Please do use the same user name for both this and SourceForge,
+if you have a SourceForge user name.  If you do not, please
+<a href="http://sourceforge.net/account/register.php">register</a> there
+first.
+</p>
+
+<p>
+<form action="[% env.script_name %]" method="POST">
+<input type="hidden" name="op" value="create_user">
+
+<table border="0" cellpadding="6"><tr>
+	<td>User name:</td>
+	<td><input type="text"     name="user"     size="32" maxlength="32"></td>
+</tr><tr>
+	<td colspan="2">Is your username the same here as on SourceForge?
+	<input type="checkbox" name="sf_match" checked></td>
+</tr><tr>
+	<td>E-mail Address:</td>
+	<td><input type="text"     name="email"    size="32" maxlength="64"></td>
+</tr><tr>
+	<td>Password:</td>
+	<td><input type="password" name="pass1"    size="32" maxlength="32"></td>
+</tr><tr>
+	<td>Verify Password:</td>
+	<td><input type="password" name="pass2"    size="32" maxlength="32"></td>
+</tr></table>
+
+<input type="submit" value="Create User"> <input type="reset" value="Clear Form">
+</form>
+</p>
+EOT
+
+	error		=> [1, <<'EOT'],
+There has been an error.
+</p>
+
+<p>
+[% err %]
+</p>
+EOT
+
+	menu		=> [1, <<'EOT'],
+<p class="menu">[
+	  <a href="[% env.script_name %]?op=add_user">New User</a>
+	| <a href="[% env.script_name %]?op=view_tests">View Test Results</a>
+	[% IF user.id %]
+	| <a href="[% env.script_name %]?op=add_test">Add Test Result</a>
+	| <a href="[% env.script_name %]?op=add_config">Add Configuration</a>
+	| <a href="[% env.script_name %]?op=logout">Logout</a>
+	[% END %]
+]</p>
+[% IF !user.id || user.new %]<p class="menu">
+	<form action="[% env.script_name %]" method="POST">
+		User: <input type="text"     name="user"    size="12" maxlength="32"><br />
+		Pass: <input type="password" name="pass"    size="12" maxlength="32"><br />
+		<input type="submit" value="Login">
+	</form>
+</p>[% END %]
+EOT
+
+	notes		=> [1, <<'EOT'],
+This is a place to report successful builds and uses of the development
+version of MacPerl, and to report test results of the various tests in
+the perl test suite.
+</p>
+
+<p>
+The first thing you should do is register as a user.  Please use the same
+user name as your SourceForge user name.
+</p>
+
+<p>
+After that, you can register various configurations that you have either
+built MacPerl on, or used MacPerl on.  Note the processor type, RAM,
+compilers used, etc.
+</p>
+
+<p>
+Then you can start testing, and reporting the results.
+</p>
+
+<p>
+Any bugs you run
+into, please check out the
+<a href="http://sourceforge.net/tracker/?group_id=7940&amp;atid=107940">bug
+reporting</a> page, and to submit patches, please use the
+<a href="http://sourceforge.net/tracker/?group_id=7940&amp;atid=307940">patches</a>
+page.  This here is for reporting results, but bugs and patches -- for
+MacPerl itself or this page -- should go over there.
+</p>
+
+<p>
+Thanks for your help!
+</p>
+
+EOT
+
+	header		=> [1, <<'EOT'],
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+	<title>MacPerl Reports</title>
+	<meta name="generator" content="BBEdit 6.1" />
+	<base href="http://macperl.sourceforge.net" />
+	<link rel="stylesheet" type="text/css" href="/style.css" />
+</head>
+<body>
+
+<h1 class="head">MacPerl Reports</h1>
+
+[% IF user.id %]<p><strong>Hi, [% user.user %].</strong></p>
+[% END %]
+<p>
+
+<a href="http://sourceforge.net/projects/macperl/">
+	<img src="http://sourceforge.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="*" />
+</a>
+
+<img src="/MacPerl.gif" width="32" height="32" alt="*" />
+EOT
+
+	footer		=> [1, <<'EOT'],
+<p class="notes">
+<a href="[% env.script_name %]">mp-report</a> is
+built using <a href="http://www.template-toolkit.org/">Template Toolkit</a>
+and <a href="http://dbi.symbolstone.org/">DBI</a> on
+<a href="http://httpd.apache.org/">Apache</a> and
+<a href="http://www.mysql.com/">MySQL</a>.<br />
+$Id$
+</p>
+</body>
+</html>
+EOT
+
+);
+
+main();
+
+1;
+
+__END__
