@@ -43,7 +43,7 @@ BEGIN {
 	
 	use vars qw(@ISA @EXPORT %Process $VERSION);
 	
-	$VERSION = '1.03';
+	$VERSION = '1.04';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		LaunchApplication
@@ -56,6 +56,7 @@ BEGIN {
 		WakeUpProcess
 		SameProcess
 		ExitToShell
+		LSFindApplicationForInfo
 		
 		GetProcessPID
 		GetProcessForPID
