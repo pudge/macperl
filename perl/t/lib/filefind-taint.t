@@ -4,9 +4,7 @@
 my %Expect_File = (); # what we expect for $_ 
 my %Expect_Name = (); # what we expect for $File::Find::name/fullname
 my %Expect_Dir  = (); # what we expect for $File::Find::dir
-my $symlink_exists = eval { symlink("",""); 1 };
-my $cwd;
-my $cwd_untainted;
+my ($cwd, $cwd_untainted);
 
 BEGIN {
     chdir 't' if -d 't';
@@ -35,16 +33,13 @@ BEGIN {
     $ENV{'PATH'} = join($sep,@path);
 }
 
-
+my $symlink_exists = eval { symlink("",""); 1 };
 if ( $symlink_exists ) { print "1..45\n"; }
 else                   { print "1..27\n";  }
 
 use File::Find;
 use File::Spec;
 use Cwd;
-
-
-my $NonTaintedCwd = $^O eq 'MSWin32' || $^O eq 'cygwin' || $^O eq 'os2';
 
 cleanup();
 
@@ -129,7 +124,6 @@ sub wanted_File_Dir_prune {
     &wanted_File_Dir;
     $File::Find::prune=1 if  $_ eq 'faba';
 }
-
 
 sub simple_wanted {
     print "# \$File::Find::dir => '$File::Find::dir'\n";
@@ -253,7 +247,6 @@ sub file_path_name {
 }
 
 
-
 MkDir( dir_path('for_find'), 0770 );
 CheckDie(chdir( dir_path('for_find')));
 
@@ -333,12 +326,8 @@ eval {File::Find::find( {wanted => \&simple_wanted, untaint => 1,
 
 print "# $@" if $@;
 #$^D = 8;
-if ($NonTaintedCwd) {
-	Skip("$^O does not taint cwd");
-    } 
-else {
-	Check( $@ =~ m|insecure cwd| );
-}
+Check( $@ =~ m|insecure cwd| );
+
 chdir($cwd_untainted);
 
 
@@ -406,12 +395,8 @@ if ( $symlink_exists ) {
     eval {File::Find::find( {wanted => \&simple_wanted, untaint => 1,
                              untaint_skip => 1, untaint_pattern =>
                              qr|^(NO_MATCH)$|}, topdir('fa') );};
-    if ($NonTaintedCwd) {
-	Skip("$^O does not taint cwd");
-    } 
-    else {
-	Check( $@ =~ m|insecure cwd| );
-    }
+    Check( $@ =~ m|insecure cwd| );
+
     chdir($cwd_untainted);
 } 
 

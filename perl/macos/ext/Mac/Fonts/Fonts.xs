@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:30  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.2  1997/11/18 00:52:23  neeri
  * MacPerl 5.1.5
  *
@@ -88,7 +91,8 @@ SetFractEnable(fractEnable)
 
 =item GetDefFontSize()
 
-Get the default size of a font.
+Get the current size of the system font if not set to 0. If the value is
+set to 0 this function will return 12 as the font size.
 
 =cut
 short

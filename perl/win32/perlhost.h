@@ -2252,11 +2252,12 @@ CPerlHost::CreateLocalEnvironmentStrings(VDir &vDir)
 
 	while(lpLocalEnv) {
 	    // still have environment overrides to add
-	    // so copy the strings into place
-	    strcpy(lpStr, lpLocalEnv);
-	    nLength = strlen(lpLocalEnv) + 1;
-	    lpStr += nLength;
-	    lpEnvPtr += nLength;
+	    // so copy the strings into place if not an override
+	    char *ptr = strchr(lpLocalEnv, '=');
+	    if(ptr && ptr[1]) {
+		strcpy(lpStr, lpLocalEnv);
+		lpStr += strlen(lpLocalEnv) + 1;
+	    }
 	    lpLocalEnv = GetIndex(dwEnvIndex);
 	}
 
@@ -2351,6 +2352,10 @@ CPerlHost::Chdir(const char *dirname)
 {
     dTHXo;
     int ret;
+    if (!dirname) {
+	errno = ENOENT;
+	return -1;
+    }
     if (USING_WIDE()) {
 	WCHAR wBuffer[MAX_PATH];
 	A2WHELPER(dirname, wBuffer, sizeof(wBuffer));

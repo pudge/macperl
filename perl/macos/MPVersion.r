@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2001/09/02 00:38:40  pudge
+ * Sync with perforce
+ *
  * Revision 1.5  2001/07/20 23:54:49  pudge
  * Sync with perforce changes 11420,11424.
  *
@@ -23,9 +26,9 @@
  *
  */
 
-#define MPDate		"2001-09-01"
-#define MPVersionStr	"5.6.1a5"
+#define MPDate		"2001-09-30"
+#define MPVersionStr	"5.6.1b1"
 #define MPRevision	0x05
 #define MPVersion	0x61
-#define MPBuild		0x05
-#define MPState		alpha
+#define MPBuild		0x01
+#define MPState		beta

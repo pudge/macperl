@@ -21,6 +21,123 @@ http://dev.macperl.org/.
 This file contains only changes that affect the maint-5.6/macperl branch.
 
 ----------------
+Version v5.6.1b1
+----------------
+
+____________________________________________________________________________
+[ 12242] By: pudge                                 on 2001/09/26  20:41:35
+        Log: Note (get|set)sockopt are available.
+     Branch: maint-5.6/macperl
+           ! pod/perlport.pod
+____________________________________________________________________________
+[ 12241] By: pudge                                 on 2001/09/26  20:28:49
+        Log: Remove unneeded disabling of umask() calls
+     Branch: maint-5.6/macperl
+           ! lib/File/Temp.pm
+____________________________________________________________________________
+[ 12219] By: pudge                                 on 2001/09/26  00:19:35
+        Log: Fix just a few of the bugs in Mac::InternetConfig (Bug #462999, Axel Rose);
+             fix doc in Mac::Fonts (Patch #447221, Andreas Marcel Riechert).
+     Branch: maint-5.6/macperl
+           ! macos/ext/Mac/Fonts/Fonts.xs
+           ! macos/ext/Mac/InternetConfig/InternetConfig.pm
+____________________________________________________________________________
+[ 12214] By: pudge                                 on 2001/09/25  21:11:21
+        Log: Integrate changes from bleadperl.
+     Branch: maint-5.6/macperl
+          !> pod/perlport.pod
+____________________________________________________________________________
+[ 12212] By: pudge                                 on 2001/09/25  20:21:06
+        Log: Integrate change #12200 from maintperl.
+     Branch: maint-5.6/macperl
+          !> win32/perlhost.h
+____________________________________________________________________________
+[ 12211] By: pudge                                 on 2001/09/25  20:11:56
+        Log: Fix file types to "apple"
+     Branch: maint-5.6/macperl
+           ! macos/ext/Mac/Menus/t/MenuBar.rsrc
+           ! macos/ext/Mac/SAT/t/Collision.rsrc
+____________________________________________________________________________
+[ 12210] By: pudge                                 on 2001/09/25  19:28:20
+        Log: Fix rsrc file as snd file; fix path in t file.
+     Branch: maint-5.6/macperl
+           ! macos/ext/Mac/Notification/t/Notification.rsrc
+           ! macos/ext/Mac/Notification/t/Notification.t
+____________________________________________________________________________
+[ 12209] By: pudge                                 on 2001/09/25  19:15:57
+        Log: Sync up with File::Find from bleadperl.
+     Branch: maint-5.6/macperl
+           ! lib/File/Find.pm t/lib/filefind-taint.t
+____________________________________________________________________________
+[ 12208] By: pudge                                 on 2001/09/25  19:06:48
+        Log: Ignore SIGPIPE being set to IGNORE.  Temporary fix until we upgrade
+             to new version of libnet.  (Axel Rose, Paul Schinder, and a cast
+             of hundreds)
+     Branch: maint-5.6/macperl
+           ! macos/bundled_lib/blib/lib/Net/Cmd.pm
+           ! macos/bundled_lib/blib/lib/Net/FTP/A.pm
+           ! macos/bundled_lib/blib/lib/Net/FTP/I.pm
+____________________________________________________________________________
+[ 12193] By: pudge                                 on 2001/09/25  02:53:42
+        Log: Fixes for multiline error parsing (Bug #459263); cmd-.
+             not working, cursor not spinning (Bug #422129); external
+             editor problems (Bug #456329); escape/cmd-. not activating
+             "Cancel" in Save dialog box (Bug #446960); Runtimes not
+             executing on launch (Bug #464441).
+     Branch: maint-5.6/macperl
+           ! macos/macish.c macos/macish.h macos/macperl/MPEditor.c
+           ! macos/macperl/MPGlobals.h macos/macperl/MPScript.c
+           ! macos/macperl/MacPerl.r
+____________________________________________________________________________
+[ 12192] By: pudge                                 on 2001/09/25  02:42:49
+        Log: Update CPAN.pm to work with new Mac::BuildTools instead
+             of ExtUtils::MM_MacOS "orphan" functions
+     Branch: maint-5.6/macperl
+           ! lib/CPAN.pm
+____________________________________________________________________________
+[ 12191] By: pudge                                 on 2001/09/25  02:37:58
+        Log: Fix up another xsubpp problem (Matthias Neeracher)
+     Branch: maint-5.6/macperl
+           ! macos/xsubpp
+____________________________________________________________________________
+[ 12190] By: pudge                                 on 2001/09/25  02:37:38
+        Log: Remove literal tabs from source in MM_MacOS.pm (Thomas Wegner)
+     Branch: maint-5.6/macperl
+           ! macos/lib/ExtUtils/MM_MacOS.pm
+____________________________________________________________________________
+[ 12189] By: pudge                                 on 2001/09/25  02:37:08
+        Log: Fix up Makefiles for more Mac:: modules (and prepare for
+             static build ...?)
+     Branch: maint-5.6/macperl
+           ! macos/Makefile.mk macos/ext/Mac/Makefile.mk
+           ! macos/macperl/Makefile.mk
+____________________________________________________________________________
+[ 12188] By: pudge                                 on 2001/09/25  02:36:19
+        Log: Fix up tests
+     Branch: maint-5.6/macperl
+           ! macos/MacPerlTests.cmd macos/MacPerlTests.plx
+____________________________________________________________________________
+[ 12187] By: pudge                                 on 2001/09/25  02:11:13
+        Log: Make malloc smarter, fix bugs.  (Bug #404030)
+     Branch: maint-5.6/macperl
+           ! macos/icemalloc.c macos/icemalloc.h
+____________________________________________________________________________
+[ 12173] By: pudge                                 on 2001/09/24  12:56:13
+        Log: Integrate maint-5.6/perl changes 12024, 12026, 12145, 12146.
+     Branch: maint-5.6/macperl
+          !> (integrate 33 files)
+____________________________________________________________________________
+[ 11904] By: pudge                                 on 2001/09/06  00:28:01
+        Log: Integrate File::Find changes from bleadperl
+     Branch: maint-5.6/macperl
+           ! lib/File/Find.pm t/lib/filefind-taint.t
+____________________________________________________________________________
+[ 11903] By: pudge                                 on 2001/09/06  00:22:29
+        Log: Integrate 11847 from maint-5.6/perl
+     Branch: maint-5.6/macperl
+          !> sv.c
+
+----------------
 Version v5.6.1a5
 ----------------
 
