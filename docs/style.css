@@ -44,6 +44,26 @@ A:hover		{
 	color: rgb(0, 0, 0);
 }
 
+.good		{
+	background-color: rgb(  0, 170,   0);
+	color: rgb(0, 0, 0);
+}
+
+.ngood		{
+	background-color: rgb(170, 170,   0);
+	color: rgb(0, 0, 0);
+}
+
+.bad		{
+	background-color: rgb(170,   0,   0);
+	color: rgb(0, 0, 0);
+}
+
+.na		{
+	background-color: rgb(170, 170, 170);
+	color: rgb(0, 0, 0);
+}
+
 IMG		{
 	border-style: none;
 	float: left;
