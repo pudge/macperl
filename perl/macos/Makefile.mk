@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.9  2001/01/23 07:42:15  neeri
+#  Support fat builds involving SC (Task 24871)
+#
 #  Revision 1.8  2001/01/16 21:12:21  pudge
 #  Misc. makefile changes
 #
@@ -334,7 +337,6 @@ dynlibrary: perl PerlStub
 		Set Echo 1
 	end
 	Echo > dynlibrary
-	setfile -m 02/01/2031 dynlibrary
 
 perl: perl.{$(MACPERL_BUILD_TOOL)}
 	FatBuild perl $(MACPERL_INST_TOOL_PPC) $(MACPERL_INST_TOOL_68K)
@@ -494,5 +496,6 @@ minitest: miniperl
 	$(LibMrC) -o :PLib:PerlLib.MrC.Lib :Obj:{$(LibObjectsMRC)}
 
 macish.c : macish.h
+	SetFile -m . macish.c
 
 .INCLUDE : $(MACPERL_SRC)BulkBuildRules.mk

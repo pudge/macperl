@@ -111,6 +111,8 @@ dist:
 	$(RM_RF) $(DISTNAME).sit
 	Stuff -o $(DISTNAME).sit $(DISTNAME)
 
+.PHONY : Objects68K ObjectsPPC ObjectsSC ObjectsMrC
+
 Objects68K: Obj $(Objects68K)
 ObjectsPPC: Obj $(ObjectsPPC)
 ObjectsSC: 	Obj $(ObjectsSC)
