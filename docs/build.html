@@ -203,8 +203,8 @@ will be properly unpacked.
 		To install the perl MPW tool, see the documentation that
 		comes with it.</p></li>
 
-	<li><p>Unpack the perl-5.6.1 archive and drop it in "HD:macperl_src:"
-		with everything else.</p></li>
+	<li><p>Unpack the perl 5.6.1 source, rename the directory "perl",
+		and drop it in "HD:macperl_src:" with everything else.</p></li>
 
 	<li><p>Unpack the MacPerl source kit.  Put the "macperl"
 		folder inside "HD:macperl_src:".  Put the "macos" folder inside
@@ -213,10 +213,6 @@ will be properly unpacked.
 	<li><p>From the "HD:macperl_src:" directory, apply the xsubpp patch.</p><pre>
 		directory "HD:macperl_src:"
 		patch -p0 &lt; :perl:macos:xsubpp.patch</pre></li>
-
-	<li><p>Unless you got your perl source from CVS (in which cases it is
-		already applied), apply the perl 5.6.1 patch (changes since the release of 5.6.1).</p><pre>
-		patch -p0 &lt; :perl:macos:maint.patch</pre></li>
 
 	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
 		change the preferences there for the compilers you will
