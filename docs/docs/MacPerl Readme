@@ -8,17 +8,6 @@ __END__
 
 MacPerl Readme
 
-=head1 BETA NOTES
-
-The included Shuck is now in testing with new features.  It has been
-stable for a while now, but please test it.  Thomas Wegner is developing it;
-please see L<http://sf.net/projects/shuck/> for more details and bug reports.
-
-This is a B<release candidate>.  All major known bugs are fixed.
-Please see L<http://dev.macperl.org/> for more information on MacPerl,
-including for submitting new bug reports.
-
-
 =head1 SYNOPSIS
 
 Welcome to MacPerl, the application that implements perl,
@@ -33,6 +22,7 @@ Please read the READMEs that come with MacPerl, but ignore the
 installation instructions presented in the main README; they do not
 apply to the Mac OS port of perl.
 
+Read L<macperldelta> for changes since MacPerl 5.2.0r4.
 
 =head2 System Requirements
 
@@ -116,7 +106,7 @@ selected as well, by default.
 
 =item Developer Kit
 
-This installs all the source and the SYM files for debugging.
+This installs all the source, and the SYM files for debugging.
 
 =back
 
@@ -163,6 +153,15 @@ Go->LookupÉ.  In MacPerl, highlight a word and select
 Help->Perl Help or double-click it.
 
 
+=head2 Mac::Glue
+
+L<Mac::Glue> is a special framework for using Apple events with an
+AppleScript vocabulary, but Perl syntax.  Run the F<gluedialect>
+and F<gluescriptadds> droplets, drop any application (including
+the Finder) that you wish to be able to script onto F<gluemac>,
+and read the L<Mac::Glue> documentation.
+
+
 =head2 Mailing list
 
 There are several MacPerl mailing lists covering various aspects of
@@ -186,7 +185,7 @@ do with MacPerl development.
 =head1 CONTACT
 
 Please send your bug reports, patches, and feature requests for MacPerl
-to the MacPerl development site at http://dev.macperl.org/.  Also head
+to the MacPerl development site at L<http://dev.macperl.org/>.  Also head
 over there for the latest source and links to other sites.
 
 
@@ -222,4 +221,4 @@ by Ramon M. Felciano.
 
 =head1 DATE
 
-Last modified 2002.02.07.
+Last modified 2002.03.07.
