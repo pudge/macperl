@@ -34,6 +34,7 @@ sub main {
 		create_config	=> [ $pw->{user}{id},	\&create_config	],
 		view_config	=> [ 1,			\&view_config	],
 
+		explain_test	=> [ 1,			\&explain_test	],
 		add_test	=> [ $pw->{user}{id},	\&add_test	],
 		create_test	=> [ $pw->{user}{id},	\&create_test	],
 		view_test	=> [ 1,			\&view_test	],
@@ -218,6 +219,12 @@ sub add_test {
 		test_id		=> $test_id,
 		map { ($_ => get_param($pw, $_)) } qw( status compiler )
 	});
+}
+
+sub explain_test {
+	my($pw) = @_;
+	$pw->header('Explain Tests');
+	$pw->process('statusexplain');
 }
 
 # default

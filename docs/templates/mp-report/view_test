@@ -7,7 +7,7 @@ It is not intended as a guide of what will and won't work.  It is
 just for testing purposes.
 </p>
 
-[% INCLUDE statusexplain %]
+[% INCLUDE statusexplainlink %]
 
 <table border="0" cellpadding="6"><tr>
 	<td valign="top" width="200">User:</td>

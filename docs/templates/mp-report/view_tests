@@ -8,7 +8,7 @@ Please read the test guidelines (not yet available ... does someone want to
 write something up?).
 </p>
 
-[% INCLUDE statusexplain %]
+[% INCLUDE statusexplainlink %]
 
 <table border="0" cellpadding="4">
 	<tr class="na"><td colspan="5"><table><tr>[% FOR st = status.keys.nsort %]

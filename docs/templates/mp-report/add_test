@@ -10,7 +10,7 @@ status of the test (if selected "Unknown", then please explain
 in the notes).
 </p>
 
-[% INCLUDE statusexplain %]
+[% INCLUDE statusexplainlink %]
 
 <form action="[% env.script_name %]" method="post">
 
