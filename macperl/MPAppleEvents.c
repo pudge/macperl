@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.4  2002/01/04 03:34:45  pudge
+Modifications for universal headers 3.4
+
 Revision 1.3  2001/10/22 19:28:01  pudge
 Sync with perforce
 
@@ -5540,6 +5543,8 @@ pascal OSErr Text2FSSpec(
 	memcpy(file, path, size);
 	file[size] = 0;
 	
+	if (!size)
+		return dirNFErr;
 	if (err = GUSIPath2FSp(file, &spec))
 		return err;
 	if (err = GUSIFSpGetCatInfo(&spec, &info))
