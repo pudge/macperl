@@ -293,6 +293,11 @@ my %preconfig;
 		myarchname		=> $arch,
 		cc			=> $cc,
 	);	
+
+# 	if (eval { require Mac::Gestalt }) {
+# 		$preconfig{osvers} = join '.', split //, sprintf "%x",
+# 			$Mac::Gestalt::Gestalt{Mac::Gestalt::gestaltSystemVersion()};
+# 	}
 }
 
 sub TIEHASH { bless { %preconfig } }
