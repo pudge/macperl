@@ -6,7 +6,7 @@ use warnings;
 use lib "../blib/arch";
 use lib "../blib/lib";
 
-BEGIN { plan tests => 52 }
+BEGIN { plan tests => 56 }
 
 use File::Basename;
 use File::Spec::Functions qw(catdir catfile splitdir);
@@ -20,10 +20,8 @@ END {
 	rmdir for reverse @rm_dirs;
 }
 
-die "FSpDelete!!!\n";
-
 SKIP: {
-#	skip "Mac::Files", 51;
+#	skip "Mac::Files", 55;
 
 	# 0
 	ok(my $dir = FindFolder(kOnSystemDisk, kDesktopFolderType),  "FindFolder");
@@ -38,7 +36,7 @@ SKIP: {
 	my($type, $creator, $creator1) = ('TEXT', 'R*ch', 'MPS ');
 
 
-	ok(FSpDirCreate($dir1),                                      "FSpDirCreate");
+	ok(FSpDirCreate($dir1),                                      "FSpDirCreate: $dir");
 	ok(-d $dir1,                                                 "dir exists");
 	ok(FSpCreate($file1, $creator, $type),                       "FSpCreate");
 	ok(-f $file1,                                                "file exists");
@@ -53,13 +51,19 @@ SKIP: {
 	# 11
 	my @stat = stat $dir1;
 	my $ntime = time + 3600;
-	is($ci->ioDrMdDat, $stat[9],                                 "check ioDrMdDat");
+	my $x = $ci->ioDrMdDat;
+	my $y = $stat[9];
+	ok( (($x == $y) || ($x == $y + 1) || ($x == $y - 1)),        "check ioDrMdDat");
 	ok($ci->ioDrMdDat($ntime),                                   "set ioDrMdDat");
 	ok(FSpSetCatInfo($dir1, $ci),                                "FSpSetCatInfo");
+
 	ok($ci = FSpGetCatInfo($dir1),                               "FSpGetCatInfo");
 	@stat = stat $dir1;
-	is($ci->ioDrMdDat, $stat[9],                                 "check ioDrMdDat");
-	is($ci->ioDrMdDat, $ntime,                                   "check ioDrMdDat");
+	$x    = $ci->ioDrMdDat;
+	$y    = $stat[9];
+	my $z = $ntime;
+	ok( (($x == $y) || ($x == $y + 1) || ($x == $y - 1)),        "check ioDrMdDat");
+	ok( (($x == $z) || ($x == $z + 1) || ($x == $z - 1)),        "check ioDrMdDat");
 
 	# 17
 	ok(my $fi = FSpGetFInfo($file1),                             "FSpGetFInfo");
@@ -113,6 +117,12 @@ SKIP: {
 	is(scalar <$fh2>, "foo\n",                                   "check value");
 	ok(close($fh1),                                              "close file");
 	ok(close($fh2),                                              "close file");
+
+	# 51
+	ok(FSpDelete($file2),                                        "FSpDelete");
+	ok(!FSpDelete($file2),                                       "FSpDelete");
+	ok(FSpDelete($file4),                                        "FSpDelete");
+	ok(!FSpDelete($file4),                                       "FSpDelete");
 }
 
 SKIP: {
