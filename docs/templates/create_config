@@ -1,3 +1,0 @@
-Configuration "[% config.name %]" (#[% config.id %]) has been added.
-You may now add test results for this configuration.
-</p>
