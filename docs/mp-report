@@ -14,7 +14,10 @@ my($constants, $dbh, $user, $form, $vu, $cgi, $template, %T, %ops);
 	$constants->{cookie_name}	= "report_user";
 	$constants->{cookie_path}	= "/";
 	$constants->{cookie_domain}	= "macperl.sourceforge.net";
-	$constants->{tt_path}		= "../htdocs/templates";
+	$constants->{tt_path}		= [
+					"../htdocs/templates/mp-report",
+					"../htdocs/templates"
+					];
 
 	$dbh = DBIx::Password->connect($constants->{virtual_user});
 	END { $dbh->disconnect if $dbh }
