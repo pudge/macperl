@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.4  2001/02/14 03:31:55  pudge
+Little fixes for bleadperl
+
 Revision 1.3  2000/09/09 22:18:25  neeri
 Dynamic libraries compile under 5.6
 
@@ -31,6 +34,7 @@ First build released to public
 #include <GUSIFileSpec.h>
 #undef modff
 #include <fp.h>
+#include <LowMem.h>
 
 char **environ;
 static  char ** gEnviron;
@@ -758,6 +762,21 @@ void MacPerl_WaitEvent(Boolean busy, long sleep, RgnHandle rgn)
 			AEProcessAppleEvent(&ev);	/* Ignore errors */
 		}
 	}
+}
+
+clock_t MacPerl_times(struct tms * t)
+{
+	t->tms_utime = clock() - gMacPerl_StartClock;
+	t->tms_stime = 0;
+	t->tms_cutime = 0;
+	t->tms_cstime = 0;
+	
+	return t->tms_utime;
+}
+
+void MacPerl_init()
+{
+	gMacPerl_StartClock = LMGetTicks();
 }
 
 void

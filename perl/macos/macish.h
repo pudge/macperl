@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.5  2001/02/23 23:34:04  pudge
+Add xsubpp.patch; update versions; fix missing fp.h for SC/MrC
+
 Revision 1.4  2000/12/22 08:31:47  neeri
 Some build tweaks
 
@@ -44,13 +47,14 @@ extern char * sys_errlist[];
 #define MP_INIT(x)
 #endif
 
-MP_EXT char				gMacPerl_AlwaysExtract							MP_INIT(false);
-MP_EXT char				gMacPerl_SyntaxError;
-MP_EXT char				gMacPerl_MustPrime;
-MP_EXT char				gMacPerl_InModalDialog							MP_INIT(false);
-MP_EXT short			gMacPerl_OSErr;
-MP_EXT char 			gMacPerl_PseudoFileName[256];
-MP_EXT int				gMacPerl_Quit;
+MP_EXT char	gMacPerl_AlwaysExtract		MP_INIT(false);
+MP_EXT char	gMacPerl_SyntaxError;
+MP_EXT char	gMacPerl_MustPrime;
+MP_EXT char	gMacPerl_InModalDialog		MP_INIT(false);
+MP_EXT short	gMacPerl_OSErr;
+MP_EXT char 	gMacPerl_PseudoFileName[256];
+MP_EXT int	gMacPerl_Quit;
+MP_EXT clock_t	gMacPerl_StartClock;
 
 #ifdef MAC_CONTEXT
 #undef Move
@@ -58,18 +62,17 @@ MP_EXT int				gMacPerl_Quit;
 #include <Dialogs.h>
 #include <Files.h>
 
-MP_EXT Handle	gMacPerl_Reply;
-MP_EXT void  	(*gMacPerl_HandleEvent)(EventRecord * ev)				MP_INIT(nil);
-MP_EXT void		(*gMacPerl_FilterEvent)(EventRecord * ev)				MP_INIT(nil);
-MP_EXT Boolean	(*gMacPerl_FilterMenu)(long menuSelection)			MP_INIT(nil);
+MP_EXT Handle		gMacPerl_Reply;
+MP_EXT void  		(*gMacPerl_HandleEvent)(EventRecord * ev)	MP_INIT(nil);
+MP_EXT void		(*gMacPerl_FilterEvent)(EventRecord * ev)	MP_INIT(nil);
+MP_EXT Boolean		(*gMacPerl_FilterMenu)(long menuSelection)	MP_INIT(nil);
 void MacPerl_WaitEvent(Boolean busy, long sleep, RgnHandle rgn);
-MP_EXT void		(*gMacPerl_WaitEvent)(Boolean busy, long sleep, RgnHandle rgn)	
-																						MP_INIT(MacPerl_WaitEvent);
+MP_EXT void		(*gMacPerl_WaitEvent)(Boolean busy, long sleep, RgnHandle rgn)	MP_INIT(MacPerl_WaitEvent);
 
 typedef OSErr	MacOSRet;
 typedef Handle	HandleRet;
-typedef Ptr		RawPtr;
-typedef Ptr		PtrRet;
+typedef Ptr	RawPtr;
+typedef Ptr	PtrRet;
 #endif
 
 typedef int (*MacPerl_EmulationProc)(void *, char *);
@@ -79,13 +82,11 @@ char * GetSysErrText(short, char *);
 unsigned char * MacPerl_CopyC2P(const char * c, unsigned char * p);
 const char * MacPerl_CanonDir(const char * dir, char * buf);
 
-#define SH_PATH    "Shell ? We don't need no stinking shell!"
-
 /* HAS_IOCTL:
  *	This symbol, if defined, indicates that the ioctl() routine is
  *	available to set I/O characteristics
  */
-#define	HAS_IOCTL		/ **/
+#define	HAS_IOCTL		/**/
  
 /* HAS_UTIME:
  *	This symbol, if defined, indicates that the routine utime() is
@@ -192,8 +193,8 @@ const char * MacPerl_CanonDir(const char * dir, char * buf);
 
 #ifndef PERL_SYS_INIT3
 #	define PERL_SYS_INIT3(c,v,e) \
-				init_env(*e);	\
-				PL_opargs[OP_TIME] &= ~OA_RETINTEGER; MALLOC_INIT
+		MacPerl_init(); init_env(*e); \
+		PL_opargs[OP_TIME] &= ~OA_RETINTEGER; MALLOC_INIT
 #endif
 
 #ifndef PERL_SYS_TERM
@@ -206,6 +207,16 @@ const char * MacPerl_CanonDir(const char * dir, char * buf);
 
 #define DYNAMIC_ENV_FETCH 1
 #define ENV_HV_NAME "%EnV%MacOS%"
+
+struct tms {
+	clock_t tms_utime;	/* User CPU time */
+	clock_t tms_stime;	/* System CPU time */
+	clock_t tms_cutime;	/* User CPU time of terminated child procs */
+	clock_t tms_cstime;	/* System CPU time of terminated child procs */
+};
+
+clock_t	MacPerl_times(struct tms *);
+#define times(x) MacPerl_times(x)
 
 /* MacOS 68K defines atan2 et al. as macros */
 
