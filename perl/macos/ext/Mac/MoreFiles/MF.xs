@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:27  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:31  neeri
  * Checked into Sourceforge
  *
@@ -192,7 +195,7 @@ FSpDirectoryCopy(srcSpec, dstSpec, preflight, copyErrHandler = NULL)
 	SV *		copyErrHandler
 	CODE:
 	gMFProc = copyErrHandler;
-	RETVAL = FSpDirectoryCopy(&srcSpec, &dstSpec, nil, 0, preflight, MFErrHdlr);
+	RETVAL = FSpDirectoryCopy(&srcSpec, &dstSpec, nil, nil, 0, preflight, MFErrHdlr);
 	OUTPUT:
 	RETVAL
 
