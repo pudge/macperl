@@ -3,6 +3,9 @@ Project	:	Perl5				-
 File	:	icemalloc.h			-	Memory allocator
 
 $Log$
+Revision 1.1  2000/08/14 01:48:17  neeri
+Checked into Sourceforge
+
 Revision 1.1  2000/05/14 21:45:04  neeri
 First build released to public
 
@@ -192,6 +195,7 @@ extern _mem_pool_ptr	_mem_pool_forest;
 void	* 				pool_malloc(_mem_pool_ptr pool, u_long size);
 void	* 				pool_realloc(_mem_pool_ptr pool, void * ptr, u_long size);
 int 					pool_free(void * ptr);
+u_long 					pool_size(void * ptr);
 int 					free_pool(int id);
 int 					free_pool_memory(int id);
 _mem_pool_ptr		find_pool(int id);

@@ -3,6 +3,9 @@ Project	:	Perl5				-
 File	:	icemalloc.c			-	Memory allocator
 
 $Log$
+Revision 1.1  2000/08/14 01:48:17  neeri
+Checked into Sourceforge
+
 Revision 1.1  2000/05/14 21:45:03  neeri
 First build released to public
 
@@ -177,7 +180,6 @@ malloc (size_t size )
 /* DISPATCH_START */
 void free(void * ptr)
 {
-	
 	pool_free((char *) ptr);
 }
 /* DISPATCH_END */
@@ -192,31 +194,48 @@ void free(void * ptr)
 /* DISPATCH_START */
 void * realloc(void * old, u_long size)
 {
-	void *			nu;
+	_mem_pool_ptr	pool;
+	char *			mem;
+
+	pool = _default_mem_pool;
+	if (pool == (_mem_pool_ptr)0)
+		return (char *)0;
 	
-	nu = malloc(size);
-	
-	if (!old || !nu)
-		return nu;
-	
-	memcpy(nu, old, size);
-	
-	free(old);
-	
-	return nu;
+	mem = pool_realloc(pool, old, size);
+
+	return mem;
 }
 /* DISPATCH_END */
 
 void * pool_realloc(_mem_pool_ptr pool, void * old, u_long size)
 {
 	void *			nu;
+	u_long			old_size = pool_size(old);
 	
+	/* 
+	 * To prevent excessive reallocations, we impose growth and
+	 * shrinkage minima.
+	 */
+
+	const int growth_fraction	= 5;
+	const int shrink_fraction   = 3;
+	
+	if (size > old_size) { /* Growing */
+		if (((size - old_size) << growth_fraction) < old_size) /* Proposed growth too small, increase it */
+			size = old_size + (old_size >> growth_fraction);
+	} else { /* Shrinking */
+		if (old_size < 65 && (size << 1) > old_size)		   /* Bucket allocation is by power of two, so don't shrink earlier */
+			return old;
+		if (((old_size - size) << shrink_fraction) < old_size) /* Proposed shrinkage too insignificant, omit it */
+			return old;
+	}
+
 	nu = pool_malloc(pool, size);
 	
 	if (!old || !nu)
 		return nu;
 	
-	memcpy(nu, old, size);
+	memcpy(nu, old, old_size < size ? old_size : size);
 	
 	pool_free(old);
 	
@@ -632,13 +651,87 @@ char	* _blk_malloc(_mem_pool_ptr pool, u_long size)
 
 #ifdef DOCUMENTATION
 
+	pool_size() determines the size of an allocated block.
+	
+#endif
+
+static u_long _pool_find_ptr_bucket_size(char * ptr);
+static u_long _pool_find_ptr_blk_size(char * ptr);
+
+u_long pool_size(void * ptr)
+{
+	u_long	ptr_size;
+
+	if (!ptr)
+		return 0;
+
+	if (ptr_size = _pool_find_ptr_bucket_size(ptr)) 
+		return ptr_size;
+	else 
+		return _pool_find_ptr_blk_size(ptr);
+}
+
+#ifdef DOCUMENTATION
+
+	_pool_find_ptr_bucket_size() finds size of a pointer allocated in a bucket.
+	
+#endif
+
+u_long _pool_find_ptr_bucket_size(char * ptr)
+{
+	_mem_pool_ptr		pool;
+	_mem_bucket_ptr	bucket;
+
+	/*
+	** Since the default list is stored at the front of the forest list,
+	** we inherently search the default forest first. Nice.
+	*/
+	pool = _mem_pool_forest;
+	
+	while (pool != (_mem_pool_ptr)0) {
+		if (bucket = pool->free_16)
+			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
+				if (bucket->free_count+1 == bucket->max_count)
+					pool->free_16 = nil;
+				return 16;
+			}
+		if (bucket = pool->free_32)
+			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)	{
+				if (bucket->free_count+1 == bucket->max_count)
+					pool->free_32 = nil;
+				return 32;
+			}
+		if (bucket = pool->free_64)
+			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
+				if (bucket->free_count+1 == bucket->max_count)
+					pool->free_64 = nil;
+				return 64;
+			}
+		
+		for (bucket = pool->blk_16; bucket; bucket = bucket->next)
+			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+				return 16;
+		for (bucket = pool->blk_32; bucket; bucket = bucket->next)
+			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+				return 32;
+		for (bucket = pool->blk_64; bucket; bucket = bucket->next)
+			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+				return 64;
+		
+		pool = pool->next;
+	}
+	
+	return 0;
+}
+
+#ifdef DOCUMENTATION
+
 	pool_free() does the low level work of a free().
 	
 #endif
 
 static _mem_bucket_ptr _pool_find_ptr_bucket(char * ptr);
-static int _block_is_freed(_mem_blk_ptr blk);
-static _mem_blk_ptr _pool_find_ptr_blk(char	* ptr);
+static _mem_blk_ptr _pool_find_ptr_blk(char * ptr);
 
 int pool_free(void * ptr)
 {
@@ -1041,7 +1134,7 @@ long				lastsize, nextsize;
 
 #ifdef DOCUMENTATION
 
-	_pool_find_ptr_blk() finds the block containing this pointer in "ptr".
+	_pool_find_ptr_bucket() finds the bucket containing this pointer in "ptr".
 	
 #endif
 
@@ -1120,6 +1213,18 @@ _mem_blk_ptr _pool_find_ptr_blk(char	* ptr)
 	return (_mem_blk_ptr)0;
 }
 
+u_long _pool_find_ptr_blk_size(char * ptr)
+{
+	_mem_blk_ptr	blk = _pool_find_ptr_blk(ptr);
+	
+	if (!blk) {
+		return 0;
+	} else {
+		_mem_ptr_hdr_ptr hdr = (_mem_ptr_hdr_ptr) ( (u_long)ptr - sizeof(_mem_ptr_hdr) );
+		
+		return GET_PTR_SIZE(hdr);
+	}
+}
 
 #ifdef DOCUMENTATION
 
