@@ -20,7 +20,7 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = '1.29';
+$VERSION = '1.30';
 
 =head2 Constants: AppleEvent Descriptor Types
 
@@ -1128,6 +1128,21 @@ If TYPE is present, make it the new type.
 Return the data from the AEDesc structure. If HANDLE is present, make
 it the new data.
 
+B<Warning>: If using Mac OS X, you must dispose of the result on your own.
+This is because in Mac OS, we returned the handle from the AEDesc itself,
+but now we must return a copy.  So in Mac OS we could do:
+
+	print $desc->data->get;
+
+Now we must do:
+
+	my $handle = $desc->data;
+	print $handle->get;
+	$handle->dispose;
+
+Normally, you don't want to call C<data> directly anyway, and you would
+use C<get> instead.
+
 =item get
 
 Return the data of the AEDesc structure in a smartly unpacked way.
@@ -1144,7 +1159,8 @@ BEGIN {
 sub new {
 	my($package, $type, $data) = @_;
 	
-	if (defined($data) && ref($data) ne "Handle") {
+	$data = "" unless defined($data);
+	if (ref($data) ne "Handle") {
 		_new($package, $type, new Handle($data));
 	} else {
 		_new(@_);
@@ -1158,9 +1174,15 @@ sub get () {
 	if (exists($constant{$type})) {
 		return $constant{$type};
 	} elsif (exists($MacUnpack{$type})) {
-		return MacUnpack($type, $desc->data->get);
+		my $handle = $desc->data;
+		my $return = $handle->get;
+		$handle->dispose unless $^O eq 'MacOS';
+		return MacUnpack($type, $return);
 	} else {
-		return $desc->data->get;
+		my $handle = $desc->data;
+		my $return = $handle->get;
+		$handle->dispose unless $^O eq 'MacOS';
+		return $return;
 	}
 }
 
