@@ -10,10 +10,9 @@ use Mac::Notification;
 use Mac::Processes;
 use MacPerl 'DoAppleScript';
 
-local *OLDERR;
-
 SKIP: {
-#	skip "Mac::Notification", 10;
+	skip "Set MAC_CARBON_GUI in env to run tests", 10
+		unless $ENV{MAC_CARBON_GUI};
 
 	my($process, $name);
 	if ($^O eq 'MacOS') {
@@ -42,18 +41,16 @@ SKIP: {
 	ok($process, 'process number');
 	ok($name, 'process name');
 
-	if (SameProcess($process, GetFrontProcess())) {
+	if (is_front($process)) {
 		ok(my $notification = NMRec->new(
 			nmStr	=> "Switch $name to the background, please.  " .
 				"I'll switch in 30 seconds if you don't."
 		), 'create notification');
 
-		close_stderr();
 		ok(NMInstall($notification),	'install notification');
-		open_stderr();
 
 		my $count = 0;
-		while (SameProcess($process, GetFrontProcess())) {
+		while (is_front($process)) {
 			sleep 1;
 			if (++$count >= 30) {
 				# fails if Finder is not running ... but we don't want to
@@ -72,35 +69,31 @@ SKIP: {
 		nmStr	=> "Please wait a few seconds, I will bring $name to the front.",
 	), 'create notification');
 
-	close_stderr();
 	ok(NMInstall($notification),	'install notification');
-	open_stderr();
 
 	my $count = 0;
-	until (SameProcess($process, GetFrontProcess())) {
+	until (is_front($process)) {
 		sleep 1;
 		last if ++$count >= 5;
 	}
+
+	ok(NMRemove($notification),	'remove notification');
 
 	ok(my $lp = new LaunchParam(
 		launchAppSpec		=> $Mac::Processes::Process{$process}->processAppSpec,
 		launchControlFlags	=> launchContinue(),
 	), 'create launch param');
 	ok(LaunchApplication($lp),	'switching back');
-
-	ok(NMRemove($notification),	'remove notification');
 }
 
+sub is_front {
+	my($process) = @_;
+	return 1 if SameProcess($process, GetFrontProcess());
 
+	my $name = $Process{GetFrontProcess()}->processName;
+	return 1 if $name eq 'SystemUIServer' || $name eq 'UserNotificationCenter';
 
-# Notification manager prints to STDERR
-sub close_stderr {
-	open OLDERR, ">&STDERR";
-	close STDERR;
-}
-
-sub open_stderr {
-	open STDERR, ">&OLDERR";
+	return 0;
 }
 
 __END__

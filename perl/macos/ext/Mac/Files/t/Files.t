@@ -6,7 +6,7 @@ use warnings;
 use lib "../blib/arch";
 use lib "../blib/lib";
 
-BEGIN { plan tests => 53 }
+BEGIN { plan tests => 52 }
 
 use File::Basename;
 use File::Spec::Functions qw(catdir catfile splitdir tmpdir);
@@ -21,7 +21,7 @@ END {
 }
 
 SKIP: {
-#	skip "Mac::Files", 55;
+#	skip "Mac::Files", 52;
 
 	# 0
 	my $dir = tmpdir();
@@ -123,12 +123,12 @@ SKIP: {
 	ok(!FSpDelete($file4),                                       "FSpDelete");
 }
 
-SKIP: {
-	skip "Mac::Files Volumes", 1;
+#SKIP: {
+#	skip "Mac::Files Volumes", 1;
 
 	# UnmountVol
 	# Eject
 	# FlushVol
-}
+#}
 
 __END__

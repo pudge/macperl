@@ -8,8 +8,9 @@ BEGIN { plan tests => 13 }
 
 use MacPerl ':all';
 
+
 SKIP: {
-#	skip "MacPerl", 13;
+#	skip "MacPerl", 10;
 
 	my @volumes = Volumes();
 	ok(@volumes, 'Volumes: ' . join(', ', @volumes));	
@@ -90,6 +91,11 @@ EOS
 		}
 	}
 	unlink $testfile;
+}
+
+SKIP: {
+	skip "Set MAC_CARBON_GUI in env to run tests", 3
+		unless $ENV{MAC_CARBON_GUI};
 
 	my $pick = MacPerl::Pick('Select the number between two and four', 0..5);
 	is($pick, 3, 'Pick()');

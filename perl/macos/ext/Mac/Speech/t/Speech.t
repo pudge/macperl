@@ -8,10 +8,11 @@ use vars '$PAUSE';
 use Mac::Files;
 use Mac::Speech;
 
-SKIP: {
-#	skip "Mac::Speech", 34;
+$ENV{MAC_CARBON_SOUND} = 1 unless defined $ENV{MAC_CARBON_SOUND};
 
-	my(@voicefiles, $voicedir, $voice, $desc, $channel, $desd);
+my(@voicefiles, $voicedir, $voice, $desc, $channel, $desd);
+SKIP: {
+#	skip "Mac::Speech", 9;
 
 	$voicedir = FindFolder(kOnSystemDisk, kVoicesFolderType);
 	if (opendir(my $dh, $voicedir)) {
@@ -33,14 +34,23 @@ SKIP: {
 	is(50,			$desc->age,		'check age');
 	is($voice->creator,	$desc->voice->creator,	'check creator');
 	is($voice->id,		$desc->voice->id,	'check id');
+}
+
+SKIP: {
+	skip "Set MAC_CARBON_SOUND in env to run tests", 3
+		unless $ENV{MAC_CARBON_SOUND};
 
 	# sing
 	speak($channel, 'Do you like my Cello Voice?',	'sing');
 	ok(SetSpeechPitch($channel, 1.2*GetSpeechPitch($channel)),
 							'adjust pitch');
 	speak($channel, 'Wanna take you higher',	'sing!');
-	ok(DisposeSpeechChannel($channel),		'dispose channel');
+}
 
+SKIP: {
+#	skip "Mac::Speech", 10;
+
+	ok(DisposeSpeechChannel($channel),		'dispose channel');
 
 	# try again with default voice
 	ok($voice   = $Mac::Speech::Voice{undef},	'load default voice');
@@ -53,6 +63,11 @@ SKIP: {
 	is($desc->age,		$desd->age,		'check age');
 	is($voice->creator,	$desd->voice->creator,	'check creator');
 	is($voice->id,		$desd->voice->id,	'check id');
+}
+
+SKIP: {
+	skip "Set MAC_CARBON_SOUND in env to run tests", 10
+		unless $ENV{MAC_CARBON_SOUND};
 
 	speak($channel, $desc->comment,			'speak default comment');
 
@@ -94,7 +109,10 @@ EOS
 			last;
 		}
 	}
+}
 
+SKIP: {
+#	skip "Mac::Speech", 2;
 
 	ok(TextToPhonemes($channel, 'Stop all the clocks disconnect the phone')
 		=~ /^_st1AAp/, # _1AOl ~DAX _kl1AAks _d2IHskAXn1EHkt ~DAX _f1OWn',

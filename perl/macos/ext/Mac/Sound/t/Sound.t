@@ -8,8 +8,11 @@ BEGIN { plan tests => 14 }
 use Mac::Resources;
 use Mac::Sound;
 
+$ENV{MAC_CARBON_SOUND} = 1 unless defined $ENV{MAC_CARBON_SOUND};
+
 SKIP: {
-#	skip "Mac::Sound Beeps", 4;
+	skip "Set MAC_CARBON_SOUND in env to run tests", 4
+		unless $ENV{MAC_CARBON_SOUND};
 
 	my $vol = GetDefaultOutputVolume();
 	ok(defined($vol),			'get current volume');
@@ -32,8 +35,9 @@ SKIP: {
 }
 
 
+my($res, $snd);
 SKIP: {
-#	skip "Mac::Sound Resource", 10;
+#	skip "Mac::Sound Resource", 7;
 
 	my $ofil = 'Scream.rsrc';
 	my $otyp = soundListRsrc();
@@ -49,7 +53,6 @@ SKIP: {
 
 	my $file = catdir($dir, $ofil);
 
-	my($res, $snd);
 	if ($file && $^O eq 'MacOS') {
 		$res = FSpOpenResFile($file, 0);
 	} elsif ($file) {
@@ -87,6 +90,11 @@ SKIP: {
 
 		ok(1, "Can't open $ofil");
 	}
+}
+
+SKIP: {
+	skip "Set MAC_CARBON_SOUND in env to run tests", 3
+		unless $ENV{MAC_CARBON_SOUND};
 
 	ok(my $chan = SndNewChannel(0, 0),		'new sound channel');
 	ok(SndPlay($chan, $snd, 0),			'play sound');
