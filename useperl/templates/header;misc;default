@@ -56,9 +56,10 @@ in this block -->
 
 &nbsp;
 
-<TABLE WIDTH="99%" ALIGN="CENTER" CELLPADDING="0" CELLSPACING="0" BORDER="0">
-	<TR><TD>&nbsp;</TD><TD VALIGN="TOP" ALIGN="LEFT" WIDTH="100%">
-
+<TABLE WIDTH="99%" ALIGN="CENTER" CELLPADDING="0" CELLSPACING="0" BORDER="[% constants.debug_maintable_border || 0 %]">
+[% PROCESS maintable_tr %]
+	[% PROCESS maintable_td %]&nbsp;</TD>
+	[% PROCESS maintable_td mt_valign="TOP" mt_align="LEFT" mt_width="100%" mt_height="1" %]
 	<TABLE BORDER="0" WIDTH="100%" CELLPADDING="2" CELLSPACING="0"><TR><TD>
 <P>[% PROCESS useperlmenu %]
 [%- IF user.is_admin; Slash.createMenu(adminmenu); END %]

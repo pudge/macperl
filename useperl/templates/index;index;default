@@ -228,10 +228,10 @@ message_count.read %] old message[% message_count.read == 1 ? "" : "s";
 
 [% UNLESS user.noboxes %]
 </TD>
-<TD>&nbsp;</TD><TD WIDTH="[% constants.fancyboxwidth + 10 %]" ALIGN="CENTER" VALIGN="TOP">
+[% PROCESS maintable_td %]&nbsp;</TD>
+[% PROCESS maintable_td mt_width=(constants.fancyboxwidth + 10) mt_height="1" mt_align="CENTER" mt_valign="TOP" %]
 [% boxes || "&nbsp;" %]
 [% END %]
-
 
 __seclev__
 10000
