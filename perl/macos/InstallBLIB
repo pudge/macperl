@@ -15,7 +15,7 @@ for $file (@ARGV) {
 	$file =~ s|/|:|g;
 	$file = ":$file" unless $file =~ /^:/;
 	($new = $file) =~ s|^:(lib:)?|:blib:lib:$prefix|;
-	next unless -g $file;
+	next unless -f $file;
 XSCHECK: {
 		if ($file =~ /\.xs$/) {
 			open(F, $file) || die;
