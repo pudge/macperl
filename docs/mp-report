@@ -2,157 +2,143 @@
 
 use lib "../perl/lib";
 use strict;
-use CGI;
-use DBIx::Password;
 use Digest::MD5 'md5_hex';
-use Template;
-my($constants, $dbh, $user, $form, $vu, $cgi, $template, %T, %ops);
+use Pudge::Web;
 
 {
-	$constants->{Id}		= '$Id$';
-	$constants->{virtual_user}	= "macperl";
-	$constants->{cookie_name}	= "report_user";
-	$constants->{cookie_path}	= "/";
-	$constants->{cookie_domain}	= "macperl.sourceforge.net";
-	$constants->{tt_path}		= [
+	my($pw) = Pudge::Web->new(
+		Id		=> '$Id$',
+		virtual_user	=> "macperl",
+		cookie_name	=> "report_user",
+		cookie_path	=> "/",
+		cookie_domain	=> "macperl.sourceforge.net",
+		tt_path		=> [
 					"../htdocs/templates/mp-report",
 					"../htdocs/templates"
-					];
-
-	$dbh = DBIx::Password->connect($constants->{virtual_user});
-	END { $dbh->disconnect if $dbh }
-	$cgi = new CGI;
-	$template = Template->new(
-		TRIM		=> 1,
-		INCLUDE_PATH	=> $constants->{tt_path}
+		],
 	);
+
+	main($pw);
 }
 
-use constant ALLOWED	=> 0;
-use constant FUNCTION	=> 1;
-
 sub main {
-	$form = $cgi->Vars;
-	login();
+	my($pw) = @_;
+	$pw->initdata();
 
 	# possible value of "op" parameter in form
-	%ops = (
+	$pw->{ops} = {
 		add_user	=> [ 1,			\&add_user	],
 		create_user	=> [ 1,			\&create_user	],
-		add_config	=> [ $user->{id},	\&add_config	],
-		create_config	=> [ $user->{id},	\&create_config	],
-		add_test	=> [ $user->{id},	\&add_test	],
-		create_test	=> [ $user->{id},	\&create_test	],
+		add_config	=> [ $pw->{user}{id},	\&add_config	],
+		create_config	=> [ $pw->{user}{id},	\&create_config	],
+		add_test	=> [ $pw->{user}{id},	\&add_test	],
+		create_test	=> [ $pw->{user}{id},	\&create_test	],
 		view_tests	=> [ 1,			\&view_tests	],
 		default		=> [ 1,			\&default	]
-	);
+	};
 
-	# prepare op to proper value if bad value given
-	my $op = $form->{op};
-	if (!$op || !exists $ops{$op} || !$ops{$op}[ALLOWED]) {
-		$op = 'default';
-	}
-
-	# dispatch of op
-	$ops{$op}[FUNCTION]->();
-	footer();
+	$pw->main();
 }
 
 # main functions
 sub view_tests {
-	my $tests = get_tests();
-	my $user_tests = get_usertests();
+	my($pw) = @_;
+	my $tests = get_tests($pw);
+	my $user_tests = get_usertests($pw);
 
-	header('View Tests');
-	process('view_tests', {
+	$pw->header('View Tests');
+	$pw->process('view_tests', {
 		tests		=> $tests,
 		user_tests	=> $user_tests,
-		configs		=> get_configsdesc(),
-		users		=> get_users(),
-		map { ($_ => get_param($_)) }
+		configs		=> get_configsdesc($pw),
+		users		=> get_users($pw),
+		map { ($_ => get_param($pw, $_)) }
 			qw( compiler status )
 	});
 }
 
 sub create_test {
+	my($pw) = @_;
 	my(%test, $id, $sth);
 
-	$test{is_tool} = $form->{is_tool} ? 1 : 0;
+	$test{is_tool} = $pw->{form}{is_tool} ? 1 : 0;
 
 	for (qw(test_id config_id status compiler notes results)) {
-		$test{$_} = $form->{$_};
+		$test{$_} = $pw->{form}{$_};
 	}
 
-	$sth = get_sth(<<'EOT', $user->{id}, @test{qw(test_id config_id status compiler is_tool notes results)});
+	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @test{qw(test_id config_id status compiler is_tool notes results)});
 INSERT INTO	user_tests	(user_id, test_id, config_id, status, compiler, is_tool, notes, results)
 VALUES			(?, ?, ?, ?, ?, ?, ?, ?)
 EOT
 	$test{id} = $sth->{'mysql_insertid'};
-	my $test_id = get_testdesc();
+	my $test_id = get_testdesc($pw);
 	$test{test} = $test_id->{$test{test_id}};
 
-	header('Create Test');
-	process('create_test', { test => \%test });
+	$pw->header('Create Test');
+	$pw->process('create_test', { test => \%test });
 }
 
 sub create_config {
+	my($pw) = @_;
 	my(%config, $id, $sth);
 
-	if (!$form->{name}) {
+	if (!$pw->{form}{name}) {
 		error("Configuration must have a name.  Please go back and try again.");
 		return;
 	}
 
 	for (qw(cvs build mwc mpw)) {
-		$config{$_} = $form->{$_} ? 1 : 0;
+		$config{$_} = $pw->{form}{$_} ? 1 : 0;
 	}
 
 	for (qw(processor ram version name notes results)) {
-		$config{$_} = $form->{$_};
+		$config{$_} = $pw->{form}{$_};
 	}
 
-	$sth = get_sth(<<'EOT', $user->{id}, @config{qw(processor ram version cvs build mwc mpw name notes results)});
+	$sth = $pw->get_sth(<<'EOT', $pw->{user}{id}, @config{qw(processor ram version cvs build mwc mpw name notes results)});
 INSERT INTO	configs	(user_id, processor, ram, version, cvs, build, mwc, mpw, name, notes, results)
 VALUES			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 EOT
 	$config{id} = $sth->{'mysql_insertid'};
 
-	header('Create Configuration');
-	process('create_config', { config => \%config });
+	$pw->header('Create Configuration');
+	$pw->process('create_config', { config => \%config });
 }
 
 sub create_user {
+	my($pw) = @_;
 	my($id, $name, $email, $pass, $sf_match, $sth);
 
-	if (!$form->{pass1} || !$form->{pass2}) {
+	if (!$pw->{form}{pass1} || !$pw->{form}{pass2}) {
 		error('No password given.  Please try again.');
 		return;
-	} elsif ($form->{pass1} ne $form->{pass2}) {
+	} elsif ($pw->{form}{pass1} ne $pw->{form}{pass2}) {
 		error("Passwords do not match.  Please try again.");
 		return;
 	} else {
-		$pass = md5_hex($form->{pass1});
+		$pass = md5_hex($pw->{form}{pass1});
 	}
 
 
-	($name = lc $form->{user}) =~ s/[^a-zA-Z0-9_.-]+//g;
+	($name = lc $pw->{form}{user}) =~ s/[^a-zA-Z0-9_.-]+//g;
 	if (!$name) {
 		error('No user name given.  Please try again.');
 		return;
-	} elsif (user_exists($name)) {
+	} elsif (user_exists($pw, $name)) {
 		error("Sorry, that user name is already in use.  Please select another.");
 		return;
 	}
 
-	$email = $form->{email};
-	$sf_match = $form->{sf_match} ? 1 : 0;
+	$email = $pw->{form}{email};
+	$sf_match = $pw->{form}{sf_match} ? 1 : 0;
 
-	$sth = get_sth(<<'EOT', $name, $email, $pass, $sf_match);
+	$sth = $pw->get_sth(<<'EOT', $name, $email, $pass, $sf_match);
 INSERT INTO	users	(user, email, pass, sf_match)
 VALUES			(?, ?, ?, ?)
 EOT
 	$id = $sth->{'mysql_insertid'};
-	$user = {
+	$pw->{user} = {
 		id		=> $id,
 		user		=> $name,
 		email		=> $email,
@@ -160,86 +146,81 @@ EOT
 		sf_match	=> $sf_match,
 	} if $id;
 
-	header('Create User');
-	process('create_user');
+	$pw->header('Create User');
+	$pw->process('create_user');
 }
 
 sub add_test {
-	my $config_id = get_configdesc();
-	my $test_id   = get_tests();
+	my($pw) = @_;
+	my $config_id = get_configdesc($pw);
+	my $test_id   = get_tests($pw);
 	if (! keys %$config_id) {
 		error("Please add a configuration before entering test results.");
 		return;
 	}
 
-	header('Add Test');
-	process('add_test', {
+	$pw->header('Add Test');
+	$pw->process('add_test', {
 		config_id	=> $config_id,
 		test_id		=> $test_id,
-		map { ($_ => get_param($_)) } qw( status compiler )
+		map { ($_ => get_param($pw, $_)) } qw( status compiler )
 	});
 }
 
 sub add_config {
-	header('Add Configuration');
-	process('add_config', { map { ($_ => get_param($_)) }
+	my($pw) = @_;
+	$pw->header('Add Configuration');
+	$pw->process('add_config', { map { ($_ => get_param($pw, $_)) }
 		qw( processor version )
 	});
 }
 
 sub add_user {
-	header('Add User');
-	process('add_user');
+	my($pw) = @_;
+	$pw->header('Add User');
+	$pw->process('add_user');
 }
 
 sub default {
-	header();
-	process('notes');
+	my($pw) = @_;
+	$pw->header();
+	$pw->process('notes');
 }
-
-sub header {
-	print $cgi->header(prep_cookie());
-	process('header', { title => $_[0] });
-}
-
-sub footer {
-	process('menu');
-	process('footer');
-}
-
 
 # helper functions
 
 sub login {
+	my($pw) = @_;
 	my $sth;
-	$user = {};
+	$pw->{user} = {};
 
-	if ($form->{op} eq 'logout') {
+	if ($pw->{form}{op} eq 'logout') {
 		return;
 
-	} elsif ($form->{user} && $form->{pass}) {
-		$sth = get_sth(<<'EOT', $form->{user}, md5_hex($form->{pass}));
+	} elsif ($pw->{form}{user} && $pw->{form}{pass}) {
+		$sth = $pw->get_sth(<<'EOT', $pw->{form}{user}, md5_hex($pw->{form}{pass}));
 SELECT	id,user,email,pass,sf_match
 FROM	users
 WHERE	user=? AND pass=?
 EOT
 		
 	} else {
-		my($id, $pass) = get_cookie($cgi);
+		my($id, $pass) = $pw->get_cookie();
 		return unless $id && $pass;
-		$sth = get_sth(<<'EOT', $id, $pass);
+		$sth = $pw->get_sth(<<'EOT', $id, $pass);
 SELECT	id,user,email,pass,sf_match
 FROM	users
 WHERE	id=? AND pass=?
 EOT
 	}
 
-	@{$user}{qw(id user email pass sf_match)} =
+	@{$pw->{user}}{qw(id user email pass sf_match)} =
 		$sth->fetchrow_array;
 }
 
 sub user_exists {
-	my $sth = get_sth(<<'EOT', $_[0]);
+	my($pw) = @_;
+	my $sth = $pw->get_sth(<<'EOT', $_[0]);
 SELECT	user
 FROM	users
 WHERE	user=?
@@ -248,8 +229,9 @@ EOT
 }
 
 sub get_param {
+	my($pw) = @_;
 	my($param) = @_;
-	my $sth = get_sth(<<'EOT', $param);
+	my $sth = $pw->get_sth(<<'EOT', $param);
 SELECT	id,name
 FROM	code_param
 WHERE	type=?
@@ -263,7 +245,8 @@ EOT
 }
 
 sub get_users {
-	my $sth = get_sth(<<'EOT');
+	my($pw) = @_;
+	my $sth = $pw->get_sth(<<'EOT');
 SELECT		id, user, sf_match
 FROM		users
 EOT
@@ -276,7 +259,8 @@ EOT
 }
 
 sub get_usertests {
-	my $sth = get_sth(<<'EOT');
+	my($pw) = @_;
+	my $sth = $pw->get_sth(<<'EOT');
 SELECT		id, user_id, test_id, config_id, status, compiler, is_tool, date
 FROM		user_tests
 ORDER BY	id
@@ -290,13 +274,14 @@ EOT
 }
 
 sub get_tests {
-	my $sth = get_sth(<<'EOT');
+	my($pw) = @_;
+	my $sth = $pw->get_sth(<<'EOT');
 SELECT		id, test, status
 FROM		tests
 ORDER BY	test
 EOT
 
-	my $user_tests = get_usertests();
+	my $user_tests = get_usertests($pw);
 
 	my $data = [];
 	while (my $row = $sth->fetchrow_hashref) {
@@ -318,7 +303,8 @@ EOT
 }
 
 sub get_testdesc {
-	my $sth = get_sth(<<'EOT');
+	my($pw) = @_;
+	my $sth = $pw->get_sth(<<'EOT');
 SELECT		id, test
 FROM		tests
 EOT
@@ -330,22 +316,9 @@ EOT
 	return $data;
 }
 
-sub get_config {
-	my $sth = get_sth(<<'EOT', $user->{id});
-SELECT	id, user_id, processor, ram, version, cvs, build, mwc, mpw, date, name, notes, results
-FROM	configs
-WHERE	user_id=?
-EOT
-
-	my $data = {};
-	while (my $row = $sth->fetchrow_hashref) {
-		$data->{$row->{id}} = $row;
-	}
-	return $data;
-}
-
 sub get_configdesc {
-	my $sth = get_sth(<<'EOT', $user->{id});
+	my($pw) = @_;
+	my $sth = $pw->get_sth(<<'EOT', $pw->{user}{id});
 SELECT	id, name
 FROM	configs
 WHERE	user_id=?
@@ -359,7 +332,8 @@ EOT
 }
 
 sub get_configsdesc {
-	my $sth = get_sth(<<'EOT');
+	my($pw) = @_;
+	my $sth = $pw->get_sth(<<'EOT');
 SELECT	id, name
 FROM	configs
 EOT
@@ -370,67 +344,6 @@ EOT
 	}
 	return $data;
 }
-
-sub process {
-	my($name, $data) = @_;
-
-	$data = {
-		env  => { map { lc, $ENV{$_} } keys %ENV },
-		user => $user,
-		form => $form,
-		constants => $constants,
-		ref $data ? %$data : ()
-	};
-	$template->process($name, $data);
-}
-
-sub get_sth {
-	my($sql, @params) = @_;
-	my $sth = $dbh->prepare($sql);
-	$sth->execute(@params);
-	return $sth;
-}
-
-sub error {
-	my($error) = @_;
-	header('Error');
-	process('error', { err => $error });
-}
-
-sub get_cookie {
-	my($cgi) = @_;
-	my $cookie = $cgi->cookie($constants->{cookie_name});
-	if ($cookie) {
-		my($id, $pass) = split /:/, $cookie, 2;
-		return($id, $pass);
-	} else {
-		return;
-	}
-}
-
-sub prep_cookie {
-	my($session) = @_;
-
-	my $val = $user->{id} && $user->{pass}
-		? "$user->{id}:$user->{pass}"
-		: "";
-
-	my %cookie = (
-		-domain	=> $constants->{cookie_domain},
-		-name   => $constants->{cookie_name},
-		-path	=> $constants->{cookie_path},
-		-value	=> $val
-	);
-	
-	$cookie{-expires} = '+6M' unless $session;
-
-	return {
-		-date		=> $cgi->expires(0, 'http'),
-		-set_cookie	=> $cgi->cookie(%cookie)
-	};
-}
-
-main();
 
 1;
 
