@@ -12,13 +12,13 @@ href="http://pudge.net/">Chris Nandor</a>.
 <h2>Current Release</h2>
 
 <p>
-MacPerl 5.6 is in development (alpha).
+MacPerl 5.6 is in development (beta).
 The current release of MacPerl is
 <a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=20742">5.2.0r4</a>
 (1998.04.17), based on perl 5.004.
 The current development release is
-<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=50978">5.6.1a5</a>
-(2001.09.01), based on perl 5.6.1, which is the most recent release of perl.  MacPerl is also being
+<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=55582">5.6.1b1</a>
+(2001.10.03), based on perl 5.6.1, which is the most recent release of perl.  MacPerl is also being
 ported to perl 5.8.0, which is currently in development.  No releases of that are expected until
 MacPerl 5.6.1 is released.
 </p>
