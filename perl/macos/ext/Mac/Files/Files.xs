@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:26  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:30  neeri
  * Checked into Sourceforge
  *
@@ -269,7 +272,8 @@ FSMakeFSSpec(vRefNum, dirID, fileName)
 	long		dirID
 	Str255	fileName
 	CODE:
-	if (gMacPerl_OSErr = FSMakeFSSpec(vRefNum, dirID, fileName, &RETVAL)) {
+	gMacPerl_OSErr = FSMakeFSSpec(vRefNum, dirID, fileName, &RETVAL);
+	if ((gMacPerl_OSErr != noErr) && (gMacPerl_OSErr != fnfErr)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:
