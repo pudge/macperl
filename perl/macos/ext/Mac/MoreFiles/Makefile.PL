@@ -17,6 +17,9 @@ if ($^O eq 'darwin') {
 	$ARGS{'clean'}{FILES}   = $ARGS{'clean'}{FILES} . ' $(C_FILES)';
 	$ARGS{'INC'}		= $ARGS{'INC'} . " -I./$src";
 	$ARGS{'OBJECT'}		= '$(O_FILES)';
+
+	# this causes failures in the Carbon headers for some reason ...
+	$ARGS{'CCFLAGS'}	=~ s/-mpowerpc64\b//;
 }
 
 if ($^O eq 'MacOS') {
