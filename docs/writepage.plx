@@ -51,7 +51,7 @@ if (exists $data{Tasks}{tasks}) {
 
 sub fixnum {
 	my($k1, $k2) = @_;
-	$text =~ s/(<!-- $k1\|$k2 -->)\d*/$1$data{$k1}{$k2}/g;
+	$text =~ s/(<!-- $k1\|$k2 -->)\d*/$1 . ($data{$k1}{$k2} || 0)/ge;
 
 }
 
