@@ -8,6 +8,9 @@ WriteMakefile(
 	'PREREQ_PM'	=> {
     		'Test::More'	=> 0,
 	},
+	'clean'		=> {
+		'FILES'		=> 'Mac-Carbon-*'
+	},
 	'test'		=> {
 		'TESTS' 	=> 't/*.t */t/*.t'
 	}
