@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.3  2000/09/09 22:18:25  neeri
+Dynamic libraries compile under 5.6
+
 Revision 1.2  2000/08/21 08:22:04  neeri
 Build tweaks & forgotten files
 
@@ -28,6 +31,10 @@ First build released to public
 #include <GUSIFileSpec.h>
 #undef modff
 #include <fp.h>
+
+char **environ;
+static  char ** gEnviron;
+static	char *	gEnvpool;
 
 /* Borrowed from msdos.c
  * Just pretend that everyone is a superuser
@@ -60,13 +67,13 @@ Gid_t
 }
 
 int
-(setuid)(int uid)
+(setuid)(uid_t uid)
 { 
 	return (uid==ROOT_UID?0:-1);
 }
 
 int
-(setgid)(int gid)
+(setgid)(gid_t gid)
 { 
 	return (gid==ROOT_GID?0:-1); 
 }
@@ -313,10 +320,6 @@ Boolean EqualEnv(const char * search, const char * env)
 	
 	return !*env || *env == '=';
 }
-
-char **environ;
-static  char ** gEnviron;
-static	char *	gEnvpool;
 
 char ** init_env(char ** env)
 {
@@ -756,3 +759,9 @@ void MacPerl_WaitEvent(Boolean busy, long sleep, RgnHandle rgn)
 		}
 	}
 }
+
+void
+Perl_my_setenv(pTHX_ char *nam, char *val)
+{
+}
+

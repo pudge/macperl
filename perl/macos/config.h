@@ -13,6 +13,9 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.3  2001/01/30 05:24:44  pudge
+Initial cleanup for 5.6.0 config ... more to come
+
 Revision 1.2  2000/12/22 08:31:47  neeri
 Some build tweaks
 
@@ -2439,6 +2442,17 @@ First build released to public
 /* U64SIZE:
  *	This symbol contains the sizeof(U64).
  */
+/* NVSIZE:
+ *	This symbol contains the sizeof(NV).
+ */
+/* NV_PRESERVES_UV:
+ *	This symbol, if defined, indicates that a variable of type NVTYPE
+ *	can preserve all the bits of a variable of type UVTYPE.
+ */
+/* NV_PRESERVES_UV_BITS:
+ *	This symbol contains the number of bits a variable of type NVTYPE
+ *	can preserve of a variable of type UVTYPE.
+ */
 #define	IVTYPE		int				/**/
 #define	UVTYPE		unsigned int	/**/
 #define	I8TYPE		int8_t			/**/
@@ -2464,6 +2478,10 @@ First build released to public
 #define	I64SIZE		8			/**/
 #define	U64SIZE		8			/**/
 #endif
+#define	NVSIZE		8		/* ??? */
+#define	NV_PRESERVES_UV			/* ??? */
+#define	NV_PRESERVES_UV_BITS	32	/* ??? */
+
 
 /* IVdf:
  *	This symbol defines the format string used for printing a Perl IV
@@ -2479,12 +2497,32 @@ First build released to public
  */
 /* UVxf:
  *	This symbol defines the format string used for printing a Perl UV
- *	as an unsigned hexadecimal integer.
+ *	as an unsigned hexadecimal integer in lowercase abcdef.
+ */
+/* UVXf:
+ *	This symbol defines the format string used for printing a Perl UV
+ *	as an unsigned hexadecimal integer in uppercase ABCDEF.
+ */
+/* NVef:
+ *	This symbol defines the format string used for printing a Perl NV
+ *	using %e-ish floating point format.
+ */
+/* NVff:
+ *	This symbol defines the format string used for printing a Perl NV
+ *	using %f-ish floating point format.
+ */
+/* NVgf:
+ *	This symbol defines the format string used for printing a Perl NV
+ *	using %g-ish floating point format.
  */
 #define	IVdf		"d"		/**/
 #define	UVuf		"u"		/**/
 #define	UVof		"o"		/**/
 #define	UVxf		"x"		/**/
+#define	UVXf		"X"		/**/
+#define	NVef		"e"		/**/
+#define	NVff		"f"		/**/
+#define	NVgf		"g"		/**/
 
 /* Pid_t:
  *	This symbol holds the type used to declare process ids in the kernel.
@@ -2584,8 +2622,13 @@ First build released to public
  *	The last element is 0, corresponding to the 0 at the end of
  *	the sig_name list.
  */
+/* SIG_SIZE:
+ *	This variable contains the number of elements of the sig_name
+ *	and sig_num arrays, excluding the final NULL entry.
+ */
 #define SIG_NAME "NUM0", "NUM1", "INT", "NUM3", "ILL", "NUM5", "NUM6", "NUM7", "FPE", "NUM9", "NUM10", "SEGV", "NUM12", "NUM13", "ALRM", "TERM", 0
 #define SIG_NUM 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0
+#define SIG_SIZE 16			/**/
 
 /* SITEARCH:
  *	This symbol contains the name of the private library for this package.
@@ -2806,6 +2849,9 @@ First build released to public
 #define STANDARD_C 1
 
 /* MacOS Specials */
+
+#define NO_ENVIRON_ARRAY
+// #define NO_LOCALE  /* ??? */
 
 #ifdef macintosh
 /* Prevent including standard stdio header */

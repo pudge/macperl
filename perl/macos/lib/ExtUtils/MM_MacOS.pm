@@ -9,6 +9,7 @@ package ExtUtils::MM_MacOS;
 unshift @MM::ISA, 'ExtUtils::MM_MacOS';
 
 use Config;
+use Cwd 'cwd';
 require Exporter;
 use File::Basename;
 use vars qw(%make_data);
@@ -178,7 +179,6 @@ NAME attribute.
 
 sub guess_name {
     my($self) = @_;
-    use Cwd 'cwd';
     my $name = cwd();
     $name =~ s/.*:// unless ($name =~ s/^.*:ext://);
     $name =~ s#:#::#g;
