@@ -7,11 +7,14 @@ is marked OK, feel free to test it anyway, because we want to make sure it is OK
 Please read the test guidelines (not yet available :-).
 </p>
 
-<table><tr>[% FOR st = status.keys.nsort %]
-	<td class="[% PROCESS get_status st => st %]">[% status.$st %]</td>[% END %]
-</tr></table>
+<table><tr>
+
 
 <table border="0" cellpadding="4">
+	<tr class="na"><td colspan="5"><table><tr>[% FOR st = status.keys.nsort %]
+	<td class="[% PROCESS get_status st => st %]">[% status.$st %]</td>[% END %]
+</tr></table></td></tr>
+
 	<tr class="na">
 		<th>Test Name</th>
 		<th>User</th>
