@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.9  2003/04/07 01:25:31  pudge
+ * Handle directory case
+ *
  * Revision 1.8  2003/04/06 22:30:29  pudge
  * Add GUSIFS2FullPath and GUSIPath2FS; do some cleanup
  *
@@ -41,6 +44,7 @@
 
 /* Perl defines Move too */
 #undef Move
+#undef DEBUG
 #include <Events.h>
 #include <Dialogs.h>
 #include <Files.h>

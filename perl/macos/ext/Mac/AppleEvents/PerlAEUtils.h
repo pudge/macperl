@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	Metrowerks C++
 
 $Log$
+Revision 1.3  2003/04/06 21:16:10  pudge
+Don't suck in Carbon.h, just #undef Move
+
 Revision 1.2  2002/12/10 03:06:24  pudge
 Big update for Carbon support
 
@@ -18,6 +21,7 @@ Synchronized with MacPerl 5.1.4a1
 
 #ifndef MACOS_TRADITIONAL
 #undef Move
+#undef DEBUG
 #endif
 #include <AppleEvents.h>
 #ifdef MACOS_TRADITIONAL
