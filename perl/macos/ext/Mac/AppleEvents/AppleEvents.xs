@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:25  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 01:48:18  neeri
  * Checked into Sourceforge
  *
@@ -25,12 +28,18 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#include "CarbonAE.h"
+#endif
 #include <stdarg.h>
 #include <Types.h>
 #include <Memory.h>
 #include <AppleEvents.h>
 #include "PerlAEUtils.h"
+#ifdef MACOS_TRADITIONAL
 #include "SubLaunch.h"
+#endif
 
 typedef int 	SysRet;
 typedef long	SysRetLong;
@@ -46,8 +55,23 @@ _new(package, type='null', data=0)
 	Handle	data
 	CODE:
 	{
+#ifdef MACOS_TRADITIONAL
 		RETVAL.descriptorType	=	type;
 		RETVAL.dataHandle			=	data;
+#else
+		Ptr  theData;
+		Size theLength;
+
+		AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL));
+		
+		theLength = AEGetDescDataSize(&RETVAL);
+		theData = malloc(theLength);
+		if (theData != NULL) {
+			AEFail(AEGetDescData(&RETVAL, theData, theLength));
+			printf("%d:%s:%d\n", theLength, theData, strlen(theData));
+		}
+		printf("%s", RETVAL.dataHandle);
+#endif
 	}
 	OUTPUT:
 	RETVAL
@@ -72,9 +96,23 @@ data(desc, newData=0)
 	Handle	newData
 	CODE:
 	{
+#ifdef MACOS_TRADITIONAL
 		if (items>1)
 			desc.dataHandle	=	newData;
 		RETVAL = desc.dataHandle;
+#else
+		if (items>1) {
+			AEReplaceDescData(desc.descriptorType, *newData,
+				GetHandleSize(newData), &desc);
+		}
+		char * descData;
+		STRLEN descLen;
+
+		descLen = AEGetDescDataSize(&desc);
+		descData = NewPtr(descLen);
+		AEGetDescData(&desc, descData, descLen);
+		PtrToHand(descData, &RETVAL, strlen(descData));
+#endif
 	}
 	OUTPUT:
 	desc
@@ -91,8 +129,12 @@ _new(package, key=0, type='null', data=0)
 	CODE:
 	{
 		RETVAL.descKey								=	key;
+#ifdef MACOS_TRADITIONAL
 		RETVAL.descContent.descriptorType	=	type;
 		RETVAL.descContent.dataHandle			=	data;
+#else
+		AEReplaceDescData(type, *data, GetHandleSize(data), &RETVAL.descContent);
+#endif
 	}
 	OUTPUT:
 	RETVAL
@@ -131,9 +173,23 @@ data(desc, newData=0)
 	Handle		newData
 	CODE:
 	{
+#ifdef MACOS_TRADITIONAL
 		if (items>1)
 			desc.descContent.dataHandle	=	newData;
 		RETVAL = desc.descContent.dataHandle;
+#else
+		if (items>1) {
+			AEReplaceDescData(desc.descContent.descriptorType, *newData,
+				GetHandleSize(newData), &desc.descContent);
+		}
+		char * descData;
+		STRLEN descLen;
+
+		descLen = AEGetDescDataSize(&desc.descContent);
+		descData = NewPtr(descLen);
+		AEGetDescData(&desc.descContent, descData, descLen);
+		PtrToHand(descData, &RETVAL, strlen(descData));
+#endif
 	}
 	OUTPUT:
 	desc
@@ -547,6 +603,7 @@ AESend(theAppleEvent, sendMode, sendPriority=kAENormalPriority, timeout=kAEDefau
 	short		sendPriority
 	long		timeout
 	CODE:
+#ifdef MACOS_TRADITIONAL
 	if (gPAESend) 
 		AEFail(
 			CallOSASendProc(gPAESend,
@@ -558,6 +615,19 @@ AESend(theAppleEvent, sendMode, sendPriority=kAENormalPriority, timeout=kAEDefau
 			AESend(
 				&theAppleEvent, &RETVAL, 
 				sendMode, sendPriority, timeout, (AEIdleUPP) &uSubLaunchIdle, nil));
+#else
+	// AESendMessage code for Mac OS X from Steve Zellers
+	mach_port_t port;
+	mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port);
+	AEPutAttributePtr(&theAppleEvent, keyReplyPortAttr, typeMachPort, &port, sizeof(port));
+	AEFail(
+		AESendMessage(
+			&theAppleEvent, &RETVAL, 
+			sendMode, timeout
+		)
+	);
+	mach_port_destroy(mach_task_self(), port);
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -787,7 +857,11 @@ AEBuild(format, ...)
 			
 		if (PAENextParam(&formscan))
 			croak("Not enough arguments to AEBuild()");
-		AEFail(vAEBuild(&RETVAL, format, gPAEArgs));
+		gMacPerl_OSErr = vAEBuild(&RETVAL, format, gPAEArgs);
+#ifndef MACOS_TRADITIONAL
+		pAEBuildError();
+#endif
+		AEFail(gMacPerl_OSErr);
 	}
 	OUTPUT:
 	RETVAL
@@ -818,6 +892,9 @@ AEBuildParameters(event, format, ...)
 		if (PAENextParam(&formscan))
 			croak("Not enough arguments to AEBuildParameters()");
 		RETVAL = vAEBuildParameters(&event, format, gPAEArgs);
+#ifndef MACOS_TRADITIONAL
+		pAEBuildError();
+#endif
 	}
 	OUTPUT:
 	RETVAL
@@ -865,7 +942,11 @@ AEBuildAppleEvent(theClass, theID, addressType, address, returnID, transactionID
 					theClass, theID, 
 					&targetDesc, returnID, transactionID, &RETVAL));
 		AEDisposeDesc(&targetDesc);
-		AEFail(vAEBuildParameters(&RETVAL, paramsFmt, gPAEArgs));
+		gMacPerl_OSErr = vAEBuildParameters(&RETVAL, paramsFmt, gPAEArgs);
+#ifndef MACOS_TRADITIONAL
+		pAEBuildError();
+#endif
+		AEFail(gMacPerl_OSErr);
 	}
 	OUTPUT:
 	RETVAL
@@ -881,12 +962,20 @@ AEPrint(desc)
 	AEDesc	&desc
 	CODE:
 	{
-		long	length;
+		long		length;
+#ifndef MACOS_TRADITIONAL
+		Handle	hand;
+
+		AEPrintDescToHandle(&desc, &hand);
+		length = GetHandleSize(hand);
+		RETVAL = newSVpv(*hand, length);
+#else
 		
 		AEFail(AEPrintSize(&desc, &length));
 		RETVAL = newSVpv("", length);
 		AEPrint(&desc, SvPVX(RETVAL), length);
 		SvCUR(RETVAL) = length-1;
+#endif
 	}
 	OUTPUT:
 	RETVAL
@@ -908,7 +997,11 @@ AESubDesc
 AEDescToSubDesc(desc)
 	AEDesc	&desc
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::AppleEvents::AEDescToSubDesc unsupported in Carbon");
+#else
 	AEDescToSubDesc(&desc, &RETVAL);
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -917,9 +1010,22 @@ AEDescToSubDesc(desc)
 Return the type of the subdescriptor.
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
 OSType
 AEGetSubDescType(subdesc)
 	AESubDesc	&subdesc
+	CODE:
+	croak("Usage: Mac::AppleEvents::AEGetSubDescType unsupported in Carbon");
+
+#else
+
+OSType
+AEGetSubDescType(subdesc)
+	AESubDesc	&subdesc
+
+#endif
 
 =item AEGetSubDescBasicType SUBDESC
 
@@ -927,18 +1033,44 @@ Return the basic type of the subdescriptor. Differs from AEGetSubDescType
 in handling of coerced records.
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
 OSType
 AEGetSubDescBasicType(subdesc)
 	AESubDesc	&subdesc
+	CODE:
+	croak("Usage: Mac::AppleEvents::AEGetSubDescBasicType unsupported in Carbon");
+
+#else
+
+OSType
+AEGetSubDescBasicType(subdesc)
+	AESubDesc	&subdesc
+
+#endif
 
 =item AESubDescIsListOrRecord SUBDESC
 
 Return nonzero if the subdescriptor is a list or record.
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
 Boolean
 AESubDescIsListOrRecord(subdesc)
 	AESubDesc	&subdesc
+	CODE:
+	croak("Usage: Mac::AppleEvents::AESubDescIsListOrRecord unsupported in Carbon");
+
+#else
+
+Boolean
+AESubDescIsListOrRecord(subdesc)
+	AESubDesc	&subdesc
+
+#endif
 
 =item AEGetSubDescData SUBDESC
 
@@ -950,11 +1082,15 @@ AEGetSubDescData(subdesc)
 	AESubDesc	&subdesc
 	CODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::AppleEvents::AEGetSubDescData unsupported in Carbon");
+#else
 		void *data;
 		long	length;
 		
 		data		= AEGetSubDescData(&subdesc, &length);
 		RETVAL	= newSVpv(data, length);
+#endif
 	}
 	OUTPUT:
 	RETVAL
@@ -969,7 +1105,11 @@ AESubDescToDesc(subdesc, desiredType=typeWildCard)
 	AESubDesc	&subdesc
 	OSType		desiredType
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::AppleEvents::AESubDescToDesc unsupported in Carbon");
+#else
 	AEFail(AESubDescToDesc(&subdesc, desiredType, &RETVAL));
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -983,9 +1123,13 @@ AECountSubDescItems(subdesc)
 	AESubDesc	&subdesc
 	CODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::AppleEvents::AECountSubDescItems unsupported in Carbon");
+#else
 		RETVAL = AECountSubDescItems(&subdesc);
 		if (RETVAL < 0)
 			AEFail((OSErr) RETVAL);
+#endif
 	}
 	OUTPUT:
 	RETVAL	
@@ -1002,6 +1146,9 @@ AEGetNthSubDesc(subdesc,index)
 	long			index
 	PPCODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::AppleEvents::AEGetNthSubDesc unsupported in Carbon");
+#else
 		OSType		kw;
 		AESubDesc	sub;
 		
@@ -1010,6 +1157,7 @@ AEGetNthSubDesc(subdesc,index)
 		if (GIMME == G_ARRAY && kw != typeWildCard) {
 			XS_XPUSH(OSType, kw);
 		}
+#endif
 	}
 
 =item AEGetKeySubDesc SUBDESC,KW
@@ -1024,7 +1172,11 @@ AEGetKeySubDesc(subdesc,kw)
 	AESubDesc	&subdesc
 	OSType		kw
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::AppleEvents::AEGetNthSubDesc unsupported in Carbon");
+#else
 	AEFail(AEGetKeySubDesc(&subdesc, kw, &RETVAL));
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -1045,7 +1197,11 @@ Return a new AEStream.
 AEStream
 Open()
 	CODE:
+#ifdef MACOS_TRADITIONAL
 	AEFail(AEStream_Open(&RETVAL));
+#else
+	RETVAL = AEStream_Open();
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -1085,7 +1241,11 @@ CreateEvent(theClass, theID, addressType, address, returnID=kAutoGenerateReturnI
 					theClass, theID, 
 					&targetDesc, returnID, transactionID, &event));
 		AEDisposeDesc(&targetDesc);
+#ifdef MACOS_TRADITIONAL
 		AEFail(AEStream_OpenEvent(&RETVAL, &event));
+#else
+		RETVAL = AEStream_OpenEvent(&event);
+#endif
 	}
 	OUTPUT:
 	RETVAL
@@ -1102,7 +1262,11 @@ AEStream
 OpenEvent(theEvent)
 	AEDesc	&theEvent
 	CODE:
+#ifdef MACOS_TRADITIONAL
 	AEFail(AEStream_OpenEvent(&RETVAL, &theEvent));
+#else
+	RETVAL = AEStream_OpenEvent(&theEvent);
+#endif
 	OUTPUT:
 	RETVAL
 

@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	Metrowerks C++
 
 $Log$
+Revision 1.2  2000/09/09 22:18:25  neeri
+Dynamic libraries compile under 5.6
+
 Revision 1.1  2000/08/14 01:48:18  neeri
 Checked into Sourceforge
 
@@ -217,7 +220,11 @@ PerlEventHandler::PerlEventHandler(
 	prev		=	nil;
 	handlers	= 	this;
 	if (!upp) {
+#ifdef MACOS_TRADITIONAL
 		upp = NewAEEventHandlerProc(HandlePerlEvent);
+#else
+		upp = NewAEEventHandlerUPP(HandlePerlEvent);
+#endif
 		atexit(PAENuke);
 	}
 	if (gPAEInstall)

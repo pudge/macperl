@@ -20,7 +20,7 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = 1.22;
+$VERSION = 1.23;
 
 =head2 Constants: AppleEvent Descriptor Types
 
@@ -189,6 +189,32 @@ sub typeSessionID				  () {	   "ssid"; }
 sub typeTargetID				  () {	   "targ"; }
 sub typeProcessSerialNumber		  () {	   "psn "; }
 sub typeNull					  () {	   "null"; }
+
+
+# new for Mac OS X ... document and arrange later
+# there's more, stuff for SOAP, that we may include later
+sub typeSInt16					  () {	   "shor"; }
+sub typeSInt32					  () {	   "long"; }
+sub typeUInt32					  () {	   "magn"; }
+sub typeSInt64					  () {	   "comp"; }
+sub typeIEEE32BitFloatingPoint	  () {	   "sing"; }
+sub typeIEEE64BitFloatingPoint	  () {	   "doub"; }
+sub type128BitFloatingPoint		  () {	   "ldbl"; }
+sub typeDecimalStruct			  () {	   "decm"; }
+
+sub typeFSRef					  () {	   "fsrf"; }
+sub typeFileURL					  () {	   "furl"; }
+sub typeApplicationURL			  () {	   "aurl"; }
+
+sub kAEShowPreferences			  () {	   "pref"; }
+
+sub typeKernelProcessID			  () {	   "kpid"; }
+sub typeMachPort				  () {	   "port"; }
+
+sub keyAcceptTimeoutAttr		  () {	   "actm"; }
+
+
+
 
 =head2 Constants: Parameter and Attribute Keywords
 
