@@ -337,20 +337,21 @@ ORDER BY	test
 EOT
 
 	my $user_tests = get_usertests($pw);
-
 	my $configs    = get_configsdesc($pw);
 	my $version    = get_param($pw, 'version');
 	my @versions   = sort { $b <=> $a } %$version;
 
 	$pw->{form}{version} = defined($pw->{form}{version})
-	    ? $pw->{form}{version} : $versions[1];
+		? $pw->{form}{version} : $versions[1];
 
 	my $data = [];
 	while (my $row = $sth->fetchrow_hashref) {
 	    if (!$row->{status}) {
 			my %rank;
 			for my $tr (@{$user_tests->{$row->{id}}}) {
-			    next if $pw->{form}{version} && $configs->{$tr->{config_id}}{version} != $pw->{form}{version};
+				my $vers = $configs->{$tr->{config_id}}{version};
+				next if $pw->{form}{version} &&
+					$vers != $pw->{form}{version};
 				$rank{$tr->{status}}++;
 			}
 			($row->{status}) = sort {

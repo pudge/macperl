@@ -136,7 +136,7 @@ will be properly unpacked.
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 	</li>
 
-	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=32572">MacPerl 5.6.1 source kit</a></strong></li>
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=33924">MacPerl 5.6.1 source kit</a></strong></li>
 </ul>
 
 
@@ -215,7 +215,8 @@ will be properly unpacked.
 		directory "HD:macperl_src:"
 		patch -p0 &lt; :perl:macos:xsubpp.patch</pre></li>
 
-	<li><p>Apply the perl 5.6.1 patch (changes since the release of 5.6.1).</p><pre>
+	<li><p>Unless you got your perl source from CVS (in which cases it is
+		already applied), apply the perl 5.6.1 patch (changes since the release of 5.6.1).</p><pre>
 		patch -p0 &lt; :perl:macos:maint.patch</pre></li>
 
 	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
@@ -263,7 +264,7 @@ the cvsroot is /cvsroot/macperl, and the CVS modules are
 "macperl", "perl", and "docs" (for the web site).  See the
 <a href="http://sourceforge.net/cvs/?group_id=7940">SourceForge</a>
 page for more information.  You can also
-<a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi?cvsroot=macperl">browse the repository</a>
+<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/macperl/">browse the repository</a>
 via the web.
 
 </p>
