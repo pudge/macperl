@@ -3,6 +3,9 @@ Project	:	Perl5				-
 File	:	icemalloc.c			-	Memory allocator
 
 $Log$
+Revision 1.2  2001/09/14 08:10:36  neeri
+Make realloc smarter (MacPerl bug $404030)
+
 Revision 1.1  2000/08/14 01:48:17  neeri
 Checked into Sourceforge
 
@@ -665,10 +668,15 @@ u_long pool_size(void * ptr)
 	if (!ptr)
 		return 0;
 
-	if (ptr_size = _pool_find_ptr_bucket_size(ptr)) 
-		return ptr_size;
-	else 
-		return _pool_find_ptr_blk_size(ptr);
+	ptr_size = _pool_find_ptr_bucket_size(ptr);
+	if (!ptr_size) 
+		ptr_size = _pool_find_ptr_blk_size(ptr);
+
+#ifdef MALLOC_LOG
+	MallocLog("sz %d %d\n", (int) ptr, (int) ptr_size);
+#endif
+	
+	return ptr_size;
 }
 
 #ifdef DOCUMENTATION
@@ -690,32 +698,26 @@ u_long _pool_find_ptr_bucket_size(char * ptr)
 	
 	while (pool != (_mem_pool_ptr)0) {
 		if (bucket = pool->free_16)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
-				if (bucket->free_count+1 == bucket->max_count)
-					pool->free_16 = nil;
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
 				return 16;
 			}
 		if (bucket = pool->free_32)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)	{
-				if (bucket->free_count+1 == bucket->max_count)
-					pool->free_32 = nil;
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)	{
 				return 32;
 			}
 		if (bucket = pool->free_64)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
-				if (bucket->free_count+1 == bucket->max_count)
-					pool->free_64 = nil;
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
 				return 64;
 			}
 		
 		for (bucket = pool->blk_16; bucket; bucket = bucket->next)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
 				return 16;
 		for (bucket = pool->blk_32; bucket; bucket = bucket->next)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
 				return 32;
 		for (bucket = pool->blk_64; bucket; bucket = bucket->next)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
 				return 64;
 		
 		pool = pool->next;
@@ -1151,32 +1153,32 @@ _mem_bucket_ptr _pool_find_ptr_bucket(char * ptr)
 	
 	while (pool != (_mem_pool_ptr)0) {
 		if (bucket = pool->free_16)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
 				if (bucket->free_count+1 == bucket->max_count)
 					pool->free_16 = nil;
 				return bucket;
 			}
 		if (bucket = pool->free_32)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)	{
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)	{
 				if (bucket->free_count+1 == bucket->max_count)
 					pool->free_32 = nil;
 				return bucket;
 			}
 		if (bucket = pool->free_64)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size) {
 				if (bucket->free_count+1 == bucket->max_count)
 					pool->free_64 = nil;
 				return bucket;
 			}
 		
 		for (bucket = pool->blk_16; bucket; bucket = bucket->next)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
 				return bucket;
 		for (bucket = pool->blk_32; bucket; bucket = bucket->next)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
 				return bucket;
 		for (bucket = pool->blk_64; bucket; bucket = bucket->next)
-			if (ptr > bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
+			if (ptr >= bucket->memory && ptr < bucket->memory + pool->pref_blk_size)
 				return bucket;
 		
 		pool = pool->next;
