@@ -15,7 +15,7 @@ use base 'DynaLoader';
 use base 'Exporter';
 use vars qw(@EXPORT %EXPORT_TAGS $VERSION);
 
-$VERSION = '1.06';
+$VERSION = '1.07';
 @EXPORT = qw(
 	FSpGetCatInfo
 	FSpSetCatInfo
