@@ -20,7 +20,7 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = '1.25';
+$VERSION = '1.26';
 
 =head2 Constants: AppleEvent Descriptor Types
 
@@ -1158,7 +1158,7 @@ sub get () {
 	} elsif (exists($MacUnpack{$type})) {
 		return MacUnpack($type, $desc->data->get);
 	} else {
-		return &Mac::AppleEvents::AEPrint($desc);
+		return $desc->data->get;
 	}
 }
 
