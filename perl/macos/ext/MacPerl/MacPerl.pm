@@ -1,8 +1,10 @@
 package MacPerl;
 
 require Exporter;
+use strict;
+use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $Target);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 
 @ISA = qw(Exporter);
 
@@ -43,6 +45,9 @@ sub kMacPerlQuitIfRuntime ()		{ 1; }
 sub kMacPerlAlwaysQuit ()		{ 2; }
 sub kMacPerlQuitIfFirstScript ()	{ 3; }
 
+# allow caller overriding of default target with $MacPerl::Target
+$Target ||= 'SystemUIServer';
+
 # bootstrap MacPerl is already implicitly done by your MacPerl binary
 unless ($^O eq 'MacOS') {
 	# use Config;
@@ -56,7 +61,7 @@ unless ($^O eq 'MacOS') {
 	# because OSA is in MacPerl.bundle, not OSA.bundle
 	my $file = "auto/MacPerl/MacPerl.$dl_dlext";
 	foreach (@INC) {
-		$dir = "$_/auto/MacPerl";
+		my $dir = "$_/auto/MacPerl";
 		next unless -d $dir;
 		my $try = "$dir/MacPerl.$dl_dlext";
 		last if $file = -f $try && $try;
@@ -71,6 +76,85 @@ unless ($^O eq 'MacOS') {
 		$xs = DynaLoader::dl_install_xsub("${mod}::bootstrap", $symref, $file);
 		&$xs($mod);
 	}
+
+	no strict 'refs';
+	no warnings 'redefine'; 
+	*Answer	= *_CarbonAnswer{CODE};
+	*Ask	= *_CarbonAsk{CODE};
+	*Pick	= *_CarbonPick{CODE};
+}
+
+sub _CarbonAnswer {
+	my $prompt = shift;
+	my @buttons = @_ ? reverse @_ : 'OK';
+	@buttons = map {
+		s/^(Cancel)$/$1 /i;
+		s/"(.+?)"/\xD2$1\xD3/g;
+		s/"/\xD2/g;
+		$_;
+	} @buttons;
+
+	my $buttons = join '","', @buttons;
+	my $default = @buttons;
+
+	my $result = _CarbonDoScript(<<EOS);
+tell application "$Target"
+	activate
+	display dialog "$prompt" buttons {"$buttons"} default button $default
+end tell
+EOS
+
+	$result =~ s/.*?"(.+)".*/$1/;
+	$result =~ s/\\(["\\])/$1/g;
+	foreach my $no (0..$#buttons) {
+		return $no if $result eq $buttons[$no];
+	}
+}
+
+sub _CarbonAsk {
+	my($prompt, $default) = @_;
+	$default ||= '';
+
+	my $result = _CarbonDoScript(<<EOS);
+tell application "$Target"
+	activate
+	display dialog "$prompt" default answer "$default" buttons {"Cancel ","OK"} default button 2
+end tell
+EOS
+
+	return undef if $result =~ /Cancel "}$/;
+	$result =~ s/.*?"(.+)".*"OK"}/$1/;
+	$result =~ s/\\(["\\])/$1/g;
+	return $result;
+}
+
+sub _CarbonPick {
+	my($prompt, @values) = @_;
+	@values = map { s/(["\\])/\\$1/g; $_ } @values;
+	my $values = join '","', @values;
+	my $multiple = wantarray ? 'and multiple selections allowed' : '';
+
+	my $result = _CarbonDoScript(<<EOS);
+tell application "$Target"
+	activate
+	choose from list {"$values"} with prompt "$prompt" with empty selection allowed $multiple
+end tell
+EOS
+
+	return undef if $result =~ /^false|{}$/;
+	$result =~ s/\\(["\\])/$1/g;
+	$result =~ s/^{"|"}$//g;
+	return wantarray ? split /", "/, $result : $result;
+}
+
+sub _CarbonDoScript {
+	my($script) = @_;
+#	print $script;
+
+	my $result = DoAppleScript($script);
+#	die $@ if $@;
+
+	return $result;
 }
 
 1;
@@ -270,6 +354,3 @@ return FSSPECs of all volumes.
 L<macperl>
 
 =cut
-
-
-    
