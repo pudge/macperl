@@ -1,6 +1,9 @@
 #!/usr/bin/perl -w
+# $Id$
+
 use strict;
 use vars qw(%data $group);
+use lib '/home/users/pudge/bin';
 
 my($text, $file, $task_format);
 
@@ -13,7 +16,7 @@ require "get_stats.plx";
 {
 	local($/, *FILE);
 	open FILE, "<" . $file or die "Cannot open $file for reading: $!";
-	$text = <>;
+	$text = <FILE>;
 	close FILE or die "Cannot close $file: $!";
 }
 
@@ -50,7 +53,7 @@ sub fixnum {
 {
 	local(*FILE);
 	open FILE, ">" . $file or die "Cannot open $file for writing: $!";
-	print $text;
+	print FILE $text;
 	close FILE or warn "Cannot close $file: $!";
 }
 
