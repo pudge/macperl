@@ -3191,6 +3191,7 @@ PP(pp_require)
 			    tryname += 2;
 			break;
 		    }
+		  }
 		}
 	    }
 	}
@@ -4641,6 +4642,22 @@ run_user_filter(pTHXo_ int idx, SV *buf_sv, int maxlen)
     return len;
 }
 
+#ifdef PERL_OBJECT
+
+static I32
+sv_cmp_locale_static(pTHXo_ register SV *str1, register SV *str2)
+{
+    return sv_cmp_locale(str1, str2);
+}
+
+static I32
+sv_cmp_static(pTHXo_ register SV *str1, register SV *str2)
+{
+    return sv_cmp(str1, str2);
+}
+
+#endif /* PERL_OBJECT */
+
 /* perhaps someone can come up with a better name for
    this?  it is not really "absolute", per se ... */
 static bool
@@ -4660,18 +4677,3 @@ S_path_is_absolute(pTHX_ char *name)
     	return FALSE;
 }
 
-#ifdef PERL_OBJECT
-
-static I32
-sv_cmp_locale_static(pTHXo_ register SV *str1, register SV *str2)
-{
-    return sv_cmp_locale(str1, str2);
-}
-
-static I32
-sv_cmp_static(pTHXo_ register SV *str1, register SV *str2)
-{
-    return sv_cmp(str1, str2);
-}
-
-#endif /* PERL_OBJECT */
