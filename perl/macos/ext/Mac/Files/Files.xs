@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.8  2003/04/06 21:29:07  pudge
+ * Fix two-arg FSpGetCatInfo(FILE, INDEX) form
+ *
  * Revision 1.7  2002/12/12 14:57:29  pudge
  * Update POD and docs
  *
@@ -646,6 +649,8 @@ _UnmountVol(volName, vRefNum)
 	RETVAL
 
 =item Eject (VOLUMENAME | VOLUMENR)
+
+B<Mac OS only.>
 
 Ejects a volume, placing it offline.
 

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2003/05/08 03:15:16  pudge
+ * Properly free stuff, get path size
+ *
  * Revision 1.5  2003/04/06 21:45:41  pudge
  * Add FSCreateResourceFile and FSOpenResourceFile for creating/opening resource
  * files from data fork instead of resource fork
@@ -122,6 +125,8 @@ HomeResFile(theResource)
 
 =item CreateResFile NAME
 
+B<Mac OS only.>
+
 The CreateResFile procedure creates an empty resource file.
 
     if ( CreateResFile("Resource.rsrc")) {
@@ -151,6 +156,8 @@ CreateResFile(fileName)
 #endif
 
 =item OpenResFile NAME
+
+B<Mac OS only.>
 
 The OpenResFile function opens an existing resource file. It also makes this file
 the current resource file.
@@ -584,6 +591,8 @@ GetMaxResourceSize(theResource)
 
 =item RsrcMapEntry HANDLE
 
+B<Mac OS only.>
+
 Given a handle to a resource, RsrcMapEntry returns the offset of the specified
 resource's entry from the beginning of the resource map in memory. If it doesn't
 find the resource entry, RsrcMapEntry returns 0, and the ResError function
@@ -603,7 +612,7 @@ long
 RsrcMapEntry(theResource)
 	Handle	theResource
 	CODE:
-	croak("Usage: Mac::Resourcecs::CreateResFile unsupported in Carbon");
+	croak("Usage: Mac::Resourcecs::RsrcMapEntry unsupported in Carbon");
 
 #else
 
@@ -796,6 +805,8 @@ SetResFileAttrs(refNum, attrs)
 
 =item RGetResource TYPE, ID
 
+B<Mac OS only.>
+
 The RGetResource function searches the resource maps in memory for the resource
 specified by the parameters $TYPE and $ID. The resource maps in memory, which
 represent all open resource forks, are arranged as a linked list. The
@@ -861,6 +872,8 @@ FSpOpenResFile(spec, permission)
 
 =item FSOpenResourceFile REF, FORKNAME, PERMISSION
 
+B<Mac OS X only.>
+
 The FSOpenResourceFile function is like FSpOpenResFile, except that it can open
 a resource file using the data fork or resource fork.  $REF is the
 path to the resource file.  $FORKNAME is
@@ -876,7 +889,7 @@ FSOpenResourceFile(ref, forkName, permissions)
 	CODE:
 	{
 #ifdef MACOS_TRADITIONAL
-	croak("Usage: Mac::Resources::FSOpenResourceFile not supported in Mac OS");
+	croak("Usage: Mac::Resources::FSOpenResourceFile unsupported in Mac OS");
 #else
 		SInt16			refNum;
 		HFSUniStr255		forkNameU;
@@ -926,6 +939,8 @@ FSpCreateResFile(spec, creator, fileType, scriptTag)
 
 =item FSCreateResourceFile PARENTREF, FILENAME, FORKNAME
 
+B<Mac OS X only.>
+
 The FSCreateResourceFile procedure is like FSpCreateResFile, except that it can
 create a resource file in the data fork or resource fork.  $PARENTREF is the
 oath of the directory where the new $FILENAME will be located.  $FORKNAME is
@@ -940,7 +955,7 @@ FSCreateResourceFile(parentRef, name, forkName)
 	CODE:
 	{
 #ifdef MACOS_TRADITIONAL
-	croak("Usage: Mac::Resources::FSCreateResourceFile not supported in Mac OS");
+	croak("Usage: Mac::Resources::FSCreateResourceFile unsupported in Mac OS");
 #else
 		HFSUniStr255		forkNameU;
 		UnicodeMappingPtr	iUnicodeMapping = malloc(sizeof(UnicodeMapping));

@@ -335,11 +335,15 @@ scripts from other applications.
 
 =item MacPerl::Quit(LEVEL)
 
+B<Mac OS only.>
+
 If LEVEL is 0, don't quit after ending the script. If 1, quit if 
 running under a runtime version, if 2, always quit. If LEVEL is 3,
 quit if this was the first script to be run since starting MacPerl.
 
 =item MacPerl::LoadExternals(LIBFILE)
+
+B<Mac OS only.>
 
 Load XCMD and XFCN extensions contained in file LIBFILE, which is searched
 along the same path as it would be for a require. The extensions are made
@@ -347,6 +351,8 @@ accessible in the current package, unless they containing an explicit package
 name.
 
 =item MacPerl::FAccess(FILE, CMD, ARGS)
+
+B<Mac OS only.>
 
 When called from the tool, manipulate various information of files. To 
 get the command constants, it's convenient to require "FAccess.ph".
