@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.7  1999/01/24 05:14:01  neeri
 Various tweaks made in 1998
 
@@ -169,18 +172,19 @@ include "MacPerl.rsrc" 'icm#'(266);
 
 resource 'vers' (1) {
 	0x05, 0x21, alpha, 0x01, verUS,
-	"5.2.1a1",
+	"5.6.0d1",
 	"MacPerl - ported by Matthias Neeracher."
 	};
 
 resource 'vers' (2) {
 	0x05, 0x21, alpha, 0x01, verUS,
-	"5.2.1a1",
-	"Perl 5.2.1a1 (21May98)"
+	"5.6.0d1",
+	"Perl 5.6.0d1 (2000-30-01)"
 	};
 
 resource 'STR#' (CreditID) {
 	{
+		"Chris Nandor (Maintainer)",
 		"Kenneth Albanowski",	"Charles Albrecht",		"Larry Allen-Tonar",
 		"Kevin Altis",				"Frank Alvani",			"Phil Ames",				
 		"Roberto Avanzi",
@@ -238,7 +242,7 @@ resource 'STR#' (CreditID) {
 		"Bill Moore",
 		"Rich Morin",
 		"Chris Myers",
-		"Chris Nandor",
+		"Jennifer Nandor",
 		"Asa Packer",
 		"Paul Patton",
 		"Mark Pease",
