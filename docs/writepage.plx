@@ -21,15 +21,18 @@ require "get_stats.plx";
 }
 
 if (exists $data{Bugs}) {
-	fixnum(qw(Bugs items));
+	fixnum(qw(Bugs open));
+	fixnum(qw(Bugs total));
 }
 
 if (exists $data{Patches}) {
-	fixnum(qw(Patches items));
+	fixnum(qw(Patches open));
+	fixnum(qw(Patches total));
 }
 
 if (exists $data{'Feature Requests'}) {
-	fixnum('Feature Requests', 'items');
+	fixnum('Feature Requests', 'open');
+	fixnum('Feature Requests', 'total');
 }
 
 if (exists $data{CVS}) {

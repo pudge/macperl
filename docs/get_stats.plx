@@ -41,18 +41,18 @@ for my $line (split /\n/, $text) {
 	}
 
 	if ($in_track) {
-		(@{$data{$_}}{'items'}) =
-			$line =~ m{\( <B>(\d+)</B> items\)};
+		(@{$data{$_}}{qw(open total)}) =
+			$line =~ m{\( <B>(\d+) open / (\d+) total</B> \)};
 		$in_track = 0;
 
 	} elsif (/^Patches$/) {
-		(@{$data{$_}}{'items'}) =
-			$line =~ m{\( <B>(\d+)</B> items\)};
+		(@{$data{$_}}{qw(open total)}) =
+			$line =~ m{\( <B>(\d+) open / (\d+) total</B> \)};
 		$in_track = 0;
 
 	} elsif (/^Feature Requests$/) {
-		(@{$data{$_}}{'items'}) =
-			$line =~ m{\( <B>(\d+)</B> items\)};
+		(@{$data{$_}}{qw(open total)}) =
+			$line =~ m{\( <B>(\d+) open / (\d+) total</B> \)};
 		$in_track = 0;
 
 	} elsif (/^CVS$/) {
