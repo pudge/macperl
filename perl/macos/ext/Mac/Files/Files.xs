@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/01/23 05:44:42  pudge
+ * Update whitespace etc., from Thomas
+ *
  * Revision 1.3  2000/09/12 20:18:57  pudge
  * Added all the new constants for FindFolder
  * Make FSMakeFSSpec return FSSpec even if file does not exist
@@ -45,16 +48,24 @@
 #include <Errors.h>
 #include <Aliases.h>
 
+#define MACPERL_CATINFO	'MpCI'
+
 typedef FSSpec			RealFSSpec;
 typedef CInfoPBPtr 	CatInfo;
+typedef struct {
+	CInfoPBRec	fInfo;
+	OSType		fOwner;
+	Str63		fName;
+} ExtCatInfo;
 
 static CatInfo NewCatInfo()
 {
-	CatInfo	ci;
-	ci = (CatInfo) malloc(sizeof(CInfoPBRec)+sizeof(Str63));
-	ci->hFileInfo.ioNamePtr = (StringPtr) ((char *)ci+sizeof(CInfoPBRec));
+	ExtCatInfo*	ci;
+	ci = (ExtCatInfo *) malloc(sizeof(ExtCatInfo));
+	ci->fOwner	= MACPERL_CATINFO;
+	ci->fInfo.hFileInfo.ioNamePtr = ci->fName;
 	
-	return ci;
+	return (CatInfo)ci;
 }
 
 MODULE = Mac::Files	PACKAGE = Mac::Files
@@ -211,7 +222,8 @@ void
 DESTROY(cat)
 	CatInfo	cat
 	CODE:
-	free(cat);
+	if (((ExtCatInfo *)cat)->fOwner == MACPERL_CATINFO)
+		free(cat);
 
 
 MODULE = Mac::Files	PACKAGE = Mac::Files
