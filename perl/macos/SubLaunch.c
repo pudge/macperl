@@ -9,6 +9,9 @@ Copyright (c) 1991-1995 Matthias Neeracher
 	as specified in the README file.
 
 $Log$
+Revision 1.2  2002/01/04 03:40:35  pudge
+Modifications for universal headers 3.4
+
 Revision 1.1  2000/08/14 01:48:17  neeri
 Checked into Sourceforge
 
@@ -325,7 +328,6 @@ OSErr SubLaunch(char * commandline, FSSpec * input, FSSpec * output, FSSpec * er
 	AppleEvent				cmd;
 	AppleEvent				reply;
 	AEAddressDesc			addr;
-	acurHandle				acur;
 	Handle					text;
 	const char *			segment;
 	FSSpec					vol;
@@ -384,9 +386,8 @@ OSErr SubLaunch(char * commandline, FSSpec * input, FSSpec * output, FSSpec * er
 	DisposeHandle(text);
 	
 	/* Send it */
-	acur	=	(acurHandle) GetResource('acur', 128);
-	DetachResource((Handle) acur);
-	InitCursorCtl(acur);
+	
+	MacPerl_InitCursorCtl(128);
 	err	=	
 		AESend(
 			&cmd, &reply, kAEWaitReply+kAENeverInteract, 
@@ -399,10 +400,8 @@ OSErr SubLaunch(char * commandline, FSSpec * input, FSSpec * output, FSSpec * er
 	AEDisposeDesc(&cmd);
 	AEDisposeDesc(&addr);
 	AEDisposeDesc(&reply);
-	
-	DisposeHandle((Handle) acur);
-	
-	InitCursorCtl(NULL);
+
+	MacPerl_InitCursorCtl(0);
 	
 	return err;
 }

@@ -14,6 +14,7 @@ Author	:	Matthias Neeracher
 
 #include <Resources.h>
 #include <Folders.h>
+#include <CursorCtl.h>
 #include <GUSIFileSpec.h>
 #undef modff
 #include <fp.h>
@@ -914,6 +915,21 @@ void MacPerl_init()
 	sAsyncExit.fProc				= 	AsyncExit;
 
 	MacPerl_QueueAsyncTask(&sSpinControl.fTask);
+	MacPerl_InitCursorCtl(128);
+}
+
+void MacPerl_InitCursorCtl(short acur)
+{
+	static Handle	sCurrentCursors = NULL;
+	
+	Handle	cursors	= GetResource('acur', acur);
+	
+	if (cursors) {
+		DetachResource(cursors);
+		if (sCurrentCursors)
+			DisposeHandle(sCurrentCursors);
+		InitCursorCtl((acurHandle)(sCurrentCursors = cursors));
+	}
 }
 
 void

@@ -77,6 +77,7 @@ unsigned char * MacPerl_CopyC2P(const char * c, unsigned char * p);
 const char * MacPerl_CanonDir(const char * dir, char * buf, Boolean is_file);
 void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 void MacPerl_Exit(int status);
+void MacPerl_InitCursorCtl(short acur);
 
 #undef PerlProc_exit
 #define PerlProc_exit(s)	my_exit((s))
