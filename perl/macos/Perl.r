@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2001/04/17 03:59:23  pudge
+ * Minor version/config changes, plus sync with maint-5.6/perl
+ *
  * Revision 1.5  2001/04/17 03:53:44  pudge
  * Minor version/config changes, plus sync with maint-5.6/perl
  *
@@ -53,19 +56,8 @@
 #include "Cmdo.r"		/* For commando interface */
 
 include "Perl.rsrc";
+#define MPAppName "perl"
 #include "MPVersion.r";
-
-resource 'vers' (1) {
-	MPRevision, MPVersion, MPState, MPBuild, verUS,
-	MPVersionStr,
-	"Perl - ported by Matthias Neeracher."
-	};
-
-resource 'vers' (2) {
-	MPRevision, MPVersion, MPState, MPBuild, verUS,
-	MPVersionStr,
-	"Perl " MPVersionStr " (" MPDate ")"
-	};
 
 resource 'DLOG' (2001)	{
 	{  0,   0, 150, 400},
@@ -269,8 +261,8 @@ resource 'cmdo' (128) {
 					MPVersionStr
 				},
 				"Perl by Larry Wall <larry@wall.org>\n"
-				"MPW port by Matthias Neeracher <neeracher@mac.com>\n"
-				"and Tim Endres <time@ice.com>\n",
+				"MPW port by Matthias Neeracher <neeracher@mac.com>,\n"
+				"Maintained by Chris Nandor <pudge@pobox.com>\n",
 				0
 			},
 		},

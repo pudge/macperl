@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.7  2001/09/26 21:50:13  pudge
+ * Sync with perforce maint-5.6/macperl
+ *
  * Revision 1.6  2001/09/02 00:38:40  pudge
  * Sync with perforce
  *
@@ -26,9 +29,22 @@
  *
  */
 
-#define MPDate		"2001-09-30"
 #define MPVersionStr	"5.6.1b1"
+#define MPDate		$$Format("%4.4d-%2.2d-%2.2d", $$Year,  $$Month, $$Day)
 #define MPRevision	0x05
 #define MPVersion	0x61
 #define MPBuild		0x01
 #define MPState		beta
+#define MPCopyright	"ported by Matthias Neeracher, maintained by Chris Nandor"
+
+resource 'vers' (1) {
+	MPRevision, MPVersion, MPState, MPBuild, verUS,
+	MPVersionStr,
+	MPVersionStr ", " MPCopyright
+	};
+
+resource 'vers' (2) {
+	0x01, 0x00, release, 0x00, verUS,
+	"1.0",
+	"MacPerl " MPVersionStr " (" MPDate ")"
+	};

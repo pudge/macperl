@@ -452,7 +452,7 @@ sub _gettemp {
       local $^F = 2;
 
       # Store callers umask
-      my $umask = umask();
+      my $umask = umask() || 0;
 
       # Set a known umask
       umask(066);
@@ -494,7 +494,7 @@ sub _gettemp {
     } elsif ($options{"mkdir"}) {
 
       # Store callers umask
-      my $umask = umask();
+      my $umask = umask() || 0;
 
       # Set a known umask
       umask(066);

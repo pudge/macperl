@@ -5,7 +5,7 @@
 /*
  * Package name      : perl
  * Configuration time: 22Nov99
- * Configured by     : Matthias Neeracher <neeri@iis.ee.ethz.ch>
+ * Configured by     : Matthias Neeracher <neeracher@mac.com>
  * Target system     : MacOS Traditional
  */
 /*********************************************************************
@@ -13,6 +13,9 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.9  2001/06/27 18:18:48  pudge
+Sync from p4; fix rand
+
 Revision 1.8  2001/05/05 20:32:41  pudge
 Prepare for 5.6.1a2, mostly updates to tests, and File::Find, and latest changes from main repository
 
