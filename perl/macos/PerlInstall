@@ -7,6 +7,7 @@ Set Exit 0
 # End
 #!perl
 
+# use some of Mac::BuildTools
 use File::Find;
 use File::Path;
 use File::Copy;
@@ -47,7 +48,7 @@ sub copyit {
 	local($_) = $_;
 	my($newdir,$auto,$name) = ($File::Find::dir, $File::Find::dir, $File::Find::name);
 	$newdir =~ s/\Q$fromdir\E/$todir/;
-	$auto   =~ s/.*\Q$fromdir\E/$todir:auto/;
+	$auto   =~ s/.*\Q$fromdir\E.*$/$todir:auto/;
 	$name   =~ s/.*\Q$fromdir\E//;
 	return if -d $_;
 	$newdir =~ s/:$//;

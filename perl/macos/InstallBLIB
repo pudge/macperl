@@ -14,7 +14,8 @@ FILE:
 for $file (@ARGV) {
 	$file =~ s|/|:|g;
 	$file = ":$file" unless $file =~ /^:/;
-	($new = $file) =~ s|^:(lib:)?|:blib:lib:$prefix|;
+        (my $new = $file) =~ s/^:(lib:|$prefix)?/':blib:lib:' .
+            ($1 eq 'lib:' ? '' : $prefix)/e;
 	next unless -f $file;
 XSCHECK: {
 		if ($file =~ /\.xs$/) {
