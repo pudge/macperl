@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.4  2000/12/22 08:31:47  neeri
+#  Some build tweaks
+#
 #  Revision 1.3  2000/09/09 22:18:25  neeri
 #  Dynamic libraries compile under 5.6
 #
@@ -145,25 +148,25 @@ MoLibsSC	=	"$(DB)lib:db.Sfio.SC.Lib"					\
 			"$(XL)"XL.SC.Lib
 
 LibFilesMrC	= 	\
-	"$(GUSI)lib:GUSI_MPW.MrC.Lib"					\
-	"$(GUSI)lib:GUSI_Sfio.MrC.Lib"					\
-	:PLib:PerlLib.MrC.Lib							\
-	"$(GUSI)lib:GUSI_Core.MrC.Lib"					\
-	"$(SFIO)lib:sfio.MrC.Lib"						\
-	"{{PPCLibraries}}MrCPlusLib.o"					\
-	"{{PPCLibraries}}PPCStdCLib.o"					\
-	"{{PPCLibraries}}StdCRuntime.o"					\
-	"{{PPCLibraries}}PPCCRuntime.o"					\
-	"{{SharedLibraries}}MathLib"					\
-	"{{PPCLibraries}}PPCToolLibs.o"					\
-	"{{SharedLibraries}}InterfaceLib"				\
-	"{{SharedLibraries}}ThreadsLib"					\
-	"{{PPCLibraries}}MrCIOStreams.o"				\
-	"{{SharedLibraries}}StdCLib"					\
-	"{{SharedLibraries}}OpenTransportLib"			\
-	"{{SharedLibraries}}OpenTptInternetLib"			\
-	"{{PPCLibraries}}OpenTransportAppPPC.o"			\
-	"{{PPCLibraries}}OpenTptInetPPC.o"
+			"$(GUSI)lib:GUSI_MPW.MrC.Lib"					\
+			"$(GUSI)lib:GUSI_Sfio.MrC.Lib"					\
+			:PLib:PerlLib.MrC.Lib							\
+			"$(GUSI)lib:GUSI_Core.MrC.Lib"					\
+			"$(SFIO)lib:sfio.MrC.Lib"						\
+			"{{PPCLibraries}}MrCPlusLib.o"					\
+			"{{PPCLibraries}}PPCStdCLib.o"					\
+			"{{PPCLibraries}}StdCRuntime.o"					\
+			"{{PPCLibraries}}PPCCRuntime.o"					\
+			"{{SharedLibraries}}MathLib"					\
+			"{{PPCLibraries}}PPCToolLibs.o"					\
+			"{{SharedLibraries}}InterfaceLib"				\
+			"{{SharedLibraries}}ThreadsLib"					\
+			"{{PPCLibraries}}MrCIOStreams.o"				\
+			"{{SharedLibraries}}StdCLib"					\
+			"{{SharedLibraries}}OpenTransportLib"			\
+			"{{SharedLibraries}}OpenTptInternetLib"			\
+			"{{PPCLibraries}}OpenTransportAppPPC.o"			\
+			"{{PPCLibraries}}OpenTptInetPPC.o"
 MoLibsMrC	=	"$(DB)lib:db.Sfio.MrC.Lib"				\
 			"$(XL)"XL.MrC.Lib							\
 			"{{SharedLibraries}}AppleScriptLib"
@@ -228,7 +231,7 @@ LibObjectsMRC = {$(libc)}.MrC.o
 
 .PHONY : translators
 
-all: miniperl $(private) $(plextract) $(public) dynlibrary runperl Perl.rsrc.stamp 
+all: PLib Obj miniperl $(private) $(plextract) $(public) dynlibrary runperl 
 	@echo " "; echo "	Everything is up to date."
 	
 PLib: 
