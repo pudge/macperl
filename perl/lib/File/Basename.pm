@@ -182,6 +182,7 @@ sub fileparse {
   }
   elsif ($fstype =~ /^MacOS/si) {
     ($dirpath,$basename) = ($fullname =~ /^(.*:)?(.*)/s);
+    $dirpath = ':' unless $dirpath;
   }
   elsif ($fstype =~ /^AmigaOS/i) {
     ($dirpath,$basename) = ($fullname =~ /(.*[:\/])?(.*)/s);
