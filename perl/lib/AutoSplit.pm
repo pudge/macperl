@@ -257,7 +257,7 @@ sub autosplit_file {
 		    ($^O eq 'dos') or ($^O eq 'MSWin32') or
 	            $Is_VMS && $filename =~ m/$modpname.pm/i);
 
-    my($al_idx_file) = "$autodir/$modpname/$IndexFile";
+    my($al_idx_file) = catfile($autodir, $modpname, $IndexFile);
 
     if ($check_mod_time){
 	my($al_ts_time) = (stat("$al_idx_file"))[9] || 1;
