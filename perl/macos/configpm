@@ -25,7 +25,7 @@ while (<MYCONFIGH>) {
 close MYCONFIGH;
 
 open CONFIG, ">$config_pm" or die "Can't open $config_pm: $!\n";
-$myver = $];
+$myver = sprintf "v%vd", $^V;
 
 print CONFIG <<'ENDOFBEG_NOQ', <<"ENDOFBEG";
 package Config;
@@ -46,8 +46,12 @@ sub import {
 }
 
 ENDOFBEG_NOQ
-\$] == $myver
-  or die "Perl lib version ($myver) doesn't match executable version (\$])";
+die "Perl lib version ($myver) doesn't match executable version (\$])"
+    unless \$^V;
+
+\$^V eq $myver
+  or die "Perl lib version ($myver) doesn't match executable version (" .
+    (sprintf "v%vd",\$^V) . ")";
 
 # This file was created by configpm when Perl was built. Any changes
 # made to this file will be lost the next time perl is built.
