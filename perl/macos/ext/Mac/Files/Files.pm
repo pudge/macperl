@@ -15,7 +15,7 @@ use base 'DynaLoader';
 use base 'Exporter';
 use vars qw(@EXPORT %EXPORT_TAGS $VERSION);
 
-$VERSION = '1.05';
+$VERSION = '1.06';
 @EXPORT = qw(
 	FSpGetCatInfo
 	FSpSetCatInfo
@@ -71,7 +71,295 @@ bootstrap Mac::Files;
 
 =head2 Constants
 
-Constants for vRefNum parameter of FindFolder().
+Constants for file access permissions.  Use these constants to request a
+type of access to a file or fork, or to deny a type of access to a file
+or fork to other paths that may request access.
+
+Note that it is possible, on Mac OS 8 and 9, to open a file residing on
+read-only media with write access. On Mac OS X, however, you cannot open
+a file with write access on read-only media; the attempt to open the
+file fails with a wrPermErr error.
+
+=over 4
+
+=item fsCurPerm
+
+Requests whatever permissions are currently allowed. If write access is unavailable (because the file is locked or the file is already open with write permission), then read permission is granted. Otherwise read/write permission is granted.
+
+=cut
+
+sub fsCurPerm () { 0x00 }
+
+=item fsRdPerm
+
+Requests permission to read the file.
+
+=cut
+
+sub fsRdPerm () { 0x01 }
+
+=item fsWrPerm
+
+Requests permission to write to the file. If write permission is granted, no other access paths are granted write permission. Note, however, that the File Manager does not support write-only access to a file. Thus, fsWrPerm is synonymous with fsRdWrPerm.
+
+=cut
+
+sub fsWrPerm () { 0x02 }
+
+=item fsRdWrPerm
+
+Requests exclusive read and write permission. If exclusive read/write permission is granted, no other users are granted permission to write to the file. Other users may, however, be granted permission to read the file.
+
+=cut
+
+sub fsRdWrPerm () { 0x03 }
+
+=item fsRdWrShPerm
+
+Requests shared read and write permission. Shared read/write permission allows mutliple access paths for reading and writing. This is safe only if there is some way of locking portions of the file before writing to them. Use the functions PBLockRangeSync and PBUnlockRangeSync to lock and unlock ranges of bytes within a file. On Mac OS 8 and 9, these functions are supported only on remotely mounted volumes, or on local volumes that are shareable on the network. You should check that range locking is available before requesting shared read/ write permission. On Mac OS X, range locking is available on all volumes.
+
+=cut
+
+sub fsRdWrShPerm () { 0x04 }
+
+=item fsRdDenyPerm
+
+Requests that any other paths be prevented from having read access. A path cannot be opened if you request read permission (with the fsRdPerm constant) but some other path has requested deny-read access. Similarly, the path cannot be opened if you request deny-read permission, but some other path already has read access. This constant is used with the PBHOpenDenySync and PBHOpenRFDenySync functions.
+
+=cut
+
+sub fsRdDenyPerm () { 0x10 }
+
+=item fsWrDenyPerm
+
+Requests that any other paths be prevented from having write access. A path cannot be opened if you request write permission (with the fsWrPerm constant) but some other path has requested deny-write access. Similarly, the path cannot be opened if you request deny-write permission, but some other path already has write access. This constant is used with the PBHOpenDenySync and PBHOpenRFDenySync functions.
+
+=cut
+
+sub fsWrDenyPerm () { 0x20 }
+
+=back
+
+ioFlAttrib bits, returned by FSpGetCatInfo.
+
+=over 4
+
+=item kioFlAttribLocked
+
+Set if file or directory is locked
+
+=cut
+
+sub kioFlAttribLocked () { 0x01 }
+
+=item kioFlAttribResOpen
+
+Set if resource fork is open
+
+=cut
+
+sub kioFlAttribResOpen () { 0x04 }
+
+=item kioFlAttribDataOpen
+
+Set if data fork is open
+
+=cut
+
+sub kioFlAttribDataOpen () { 0x08 }
+
+=item kioFlAttribDir
+
+Set if this is a directory
+
+=cut
+
+sub kioFlAttribDir () { 0x10 }
+
+=item kioFlAttribCopyProt
+
+Set if AppleShare server "copy-protects" the file
+
+=cut
+
+sub kioFlAttribCopyProt () { 0x40 }
+
+=item kioFlAttribFileOpen
+
+Set if file (either fork) is open
+
+=cut
+
+sub kioFlAttribFileOpen () { 0x80 }
+
+=item kioFlAttribInShared
+
+Set if the directory is within a shared area of the directory hierarchy
+
+=cut
+
+sub kioFlAttribInShared () { 0x04 }
+
+=item kioFlAttribMounted
+
+Set if the directory is a share point that is mounted by some user
+
+=cut
+
+sub kioFlAttribMounted () { 0x08 }
+
+=item kioFlAttribSharePoint
+
+Set if the directory is a share point
+
+=cut
+
+sub kioFlAttribSharePoint () { 0x20 }
+
+=back
+
+Finder flags
+
+=over 4
+
+=item kIsOnDesk
+
+Files and folders (System 6)
+
+=cut
+
+sub kIsOnDesk () { 0x0001 }
+
+=item kColor
+
+Files and folders; bit 0x0020 was kRequireSwitchLaunch, but is now reserved for future use
+
+=cut
+
+sub kColor () { 0x000E }
+
+=item kIsShared
+
+Files only (Applications only); if clear, the application needs to write to its resource fork, and therefore cannot be shared on a server
+
+=cut
+
+sub kIsShared () { 0x0040 }
+
+=item kHasNoINITs
+
+Files only (Extensions/Control Panels only); this file contains no INIT resource
+
+=cut
+
+sub kHasNoINITs () { 0x0080 }
+
+=item kHasBeenInited
+
+Files only; clear if the file contains desktop database; resources ('BNDL', 'FREF', 'open', 'kind'...) that have not been added yet. Set only by the Finder; reserved for folders - make sure this bit is cleared for folders; bit 0x0200 was the letter bit for AOCE, but is now reserved for future use
+
+=cut
+
+sub kHasBeenInited () { 0x0100 }
+
+=item kHasCustomIcon
+
+Files and folders
+
+=cut
+
+sub kHasCustomIcon () { 0x0400 }
+
+=item kIsStationery
+
+Files only
+
+=cut
+
+sub kIsStationery () { 0x0800 }
+
+=item kNameLocked
+
+Files and folders
+
+=cut
+
+sub kNameLocked () { 0x1000 }
+
+=item kHasBundle
+
+Files only
+
+=cut
+
+sub kHasBundle () { 0x2000 }
+
+=item kIsInvisible
+
+Files and folders
+
+=cut
+
+sub kIsInvisible () { 0x4000 }
+
+=item kIsAlias
+
+Files only
+
+=cut
+
+sub kIsAlias () { 0x8000 }
+
+=back
+
+AppleTalk/GetAliasInfo Constants
+
+=over 4
+
+=item asiZoneName
+
+Return AppleTalk zone name from GetAliasInfo.
+
+=cut
+
+sub asiZoneName () { -3 }
+
+=item asiServerName
+
+Return AppleTalk server name from GetAliasInfo.
+
+=cut
+
+sub asiServerName () { -2 }
+
+=item asiVolumeName
+
+Return volume name from GetAliasInfo.
+
+=cut
+
+sub asiVolumeName () { -1 }
+
+=item asiAliasName
+
+Return last component of target file name from GetAliasInfo.
+
+=cut
+
+sub asiAliasName () { 0 }
+
+=item asiParentName
+
+Return name of enclosing folder from GetAliasInfo. This index value is 1.  Higher indices will return folder names higher up the hierarchy.
+
+=cut
+
+sub asiParentName () { 1 }
+
+=back
+
+Folder type constants.  Specify a type of folder on a particular volume.
+Use in vRefNum parameter of FindFolder().
 
 =over 4
 
@@ -1286,53 +1574,6 @@ The "Stationery" folder, pre Mac OS 9.1
 =cut
 
 sub kPreMacOS91StationeryFolderType () { '¿dst' }
-
-=back
-
-AppleTalk/GetAliasInfo Constants
-
-=over 4
-
-=item asiZoneName
-
-Return AppleTalk zone name from GetAliasInfo.
-
-=cut
-
-sub asiZoneName () { -3 }
-
-=item asiServerName
-
-Return AppleTalk server name from GetAliasInfo.
-
-=cut
-
-sub asiServerName () { -2 }
-
-=item asiVolumeName
-
-Return volume name from GetAliasInfo.
-
-=cut
-
-sub asiVolumeName () { -1 }
-
-=item asiAliasName
-
-Return last component of target file name from GetAliasInfo.
-
-=cut
-
-sub asiAliasName () { 0 }
-
-=item asiParentName
-
-Return name of enclosing folder from GetAliasInfo. This index value is 1.
-Higher indices will return folder names higher up the hierarchy.
-
-=cut
-
-sub asiParentName () { 1 }
 
 =back
 
