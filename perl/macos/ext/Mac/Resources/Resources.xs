@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/11/13 02:04:52  pudge
+ * Aieeeeee!  Big ol' Carbon update.
+ *
  * Revision 1.3  2002/01/23 05:44:42  pudge
  * Update whitespace etc., from Thomas
  *
@@ -842,7 +845,7 @@ spec parameter. It also makes this file the current resource file.
 
 In addition to opening the resource fork for the file with the specified name,
 FSpOpenResFile lets you specify in the permission parameter the read/write permission
-of the resource fork the first time it is opened. 
+of the resource fork the first time it is opened.
 
 =cut
 short
@@ -851,6 +854,47 @@ FSpOpenResFile(spec, permission)
 	SInt8	permission
 	CLEANUP:
 	ResErrorCheckRetval;
+
+=item FSOpenResourceFile REF, FORKNAME, PERMISSION
+
+The FSOpenResourceFile function is like FSpOpenResFile, except that it can open
+a resource file using the data fork or resource fork.  $REF is the
+path to the resource file.  $FORKNAME is
+"rsrc" for a resource fork; else the data fork will be used.  It also makes this
+file the current resource file.
+
+=cut
+short
+FSOpenResourceFile(ref, forkName, permissions)
+	FSRef		&ref
+	char *		forkName
+	SInt8		permissions
+	CODE:
+	{
+#ifdef MACOS_TRADITIONAL
+	croak("Usage: Mac::Resources::FSOpenResourceFile not supported in Mac OS");
+#else
+		SInt16			refNum;
+		HFSUniStr255		forkNameU;
+
+		if (strEQ(forkName, "rsrc"))
+			FSGetResourceForkName(&forkNameU);
+		else
+			FSGetDataForkName(&forkNameU);
+
+		gMacPerl_OSErr = FSOpenResourceFile(&ref,
+			forkNameU.length, forkNameU.unicode,
+			permissions, &refNum
+		);
+
+		if (!gMacPerl_OSErr)
+			RETVAL = refNum;
+		else
+			RETVAL = 0;
+#endif
+	}
+	OUTPUT:
+	RETVAL
 
 =item FSpCreateResFile SPEC, CREATOR, FILETYPE, SCRIPTTAG
 
@@ -874,6 +918,57 @@ FSpCreateResFile(spec, creator, fileType, scriptTag)
 	SInt8			scriptTag
 	CLEANUP:
 	ResErrorReturn;
+
+
+=item FSCreateResourceFile PARENTREF, FILENAME, FORKNAME
+
+The FSCreateResourceFile procedure is like FSpCreateResFile, except that it can
+create a resource file in the data fork or resource fork.  $PARENTREF is the
+oath of the directory where the new $FILENAME will be located.  $FORKNAME is
+"rsrc" for a resource fork; else the data fork will be used.
+
+=cut
+OSErr
+FSCreateResourceFile(parentRef, name, forkName)
+	FSRef		&parentRef
+	Str255		name
+	char *		forkName
+	CODE:
+	{
+#ifdef MACOS_TRADITIONAL
+	croak("Usage: Mac::Resources::FSCreateResourceFile not supported in Mac OS");
+#else
+		HFSUniStr255		forkNameU;
+		UnicodeMappingPtr	iUnicodeMapping = malloc(sizeof(UnicodeMapping));
+		TextToUnicodeInfo	oTextToUnicodeInfo;
+		UniChar *		uName = malloc(sizeof(UniChar) * sizeof(Str255));
+		UniCharCount		uNameLength;
+
+		iUnicodeMapping->unicodeEncoding = kTextEncodingUnicodeDefault;
+		iUnicodeMapping->otherEncoding   = kTextEncodingISOLatin1;
+		iUnicodeMapping->mappingVersion  = kUnicodeUseLatestMapping;
+
+		CreateTextToUnicodeInfo(iUnicodeMapping, &oTextToUnicodeInfo);
+		ConvertFromPStringToUnicode(
+			oTextToUnicodeInfo, name, sizeof(UniChar) * sizeof(Str255),
+			&uNameLength, uName
+		);
+
+		if (strEQ(forkName, "rsrc"))
+			FSGetResourceForkName(&forkNameU);
+		else
+			FSGetDataForkName(&forkNameU);
+
+		RETVAL = gMacPerl_OSErr = FSCreateResourceFile(&parentRef,
+			uNameLength, uName,
+			NULL, NULL,
+			forkNameU.length, forkNameU.unicode,
+			NULL, NULL
+		);
+#endif
+	}
+	OUTPUT:
+	RETVAL
 
 =item ReadPartialResource HANDLE, OFFSET, BYTECOUNT
 
