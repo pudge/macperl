@@ -58,7 +58,7 @@ sub initdata {
 	my($self) = @_;
 	$self->{form} = $self->{cgi}->Vars;
 	if (keys %{$self->{form}} == 1 && !$self->{form}{op}) {
-	    ($self->{form}{op}) = keys %{$self->{form}};
+		($self->{form}{op}) = keys %{$self->{form}};
 	}
 	main::login($self) if defined &main::login;	# maybe put in Pudge::Web?
 }
@@ -77,9 +77,10 @@ sub main {
 }
 
 sub header {
-	my($self, $title) = @_;
+	my($self, $title, $data) = @_;
+	$data ||= {};
 	print $self->{cgi}->header($self->prep_cookie);
-	$self->process('header', { title => $title });
+	$self->process('header', { title => $title, head => $data });
 }
 
 sub footer {

@@ -49,7 +49,9 @@ sub home {
 
 sub build {
 	my($pw) = @_;
-	$pw->header('Build Instructions');
+	$pw->header('Build Instructions', {
+		base => 'http://dev.macperl.org/build.html'
+	});
 	$pw->process('build');
 }
 

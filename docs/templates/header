@@ -16,7 +16,7 @@
 	<title>[% FILTER strip_nohtml ; title ; END %]</title>
 	<base href="[% head.base || "http://dev.macperl.org" %]" />
 	<link rel="stylesheet" type="text/css" href="/style.css" />
-[% head.other %]</head>
+</head>
 <body>
 
 <h1 class="head">[% FILTER strip_literal ; title ; END %]</h1>
