@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- ?xml version="1.0" encoding="iso-8859-1"? -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -115,7 +115,10 @@ archives will be properly unpacked.
 
 	<li><strong><a href="http://www.stlport.org/">STLport</a></strong> (3.12.3), if building with SC / MrC</li>
 
-	<li><strong><a href="http://www.cpan.org/src/5.0/perl-5.6.0.tar.gz">perl-5.6.0 source</a></strong></li>
+	<li>
+		<strong><a href="ftp://macperl.sourceforge.net//pub/macperl/perl-5.6.0.sit.bin">perl-5.6.0 source</a></strong> (Stuffit Archive; recommended), or
+		<strong><a href="http://www.cpan.org/src/5.0/perl-5.6.0.tar.gz">perl-5.6.0 source</a></strong> (.tar.gz)
+	</li>
 
 	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=22346">MacPerl 5.6.0 source kit</a></strong></li>
 </ul>
@@ -198,7 +201,9 @@ archives will be properly unpacked.
 
 	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
 		change the preferences there for the compilers you will
-		be using.  (CodeWarrior is 68K/PPC, Apple is SC/MrC.)</p></li>
+		be using.  (CodeWarrior is 68K/PPC, Apple is SC/MrC; you
+		should stick with either one pair, or both pairs; don't
+		try to use just one compiler for everything.)</p></li>
 
 	<li><p>Quit and restart MPW Shell, so the startup files will
 		be executed, or execute the MPW startup files
@@ -209,12 +214,15 @@ archives will be properly unpacked.
 		to an hour, and will build all of the MPW tools
 		and perl modules for the compilers you chose.</p></li>
 
-	<li><p>Change directory in MPW to "HD:macperl_src:macos:" and
+	<li><p>Change directory in MPW to "HD:macperl_src:macperl:" and
 		execute <tt>buildprogram all</tt>.  This will build
 		the MacPerl application and supporting files.</p></li>
 
 	<li><p>Do a happy dance.  You're done.  Note that there are
-		plenty of bugs, so some things will not work.</p></li>
+		plenty of bugs, so some things will not work.  Set
+		your library path to "HD:macperl_src:perl:lib:" and
+		you should have access to most of the standard perl
+		and MacPerl library.</p></li>
 
 </ol>
 
