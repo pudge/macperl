@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2003/06/25 02:22:21  pudge
+ * Fix OSADoEvent, bump version
+ *
  * Revision 1.3  2002/12/10 02:12:06  pudge
  * Add Carbon support
  *
@@ -580,7 +583,7 @@ OSADoEvent(scriptingComponent, theAppleEvent, contextID, modeFlags)
 	OSAID 				contextID
 	long 					modeFlags
 	CODE:
-	memcpy(&RETVAL, SvPV_nolen((SV*)SvRV(ST(1))), sizeof(AEDesc));
+	AECreateAppleEvent(NULL, NULL, NULL, NULL, NULL, &RETVAL);
 	if (gMacPerl_OSErr = (short) OSADoEvent(scriptingComponent, &theAppleEvent, contextID, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
