@@ -8,7 +8,7 @@ just for testing purposes.
 </p>
 
 <table border="0" cellpadding="6"><tr>
-        <td valign="top">User:</td>
+        <td valign="top" width="200">User:</td>
         <td>[% IF myuser.sf_match %]
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
         [% ELSE; myuser.name; END %]</td>

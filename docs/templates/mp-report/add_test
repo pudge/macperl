@@ -13,7 +13,7 @@ in the notes).
 <form action="[% env.script_name %]" method="post">
 
 <table border="0" cellpadding="6"><tr>
-	<td valign="top">Test:</td>
+	<td valign="top" width="200">Test:</td>
 	<td><select name="test_id">
 [% FOR test = test_id %]		<option value="[% test.id %]">[% test.test %]</option>
 [% END %]

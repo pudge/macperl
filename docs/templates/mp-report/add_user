@@ -14,7 +14,7 @@ first.
 <form action="[% env.script_name %]" method="post">
 
 <table border="0" cellpadding="6"><tr>
-	<td valign="top">User name:</td>
+	<td valign="top" width="200">User name:</td>
 	<td><input type="text"     name="user"     size="32" maxlength="32" /></td>
 </tr><tr>
 	<td valign="top" colspan="2">Is your username the same here as on SourceForge?

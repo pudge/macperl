@@ -30,7 +30,7 @@ Save discussion of individual tests for the tests section.
 <form action="[% env.script_name %]" method="post">
 
 <table border="0" cellpadding="6"><tr>
-	<td valign="top">Configuration name:</td>
+	<td valign="top" width="200">Configuration name:</td>
 	<td><input type="text" name="name" size="32" maxlength="32" /></td>	
 </tr><tr>
 [% PROCESS get_select label => "Processor", name => "processor", data => processor %]
