@@ -14,3 +14,5 @@ __template__
 <P ALIGN="CENTER"><SMALL>Stories, comments, journals, and other submissions on use Perl; are Copyright 1998-2003, their respective owners.</SMALL></P>
 __seclev__
 500
+__version__
+$Id$

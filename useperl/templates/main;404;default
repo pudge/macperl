@@ -44,3 +44,5 @@ You are apparently trying to link to an old story.  We tried to find it for you,
 <P>If you feel like it, mail the url, and where ya came from to <A HREF="mailto:[% constants.adminmail %]">[% constants.adminmail %].</A>
 __seclev__
 10000
+__version__
+$Id$
