@@ -1,0 +1,2258 @@
+diff -ru :perl:ext:File:Glob:Glob.pm :perl.new:ext:File:Glob:Glob.pm
+--- :perl:ext:File:Glob:Glob.pm	Tue Apr  3 17:05:05 2001
++++ :perl.new:ext:File:Glob:Glob.pm	Fri Apr 13 09:45:15 2001
+@@ -25,6 +25,7 @@
+     GLOB_CSH
+     GLOB_ERR
+     GLOB_ERROR
++    GLOB_LIMIT
+     GLOB_MARK
+     GLOB_NOCASE
+     GLOB_NOCHECK
+@@ -44,6 +45,7 @@
+         GLOB_CSH
+         GLOB_ERR
+         GLOB_ERROR
++        GLOB_LIMIT
+         GLOB_MARK
+         GLOB_NOCASE
+         GLOB_NOCHECK
+@@ -57,7 +59,7 @@
+     ) ],
+ );
+ 
+-$VERSION = '0.991';
++$VERSION = '1.0';
+ 
+ sub import {
+     my $i = 1;
+@@ -241,6 +243,15 @@
+ 
+ Force bsd_glob() to return an error when it encounters a directory it
+ cannot open or read.  Ordinarily bsd_glob() continues to find matches.
++
++=item C<GLOB_LIMIT>
++
++Make bsd_glob() return an error (GLOB_NOSPACE) when the pattern expands
++to a size bigger than the system constant C<ARG_MAX> (usually found in
++limits.h).  If your system does not define this constant, bsd_glob() uses
++C<sysconf(_SC_ARG_MAX)> or C<_POSIX_ARG_MAX> where available (in that
++order).  You can inspect these values using the standard C<POSIX>
++extension.
+ 
+ =item C<GLOB_MARK>
+ 
+diff -ru :perl:ext:File:Glob:Glob.xs :perl.new:ext:File:Glob:Glob.xs
+--- :perl:ext:File:Glob:Glob.xs	Wed Apr  4 20:43:12 2001
++++ :perl.new:ext:File:Glob:Glob.xs	Fri Apr 13 09:45:23 2001
+@@ -69,6 +69,12 @@
+     case 'K':
+ 	break;
+     case 'L':
++	if (strEQ(name, "GLOB_LIMIT"))
++#ifdef GLOB_LIMIT
++	    return GLOB_LIMIT;
++#else
++	    goto not_there;
++#endif
+ 	break;
+     case 'M':
+ 	if (strEQ(name, "GLOB_MARK"))
+diff -ru :perl:ext:File:Glob:bsd_glob.c :perl.new:ext:File:Glob:bsd_glob.c
+--- :perl:ext:File:Glob:bsd_glob.c	Tue Apr  3 17:05:05 2001
++++ :perl.new:ext:File:Glob:bsd_glob.c	Mon Apr 16 23:39:49 2001
+@@ -32,6 +32,9 @@
+ 
+ #if defined(LIBC_SCCS) && !defined(lint)
+ static char sccsid[] = "@(#)glob.c	8.3 (Berkeley) 10/13/93";
++/* most changes between the version above and the one below have been ported:
++static char sscsid[]=  "$OpenBSD: glob.c,v 1.8.10.1 2001/04/10 jason Exp $";
++ */
+ #endif /* LIBC_SCCS and not lint */
+ 
+ /*
+@@ -87,6 +90,30 @@
+ #  endif
+ #endif
+ 
++#ifdef I_LIMITS
++#include <limits.h>
++#endif
++
++#ifndef ARG_MAX
++#  ifdef MACOS_TRADITIONAL
++#    define		ARG_MAX		65536	/* Mac OS is actually unlimited */
++#  else
++#    ifdef _SC_ARG_MAX
++#      define		ARG_MAX		(sysconf(_SC_ARG_MAX))
++#    else
++#      ifdef _POSIX_ARG_MAX
++#        define		ARG_MAX		_POSIX_ARG_MAX
++#      else
++#        ifdef WIN32
++#          define	ARG_MAX		14500	/* from VC's limits.h */
++#        else
++#          define	ARG_MAX		4096	/* from POSIX, be conservative */
++#        endif
++#      endif
++#    endif
++#  endif
++#endif
++
+ #define	BG_DOLLAR	'$'
+ #define	BG_DOT		'.'
+ #define	BG_EOS		'\0'
+@@ -146,20 +173,20 @@
+ 
+ static int	 compare(const void *, const void *);
+ static int	 ci_compare(const void *, const void *);
+-static void	 g_Ctoc(const Char *, char *);
++static int	 g_Ctoc(const Char *, char *, STRLEN);
+ static int	 g_lstat(Char *, Stat_t *, glob_t *);
+ static DIR	*g_opendir(Char *, glob_t *);
+ static Char	*g_strchr(Char *, int);
+-#ifdef notdef
+-static Char	*g_strcat(Char *, const Char *);
+-#endif
+ static int	 g_stat(Char *, Stat_t *, glob_t *);
+ static int	 glob0(const Char *, glob_t *);
+-static int	 glob1(Char *, glob_t *);
+-static int	 glob2(Char *, Char *, Char *, glob_t *);
+-static int	 glob3(Char *, Char *, Char *, Char *, glob_t *);
+-static int	 globextend(const Char *, glob_t *);
+-static const Char *	 globtilde(const Char *, Char *, glob_t *);
++static int	 glob1(Char *, Char *, glob_t *, size_t *);
++static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
++		       glob_t *, size_t *);
++static int	 glob3(Char *, Char *, Char *, Char *, Char *, Char *,
++		       Char *, Char *, glob_t *, size_t *);
++static int	 globextend(const Char *, glob_t *, size_t *);
++static const Char *
++		 globtilde(const Char *, Char *, size_t, glob_t *);
+ static int	 globexp1(const Char *, glob_t *);
+ static int	 globexp2(const Char *, const Char *, glob_t *, int *);
+ static int	 match(Char *, Char *, Char *, int);
+@@ -185,7 +212,7 @@
+ {
+ 	const U8 *patnext;
+ 	int c;
+-	Char *bufnext, *bufend, patbuf[MAXPATHLEN+1];
++	Char *bufnext, *bufend, patbuf[MAXPATHLEN];
+ 
+ 	patnext = (U8 *) pattern;
+ 	if (!(flags & GLOB_APPEND)) {
+@@ -199,7 +226,7 @@
+ 	pglob->gl_matchc = 0;
+ 
+ 	bufnext = patbuf;
+-	bufend = bufnext + MAXPATHLEN;
++	bufend = bufnext + MAXPATHLEN - 1;
+ #ifdef DOSISH
+ 	/* Nasty hack to treat patterns like "C:*" correctly. In this
+ 	 * case, the * should match any file in the current directory
+@@ -239,13 +266,11 @@
+ 					--patnext;
+ 				}
+ 				*bufnext++ = c | M_PROTECT;
+-			}
+-			else
++			} else
+ 				*bufnext++ = c;
+-	}
+-	else
+-	    while (bufnext < bufend && (c = *patnext++) != BG_EOS)
+-		    *bufnext++ = c;
++	} else
++		while (bufnext < bufend && (c = *patnext++) != BG_EOS)
++			*bufnext++ = c;
+ 	*bufnext = BG_EOS;
+ 
+ 	if (flags & GLOB_BRACE)
+@@ -259,7 +284,8 @@
+  * invoke the standard globbing routine to glob the rest of the magic
+  * characters
+  */
+-static int globexp1(const Char *pattern, glob_t *pglob)
++static int
++globexp1(const Char *pattern, glob_t *pglob)
+ {
+ 	const Char* ptr = pattern;
+ 	int rv;
+@@ -281,17 +307,19 @@
+  * If it succeeds then it invokes globexp1 with the new pattern.
+  * If it fails then it tries to glob the rest of the pattern and returns.
+  */
+-static int globexp2(const Char *ptr, const Char *pattern,
+-		    glob_t *pglob, int *rv)
++static int
++globexp2(const Char *ptr, const Char *pattern,
++	 glob_t *pglob, int *rv)
+ {
+ 	int     i;
+ 	Char   *lm, *ls;
+ 	const Char *pe, *pm, *pl;
+-	Char    patbuf[MAXPATHLEN + 1];
++	Char    patbuf[MAXPATHLEN];
+ 
+ 	/* copy part up to the brace */
+ 	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+-		continue;
++		;
++	*lm = BG_EOS;
+ 	ls = lm;
+ 
+ 	/* Find the balanced brace */
+@@ -299,7 +327,7 @@
+ 		if (*pe == BG_LBRACKET) {
+ 			/* Ignore everything between [] */
+ 			for (pm = pe++; *pe != BG_RBRACKET && *pe != BG_EOS; pe++)
+-				continue;
++				;
+ 			if (*pe == BG_EOS) {
+ 				/*
+ 				 * We could not find a matching BG_RBRACKET.
+@@ -307,8 +335,7 @@
+ 				 */
+ 				pe = pm;
+ 			}
+-		}
+-		else if (*pe == BG_LBRACE)
++		} else if (*pe == BG_LBRACE)
+ 			i++;
+ 		else if (*pe == BG_RBRACE) {
+ 			if (i == 0)
+@@ -322,12 +349,12 @@
+ 		return 0;
+ 	}
+ 
+-	for (i = 0, pl = pm = ptr; pm <= pe; pm++)
++	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+ 		switch (*pm) {
+ 		case BG_LBRACKET:
+ 			/* Ignore everything between [] */
+ 			for (pl = pm++; *pm != BG_RBRACKET && *pm != BG_EOS; pm++)
+-				continue;
++				;
+ 			if (*pm == BG_EOS) {
+ 				/*
+ 				 * We could not find a matching BG_RBRACKET.
+@@ -343,8 +370,8 @@
+ 
+ 		case BG_RBRACE:
+ 			if (i) {
+-			    i--;
+-			    break;
++				i--;
++				break;
+ 			}
+ 			/* FALLTHROUGH */
+ 		case BG_COMMA:
+@@ -353,13 +380,14 @@
+ 			else {
+ 				/* Append the current string */
+ 				for (lm = ls; (pl < pm); *lm++ = *pl++)
+-					continue;
++					;
++
+ 				/*
+ 				 * Append the rest of the pattern after the
+ 				 * closing brace
+ 				 */
+-				for (pl = pe + 1; (*lm++ = *pl++) != BG_EOS;)
+-					continue;
++				for (pl = pe + 1; (*lm++ = *pl++) != BG_EOS; )
++					;
+ 
+ 				/* Expand the current pattern */
+ #ifdef GLOB_DEBUG
+@@ -375,6 +403,7 @@
+ 		default:
+ 			break;
+ 		}
++	}
+ 	*rv = 0;
+ 	return 0;
+ }
+@@ -385,23 +414,29 @@
+  * expand tilde from the passwd file.
+  */
+ static const Char *
+-globtilde(const Char *pattern, Char *patbuf, glob_t *pglob)
++globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
+ {
+ 	struct passwd *pwd;
+ 	char *h;
+ 	const Char *p;
+-	Char *b;
++	Char *b, *eb;
+ 
+ 	if (*pattern != BG_TILDE || !(pglob->gl_flags & GLOB_TILDE))
+ 		return pattern;
+ 
+ 	/* Copy up to the end of the string or / */
+-	for (p = pattern + 1, h = (char *) patbuf; *p && *p != BG_SLASH;
+-	     *h++ = *p++)
+-		continue;
++	eb = &patbuf[patbuf_len - 1];
++	for (p = pattern + 1, h = (char *) patbuf;
++	     h < (char*)eb && *p && *p != BG_SLASH; *h++ = *p++)
++		;
+ 
+ 	*h = BG_EOS;
+ 
++#if 0
++	if (h == (char *)eb)
++		return what;
++#endif
++
+ 	if (((char *) patbuf)[0] == BG_EOS) {
+ 		/*
+ 		 * handle a plain ~ or ~/ by expanding $HOME
+@@ -417,8 +452,7 @@
+                         return pattern;
+ #endif
+ 		}
+-	}
+-	else {
++	} else {
+ 		/*
+ 		 * Expand a ~user
+ 		 */
+@@ -433,12 +467,13 @@
+ 	}
+ 
+ 	/* Copy the home directory */
+-	for (b = patbuf; *h; *b++ = *h++)
+-		continue;
++	for (b = patbuf; b < eb && *h; *b++ = *h++)
++		;
+ 
+ 	/* Append the rest of the pattern */
+-	while ((*b++ = *p++) != BG_EOS)
+-		continue;
++	while (b < eb && (*b++ = *p++) != BG_EOS)
++		;
++	*b = BG_EOS;
+ 
+ 	return patbuf;
+ }
+@@ -456,15 +491,16 @@
+ {
+ 	const Char *qpat, *qpatnext;
+ 	int c, err, oldflags, oldpathc;
+-	Char *bufnext, patbuf[MAXPATHLEN+1];
++	Char *bufnext, patbuf[MAXPATHLEN];
++	size_t limit = 0;
+ 
+ #ifdef MACOS_TRADITIONAL
+ 	if ( (*pattern == BG_TILDE) && (pglob->gl_flags & GLOB_TILDE) ) {
+-		return(globextend(pattern, pglob));
++		return(globextend(pattern, pglob, &limit));
+ 	}
+ #endif
+ 
+-	qpat = globtilde(pattern, patbuf, pglob);
++	qpat = globtilde(pattern, patbuf, MAXPATHLEN, pglob);
+ 	qpatnext = qpat;
+ 	oldflags = pglob->gl_flags;
+ 	oldpathc = pglob->gl_pathc;
+@@ -510,7 +546,7 @@
+ 			 * to avoid exponential behavior
+ 			 */
+ 			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+-			    *bufnext++ = M_ALL;
++				*bufnext++ = M_ALL;
+ 			break;
+ 		default:
+ 			*bufnext++ = CHAR(c);
+@@ -522,7 +558,7 @@
+ 	qprintf("glob0:", patbuf);
+ #endif /* GLOB_DEBUG */
+ 
+-	if ((err = glob1(patbuf, pglob)) != 0) {
++	if ((err = glob1(patbuf, patbuf+MAXPATHLEN-1, pglob, &limit)) != 0) {
+ 		pglob->gl_flags = oldflags;
+ 		return(err);
+ 	}
+@@ -542,7 +578,7 @@
+ 		printf("calling globextend from glob0\n");
+ #endif /* GLOB_DEBUG */
+ 		pglob->gl_flags = oldflags;
+-		return(globextend(qpat, pglob));
++		return(globextend(qpat, pglob, &limit));
+         }
+ 	else if (!(pglob->gl_flags & GLOB_NOSORT))
+ 		qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
+@@ -556,19 +592,19 @@
+ static int
+ ci_compare(const void *p, const void *q)
+ {
+-    const char *pp = *(const char **)p;
+-    const char *qq = *(const char **)q;
+-    int ci;
+-    while (*pp && *qq) {
+-	if (tolower(*pp) != tolower(*qq))
+-	    break;
+-	++pp;
+-	++qq;
+-    }
+-    ci = tolower(*pp) - tolower(*qq);
+-    if (ci == 0)
+-	return compare(p, q);
+-    return ci;
++	const char *pp = *(const char **)p;
++	const char *qq = *(const char **)q;
++	int ci;
++	while (*pp && *qq) {
++		if (tolower(*pp) != tolower(*qq))
++			break;
++		++pp;
++		++qq;
++	}
++	ci = tolower(*pp) - tolower(*qq);
++	if (ci == 0)
++		return compare(p, q);
++	return ci;
+ }
+ 
+ static int
+@@ -578,14 +614,16 @@
+ }
+ 
+ static int
+-glob1(Char *pattern, glob_t *pglob)
++glob1(Char *pattern, Char *pattern_last, glob_t *pglob, size_t *limitp)
+ {
+-	Char pathbuf[MAXPATHLEN+1];
++	Char pathbuf[MAXPATHLEN];
+ 
+ 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
+ 	if (*pattern == BG_EOS)
+ 		return(0);
+-	return(glob2(pathbuf, pathbuf, pattern, pglob));
++	return(glob2(pathbuf, pathbuf+MAXPATHLEN-1,
++		     pathbuf, pathbuf+MAXPATHLEN-1,
++		     pattern, pattern_last, pglob, limitp));
+ }
+ 
+ /*
+@@ -594,7 +632,8 @@
+  * meta characters.
+  */
+ static int
+-glob2(Char *pathbuf, Char *pathend, Char *pattern, glob_t *pglob)
++glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
++      Char *pattern, Char *pattern_last, glob_t *pglob, size_t *limitp)
+ {
+ 	Stat_t sb;
+ 	Char *p, *q;
+@@ -607,7 +646,6 @@
+ 	for (anymeta = 0;;) {
+ 		if (*pattern == BG_EOS) {		/* End of pattern? */
+ 			*pathend = BG_EOS;
+-
+ 			if (g_lstat(pathbuf, &sb, pglob))
+ 				return(0);
+ 
+@@ -616,10 +654,12 @@
+ #ifdef DOSISH
+ 			    && pathend[-1] != BG_SEP2
+ #endif
+-			    ) && (S_ISDIR(sb.st_mode)
+-			    || (S_ISLNK(sb.st_mode) &&
++			    ) && (S_ISDIR(sb.st_mode) ||
++				  (S_ISLNK(sb.st_mode) &&
+ 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
+ 			    S_ISDIR(sb.st_mode)))) {
++				if (pathend+1 > pathend_last)
++					return (1);
+ 				*pathend++ = BG_SEP;
+ 				*pathend = BG_EOS;
+ 			}
+@@ -627,7 +667,7 @@
+ #ifdef GLOB_DEBUG
+                         printf("calling globextend from glob2\n");
+ #endif /* GLOB_DEBUG */
+-			return(globextend(pathbuf, pglob));
++			return(globextend(pathbuf, pglob, limitp));
+ 		}
+ 
+ 		/* Find end of next segment, copy tentatively to pathend. */
+@@ -640,6 +680,8 @@
+ 		       ) {
+ 			if (ismeta(*p))
+ 				anymeta = 1;
++			if (q+1 > pathend_last)
++				return (1);
+ 			*q++ = *p++;
+ 		}
+ 
+@@ -650,17 +692,24 @@
+ #ifdef DOSISH
+ 			       || *pattern == BG_SEP2
+ #endif
+-			       )
++			       ) {
++				if (pathend+1 > pathend_last)
++					return (1);
+ 				*pathend++ = *pattern++;
+-		} else			/* Need expansion, recurse. */
+-			return(glob3(pathbuf, pathend, pattern, p, pglob));
++			}
++		} else
++			/* Need expansion, recurse. */
++			return(glob3(pathbuf, pathbuf_last, pathend,
++				     pathend_last, pattern, pattern_last,
++				     p, pattern_last, pglob, limitp));
+ 	}
+ 	/* NOTREACHED */
+ }
+ 
+ static int
+-glob3(Char *pathbuf, Char *pathend, Char *pattern,
+-      Char *restpattern, glob_t *pglob)
++glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
++      Char *pattern, Char *pattern_last,
++      Char *restpattern, Char *restpattern_last, glob_t *pglob, size_t *limitp)
+ {
+ 	register Direntry_t *dp;
+ 	DIR *dirp;
+@@ -676,28 +725,32 @@
+ 	 */
+ 	Direntry_t *(*readdirfunc)(DIR*);
+ 
++	if (pathend > pathend_last)
++		return (1);
+ 	*pathend = BG_EOS;
+ 	errno = 0;
+ 
+ #ifdef VMS
+         {
+-            Char *q = pathend;
+-            if (q - pathbuf > 5) {
+-                q -= 5;
+-                if (q[0] == '.' && tolower(q[1]) == 'd' && tolower(q[2]) == 'i'
+-		    && tolower(q[3]) == 'r' && q[4] == '/')
+-		{
+-                    q[0] = '/';
+-                    q[1] = BG_EOS;
+-                    pathend = q+1;
+-                }
+-            }
++		Char *q = pathend;
++		if (q - pathbuf > 5) {
++			q -= 5;
++			if (q[0] == '.' &&
++			    tolower(q[1]) == 'd' && tolower(q[2]) == 'i' &&
++			    tolower(q[3]) == 'r' && q[4] == '/')
++			{
++				q[0] = '/';
++				q[1] = BG_EOS;
++				pathend = q+1;
++			}
++		}
+         }
+ #endif
+ 	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+ 		/* TODO: don't call for ENOENT or ENOTDIR? */
+ 		if (pglob->gl_errfunc) {
+-			g_Ctoc(pathbuf, buf);
++			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
++				return (GLOB_ABEND);
+ 			if (pglob->gl_errfunc(buf, errno) ||
+ 			    (pglob->gl_flags & GLOB_ERR))
+ 				return (GLOB_ABEND);
+@@ -710,7 +763,7 @@
+ 
+ 	/* Search directory for matching names. */
+ 	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+-               readdirfunc = (Direntry_t *(*)(DIR *))pglob->gl_readdir;
++		readdirfunc = (Direntry_t *(*)(DIR *))pglob->gl_readdir;
+ 	else
+ 		readdirfunc = my_readdir;
+ 	while ((dp = (*readdirfunc)(dirp))) {
+@@ -720,14 +773,22 @@
+ 		/* Initial BG_DOT must be matched literally. */
+ 		if (dp->d_name[0] == BG_DOT && *pattern != BG_DOT)
+ 			continue;
+-		for (sc = (U8 *) dp->d_name, dc = pathend;
+-		     (*dc++ = *sc++) != BG_EOS;)
+-			continue;
++		dc = pathend;
++		sc = (U8 *) dp->d_name;
++		while (dc < pathend_last && (*dc++ = *sc++) != BG_EOS)
++			;
++		if (dc >= pathend_last) {
++			*dc = BG_EOS;
++			err = 1;
++			break;
++		}
++
+ 		if (!match(pathend, pattern, restpattern, nocase)) {
+ 			*pathend = BG_EOS;
+ 			continue;
+ 		}
+-		err = glob2(pathbuf, --dc, restpattern, pglob);
++		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
++			    restpattern, restpattern_last, pglob, limitp);
+ 		if (err)
+ 			break;
+ 	}
+@@ -755,10 +816,11 @@
+  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
+  */
+ static int
+-globextend(const Char *path, glob_t *pglob)
++globextend(const Char *path, glob_t *pglob, size_t *limitp)
+ {
+ 	register char **pathv;
+ 	register int i;
++	STRLEN newsize, len;
+ 	char *copy;
+ 	const Char *p;
+ 
+@@ -769,13 +831,18 @@
+         printf("\n");
+ #endif /* GLOB_DEBUG */
+ 
++	newsize = sizeof(*pathv) * (2 + pglob->gl_pathc + pglob->gl_offs);
+ 	if (pglob->gl_pathv)
+-		pathv = Renew(pglob->gl_pathv,
+-			      (2 + pglob->gl_pathc + pglob->gl_offs),char*);
++		pathv = Renew(pglob->gl_pathv,newsize,char*);
+ 	else
+-		New(0,pathv,(2 + pglob->gl_pathc + pglob->gl_offs),char*);
+-	if (pathv == NULL)
++		New(0,pathv,newsize,char*);
++	if (pathv == NULL) {
++		if (pglob->gl_pathv) {
++			Safefree(pglob->gl_pathv);
++			pglob->gl_pathv = NULL;
++		}
+ 		return(GLOB_NOSPACE);
++	}
+ 
+ 	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+ 		/* first time around -- clear initial gl_offs items */
+@@ -786,13 +853,25 @@
+ 	pglob->gl_pathv = pathv;
+ 
+ 	for (p = path; *p++;)
+-		continue;
++		;
++	len = (STRLEN)(p - path);
++	*limitp += len;
+ 	New(0, copy, p-path, char);
+ 	if (copy != NULL) {
+-		g_Ctoc(path, copy);
++		if (g_Ctoc(path, copy, len)) {
++			Safefree(copy);
++			return(GLOB_NOSPACE);
++		}
+ 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
+ 	}
+ 	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
++
++	if ((pglob->gl_flags & GLOB_LIMIT) &&
++	    newsize + *limitp >= ARG_MAX) {
++		errno = 0;
++		return(GLOB_NOSPACE);
++	}
++
+ 	return(copy == NULL ? GLOB_NOSPACE : 0);
+ }
+ 
+@@ -816,7 +895,8 @@
+ 			do
+ 			    if (match(name, pat, patend, nocase))
+ 				    return(1);
+-			while (*name++ != BG_EOS);
++			while (*name++ != BG_EOS)
++				;
+ 			return(0);
+ 		case M_ONE:
+ 			if (*name++ == BG_EOS)
+@@ -866,6 +946,7 @@
+ 			if (*pp)
+ 				Safefree(*pp);
+ 		Safefree(pglob->gl_pathv);
++		pglob->gl_pathv = NULL;
+ 	}
+ }
+ 
+@@ -881,13 +962,14 @@
+ 		strcpy(buf, ".");
+ #endif
+ 	} else {
+-		g_Ctoc(str, buf);
++		if (g_Ctoc(str, buf, sizeof(buf)))
++			return(NULL);
+ 	}
+ 
+ 	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+ 		return((*pglob->gl_opendir)(buf));
+-	else
+-	    return(PerlDir_open(buf));
++
++	return(PerlDir_open(buf));
+ }
+ 
+ static int
+@@ -895,7 +977,8 @@
+ {
+ 	char buf[MAXPATHLEN];
+ 
+-	g_Ctoc(fn, buf);
++	if (g_Ctoc(fn, buf, sizeof(buf)))
++		return(-1);
+ 	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+ 		return((*pglob->gl_lstat)(buf, sb));
+ #ifdef HAS_LSTAT
+@@ -910,7 +993,8 @@
+ {
+ 	char buf[MAXPATHLEN];
+ 
+-	g_Ctoc(fn, buf);
++	if (g_Ctoc(fn, buf, sizeof(buf)))
++		return(-1);
+ 	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+ 		return((*pglob->gl_stat)(buf, sb));
+ 	return(PerlLIO_stat(buf, sb));
+@@ -926,29 +1010,14 @@
+ 	return (NULL);
+ }
+ 
+-#ifdef notdef
+-static Char *
+-g_strcat(Char *dst, const Char *src)
+-{
+-	Char *sdst = dst;
+-
+-	while (*dst++)
+-		continue;
+-	--dst;
+-	while((*dst++ = *src++) != BG_EOS)
+-	    continue;
+-
+-	return (sdst);
+-}
+-#endif
+-
+-static void
+-g_Ctoc(register const Char *str, char *buf)
++static int
++g_Ctoc(register const Char *str, char *buf, STRLEN len)
+ {
+-	register char *dc;
+-
+-	for (dc = buf; (*dc++ = *str++) != BG_EOS;)
+-		continue;
++	while (len--) {
++		if ((*buf++ = *str++) == BG_EOS)
++			return (0);
++	}
++	return (1);
+ }
+ 
+ #ifdef GLOB_DEBUG
+diff -ru :perl:ext:File:Glob:bsd_glob.h :perl.new:ext:File:Glob:bsd_glob.h
+--- :perl:ext:File:Glob:bsd_glob.h	Tue Mar 20 14:28:43 2001
++++ :perl.new:ext:File:Glob:bsd_glob.h	Fri Apr 13 09:44:56 2001
+@@ -30,6 +30,7 @@
+  * SUCH DAMAGE.
+  *
+  *	@(#)glob.h	8.1 (Berkeley) 6/2/93
++ *	[lots of perl-specific changes since then--see bsd_glob.c]
+  */
+ 
+ #ifndef _BSD_GLOB_H_
+@@ -73,6 +74,8 @@
+ #define	GLOB_TILDE	0x0800	/* Expand tilde names from the passwd file. */
+ #define	GLOB_NOCASE	0x1000	/* Treat filenames without regard for case. */
+ #define	GLOB_ALPHASORT	0x2000	/* Alphabetic, not ASCII sort, like csh. */
++#define	GLOB_LIMIT	0x4000	/* Limit pattern match output to ARG_MAX
++				   (usually from limits.h). */
+ 
+ #define	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
+ #define	GLOB_ABEND	(-2)	/* Unignored error. */
+diff -ru :perl:gv.c :perl.new:gv.c
+--- :perl:gv.c	Wed Mar 28 23:39:08 2001
++++ :perl.new:gv.c	Wed Apr 11 20:01:56 2001
+@@ -1033,7 +1033,12 @@
+ 		 * module, don't bother warning */
+ 		if (file
+ 		    && PERL_FILE_IS_ABSOLUTE(file)
+-		    && (instr(file, "/lib/") || instr(file, ".pm")))
++#ifdef MACOS_TRADITIONAL
++		    && (instr(file, ":lib:")
++#else
++		    && (instr(file, "/lib/")
++#endif
++		    || instr(file, ".pm")))
+ 		{
+ 		    continue;
+ 		}
+diff -ru :perl:lib:Devel:SelfStubber.pm :perl.new:lib:Devel:SelfStubber.pm
+--- :perl:lib:Devel:SelfStubber.pm	Mon Feb  5 23:52:30 2001
++++ :perl.new:lib:Devel:SelfStubber.pm	Fri Apr 13 09:46:05 2001
+@@ -3,7 +3,8 @@
+ @ISA = qw(SelfLoader);
+ @EXPORT = 'AUTOLOAD';
+ $JUST_STUBS = 1;
+-$VERSION = 1.01; sub Version {$VERSION}
++$VERSION = '1.02';
++sub Version {$VERSION}
+ 
+ # Use as
+ # perl -e 'use Devel::SelfStubber;Devel::SelfStubber->stub(MODULE_NAME,LIB)'
+diff -ru :perl:lib:ExtUtils:Install.pm :perl.new:lib:ExtUtils:Install.pm
+--- :perl:lib:ExtUtils:Install.pm	Mon Feb  5 23:52:31 2001
++++ :perl.new:lib:ExtUtils:Install.pm	Mon Apr 16 17:56:51 2001
+@@ -120,7 +120,6 @@
+ 	    return unless -f _;
+ 	    return if $_ eq ".exists";
+ 	    my $targetdir  = MY->catdir($targetroot, $File::Find::dir);
+-	    my $origfile   = $_;
+ 	    my $targetfile = MY->catfile($targetdir, $_);
+ 
+ 	    my $diff = 0;
+@@ -156,7 +155,7 @@
+ 	    } else {
+ 		inc_uninstall($_,$File::Find::dir,$verbose,0); # nonono set to 0
+ 	    }
+-	    $packlist->{$origfile}++;
++	    $packlist->{$targetfile}++;
+ 
+ 	}, ".");
+ 	chdir($cwd) or Carp::croak("Couldn't chdir to $cwd: $!");
+diff -ru :perl:lib:ExtUtils:Installed.pm :perl.new:lib:ExtUtils:Installed.pm
+--- :perl:lib:ExtUtils:Installed.pm	Mon Feb  5 23:52:31 2001
++++ :perl.new:lib:ExtUtils:Installed.pm	Mon Apr 16 17:57:28 2001
+@@ -8,7 +8,28 @@
+ use Config;
+ use File::Find;
+ use File::Basename;
+-our $VERSION = '0.02';
++our $VERSION = '0.03';
++
++my $DOSISH = ($^O =~ /^(MSWin\d\d|os2|dos|mint)$/);
++
++sub _is_prefix
++{
++my ($self, $path, $prefix) = @_;
++if (substr($path, 0, length($prefix)) eq $prefix)
++   {
++   return(1);
++   }
++if ($DOSISH)
++   {
++   $path =~ s|\\|/|g;
++   $prefix =~ s|\\|/|g;
++   if ($path =~ m{^\Q$prefix\E}i)
++      {
++      return(1);
++      }
++   }
++return(0);
++}
+ 
+ sub _is_type($$$)
+ {
+@@ -16,22 +37,18 @@
+ return(1) if ($type eq "all");
+ if ($type eq "doc")
+    {
+-   return(substr($path, 0, length($Config{installman1dir}))
+-              eq $Config{installman1dir}
++   return($self->_is_prefix($path, $Config{installman1dir})
+           ||
+-          substr($path, 0, length($Config{installman3dir}))
+-              eq $Config{installman3dir}
++          $self->_is_prefix($path, $Config{installman3dir})
+           ? 1 : 0)
+    }
+ if ($type eq "prog")
+    {
+-   return(substr($path, 0, length($Config{prefix})) eq $Config{prefix}
++   return($self->_is_prefix($path, $Config{prefix})
+           &&
+-          substr($path, 0, length($Config{installman1dir}))
+-             ne $Config{installman1dir}
++          !$self->_is_prefix($path, $Config{installman1dir})
+           &&
+-          substr($path, 0, length($Config{installman3dir}))
+-              ne $Config{installman3dir}
++          !$self->_is_prefix($path, $Config{installman3dir})
+           ? 1 : 0);
+    }
+ return(0);
+@@ -43,7 +60,7 @@
+ $under[0] = "" if (! @under);
+ foreach my $dir (@under)
+    {
+-   return(1) if (substr($path, 0, length($dir)) eq $dir);
++   return(1) if ($self->_is_prefix($path, $dir));
+    }
+ return(0);
+ }
+@@ -54,21 +71,32 @@
+ $class = ref($class) || $class;
+ my $self = {};
+ 
++my $installarchlib = $Config{installarchlib};
++my $archlib = $Config{archlib};
++my $sitearch = $Config{sitearch};
++
++if ($DOSISH)
++   {
++   $installarchlib =~ s|\\|/|g;
++   $archlib =~ s|\\|/|g;
++   $sitearch =~ s|\\|/|g;
++   }
++
+ # Read the core packlist
+ $self->{Perl}{packlist} =
+-   ExtUtils::Packlist->new("$Config{installarchlib}/.packlist");
++   ExtUtils::Packlist->new("$installarchlib/.packlist");
+ $self->{Perl}{version} = $Config{version};
+ 
+ # Read the module packlists
+ my $sub = sub
+    {
+    # Only process module .packlists
+-   return if ($_) ne ".packlist" || $File::Find::dir eq $Config{installarchlib};
++   return if ($_) ne ".packlist" || $File::Find::dir eq $installarchlib;
+ 
+    # Hack of the leading bits of the paths & convert to a module name
+    my $module = $File::Find::name;
+-   $module =~ s!$Config{archlib}/auto/(.*)/.packlist!$1!s;
+-   $module =~ s!$Config{sitearch}/auto/(.*)/.packlist!$1!s;
++   $module =~ s!\Q$archlib\E/auto/(.*)/.packlist!$1!s;
++   $module =~ s!\Q$sitearch\E/auto/(.*)/.packlist!$1!s;
+    my $modfile = "$module.pm";
+    $module =~ s!/!::!g;
+ 
+@@ -87,7 +115,7 @@
+    # Read the .packlist
+    $self->{$module}{packlist} = ExtUtils::Packlist->new($File::Find::name);
+    };
+-find($sub, $Config{archlib}, $Config{sitearch});
++find($sub, $archlib, $sitearch);
+ 
+ return(bless($self, $class));
+ }
+diff -ru :perl:lib:File:Basename.pm :perl.new:lib:File:Basename.pm
+--- :perl:lib:File:Basename.pm	Tue Feb 13 22:26:15 2001
++++ :perl.new:lib:File:Basename.pm	Mon Apr 23 19:52:50 2001
+@@ -182,6 +182,7 @@
+   }
+   elsif ($fstype =~ /^MacOS/si) {
+     ($dirpath,$basename) = ($fullname =~ /^(.*:)?(.*)/s);
++    $dirpath = ':' unless $dirpath;
+   }
+   elsif ($fstype =~ /^AmigaOS/i) {
+     ($dirpath,$basename) = ($fullname =~ /(.*[:\/])?(.*)/s);
+diff -ru :perl:lib:File:Find.pm :perl.new:lib:File:Find.pm
+--- :perl:lib:File:Find.pm	Mon Feb  5 23:52:34 2001
++++ :perl.new:lib:File:Find.pm	Mon Apr 23 20:55:30 2001
+@@ -98,7 +98,7 @@
+ C<follow_skip==0> causes File::Find to die if any file is about to be
+ processed a second time.
+ C<follow_skip==2> causes File::Find to ignore any duplicate files and
+-dirctories but to proceed normally otherwise.
++directories but to proceed normally otherwise.
+ 
+ 
+ =item C<no_chdir>
+@@ -184,6 +184,45 @@
+ might cause very unpleasant surprises, since you delete or change files
+ in an unknown directory.
+ 
++=head1 NOTES
++
++=over 4
++
++=item *
++
++Mac OS (Classic) users should note a few differences:
++
++=over 4
++
++=item *   
++
++The path separator is ':', not '/' and the current directory is denoted 
++as ':', not '.'. You should be careful about specifying relative pathnames. 
++While a full path always begins with a volume name, a relative pathname 
++should always begin with a ':'.  If specifying a volume name only, a 
++trailing ':' is required.
++
++=item *   
++
++C<$File::Find::dir> is guaranteed to end with a ':'. If C<$_> 
++contains the name of a directory, that name may or may not end with a 
++':'. Likewise, C<$File::Find::name>, which contains the complete 
++pathname to that directory, and C<$File::Find::fullname>, which holds 
++the absolute pathname of that directory with all symbolic links resolved,
++may or may not end with a ':'.
++
++=item *   
++
++The invisible file "Icon\015" is ignored.
++
++=item *   
++
++The default C<untaint_pattern> (see above) on Mac OS is set to  
++C<qr|^(.+)$|s>. Note that the parantheses are vital.
++
++=back
++
++=back
+ 
+ =cut
+ 
+@@ -193,8 +232,10 @@
+ 
+ use strict;
+ my $Is_VMS;
++my $Is_MacOS;
+ 
+ require File::Basename;
++require File::Spec;
+ 
+ my %SLnkSeen;
+ my ($wanted_callback, $avoid_nlink, $bydepth, $no_chdir, $follow,
+@@ -204,7 +245,7 @@
+ sub contract_name {
+     my ($cdir,$fn) = @_;
+ 
+-    return substr($cdir,0,rindex($cdir,'/')) if $fn eq '.';
++    return substr($cdir,0,rindex($cdir,'/')) if $fn eq $File::Find::current_dir;
+ 
+     $cdir = substr($cdir,0,rindex($cdir,'/')+1);
+ 
+@@ -219,25 +260,84 @@
+     return $abs_name;
+ }
+ 
++# return the absolute name of a directory or file
++sub contract_name_Mac {
++    my ($cdir,$fn) = @_; 
++    my $abs_name;
++
++    if ($fn =~ /^(:+)(.*)$/) { # valid pathname starting with a ':'
++
++	my $colon_count = length ($1);
++	if ($colon_count == 1) {
++	    $abs_name = $cdir . $2;
++	    return $abs_name;
++	}
++	else { 
++	    # need to move up the tree, but 
++	    # only if it's not a volume name
++	    for (my $i=1; $i<$colon_count; $i++) {
++		unless ($cdir =~ /^[^:]+:$/) { # volume name
++		    $cdir =~ s/[^:]+:$//;
++		}
++		else {
++		    return undef;
++		}
++	    }
++	    $abs_name = $cdir . $2;
++	    return $abs_name;
++	}
++
++    }
++    else {
++
++	# $fn may be a valid full path (volume name),
++	# without leading ':'
++	# $fn may be a valid full path or a file, without leading ':'
++	if (-e $fn) { # valid directory/file
++	    if ($fn =~ /^[^:]+:/) { # a volume name like DataHD:*
++		return $fn; # $fn is already an absolut path
++	    }
++	    else {
++		$abs_name = $cdir . $fn;
++		return $abs_name;
++	    }
++	}
++	else { # argh!, $fn is not a valid directory/file 
++	     return undef;
++	}
++    }
++}
+ 
+ sub PathCombine($$) {
+     my ($Base,$Name) = @_;
+     my $AbsName;
+ 
+-    if (substr($Name,0,1) eq '/') {
+-	$AbsName= $Name;
++    if ($Is_MacOS) {
++	# $Name is the resolved symlink (always a full path on MacOS),
++	# i.e. there's no need to call contract_name_Mac()
++	$AbsName = $Name; 
++
++	# (simple) check for recursion
++	if ($Base =~ /^$AbsName/) { # recursion
++	    return undef;
++	}
+     }
+     else {
+-	$AbsName= contract_name($Base,$Name);
+-    }
++	if (substr($Name,0,1) eq '/') {
++	    $AbsName= $Name;
++	}
++	else {
++	    $AbsName= contract_name($Base,$Name);
++	}
+ 
+-    # (simple) check for recursion
+-    my $newlen= length($AbsName);
+-    if ($newlen <= length($Base)) {
+-	if (($newlen == length($Base) || substr($Base,$newlen,1) eq '/')
+-	    && $AbsName eq substr($Base,0,$newlen))
+-	{
+-	    return undef;
++	# (simple) check for recursion
++	my $newlen= length($AbsName);
++	if ($newlen <= length($Base)) {
++	    if (($newlen == length($Base) || substr($Base,$newlen,1) eq '/')
++		&& $AbsName eq substr($Base,0,$newlen))
++	    {
++		return undef;
++	    }
+ 	}
+     }
+     return $AbsName;
+@@ -323,55 +423,87 @@
+ 
+     Proc_Top_Item:
+     foreach my $TOP (@_) {
+-        my $top_item = $TOP;
+-        $top_item =~ s|/\z|| unless $top_item eq '/';
+-        $Is_Dir= 0;
+-        
+-        ($topdev,$topino,$topmode,$topnlink) = stat $top_item;
+-
+-        if ($follow) {
+-            if (substr($top_item,0,1) eq '/') {
+-                $abs_dir = $top_item;
+-            }
+-	    elsif ($top_item eq '.') {
+-		$abs_dir = $cwd;
+-	    }
+-            else {  # care about any  ../
+-		$abs_dir = contract_name("$cwd/",$top_item); 
+-            }
+-            $abs_dir= Follow_SymLink($abs_dir);
+-            unless (defined $abs_dir) {
++	my $top_item = $TOP;
++
++	if ($Is_MacOS) {
++	    ($topdev,$topino,$topmode,$topnlink) = stat $top_item;
++	    $top_item = ":$top_item"
++		if ( (-d _) && ($top_item =~ /^[^:]+\z/) );
++	}
++	else {
++	    $top_item =~ s|/\z|| unless $top_item eq '/';
++	    ($topdev,$topino,$topmode,$topnlink) = stat $top_item;
++	}
++
++	$Is_Dir= 0;
++
++	if ($follow) {
++
++	    if ($Is_MacOS) {
++		$cwd = "$cwd:" unless ($cwd =~ /:$/); # for safety
++
++		if ($top_item eq $File::Find::current_dir) {
++		    $abs_dir = $cwd;
++		}
++		else {
++		    $abs_dir = contract_name_Mac($cwd, $top_item);
++		    unless (defined $abs_dir) {
++			warn "Can't determine absolute path for $top_item (No such file or directory)\n";
++			next Proc_Top_Item;
++		    }
++		}
++
++	    }
++	    else {
++		if (substr($top_item,0,1) eq '/') {
++		    $abs_dir = $top_item;
++		}
++		elsif ($top_item eq $File::Find::current_dir) {
++		    $abs_dir = $cwd;
++		}
++		else {  # care about any  ../
++		    $abs_dir = contract_name("$cwd/",$top_item);
++		}
++	    }
++	    $abs_dir= Follow_SymLink($abs_dir);
++	    unless (defined $abs_dir) {
+ 		warn "$top_item is a dangling symbolic link\n";
+ 		next Proc_Top_Item;
+-            }
+-            if (-d _) {
++	    }
++
++	    if (-d _) {
+ 		_find_dir_symlnk($wanted, $abs_dir, $top_item);
+ 		$Is_Dir= 1;
+-            }
+-        }
++	    }
++	}
+ 	else { # no follow
+-            $topdir = $top_item;
+-            unless (defined $topnlink) {
+-                warn "Can't stat $top_item: $!\n";
+-                next Proc_Top_Item;
+-            }
+-            if (-d _) {
++	    $topdir = $top_item;
++	    unless (defined $topnlink) {
++		warn "Can't stat $top_item: $!\n";
++		next Proc_Top_Item;
++	    }
++	    if (-d _) {
+ 		$top_item =~ s/\.dir\z// if $Is_VMS;
+ 		_find_dir($wanted, $top_item, $topnlink);
+ 		$Is_Dir= 1;
+-            }
++	    }
+ 	    else {
+ 		$abs_dir= $top_item;
+-            }
+-        }
++	    }
++	}
+ 
+-        unless ($Is_Dir) {
++	unless ($Is_Dir) {
+ 	    unless (($_,$dir) = File::Basename::fileparse($abs_dir)) {
+-		($dir,$_) = ('./', $top_item);
++		if ($Is_MacOS) {
++		    ($dir,$_) = (':', $top_item); # $File::Find::dir, $_
++		}
++		else {
++		    ($dir,$_) = ('./', $top_item);
++		}
+ 	    }
+ 
+-            $abs_dir = $dir;
+-            if ($untaint) {
++	    $abs_dir = $dir;
++	    if ($untaint) {
+ 		my $abs_dir_save = $abs_dir;
+ 		$abs_dir = $1 if $abs_dir =~ m|$untaint_pat|;
+ 		unless (defined $abs_dir) {
+@@ -382,20 +514,20 @@
+ 			next Proc_Top_Item;
+ 		    }
+ 		}
+-            }
++	    }
+ 
+-            unless ($no_chdir or chdir $abs_dir) {
+-                warn "Couldn't chdir $abs_dir: $!\n";
+-                next Proc_Top_Item;
+-            }
++	    unless ($no_chdir or chdir $abs_dir) {
++		warn "Couldn't chdir $abs_dir: $!\n";
++		next Proc_Top_Item;
++	    }
+ 
+-            $name = $abs_dir . $_;
++	    $name = $abs_dir . $_; # $File::Find::name
+ 
+-            { &$wanted_callback }; # protect against wild "next"
++	    { &$wanted_callback }; # protect against wild "next"
+ 
+-        }
++	}
+ 
+-        $no_chdir or chdir $cwd_untainted;
++	$no_chdir or chdir $cwd_untainted;
+     }
+ }
+ 
+@@ -414,12 +546,21 @@
+     my ($subcount,$sub_nlink);
+     my $SE= [];
+     my $dir_name= $p_dir;
+-    my $dir_pref= ( $p_dir eq '/' ? '/' : "$p_dir/" );
+-    my $dir_rel= '.';      # directory name relative to current directory
++    my $dir_pref;
++    my $dir_rel;
++
++    if ($Is_MacOS) {
++	$dir_pref= ($p_dir =~ /:$/) ? $p_dir : "$p_dir:"; # preface
++	$dir_rel= ':'; # directory name relative to current directory
++    }
++    else {
++	$dir_pref= ( $p_dir eq '/' ? '/' : "$p_dir/" );
++	$dir_rel= '.'; # directory name relative to current directory
++    }
+ 
+     local ($dir, $name, $prune, *DIR);
+-     
+-    unless ($no_chdir or $p_dir eq '.') {
++
++    unless ($no_chdir or ($p_dir eq $File::Find::current_dir) ) {
+ 	my $udir = $p_dir;
+ 	if ($untaint) {
+ 	    $udir = $1 if $p_dir =~ m|$untaint_pat|;
+@@ -437,46 +578,65 @@
+ 	    return;
+ 	}
+     }
+-    
++
++    # push the starting directory
+     push @Stack,[$CdLvl,$p_dir,$dir_rel,-1]  if  $bydepth;
+ 
++    if ($Is_MacOS) {
++	$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
++    }
++
+     while (defined $SE) {
+ 	unless ($bydepth) {
+-            $dir= $p_dir;
+-            $name= $dir_name;
+-            $_= ($no_chdir ? $dir_name : $dir_rel );
++	    $dir= $p_dir; # $File::Find::dir 
++	    $name= $dir_name; # $File::Find::dir 
++	    $_= ($no_chdir ? $dir_name : $dir_rel ); # $_
+ 	    # prune may happen here
+-            $prune= 0;
+-            { &$wanted_callback }; 	# protect against wild "next"
+-            next if $prune;
++	    $prune= 0;
++	    { &$wanted_callback };	# protect against wild "next"
++	    next if $prune;
+ 	}
+-      
++
+ 	# change to that directory
+-	unless ($no_chdir or $dir_rel eq '.') {
++	unless ($no_chdir or $dir_rel eq $File::Find::current_dir) {
+ 	    my $udir= $dir_rel;
+ 	    if ($untaint) {
+ 		$udir = $1 if $dir_rel =~ m|$untaint_pat|;
+ 		unless (defined $udir) {
+ 		    if ($untaint_skip == 0) {
+-			die "directory ("
+-			    . ($p_dir ne '/' ? $p_dir : '')
+-			    . "/) $dir_rel is still tainted";
++			if ($Is_MacOS) {
++			    die "directory ($p_dir) $dir_rel is still tainted";
++			}
++			else {
++			    die "directory ("
++				. ($p_dir ne '/' ? $p_dir : '')
++				. "/) $dir_rel is still tainted";
++			}
+ 		    }
+ 		}
+ 	    }
+ 	    unless (chdir $udir) {
+-		warn "Can't cd to ("
+-		    . ($p_dir ne '/' ? $p_dir : '')
+-		    . "/) $udir : $!\n";
++		if ($Is_MacOS) {
++		    warn "Can't cd to ($p_dir) $udir: $!\n";
++		}
++		else {
++		    warn "Can't cd to ("
++			. ($p_dir ne '/' ? $p_dir : '')
++			. "/) $udir: $!\n";
++		}
+ 		next;
+ 	    }
+ 	    $CdLvl++;
+ 	}
+ 
+-	$dir= $dir_name;
++	if ($Is_MacOS) {
++	    $dir_name = "$dir_name:" unless ($dir_name =~ /:$/);
++	}
++
++	$dir= $dir_name; # $File::Find::dir 
+ 
+ 	# Get the list of files in the current directory.
+-	unless (opendir DIR, ($no_chdir ? $dir_name : '.')) {
++	unless (opendir DIR, ($no_chdir ? $dir_name : $File::Find::current_dir)) {
+ 	    warn "Can't opendir($dir_name): $!\n";
+ 	    next;
+ 	}
+@@ -488,10 +648,10 @@
+ 	if ($nlink == 2 && !$avoid_nlink) {
+ 	    # This dir has no subdirectories.
+ 	    for my $FN (@filenames) {
+-		next if $FN =~ /^\.{1,2}\z/;
++		next if $FN =~ $File::Find::skip_pattern;
+ 		
+-		$name = $dir_pref . $FN;
+-		$_ = ($no_chdir ? $name : $FN);
++		$name = $dir_pref . $FN; # $File::Find::name
++		$_ = ($no_chdir ? $name : $FN); # $_
+ 		{ &$wanted_callback }; # protect against wild "next"
+ 	    }
+ 
+@@ -501,7 +661,7 @@
+ 	    $subcount = $nlink - 2;
+ 
+ 	    for my $FN (@filenames) {
+-		next if $FN =~ /^\.{1,2}\z/;
++		next if $FN =~ $File::Find::skip_pattern;
+ 		if ($subcount > 0 || $avoid_nlink) {
+ 		    # Seen all the subdirs?
+ 		    # check for directoriness.
+@@ -514,8 +674,8 @@
+ 			push @Stack,[$CdLvl,$dir_name,$FN,$sub_nlink];
+ 		    }
+ 		    else {
+-			$name = $dir_pref . $FN;
+-			$_= ($no_chdir ? $name : $FN);
++			$name = $dir_pref . $FN; # $File::Find::name
++			$_= ($no_chdir ? $name : $FN); # $_
+ 			{ &$wanted_callback }; # protect against wild "next"
+ 		    }
+ 		}
+@@ -531,32 +691,65 @@
+ 	while ( defined ($SE = pop @Stack) ) {
+ 	    ($Level, $p_dir, $dir_rel, $nlink) = @$SE;
+ 	    if ($CdLvl > $Level && !$no_chdir) {
+-                my $tmp = join('/',('..') x ($CdLvl-$Level));
+-                die "Can't cd to $dir_name" . $tmp
+-                    unless chdir ($tmp);
++		my $tmp;
++		if ($Is_MacOS) {
++		    $tmp = (':' x ($CdLvl-$Level)) . ':';
++		}
++		else{
++		    $tmp = join('/',('..') x ($CdLvl-$Level));
++		}
++		die "Can't cd to $dir_name" . $tmp
++		    unless chdir ($tmp);
+ 		$CdLvl = $Level;
+ 	    }
+-	    $dir_name = ($p_dir eq '/' ? "/$dir_rel" : "$p_dir/$dir_rel");
+-	    $dir_pref = "$dir_name/";
++
++	    if ($Is_MacOS) {
++		# $pdir always has a trailing ':', except for the starting dir,
++		# where $dir_rel == ':'
++		$dir_name = "$p_dir$dir_rel";
++		$dir_pref = "$dir_name:";
++	    }
++	    else {
++		$dir_name = ($p_dir eq '/' ? "/$dir_rel" : "$p_dir/$dir_rel");
++		$dir_pref = "$dir_name/";
++	    }
++
+ 	    if ( $nlink == -2 ) {
+-		$name = $dir = $p_dir;
+-		$_ = ".";
++		$name = $dir = $p_dir; # $File::Find::name / dir
++		if ($Is_MacOS) {
++		    $_ = ':'; # $_
++		}
++		else {
++		    $_ = '.';
++		}
+ 		&$post_process;		# End-of-directory processing
+-            } elsif ( $nlink < 0 ) {  # must be finddepth, report dirname now
+-                $name = $dir_name;
+-                if ( substr($name,-2) eq '/.' ) {
+-                  $name =~ s|/\.$||;
+-                }
+-                $dir = $p_dir;
+-                $_ = ($no_chdir ? $dir_name : $dir_rel );
+-                if ( substr($_,-2) eq '/.' ) {
+-                  s|/\.$||;
+-                }
+-                { &$wanted_callback }; # protect against wild "next"
+-            } else {
+-                push @Stack,[$CdLvl,$p_dir,$dir_rel,-1]  if  $bydepth;
+-                last;
+-            }
++	    }
++	    elsif ( $nlink < 0 ) {  # must be finddepth, report dirname now
++		$name = $dir_name;
++		if ($Is_MacOS) {
++		    if ($dir_rel eq ':') { # must be the top dir, where we started
++			$name =~ s|:$||;
++			$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
++		    }
++		    $dir = $p_dir; # $File::Find::dir
++		    $_ = ($no_chdir ? $name : $dir_rel); # $_
++		}
++		else {
++		    if ( substr($name,-2) eq '/.' ) {
++			$name =~ s|/\.$||;
++		    }
++		    $dir = $p_dir;
++		    $_ = ($no_chdir ? $dir_name : $dir_rel );
++		    if ( substr($_,-2) eq '/.' ) {
++			s|/\.$||;
++		    }
++		}
++		{ &$wanted_callback }; # protect against wild "next"
++	     }
++	     else {
++		push @Stack,[$CdLvl,$p_dir,$dir_rel,-1]  if  $bydepth;
++		last;
++	    }
+ 	}
+     }
+ }
+@@ -570,21 +763,31 @@
+ #  chdir (if not no_chdir) to dir
+ 
+ sub _find_dir_symlnk($$$) {
+-    my ($wanted, $dir_loc, $p_dir) = @_;
++    my ($wanted, $dir_loc, $p_dir) = @_; # $dir_loc is absdir, without trailing ':' on Mac OS
+     my @Stack;
+     my @filenames;
+     my $new_loc;
+     my $pdir_loc = $dir_loc;
+     my $SE = [];
+     my $dir_name = $p_dir;
+-    my $dir_pref = ( $p_dir   eq '/' ? '/' : "$p_dir/" );
+-    my $loc_pref = ( $dir_loc eq '/' ? '/' : "$dir_loc/" );
+-    my $dir_rel = '.';		# directory name relative to current directory
+-    my $byd_flag;               # flag for pending stack entry if $bydepth
++    my $dir_pref;
++    my $loc_pref;
++    my $dir_rel;
++    my $byd_flag; # flag for pending stack entry if $bydepth
++
++    if ($Is_MacOS) {
++	$dir_pref = ($p_dir =~ /:$/) ? "$p_dir" : "$p_dir:";
++	$loc_pref = ($dir_loc =~ /:$/) ? "$dir_loc" : "$dir_loc:";
++	$dir_rel  = ':'; # directory name relative to current directory
++    } else {
++	$dir_pref = ( $p_dir   eq '/' ? '/' : "$p_dir/" );
++	$loc_pref = ( $dir_loc eq '/' ? '/' : "$dir_loc/" );
++	$dir_rel  = '.'; # directory name relative to current directory
++    }
+ 
+     local ($dir, $name, $fullname, $prune, *DIR);
+-    
+-    unless ($no_chdir or $p_dir eq '.') {
++
++    unless ($no_chdir or $p_dir eq $File::Find::current_dir) {
+ 	my $udir = $dir_loc;
+ 	if ($untaint) {
+ 	    $udir = $1 if $dir_loc =~ m|$untaint_pat|;
+@@ -605,6 +808,10 @@
+ 
+     push @Stack,[$dir_loc,$pdir_loc,$p_dir,$dir_rel,-1]  if  $bydepth;
+ 
++    if ($Is_MacOS) {
++	$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
++    }
++
+     while (defined $SE) {
+ 
+ 	unless ($bydepth) {
+@@ -619,19 +826,19 @@
+ 		    next;
+ 		}
+ 	    }
+-	    $dir= $p_dir;
+-            $name= $dir_name;
+-            $_= ($no_chdir ? $dir_name : $dir_rel );
+-            $fullname= $dir_loc;
++	    $dir= $p_dir; # File::Find::dir
++	    $name= $dir_name; # File::Find::name
++	    $_= ($no_chdir ? $dir_name : $dir_rel ); # $_
++	    $fullname= $dir_loc; # File::Find::fullname
+ 	    # prune may happen here
+-            $prune= 0;
++	    $prune= 0;
+ 	    lstat($_); # make sure  file tests with '_' work
+-            { &$wanted_callback }; # protect against wild "next"
+-            next if  $prune;
++	    { &$wanted_callback }; # protect against wild "next"
++	    next if $prune;
+ 	}
+ 
+ 	# change to that directory
+-	unless ($no_chdir or $dir_rel eq '.') {
++	unless ($no_chdir or $dir_rel eq $File::Find::current_dir) {
+ 	    my $udir = $dir_loc;
+ 	    if ($untaint) {
+ 		$udir = $1 if $dir_loc =~ m|$untaint_pat|;
+@@ -650,10 +857,14 @@
+ 	    }
+ 	}
+ 
+-	$dir = $dir_name;
++	if ($Is_MacOS) {
++	    $dir_name = "$dir_name:" unless ($dir_name =~ /:$/);
++	}
++
++	$dir = $dir_name; # $File::Find::dir
+ 
+ 	# Get the list of files in the current directory.
+-	unless (opendir DIR, ($no_chdir ? $dir_loc : '.')) {
++	unless (opendir DIR, ($no_chdir ? $dir_loc : $File::Find::current_dir)) {
+ 	    warn "Can't opendir($dir_loc): $!\n";
+ 	    next;
+ 	}
+@@ -661,21 +872,21 @@
+ 	closedir(DIR);
+ 
+ 	for my $FN (@filenames) {
+-	    next if $FN =~ /^\.{1,2}\z/;
++	    next if $FN =~ $File::Find::skip_pattern;
+ 
+ 	    # follow symbolic links / do an lstat
+ 	    $new_loc = Follow_SymLink($loc_pref.$FN);
+ 
+ 	    # ignore if invalid symlink
+ 	    next unless defined $new_loc;
+-     
++
+ 	    if (-d _) {
+ 		push @Stack,[$new_loc,$dir_loc,$dir_name,$FN,1];
+ 	    }
+ 	    else {
+-		$fullname = $new_loc;
+-		$name = $dir_pref . $FN;
+-		$_ = ($no_chdir ? $name : $FN);
++		$fullname = $new_loc; # $File::Find::fullname 
++		$name = $dir_pref . $FN; # $File::Find::name
++		$_ = ($no_chdir ? $name : $FN); # $_
+ 		{ &$wanted_callback }; # protect against wild "next"
+ 	    }
+ 	}
+@@ -684,37 +895,57 @@
+     continue {
+ 	while (defined($SE = pop @Stack)) {
+ 	    ($dir_loc, $pdir_loc, $p_dir, $dir_rel, $byd_flag) = @$SE;
+-	    $dir_name = ($p_dir eq '/' ? "/$dir_rel" : "$p_dir/$dir_rel");
+-	    $dir_pref = "$dir_name/";
+-	    $loc_pref = "$dir_loc/";
+-            if ( $byd_flag < 0 ) {  # must be finddepth, report dirname now
+-	        unless ($no_chdir or $dir_rel eq '.') {
+-	            my $udir = $pdir_loc;
+-	            if ($untaint) {
+-		        $udir = $1 if $dir_loc =~ m|$untaint_pat|;
+-	            }
+-	            unless (chdir $udir) {
+-		        warn "Can't cd to $udir: $!\n";
+-		        next;
+-	            }
+-	        }
+-	        $fullname = $dir_loc;
+-	        $name = $dir_name;
+-                if ( substr($name,-2) eq '/.' ) {
+-                  $name =~ s|/\.$||;
+-                }
+-                $dir = $p_dir;
+-	        $_ = ($no_chdir ? $dir_name : $dir_rel);
+-                if ( substr($_,-2) eq '/.' ) {
+-                  s|/\.$||;
+-                }
+-
+-		lstat($_); # make sure  file tests with '_' work
+-	        { &$wanted_callback }; # protect against wild "next"
+-            } else {
+-                push @Stack,[$dir_loc, $pdir_loc, $p_dir, $dir_rel,-1]  if  $bydepth;
+-                last;
+-            }
++	    if ($Is_MacOS) {
++		# $pdir always has a trailing ':', except for the starting dir,
++		# where $dir_rel == ':'
++		$dir_name = "$p_dir$dir_rel";
++		$dir_pref = "$dir_name:";
++		$loc_pref = ($dir_loc =~ /:$/) ? $dir_loc : "$dir_loc:";
++	    }
++	    else {
++		$dir_name = ($p_dir eq '/' ? "/$dir_rel" : "$p_dir/$dir_rel");
++		$dir_pref = "$dir_name/";
++		$loc_pref = "$dir_loc/";
++	    }
++	    if ( $byd_flag < 0 ) {  # must be finddepth, report dirname now
++		unless ($no_chdir or $dir_rel eq $File::Find::current_dir) {
++		    my $udir = $pdir_loc;
++		    if ($untaint) {
++			$udir = $1 if $dir_loc =~ m|$untaint_pat|;
++		    }
++		    unless (chdir $udir) {
++			warn "Can't cd to $udir: $!\n";
++			next;
++		    }
++		}
++		$fullname = $dir_loc; # $File::Find::fullname
++		$name = $dir_name; # $File::Find::name
++		if ($Is_MacOS) {
++		    if ($dir_rel eq ':') { # must be the top dir, where we started
++			$name =~ s|:$||; # $File::Find::name
++			$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
++		    }
++		    $dir = $p_dir; # $File::Find::dir
++		     $_ = ($no_chdir ? $name : $dir_rel); # $_
++		}
++		else {
++		    if ( substr($name,-2) eq '/.' ) {
++			$name =~ s|/\.$||;
++		    }
++		    $dir = $p_dir; # $File::Find::dir
++		    $_ = ($no_chdir ? $dir_name : $dir_rel);
++		    if ( substr($_,-2) eq '/.' ) {
++			s|/\.$||;
++		    }
++		}
++
++		lstat($_); # make sure file tests with '_' work
++		{ &$wanted_callback }; # protect against wild "next"
++	    }
++	    else {
++		push @Stack,[$dir_loc, $pdir_loc, $p_dir, $dir_rel,-1]  if  $bydepth;
++		last;
++	    }
+ 	}
+     }
+ }
+@@ -727,7 +958,7 @@
+ 	    $wanted->{follow_skip} = 1 unless defined $wanted->{follow_skip};
+ 	}
+ 	if ( $wanted->{untaint} ) {
+-	    $wanted->{untaint_pattern} = qr|^([-+@\w./]+)$|  
++	    $wanted->{untaint_pattern} = $File::Find::untaint_pattern  
+ 		unless defined $wanted->{untaint_pattern};
+ 	    $wanted->{untaint_skip} = 0 unless defined $wanted->{untaint_skip};
+ 	}
+@@ -751,11 +982,25 @@
+     %SLnkSeen= ();  # free memory
+ }
+ 
++# default
++$File::Find::skip_pattern    = qr/^\.{1,2}\z/;
++$File::Find::untaint_pattern = qr|^([-+@\w./]+)$|;
++
+ # These are hard-coded for now, but may move to hint files.
+ if ($^O eq 'VMS') {
+     $Is_VMS = 1;
+-    $File::Find::dont_use_nlink = 1;
++    $File::Find::dont_use_nlink  = 1;
+ }
++elsif ($^O eq 'MacOS') {
++    $Is_MacOS = 1;
++    $File::Find::dont_use_nlink  = 1;
++    $File::Find::skip_pattern    = qr/^Icon\015\z/;
++    $File::Find::untaint_pattern = qr|^(.+)$|;
++}
++
++# this _should_ work properly on all platforms
++# where File::Find can be expected to work
++$File::Find::current_dir = File::Spec->curdir || '.';
+ 
+ $File::Find::dont_use_nlink = 1
+     if $^O eq 'os2' || $^O eq 'dos' || $^O eq 'amigaos' || $^O eq 'MSWin32' ||
+Only in :perl:lib:Pod:Text: Overstrike.pm
+Only in :perl.new:lib:Text: Overstrike.pm
+diff -ru :perl:perl.c :perl.new:perl.c
+--- :perl:perl.c	Wed Mar 21 23:01:06 2001
++++ :perl.new:perl.c	Fri Apr 20 14:15:01 2001
+@@ -3087,6 +3087,9 @@
+ 		    while ((s = moreswitches(s)))
+ 			;
+ 	    }
++#ifdef MACOS_TRADITIONAL
++	    break;
++#endif
+ 	}
+     }
+ }
+diff -ru :perl:regexec.c :perl.new:regexec.c
+--- :perl:regexec.c	Wed Mar 21 23:01:42 2001
++++ :perl.new:regexec.c	Fri Apr 13 09:45:57 2001
+@@ -385,18 +385,17 @@
+ 		     || ( (prog->reganch & ROPT_ANCH_BOL)
+ 			  && !PL_multiline ) );	/* Check after \n? */
+ 
+-	if (!ml_anch) {
+-	  if ( !(prog->reganch & ROPT_ANCH_GPOS) /* Checked by the caller */
+-	       /* SvCUR is not set on references: SvRV and SvPVX overlap */
+-	       && sv && !SvROK(sv)
+-	       && (strpos != strbeg)) {
+-	      DEBUG_r(PerlIO_printf(Perl_debug_log, "Not at start...\n"));
+-	      goto fail;
+-	  }
+-	  if (prog->check_offset_min == prog->check_offset_max) {
++	if ((prog->check_offset_min == prog->check_offset_max) && !ml_anch) {
+ 	    /* Substring at constant offset from beg-of-str... */
+ 	    I32 slen;
+ 
++	    if ( !(prog->reganch & ROPT_ANCH_GPOS) /* Checked by the caller */
++		 /* SvCUR is not set on references: SvRV and SvPVX overlap */
++		 && sv && !SvROK(sv)
++		 && (strpos != strbeg)) {
++		DEBUG_r(PerlIO_printf(Perl_debug_log, "Not at start...\n"));
++		goto fail;
++	    }
+ 	    PL_regeol = strend;			/* Used in HOP() */
+ 	    s = HOPc(strpos, prog->check_offset_min);
+ 	    if (SvTAIL(check)) {
+@@ -422,7 +421,6 @@
+ 			 && memNE(SvPVX(check), s, slen)))
+ 		goto report_neq;
+ 	    goto success_at_start;
+-	  }
+ 	}
+ 	/* Match is anchored, but substr is not anchored wrt beg-of-str. */
+ 	s = strpos;
+diff -ru :perl:t:lib:filefind.t :perl.new:t:lib:filefind.t
+--- :perl:t:lib:filefind.t	Mon Feb  5 23:54:27 2001
++++ :perl.new:t:lib:filefind.t	Mon Apr 23 20:58:00 2001
+@@ -6,7 +6,11 @@
+ 
+ BEGIN {
+     chdir 't' if -d 't';
+-    @INC = '../lib';
++    if ($^O eq 'MacOS') { 
++        @INC = qw(: ::lib ::macos:lib); 
++    } else {
++        @INC = '../lib';
++    }
+ }
+ 
+ if ( $symlink_exists ) { print "1..117\n"; }
+@@ -14,24 +18,41 @@
+ 
+ use File::Find;
+ 
+-find(sub { print "ok 1\n" if $_ eq 'filefind.t'; }, ".");
+-finddepth(sub { print "ok 2\n" if $_ eq 'filefind.t'; }, ".");
+-
++if ($^O eq 'MacOS') {
++    find(sub { print "ok 1\n" if $_ eq 'filefind.t'; }, ':');
++    finddepth(sub { print "ok 2\n" if $_ eq 'filefind.t'; }, ':');
++} else {
++    find(sub { print "ok 1\n" if $_ eq 'filefind.t'; }, '.');
++    finddepth(sub { print "ok 2\n" if $_ eq 'filefind.t'; }, '.');
++}
+ 
+ my $case = 2;
+ my $FastFileTests_OK = 0;
+ 
+ END {
+-    unlink 'fa/fa_ord','fa/fsl','fa/faa/faa_ord',
+-	   'fa/fab/fab_ord','fa/fab/faba/faba_ord','fb/fb_ord','fb/fba/fba_ord';
+-    rmdir 'fa/faa';
+-    rmdir 'fa/fab/faba';
+-    rmdir 'fa/fab';
+-    rmdir 'fa';
+-    rmdir 'fb/fba';
+-    rmdir 'fb';
+-    chdir '..';
+-    rmdir 'for_find';
++    if ($^O eq 'MacOS') {
++      unlink ':fa:fa_ord',':fa:fsl',':fa:faa:faa_ord',
++         ':fa:fab:fab_ord',':fa:fab:faba:faba_ord',':fb:fb_ord',':fb:fba:fba_ord';
++      rmdir ':fa:faa';
++      rmdir ':fa:fab:faba';
++      rmdir ':fa:fab';
++      rmdir ':fa';
++      rmdir ':fb:fba';
++      rmdir ':fb';
++      chdir '::';
++      rmdir ':for_find';
++    } else {
++      unlink 'fa/fa_ord','fa/fsl','fa/faa/faa_ord',
++         'fa/fab/fab_ord','fa/fab/faba/faba_ord','fb/fb_ord','fb/fba/fba_ord';
++      rmdir 'fa/faa';
++      rmdir 'fa/fab/faba';
++      rmdir 'fa/fab';
++      rmdir 'fa';
++      rmdir 'fb/fba';
++      rmdir 'fb';
++      chdir '..';
++      rmdir 'for_find';
++    }
+ }
+ 
+ sub Check($) {
+@@ -66,7 +87,7 @@
+       unless ( $Expect_Dir{$_} && ! -d $_ );
+   }
+   $File::Find::prune=1 if  $_ eq 'faba';
+-  
++
+ }
+ 
+ sub dn_wanted {
+@@ -75,8 +96,10 @@
+   print "# '$n' => 1\n";
+   my $i = rindex($n,'/');
+   my $OK = exists($Expect{$n});
+-  if ( $OK ) {
+-      $OK= exists($Expect{substr($n,0,$i)})  if $i >= 0;
++  unless ($^O eq 'MacOS') {
++    if ( $OK ) {
++  	  $OK= exists($Expect{substr($n,0,$i)})  if $i >= 0;    
++    }
+   }
+   Check($OK);
+   delete $Expect{$n};
+@@ -87,111 +110,211 @@
+   s#\.$## if ($^O eq 'VMS' && $_ ne '.');
+   my $i = rindex($_,'/');
+   my $OK = exists($Expect{$_});
+-  if ( $OK ) {
+-      $OK= exists($Expect{substr($_,0,$i)})  if $i >= 0;
++  unless ($^O eq 'MacOS') {
++    if ( $OK ) {
++        $OK= exists($Expect{substr($_,0,$i)})  if $i >= 0;
++    }
+   }
+   Check($OK);
+   delete $Expect{$_};
+ }
+ 
+-MkDir( 'for_find',0770 );
+-CheckDie(chdir(for_find));
+-MkDir( 'fa',0770 );
+-MkDir( 'fb',0770  );
+-touch('fb/fb_ord');
+-MkDir( 'fb/fba',0770  );
+-touch('fb/fba/fba_ord');
+-CheckDie( symlink('../fb','fa/fsl') ) if $symlink_exists;
+-touch('fa/fa_ord');
+-
+-MkDir( 'fa/faa',0770  );
+-touch('fa/faa/faa_ord');
+-MkDir( 'fa/fab',0770  );
+-touch('fa/fab/fab_ord');
+-MkDir( 'fa/fab/faba',0770  );
+-touch('fa/fab/faba/faba_ord');
+-
+-%Expect = ('.' => 1, 'fsl' => 1, 'fa_ord' => 1, 'fab' => 1, 'fab_ord' => 1,
+-	   'faba' => 1, 'faa' => 1, 'faa_ord' => 1);
+-delete $Expect{'fsl'} unless $symlink_exists;
+-%Expect_Dir = ('fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
+-               'fb' => 1, 'fba' => 1);
+-delete @Expect_Dir{'fb','fba'} unless $symlink_exists;
+-File::Find::find( {wanted => \&wanted, },'fa' );
+-Check( scalar(keys %Expect) == 0 );
+-
+-%Expect=('fa' => 1, 'fa/fsl' => 1, 'fa/fa_ord' => 1, 'fa/fab' => 1,
+-	 'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1,
+-	 'fa/fab/faba/faba_ord' => 1, 'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
+-delete $Expect{'fa/fsl'} unless $symlink_exists;
+-%Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
+-               'fb' => 1, 'fb/fba' => 1);
+-delete @Expect_Dir{'fb','fb/fba'} unless $symlink_exists;
+-File::Find::find( {wanted => \&wanted, no_chdir => 1},'fa' );
+-
+-Check( scalar(keys %Expect) == 0 );
+-
+-%Expect=('.' => 1, './fa' => 1, './fa/fsl' => 1, './fa/fa_ord' => 1, './fa/fab' => 1,
+-         './fa/fab/fab_ord' => 1, './fa/fab/faba' => 1,
+-         './fa/fab/faba/faba_ord' => 1, './fa/faa' => 1, './fa/faa/faa_ord' => 1,
+-         './fb' => 1, './fb/fba' => 1, './fb/fba/fba_ord' => 1, './fb/fb_ord' => 1);
+-delete $Expect{'./fa/fsl'} unless $symlink_exists;
+-%Expect_Dir = ('./fa' => 1, './fa/faa' => 1, '/fa/fab' => 1, './fa/fab/faba' => 1, 
+-               './fb' => 1, './fb/fba' => 1);
+-delete @Expect_Dir{'./fb','./fb/fba'} unless $symlink_exists;
+-File::Find::finddepth( {wanted => \&dn_wanted },'.' );
+-Check( scalar(keys %Expect) == 0 );
+-
+-%Expect=('.' => 1, './fa' => 1, './fa/fsl' => 1, './fa/fa_ord' => 1, './fa/fab' => 1,
+-         './fa/fab/fab_ord' => 1, './fa/fab/faba' => 1,
+-         './fa/fab/faba/faba_ord' => 1, './fa/faa' => 1, './fa/faa/faa_ord' => 1,
+-         './fb' => 1, './fb/fba' => 1, './fb/fba/fba_ord' => 1, './fb/fb_ord' => 1);
+-delete $Expect{'./fa/fsl'} unless $symlink_exists;
+-%Expect_Dir = ('./fa' => 1, './fa/faa' => 1, '/fa/fab' => 1, './fa/fab/faba' => 1, 
+-               './fb' => 1, './fb/fba' => 1);
+-delete @Expect_Dir{'./fb','./fb/fba'} unless $symlink_exists;
+-File::Find::finddepth( {wanted => \&d_wanted, no_chdir => 1 },'.' );
+-Check( scalar(keys %Expect) == 0 );
+-
+-if ( $symlink_exists ) {
+-  $FastFileTests_OK= 1;
+-  %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
+-           'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faa' => 1,
+-           'faa_ord' => 1);
+-  %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
+-                 'fb' => 1, 'fb/fba' => 1);
+-
+-  File::Find::find( {wanted => \&wanted, follow_fast => 1},'fa' );
+-  Check( scalar(keys %Expect) == 0 );
+-
+-  %Expect=('fa' => 1, 'fa/fa_ord' => 1, 'fa/fsl' => 1, 'fa/fsl/fb_ord' => 1,
+-           'fa/fsl/fba' => 1, 'fa/fsl/fba/fba_ord' => 1, 'fa/fab' => 1,
+-           'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1, 'fa/fab/faba/faba_ord' => 1,
+-           'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
+-  %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
+-                 'fb' => 1, 'fb/fba' => 1);
+-  File::Find::find( {wanted => \&wanted, follow_fast => 1, no_chdir => 1},'fa' );
+-  Check( scalar(keys %Expect) == 0 );
+-
+-  %Expect=('fa' => 1, 'fa/fa_ord' => 1, 'fa/fsl' => 1, 'fa/fsl/fb_ord' => 1,
+-           'fa/fsl/fba' => 1, 'fa/fsl/fba/fba_ord' => 1, 'fa/fab' => 1,
+-           'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1, 'fa/fab/faba/faba_ord' => 1,
+-           'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
+-  %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
+-                 'fb' => 1, 'fb/fba' => 1);
+-
+-  File::Find::finddepth( {wanted => \&dn_wanted, follow_fast => 1},'fa' );
+-  Check( scalar(keys %Expect) == 0 );
+-
+-  %Expect=('fa' => 1, 'fa/fa_ord' => 1, 'fa/fsl' => 1, 'fa/fsl/fb_ord' => 1,
+-           'fa/fsl/fba' => 1, 'fa/fsl/fba/fba_ord' => 1, 'fa/fab' => 1,
+-           'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1, 'fa/fab/faba/faba_ord' => 1,
+-           'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
+-  %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
+-                 'fb' => 1, 'fb/fba' => 1);
++if ($^O eq 'MacOS') {
+ 
+-  File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},'fa' );
+-  Check( scalar(keys %Expect) == 0 );
++    MkDir( 'for_find',0770 );
++    CheckDie(chdir(for_find));
++    MkDir( 'fa',0770 );
++    MkDir( 'fb',0770  );
++    touch(':fb:fb_ord');
++    MkDir( ':fb:fba',0770  );
++    touch(':fb:fba:fba_ord');
++
++    CheckDie( symlink(':fb',':fa:fsl') ) if $symlink_exists;
++    touch(':fa:fa_ord');
++
++    MkDir( ':fa:faa',0770  );
++    touch(':fa:faa:faa_ord');
++    MkDir( ':fa:fab',0770  );
++    touch(':fa:fab:fab_ord');
++    MkDir( ':fa:fab:faba',0770  );
++    touch(':fa:fab:faba:faba_ord');
++
++    %Expect = (':' => 1, 'fsl' => 1, 'fa_ord' => 1, 'fab' => 1, 'fab_ord' => 1,
++           'faba' => 1, 'faa' => 1, 'faa_ord' => 1);
++    delete $Expect{'fsl'} unless $symlink_exists;
++    %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
++                   'fb' => 1, 'fba' => 1);
++    delete @Expect_Dir{'fb','fba'} unless $symlink_exists;
++    File::Find::find( {wanted => \&wanted, },':fa' );
++    Check( scalar(keys %Expect) == 0 );
++
++    %Expect=(':fa' => 1, ':fa:fsl' => 1, ':fa:fa_ord' => 1, ':fa:fab' => 1,
++         ':fa:fab:fab_ord' => 1, ':fa:fab:faba' => 1,
++         ':fa:fab:faba:faba_ord' => 1, ':fa:faa' => 1, ':fa:faa:faa_ord' => 1);
++    delete $Expect{':fa:fsl'} unless $symlink_exists;
++    %Expect_Dir = (':fa' => 1, ':fa:faa' => 1, ':fa:fab' => 1, ':fa:fab:faba' => 1, 
++                   ':fb' => 1, ':fb:fba' => 1);
++    delete @Expect_Dir{':fb',':fb:fba'} unless $symlink_exists;
++    File::Find::find( {wanted => \&wanted, no_chdir => 1},':fa' );
++    Check( scalar(keys %Expect) == 0 );
++
++    %Expect=(':' => 1, ':fa' => 1, ':fa:fsl' => 1, ':fa:fa_ord' => 1, ':fa:fab' => 1,
++             ':fa:fab:fab_ord' => 1, ':fa:fab:faba' => 1,
++             ':fa:fab:faba:faba_ord' => 1, ':fa:faa' => 1, ':fa:faa:faa_ord' => 1,
++             ':fb' => 1, ':fb:fba' => 1, ':fb:fba:fba_ord' => 1, ':fb:fb_ord' => 1);
++    delete $Expect{':fa:fsl'} unless $symlink_exists;
++    %Expect_Dir = (':' => 1, ':fa' => 1, ':fa:faa' => 1, ':fa:fab' => 1, ':fa:fab:faba' => 1, 
++                   ':fb' => 1, ':fb:fba' => 1);
++    delete @Expect_Dir{':fb',':fb:fba'} unless $symlink_exists;
++    File::Find::finddepth( {wanted => \&dn_wanted },':' );
++    Check( scalar(keys %Expect) == 0 );
++
++    %Expect=(':' => 1, ':fa' => 1, ':fa:fsl' => 1, ':fa:fa_ord' => 1, ':fa:fab' => 1,
++             ':fa:fab:fab_ord' => 1, ':fa:fab:faba' => 1,
++             ':fa:fab:faba:faba_ord' => 1, ':fa:faa' => 1, ':fa:faa:faa_ord' => 1,
++             ':fb' => 1, ':fb:fba' => 1, ':fb:fba:fba_ord' => 1, ':fb:fb_ord' => 1);
++    delete $Expect{':fa:fsl'} unless $symlink_exists;
++    %Expect_Dir = (':' => 1, ':fa' => 1, ':fa:faa' => 1, ':fa:fab' => 1, ':fa:fab:faba' => 1, 
++                   ':fb' => 1, ':fb:fba' => 1);
++    delete @Expect_Dir{':fb',':fb:fba'} unless $symlink_exists;
++    File::Find::finddepth( {wanted => \&d_wanted, no_chdir => 1 },':' );
++    Check( scalar(keys %Expect) == 0 );
++
++    if ( $symlink_exists ) {
++      $FastFileTests_OK= 1;
++      %Expect=(':' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faa' => 1,
++               'faa_ord' => 1);
++      %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
++                     'fb' => 1, 'fba' => 1);	   
++      File::Find::find( {wanted => \&wanted, follow_fast => 1},':fa' );
++      Check( scalar(keys %Expect) == 0 );	  
++
++      %Expect=(':fa' => 1, ':fa:fa_ord' => 1, ':fa:fsl' => 1, ':fa:fsl:fb_ord' => 1,
++               ':fa:fsl:fba' => 1, ':fa:fsl:fba:fba_ord' => 1, ':fa:fab' => 1,
++               ':fa:fab:fab_ord' => 1, ':fa:fab:faba' => 1, ':fa:fab:faba:faba_ord' => 1,
++               ':fa:faa' => 1, ':fa:faa:faa_ord' => 1);
++      %Expect_Dir = (':fa' => 1, ':fa:faa' => 1, ':fa:fab' => 1, ':fa:fab:faba' => 1, 
++                     ':fb' => 1, ':fb:fba' => 1); 
++      File::Find::find( {wanted => \&wanted, follow_fast => 1, no_chdir => 1},':fa' );
++      Check( scalar(keys %Expect) == 0 );
++
++      %Expect=(':fa' => 1, ':fa:fa_ord' => 1, ':fa:fsl' => 1, ':fa:fsl:fb_ord' => 1,
++               ':fa:fsl:fba' => 1, ':fa:fsl:fba:fba_ord' => 1, ':fa:fab' => 1,
++               ':fa:fab:fab_ord' => 1, ':fa:fab:faba' => 1, ':fa:fab:faba:faba_ord' => 1,
++               ':fa:faa' => 1, ':fa:faa:faa_ord' => 1);
++        %Expect_Dir = (':fa' => 1, ':fa:faa' => 1, ':fa:fab' => 1, ':fa:fab:faba' => 1, 
++                       ':fb' => 1, ':fb:fba' => 1);
++      File::Find::finddepth( {wanted => \&dn_wanted, follow_fast => 1},':fa' );
++      Check( scalar(keys %Expect) == 0 );
++
++      %Expect=(':fa' => 1, ':fa:fa_ord' => 1, ':fa:fsl' => 1, ':fa:fsl:fb_ord' => 1,
++               ':fa:fsl:fba' => 1, ':fa:fsl:fba:fba_ord' => 1, ':fa:fab' => 1,
++               ':fa:fab:fab_ord' => 1, ':fa:fab:faba' => 1, ':fa:fab:faba:faba_ord' => 1,
++               ':fa:faa' => 1, ':fa:faa:faa_ord' => 1);
++      %Expect_Dir = (':fa' => 1, ':fa:faa' => 1, ':fa:fab' => 1, ':fa:fab:faba' => 1, 
++                     ':fb' => 1, ':fb:fba' => 1);
++      File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},':fa' );
++      Check( scalar(keys %Expect) == 0 );
++    }
++
++} else {
++
++    MkDir( 'for_find',0770 );
++    CheckDie(chdir(for_find));
++    MkDir( 'fa',0770 );
++    MkDir( 'fb',0770  );
++    touch('fb/fb_ord');
++    MkDir( 'fb/fba',0770  );
++    touch('fb/fba/fba_ord');
++    CheckDie( symlink('../fb','fa/fsl') ) if $symlink_exists;
++    touch('fa/fa_ord');
++
++    MkDir( 'fa/faa',0770  );
++    touch('fa/faa/faa_ord');
++    MkDir( 'fa/fab',0770  );
++    touch('fa/fab/fab_ord');
++    MkDir( 'fa/fab/faba',0770  );
++    touch('fa/fab/faba/faba_ord');
++
++    %Expect = ('.' => 1, 'fsl' => 1, 'fa_ord' => 1, 'fab' => 1, 'fab_ord' => 1,
++           'faba' => 1, 'faa' => 1, 'faa_ord' => 1);
++    delete $Expect{'fsl'} unless $symlink_exists;
++    %Expect_Dir = ('fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
++                   'fb' => 1, 'fba' => 1);
++    delete @Expect_Dir{'fb','fba'} unless $symlink_exists;
++    File::Find::find( {wanted => \&wanted, },'fa' );
++    Check( scalar(keys %Expect) == 0 );
++
++    %Expect=('fa' => 1, 'fa/fsl' => 1, 'fa/fa_ord' => 1, 'fa/fab' => 1,
++         'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1,
++         'fa/fab/faba/faba_ord' => 1, 'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
++    delete $Expect{'fa/fsl'} unless $symlink_exists;
++    %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
++                   'fb' => 1, 'fb/fba' => 1);
++    delete @Expect_Dir{'fb','fb/fba'} unless $symlink_exists;
++    File::Find::find( {wanted => \&wanted, no_chdir => 1},'fa' );
++    Check( scalar(keys %Expect) == 0 );
++
++    %Expect=('.' => 1, './fa' => 1, './fa/fsl' => 1, './fa/fa_ord' => 1, './fa/fab' => 1,
++             './fa/fab/fab_ord' => 1, './fa/fab/faba' => 1,
++             './fa/fab/faba/faba_ord' => 1, './fa/faa' => 1, './fa/faa/faa_ord' => 1,
++             './fb' => 1, './fb/fba' => 1, './fb/fba/fba_ord' => 1, './fb/fb_ord' => 1);
++    delete $Expect{'./fa/fsl'} unless $symlink_exists;
++    %Expect_Dir = ('./fa' => 1, './fa/faa' => 1, '/fa/fab' => 1, './fa/fab/faba' => 1, 
++                   './fb' => 1, './fb/fba' => 1);
++    delete @Expect_Dir{'./fb','./fb/fba'} unless $symlink_exists;
++    File::Find::finddepth( {wanted => \&dn_wanted },'.' );
++    Check( scalar(keys %Expect) == 0 );
++
++    %Expect=('.' => 1, './fa' => 1, './fa/fsl' => 1, './fa/fa_ord' => 1, './fa/fab' => 1,
++             './fa/fab/fab_ord' => 1, './fa/fab/faba' => 1,
++             './fa/fab/faba/faba_ord' => 1, './fa/faa' => 1, './fa/faa/faa_ord' => 1,
++             './fb' => 1, './fb/fba' => 1, './fb/fba/fba_ord' => 1, './fb/fb_ord' => 1);
++    delete $Expect{'./fa/fsl'} unless $symlink_exists;
++    %Expect_Dir = ('./fa' => 1, './fa/faa' => 1, '/fa/fab' => 1, './fa/fab/faba' => 1, 
++                   './fb' => 1, './fb/fba' => 1);
++    delete @Expect_Dir{'./fb','./fb/fba'} unless $symlink_exists;
++    File::Find::finddepth( {wanted => \&d_wanted, no_chdir => 1 },'.' );
++    Check( scalar(keys %Expect) == 0 );
++
++    if ( $symlink_exists ) {
++      $FastFileTests_OK= 1;
++      %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
++               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faa' => 1,
++               'faa_ord' => 1);
++      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
++                     'fb' => 1, 'fb/fba' => 1);
++      File::Find::find( {wanted => \&wanted, follow_fast => 1},'fa' );
++      Check( scalar(keys %Expect) == 0 );
++
++      %Expect=('fa' => 1, 'fa/fa_ord' => 1, 'fa/fsl' => 1, 'fa/fsl/fb_ord' => 1,
++               'fa/fsl/fba' => 1, 'fa/fsl/fba/fba_ord' => 1, 'fa/fab' => 1,
++               'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1, 'fa/fab/faba/faba_ord' => 1,
++               'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
++      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
++                     'fb' => 1, 'fb/fba' => 1);
++      File::Find::find( {wanted => \&wanted, follow_fast => 1, no_chdir => 1},'fa' );
++      Check( scalar(keys %Expect) == 0 );
++
++      %Expect=('fa' => 1, 'fa/fa_ord' => 1, 'fa/fsl' => 1, 'fa/fsl/fb_ord' => 1,
++               'fa/fsl/fba' => 1, 'fa/fsl/fba/fba_ord' => 1, 'fa/fab' => 1,
++               'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1, 'fa/fab/faba/faba_ord' => 1,
++               'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
++      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
++                     'fb' => 1, 'fb/fba' => 1);					 
++      File::Find::finddepth( {wanted => \&dn_wanted, follow_fast => 1},'fa' );
++      Check( scalar(keys %Expect) == 0 );
++
++      %Expect=('fa' => 1, 'fa/fa_ord' => 1, 'fa/fsl' => 1, 'fa/fsl/fb_ord' => 1,
++               'fa/fsl/fba' => 1, 'fa/fsl/fba/fba_ord' => 1, 'fa/fab' => 1,
++               'fa/fab/fab_ord' => 1, 'fa/fab/faba' => 1, 'fa/fab/faba/faba_ord' => 1,
++               'fa/faa' => 1, 'fa/faa/faa_ord' => 1);
++      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, '/fa/fab' => 1, 'fa/fab/faba' => 1, 
++                     'fb' => 1, 'fb/fba' => 1);
++      File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},'fa' );
++      Check( scalar(keys %Expect) == 0 );
++    }
+ }
+ 
+ print "# of cases: $case\n";
+diff -ru :perl:t:op:pat.t :perl.new:t:op:pat.t
+--- :perl:t:op:pat.t	Thu Mar 15 18:03:22 2001
++++ :perl.new:t:op:pat.t	Fri Apr 13 09:45:41 2001
+@@ -4,7 +4,7 @@
+ # the format supported by op/regexp.t.  If you want to add a test
+ # that does fit that format, add it to op/re_tests, not here.
+ 
+-print "1..231\n";
++print "1..236\n";
+ 
+ BEGIN {
+     chdir 't' if -d 't';
+@@ -1127,4 +1127,29 @@
+   print "not " if $1 ne "abc";
+   print "ok $test\n";
+   $test++;
++}
++
++{
++    # bugid 20010410.006
++    for my $rx (
++		'/(.*?)\{(.*?)\}/csg',
++		'/(.*?)\{(.*?)\}/cg',
++		'/(.*?)\{(.*?)\}/sg',
++		'/(.*?)\{(.*?)\}/g',
++		'/(.+?)\{(.+?)\}/csg',
++	       )
++    {
++	my($input, $i);
++
++	$i = 0;
++	$input = "a{b}c{d}";
++        eval <<EOT;
++	while (eval \$input =~ $rx) {
++	    print "# \\\$1 = '\$1' \\\$2 = '\$2'\n";
++	    ++\$i;
++	}
++EOT
++	print "not " unless $i == 2;
++	print "ok " . $test++ . "\n";
++    }
+ }
