@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+use File::Basename;
 use File::Spec::Functions;
 use Test::More;
 use strict;
@@ -59,28 +60,34 @@ EOS
 	}
 
 	# file info get/set
-	my($crea, $type) = GetFileInfo($finder);
-	is($crea, 'MACS', "creator of '$finder'");
-	is($type, 'FNDR', "type of '$finder'");
+	TODO: {
+		local $TODO = _is_ufs(dirname($finder));
+		my($crea, $type) = GetFileInfo($finder);
+		is($crea, 'MACS', "creator of '$finder'");
+		is($type, 'FNDR', "type of '$finder'");
+	}
 
 	my $testfile = catfile(curdir(), "foo");
 	unlink $testfile;
-	if (open(my $fh, ">", $testfile)) {
-		close $fh;
-		($crea, $type) = GetFileInfo($testfile);
-		# could fail under Mac OS if local GUSI resource changed
-		# so new files are not R*ch/TEXT; we could read
-		# the resource instead ... (and old versions of MacPerl
-		# used MPS /TEXT)
-		is($crea, $mcrea, "creator of '$testfile'");
-		is($type, $mtype, "type of '$testfile'");
+	TODO: {
+		local $TODO = _is_ufs(dirname($testfile));
+		if (open(my $fh, ">", $testfile)) {
+			close $fh;
+			my($crea, $type) = GetFileInfo($testfile);
+			# could fail under Mac OS if local GUSI resource changed
+			# so new files are not R*ch/TEXT; we could read
+			# the resource instead ... (and old versions of MacPerl
+			# used MPS /TEXT)
+			is($crea, $mcrea, "creator of '$testfile'");
+			is($type, $mtype, "type of '$testfile'");
 
-		SetFileInfo('McPL', 'TEXT', $testfile);
-		($crea, $type) = GetFileInfo($testfile);
-		is('McPL', $crea, "creator of '$testfile'");
-		is('TEXT', $type, "type of '$testfile'");
-	} else {
-		ok(0, "No file '$testfile'") for 1..4;
+			SetFileInfo('McPL', 'TEXT', $testfile);
+			($crea, $type) = GetFileInfo($testfile);
+			is($crea, 'McPL', "creator of '$testfile'");
+			is($type, 'TEXT', "type of '$testfile'");
+		} else {
+			ok(0, "No file '$testfile'") for 1..4;
+		}
 	}
 	unlink $testfile;
 
@@ -92,6 +99,12 @@ EOS
 
 	my $answer = MacPerl::Answer("Please click Cancel", "OK", "Cancel", "Booya!");
 	is($answer, 1, 'Answer()');
+}
+
+sub _is_ufs {
+	my($path) = @_;
+	my($nblocks) = (stat($path))[12];
+	return $nblocks ? "[SG]etFileInfo not working for UFS" : "";
 }
 
 __END__

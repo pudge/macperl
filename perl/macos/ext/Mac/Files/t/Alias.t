@@ -18,7 +18,7 @@ SKIP: {
 	ok(-f $file,                                                 "file exists");
 	ok(my $alias = NewAlias($file),                              "NewAlias");
 	ok(-f(my $alias_path = ResolveAlias($alias)),                "ResolveAlias");
-	is(basename($alias_path), 'Files.pm',                       "check name");
+	is(basename($alias_path), 'Files.pm',                        "check name");
 
 	# 4
 	my $file2 = $INC{'Exporter.pm'};
@@ -32,7 +32,10 @@ SKIP: {
 	for my $n (0 .. $#dirs) {
 		unshift @path, GetAliasInfo($alias, $n);
 	}
-	is(catfile(@path), $alias_path,                              "GetAliasInfo");
+	TODO: {
+		local $TODO = _is_ufs(dirname($alias_path));
+		is(catfile(@path), $alias_path,                      "GetAliasInfo");
+	}
 
 	# not entirely reliable, perhaps ...
 	my $vol;
@@ -64,6 +67,12 @@ SKIP: {
 	ok($alias = NewAliasMinimalFromFullPath($alias_path),        "NewAliasMinimalFromFullPath");
 	is(ResolveAlias($alias), $alias_path,                        "ResolveAlias");
     }
+}
+
+sub _is_ufs {
+	my($path) = @_;
+	my($nblocks) = (stat($path))[12];
+	return $nblocks ? "GetAliasInfo not working for UFS" : "";
 }
 
 __END__
