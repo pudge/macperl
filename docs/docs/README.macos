@@ -1,0 +1,185 @@
+If you read this file _as_is_, just ignore the funny characters you see.
+It is written in the POD format (see pod/perlpod.pod) which is specially
+designed to be readable as is.
+
+=head1 NAME
+
+README.macos - Perl under Mac OS (Classic)
+
+
+=head1 SYNOPSIS
+
+This document describes perl under Mac OS (Classic). If you are running
+perl under Mac OS X, you don't want to be here (unless you are in the
+Classic environment under Mac OS X).
+
+When we say "Mac OS" below, we mean pre-Mac OS X, which includes
+Mac OS 7, 8, and 9.  "MacPerl" is the name of the Mac OS application
+implementing perl.
+
+
+=head1 DESCRIPTION
+
+Feel free to give MacPerl away according to the terms stated in
+README.  Please ignore the installation instructions there; they do not
+apply to the Mac OS port of perl.
+
+Read on for information about using, installing, building, and
+living with MacPerl.
+
+
+=head2 System Requirements
+
+MacPerl 5.6 requires System 7. (what other requirements ??)
+
+
+=head2 Installing
+
+MacPerl is installed by running the installer, and then setting up
+the Online Help as described below.
+
+To install the MPW perl tool, additionally follow the instructions
+in F<Install.MPW_Perl>.
+
+
+=head2 Online Help
+
+There are two portions to the MacPerl documentation.  The first
+is this README, along with the rest of the READMEs, licenses, and
+manuals in the MacPerl directory.
+
+The other is the considerable amount of POD-based online help
+that comes with Perl.  For this help to work, make sure you have:
+
+=over 4
+
+=item *
+
+F<MacPerl Help> and the F<pod> folder in the same folder as your
+MacPerl application.
+
+=item *
+
+A recent version of Internet Config (version 1.4 is bundled with the
+distribution - ??), or the Internet control panel shipped with recent versions
+of Mac OS.
+
+=item *
+
+Set up Internet Config (or the Internet control panel) with a helper
+for "http", set to your web browser of choice, and the a helper for
+"pod", set to F<Shuck>, the POD reader distributed with MacPerl.
+
+=back
+
+
+=head2 Mailing list
+
+There are several MacPerl mailing lists covering various aspects of
+MacPerl.  See the Perl mailing lists site for more information.
+
+	http://lists.perl.org/
+
+
+=head2 Distribution
+
+MacPerl can always be obtained from the following locations, among
+others:
+
+	http://macperl.sourceforge.net/
+	http://www.cpan.org/ports/mac/
+	ftp://ftp.cpan.org/CPAN/ports/mac/
+
+MacPerl is avaiable on all the CPAN sites.  Find the CPAN mirror near you:
+
+	http://mirror.cpan.org/
+
+MacPerl is distributed in several forms.  Anonymous CVS access is
+available from the SourceForge site.  The source is also available
+in a single archive.  The compiled, prepared distribution of MacPerl
+is available in two forms, a web-based installer that allows you to
+choose which pieces to download as-needed, and a large installer with
+everything in it.
+
+   MacPerl-5.6.1r1_src.bin
+   MacPerl-5.6.1r1_web.bin
+   MacPerl-5.6.1r1_full.bin
+   ^       ^     ^ ^    ^
+   MacPerl |     | |    MacBinary Suffix ("bin")
+           |     | Distribution Component ("src", "web", "full")
+           |     MacPerl Release ("1")
+           Perl Version ("5.6.1")
+
+The web and full installers give the following options:
+
+=over 4
+
+* fat/ppc/68k
+
+* library (any options?  no Mac modules option?)
+
+* shuck and docs
+
+* tool
+
+* glue?  other tools?
+
+* extra extensions?
+
+* translators?
+
+* examples?
+
+* internet config
+
+=back
+
+
+=head2 Building
+
+The perl 5.6.1 source itself builds on Mac OS, with some additional
+pieces.  Support for Mac OS is now in the perl core, and MacPerl is
+kept in close sync with regular perl releases.
+
+To build perl for Mac OS (as an MPW tool), you will need the addition
+of the "macos" subdirectory, distributed separately (L<"CONTACT">).
+It includes extra source files, config files, and make files.  It also
+includes a lot of extra Mac-specific modules.
+
+To build the MacPerl application, you will also need the "macperl"
+directory, which includes the source files for creating the
+application itself.
+
+You will also need compilers and libraries, all of them freely
+available.  These are linked to from the SourceForge site. Go to that
+site for all things having to do with MacPerl development.
+
+
+=head1 CONTACT
+
+Please send your bug reports, patches, and feature requests for MacPerl
+to the MacPerl site at SourceForge.  Also head over there for the latest
+source and links to other sites.
+
+	http://macperl.sourceforge.net/
+
+
+=head1 CREDITS
+
+Perl was ported to Mac OS by Matthias Neeracher E<lt>neeracher@mac.comE<gt>.
+The port is maintained by Chris Nandor E<lt>pudge@pobox.comE<gt>.
+
+The installer for MacPerl was created using Installer VISE from MindVision
+Software. For more information on Installer VISE, contact: 
+
+	MindVision Software 
+	5901 North 58th Street 
+	Lincoln, NE 68507 
+
+	Voice: (402) 323-6600
+	Fax: (402) 323-6611
+	E-mail: mindvision@mindvision.com 
+	http://www.mindvision.com 
+
+The MacPerl application uses Mercutio MDEF, Copyright 1992-1998
+by Ramon M. Felciano.
