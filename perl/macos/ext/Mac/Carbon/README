@@ -29,12 +29,11 @@ bugs, etc.
 =head1 HELP ME
 
 There are probably a lot of bugs, especially in F<Carbon.h>.  Bugs are listed
-in L<Mac::Carbon/"Known Bugs">; please feel free to report them on the MacPerl bug
-reporting page, in the "Mac Toolbox" category.  Patches are welcome,
-too, of course.  For large patches, such as stuff for test suites and
-building, please do coordinate with me before spending much time on it.
+in L<Mac::Carbon/"Known Bugs">; please feel free to report more.  Patches
+are welcome, too, of course.  For large patches, such as stuff for test suites
+and building, please do coordinate with me before spending much time on it.
 
-	http://sf.net/projects/macperl/
+	http://projects.pudge.net/
 
 
 =head1 REQUIREMENTS
@@ -61,12 +60,10 @@ with perl 5.6.0/5.6.1/5.8.0, with both gcc2 and gcc3.  Some tests fail on
 UFS ([GS]etFileInfo in MacPerl.t).  There are a lot of warnings on 10.1,
 though the tests should all pass.
 
-The modules will compile and test remotely (such as via ssh, instead of
-via the Terminal), but some of the tests might not run properly, and
-one of the tests (e.g., for Mac::Notification) wants user feedback (though
-will work without it).
-
-Hm, the MacPerl.t test might not fully work remotely now.  Not tested yet.
+Don't run the test suite on a remote computer (such as via ssh, instead
+of via the Terminal).  It requires user feedback in some cases, and in general
+it is best to be there when you run the tests.  Maybe in the future this
+can be addressed.
 
 
 =head1 BUILDING
@@ -98,6 +95,7 @@ modules are:
 	Mac::Sound
 	Mac::Speech
 	Mac::Types
+	MacPerl
 
 Coming next, hopefully (to be distributed separately on the CPAN
 and SourceForge.net):
