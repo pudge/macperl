@@ -31,6 +31,13 @@ a familiarity with Carbon is assumed in the POD), see apple.com.
 
 	http://developer.apple.com/techpubs/macosx/Carbon/
 
+The documentation is also located on your system, if you have the Developer
+Tools installed, at /Developer/Documentation/Carbon/.
+
+Also of significant use are the related header files on your system.  Use
+the `locate` command to find them.  They contain current documentation and
+notes for the API.
+
 The modules were written for Mac OS originally, and are in part being
 ported to Carbon.  You may also be interested in the original documentation.
 
@@ -134,6 +141,10 @@ When creating FSSpecs, the file must exist.  This is Bad.
 
 =item *
 
+[GS]etFileInfo fails on UFS.
+
+=item *
+
 Docs not updated for Carbon incompatibilities (including changes to
 Processes fields).  Generate list of all unsupported functions.
 
@@ -166,6 +177,11 @@ then the tied %Application hash should be implemented differently.
 =item *
 
 Can we support XCMDs etc. via XL?  Do we want to?
+
+=item *
+
+Find a way to open resources stored in data files.  Technically not a bug,
+but darnit, it's a pain in the rear.
 
 =back
 
@@ -252,7 +268,9 @@ Nandor E<lt>pudge@pobox.comE<gt>.
 =head1 THANKS
 
 Michael Blakeley E<lt>mike@blakeley.comE<gt>,
+Emmanuel. M. Decarie E<lt>emm@scriptdigital.comE<gt>,
 brian d foy E<lt>comdog@panix.comE<gt>,
+David Hand E<lt>davidhand@davidhand.comE<gt>,
 Gero Herrmann E<lt>herr@ils.uec.ac.jpE<gt>,
 Paul McCann E<lt>pmccann@maths.adelaide.edu.auE<gt>,
 Dan Sugalksi E<lt>dan@sidhe.orgE<gt>,
