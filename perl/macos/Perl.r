@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2001/01/30 05:26:09  pudge
+ * Update versions
+ *
  * Revision 1.1  2000/08/14 01:48:17  neeri
  * Checked into Sourceforge
  *
@@ -43,15 +46,15 @@
 include "Perl.rsrc";
 
 resource 'vers' (1) {
-	0x05, 0x06, development, 0x01, verUS,
-	"5.6.0d1",
-	"Perl 5 - ported by Matthias Neeracher."
+	0x05, 0x61, development, 0x01, verUS,
+	"5.6.1d1",
+	"Perl - ported by Matthias Neeracher."
 	};
 
 resource 'vers' (2) {
-	0x05, 0x06, development, 0x01, verUS,
-	"5.6.0d1",
-	"Perl 5.6.0d1 (2000-30-01)"
+	0x05, 0x61, development, 0x01, verUS,
+	"5.6.1d1",
+	"Perl 5.6.1d1 (2001-02-23)"
 	};
 
 resource 'DLOG' (2001)	{
@@ -253,7 +256,7 @@ resource 'cmdo' (128) {
 			},
 			notDependent {}, VersionDialog {
 				VersionString {
-					"5.6.0d1"
+					"5.6.1d1"
 				},
 				"Perl by Larry Wall <larry@wall.org>\n"
 				"MPW port by Matthias Neeracher <neeri@iis.ee.ethz.ch>\n"

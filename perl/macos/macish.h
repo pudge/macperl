@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.4  2000/12/22 08:31:47  neeri
+Some build tweaks
+
 Revision 1.3  2000/09/09 22:18:25  neeri
 Dynamic libraries compile under 5.6
 
@@ -220,6 +223,7 @@ double Perl_modf(double x, double * iptr);
 #endif
 
 #if defined(__SC__) || defined(__MRC__)
+#include <fp.h>
 #undef Perl_atof
 double Perl_atof(const char *s);
 #endif
