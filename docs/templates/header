@@ -5,7 +5,9 @@
    ELSE;
    	title = "MacPerl Development";
    END;
--%]
+   dot = BLOCK -%]
+<img src="/dot.gif" width="5" height="9" alt="* " />
+[%- END -%]
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -24,47 +26,50 @@
 		<td valign="top" class="links">
 [% IF user.id %]<p><strong>Hi, [% user.user %], you're logged in.</strong></p>
 
-[% END %]	* <a href="/">Home</a><br />
-	* <a href="http://sf.net/projects/macperl/">SourceForge</a><br />
+[% END %]	[% dot %]<a href="/">Home</a><br />
+	<img src="/dot.gif" width="5" height="9" alt="* " /><a href="http://sf.net/projects/macperl/">SourceForge</a><br />
 		<br />
 
-	* <a href="http://sf.net/project/showfiles.php?group_id=7940">Downloads</a><br />
-	* <a href="http://dev.macperl.org/files/">Related Files</a><br />
-	* <a href="/build.html">Build Instructions</a><br />
-	* <a href="/build.html#cvs">CVS</a>
+	[% dot %]<a href="http://sf.net/project/showfiles.php?group_id=7940">Downloads</a><br />
+	[% dot %]<a href="http://dev.macperl.org/files/">Related Files</a><br />
+	[% dot %]<a href="/build.html">Build Instructions</a><br />
+	[% dot %]<a href="/build.html#cvs">CVS</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/macperl/">Browse</a> ]
-			<br />&nbsp; &nbsp; &nbsp;( <!-- CVS|commit -->0 / <!-- CVS|add -->0 )
+			<br />&nbsp; &nbsp; &nbsp;( <!-- CVS|commit -->1502 / <!-- CVS|add -->966 )
 			<br />
 			<br />
 
-	* <a href="/cgi-bin/mp-report">Testing</a>
+	[% dot %]<a href="/cgi-bin/mp-report">Testing</a>
 		<br />
-	* <a href="http://sf.net/tracker/?group_id=7940&amp;atid=107940">Bugs</a>
+	[% dot %]<a href="http://sf.net/tracker/?group_id=7940&amp;atid=107940">Bugs</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">Submit</a> ]
-			<br />&nbsp; &nbsp; &nbsp;( <!-- Bugs|open -->0 / <!-- Bugs|total -->0 )
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Bugs|open -->27 / <!-- Bugs|total -->65 )
 		<br />
 
-	* <a href="http://sf.net/tracker/?group_id=7940&amp;atid=307940">Patches</a>
+	[% dot %]<a href="http://sf.net/tracker/?group_id=7940&amp;atid=307940">Patches</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=307940">Submit</a> ]
-			<br />&nbsp; &nbsp; &nbsp;( <!-- Patches|open -->0 / <!-- Patches|total -->0 )
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Patches|open -->1 / <!-- Patches|total -->4 )
 		<br />
 
-	* <a href="http://sf.net/tracker/?group_id=7940&amp;atid=357940">Feature Requests</a>
+	[% dot %]<a href="http://sf.net/tracker/?group_id=7940&amp;atid=357940">Feature Requests</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=357940">Submit</a> ]
-			<br />&nbsp; &nbsp; &nbsp;( <!-- Feature Requests|open -->0 / <!-- Feature Requests|total -->0 )
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Feature Requests|open -->0 / <!-- Feature Requests|total -->2 )
 		<br />
 
-	* <a href="http://sf.net/pm/?group_id=7940">Task Manager</a>
+	[% dot %]<a href="http://sf.net/pm/?group_id=7940">Task Manager</a>
 		<ul>
 			<!-- Tasks|begin -->
+			<li><a href="http://sourceforge.net/pm/task.php?group_project_id=6928&amp;group_id=7940&amp;func=browse">5.6.1 alpha</a></li>
+			<li><a href="http://sourceforge.net/pm/task.php?group_project_id=9632&amp;group_id=7940&amp;func=browse">5.6.1 beta</a></li>
 			<!-- Tasks|end -->
 		</ul>
+		<br />
 
-	* <a href="/state.txt">State of MacPerl</a><br />
-	* <a href="http://use.perl.org/~pudge/">Development Journal</a><br />
-	* <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a><br />
-	* <a href="http://lists.perl.org/showlist.cgi?name=perl5-changes-mac">perl5-changes-mac</a><br />
-	* #macperl (<a href="http://openprojects.nu/irc_servers.shtml">OPN</a>)<br />
+	[% dot %]<a href="/state.txt">State of MacPerl</a><br />
+	[% dot %]<a href="http://use.perl.org/~pudge/">Development Journal</a><br />
+	[% dot %]<a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a><br />
+	[% dot %]<a href="http://lists.perl.org/showlist.cgi?name=perl5-changes-mac">perl5-changes-mac</a><br />
+	[% dot %]#macperl (<a href="http://openprojects.nu/irc_servers.shtml">OPN</a>)<br />
 
 <p>
 	<img src="http://sf.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="[ SourceForge ]" />

@@ -8,8 +8,8 @@
 	[% END %]
 ]</p>
 [% IF !user.id %]
-<form action="[% env.script_name %]" method="post"><p class="menu">
+<form action="[% env.script_name %]" method="post"><div class="menu">
 	User: <input type="text"     name="user"    size="12" maxlength="32" /><br />
 	Pass: <input type="password" name="pass"    size="12" maxlength="32" /><br />
 	<input type="submit" value="Login" />
-</p></form>[% END %]
+</div></form>[% END %]

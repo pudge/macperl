@@ -1,9 +1,9 @@
-	<td valign="top">[% label %]:</td>
-	<td><select name="[% name %]">
+[% IF label %]	<td valign="top">[% label %]:</td>
+	<td>[% END %]<select name="[% name %]">
 [% FOR id = data.keys.nsort 
 %]		<option value="[% FILTER strip_attribute ; id ; END %]"[%
 IF seldef == id; ' selected="selected"'; END 
 %]>[% data.$id %]</option>
 [% END %]
-	</select></td>
+	</select>[% IF label %]</td>[% END %]
 

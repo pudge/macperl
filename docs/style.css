@@ -74,7 +74,7 @@ IMG		{
 	float: none;
 }
 
-P.menu		{
+.menu		{
 	text-align: center;
 	font-weight: bold;
 }
@@ -84,7 +84,7 @@ P.menu		{
 	font-family: verdana, "Times New Roman", serif;
 	background-color: rgb(210, 210, 210);
 	color: rgb(0, 0, 0);
-	width: 120px;
+	width: 135px;
 }
 
 P.notes		{ font-size: 9px					}

@@ -1,3 +1,7 @@
+		</td>
+	</tr>
+</table>
+
 <p class="notes">
 <a href="[% env.script_name %]">This page</a> is
 built using <a href="http://www.tt2.org/">Template Toolkit</a>
