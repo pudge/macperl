@@ -4,7 +4,7 @@ require Exporter;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $Target);
 
-$VERSION = '1.03';
+$VERSION = '1.04';
 
 @ISA = qw(Exporter);
 
@@ -97,6 +97,10 @@ sub _CarbonAnswer {
 	my $buttons = join '","', @buttons;
 	my $default = @buttons;
 
+	if (!$Target) {
+		return _CarbonText($prompt, \@buttons, $default-1);
+	}
+
 	my $result = _CarbonDoScript(<<EOS);
 tell application "$Target"
 	activate
@@ -114,6 +118,10 @@ EOS
 sub _CarbonAsk {
 	my($prompt, $default) = @_;
 	$default ||= '';
+
+	if (!$Target) {
+		return _CarbonText($prompt, 0, $default);
+	}
 
 	my $result = _CarbonDoScript(<<EOS);
 tell application "$Target"
@@ -134,6 +142,10 @@ sub _CarbonPick {
 	my $values = join '","', @values;
 	my $multiple = wantarray ? 'and multiple selections allowed' : '';
 
+	if (!$Target) {
+		return _CarbonText($prompt, \@values, '', $multiple, 1);
+	}
+
 	my $result = _CarbonDoScript(<<EOS);
 tell application "$Target"
 	activate
@@ -149,12 +161,56 @@ EOS
 
 sub _CarbonDoScript {
 	my($script) = @_;
-#	print $script;
 
 	my $result = DoAppleScript($script);
-#	die $@ if $@;
 
 	return $result;
+}
+
+sub _CarbonText {
+	local $| = 1;
+	local $\;
+	my($prompt, $options, $default, $multiple, $text) = @_;
+
+	$default = '' unless defined $default;
+	my $string = $prompt;
+
+	if (ref $options eq 'ARRAY') {
+		if ($multiple) {
+			print "Pick one or more of the following (separate by commas):\n";
+		} else {
+			print "Pick one of the following:\n";
+		}
+
+		my $num = length @$options;
+		for (0 .. $#{$options}) {
+			printf " [%${num}d] %s\n", $_, $options->[$_];
+		}
+	} else {
+		$multiple = $text = '';
+	}
+
+	$string .= sprintf(' [%s]', $default) if length $default;
+	$string .= ': ';
+
+	print $string;
+	chomp(my $ans = <STDIN>);
+
+	if ($multiple) {
+		$ans = [ sort { $a <=> $b } split /\s*,\s*/, $ans ];
+	}
+
+	if ($text) {
+		if (ref $ans eq 'ARRAY') {
+			for (@$ans) {
+				$_ = $options->[$_];
+			}
+		} else {
+			$ans = $options->[$ans];
+		}
+	}
+
+	return length $ans ? ref $ans eq 'ARRAY' ? @$ans : $ans : $default;
 }
 
 1;
