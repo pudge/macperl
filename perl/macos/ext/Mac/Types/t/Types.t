@@ -17,7 +17,7 @@ SKIP: {
 	my $u = MacUnpack("STR ", "$p dskjkjkdsjk");
 	is($u, $s, 'regular string');
 
-	my $path = MakeFSSpec(FindFolder(kOnSystemDisk, kDesktopFolderType));
+	my $path = MakeFSSpec(FindFolder(kOnSystemDisk, kApplicationSupportFolderType));
 	my $fss = MacPack('fss ', $path);
 	isnt($path, $fss, 'to real FSSpec');
 	is($path, MacUnpack('fss ', $fss), 'back to string FSSpec');
