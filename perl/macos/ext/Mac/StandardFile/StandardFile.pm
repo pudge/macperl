@@ -23,14 +23,15 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.00';
+	$VERSION = '1.10';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		StandardPutFile
 		StandardGetFile
 		CustomPutFile
 		CustomGetFile
-		StandardOpenDialog
+		ChooseFSObject
+		StandardGetFolder
 	
 		putDlgID
 		putSave
@@ -80,6 +81,9 @@ BEGIN {
 		sfStatWarnDialogRefCon
 		sfLockWarnDialogRefCon
 		sfErrorDialogRefCon
+		
+		kGetFolder
+		kGetFile
 	);
 }
 
@@ -252,6 +256,12 @@ sub sfHookLastCall ()              {         -2; }
 
 Refcons to distinguish the dialogs.
 
+=item kGetFolder
+
+=item kGetFile
+
+These constants may be passed to the FOLDER parameter of the ChooseFSObject function.
+
 =cut
 sub sfMainDialogRefCon ()          {     0x73746466; } # 'stdf'
 sub sfNewFolderDialogRefCon ()     {     0x6E666472; } # 'nfdr'
@@ -260,9 +270,32 @@ sub sfStatWarnDialogRefCon ()      {     0x73746174; } # 'stat'
 sub sfLockWarnDialogRefCon ()      {     0x6C6F636B; } # 'lock'
 sub sfErrorDialogRefCon ()         {     0x65727220; } # 'err '
 
+sub kGetFolder ()				   {	 		  1; }
+sub kGetFile ()					   {	          0; }
+
 =back
 
 =include StandardFile.xs
+
+=cut
+
+=item StandardGetFolder [ DEFAULTPATH ]
+
+Choose a folder.  Implemented via ChooseFSObject (see above).
+Optionally, the DEFAULTPATH parameter specifies a directory where Standard File
+starts the choose dialog. DEFAULTPATH should be a valid relative or full path.
+This function is a MacPerl supplement, you will not find it anywhere in Inside Macintosh. 
+It will NOT work with versions of the MacPerl application and tool prior to 5.6.1r2.
+
+=cut
+
+sub StandardGetFolder {
+	if (@_ > 1) {
+		croak("Usage: Mac::StandardFile::StandardGetFolder( [ DEFAULTPATH ] )");
+	}
+	ChooseFSObject(kGetFolder, $_[1]);
+} 
+
 
 =head1 BUGS/LIMITATIONS
 
@@ -271,6 +304,8 @@ sub sfErrorDialogRefCon ()         {     0x65727220; } # 'err '
 =head1 AUTHOR(S)
 
 Matthias Ulrich Neeracher <neeracher@mac.com> 
+
+Thomas Wegner <t_wegner@gmx.net> contributed the ChooseFSObject function.
 
 =cut
 

@@ -17,6 +17,7 @@
 #include <Types.h>
 #include <StandardFile.h>
 #include <GUSIFileSpec.h>
+#include "ChooseFSObject.h"
 
 typedef struct {
 	SV *	fileFilter;
@@ -367,6 +368,69 @@ CustomGetFile(fileFilter, typeList, dlgID, where, dlgHook=&PL_sv_undef, filterPr
 	}
 	OUTPUT:
 	RETVAL
+
+
+
+=item ChooseFSObject FOLDER [, DEFAULTPATH ]
+
+Choose a folder or file with Standard File. ChooseFSObject returns a full
+path to the selected file system  object if the user confirms the dialog,
+or undef if the dialog is canceled. In the FOLDER parameter you should
+pass 1 (i.e. true) or the constant kGetFolder if you want to choose a folder
+or volume (which is a special kind of folder). Or you pass 0 (i.e. false) or
+the constant kGetFile to choose a file. Optionally, the DEFAULTPATH 
+parameter specifies a directory where Standard File starts the choose dialog.
+DEFAULTPATH should be a valid relative or full path. This function is a
+MacPerl supplement, you will not find it anywhere in Inside Macintosh. It
+will NOT work with versions of the MacPerl application and tool prior to
+5.6.1r2.
+
+=cut
+void
+ChooseFSObject(folder, ...)
+
+	Boolean	folder;
+	CODE:
+	{
+		STRLEN		len;
+		char *		defaultPath;
+		char 		path[256];
+		Str255		msg;
+		Boolean 	hasDefault;
+		
+		if ((items < 1) || (items > 2)) {
+			
+			croak("Usage: Mac::StandardFile::ChooseFSObject( FOLDER [, DEFAULTPATH ] )");
+		
+		} else if (items == 2 ) {
+		
+			defaultPath = (char *) SvPV_nolen(ST(1));
+			len = strlen(defaultPath);
+			
+			if ( len > 255 ) {
+				hasDefault = false;
+			} else {
+				hasDefault = true;
+				strcpy( path, defaultPath );  
+			}
+		
+		} else if (items == 1 ) {
+		
+			hasDefault = false;
+			
+		}
+		
+		if ( StdFChooseFSObject( path, folder, hasDefault ) ) 
+		{
+			ST(0) = sv_2mortal(newSVpv(path, 0));
+		}
+		else 
+		{
+			ST(0) = &PL_sv_undef;
+		}			
+		
+	}
+
 
 =back 
 
