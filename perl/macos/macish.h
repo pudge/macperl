@@ -74,7 +74,7 @@ char * MacPerl_MPWFileName(char * file);
 char * GetSysErrText(short, char *);
 unsigned char * MacPerl_CopyC2P(const char * c, unsigned char * p);
 const char * MacPerl_CanonDir(const char * dir, char * buf);
-void MacPerl_WriteMsg(PerlIO * io, const char * msg, size_t len);
+void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 
 /* These defined following should be defined in 5.8 in config.h */
 #define HAS_USLEEP

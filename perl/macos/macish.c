@@ -827,7 +827,7 @@ static void WriteMsg(PerlIO * io, const char * msg, size_t len, Boolean start)
 		WriteMsgLn(io, msg, len, start);
 }
 
-void MacPerl_WriteMsg(PerlIO * io, const char * msg, size_t len)
+void MacPerl_WriteMsg(void * io, const char * msg, size_t len)
 {
 	const char * line= msg;
 	const char * at;
