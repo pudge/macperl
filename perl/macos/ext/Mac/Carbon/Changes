@@ -1,3 +1,14 @@
+* v0.65, 9 March 2004
+
+   DirectoryCopy.c and FileCopy.c in MoreFiles have issues with G5 optimization
+   flags; ignore those flags for compiling MoreFiles. (John Siracusa)
+
+   Clean up tests, including turning GUI tests off by default (add
+   MAC_CARBON_GUI=1 to `make test` to turn on) and ability to turn
+   off sound (add MAC_CARBON_SOUND=0 to turn off).  Affected tests
+   include MacPerl, Notification, Sound, and Speech.
+
+
 * v0.64, 18 February 2004
 
    *Export* typeApplicationBundleID target type constant.
