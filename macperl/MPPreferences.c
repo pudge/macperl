@@ -549,7 +549,11 @@ static short PrefsLibDialog(DialogPtr prefs, short resFile)
 			contents[0] 	 = len;
 			contents[len+1] = 0;
 			if (!GUSIPath2FSp((char *)contents+1, &item)) {
+#if GUSI_RELATIVE_PATHS_FIXED
 				shortpath = GUSIFSp2DirRelPath(&item, &libspec);
+#else
+				shortpath = GUSIFSp2FullPath(&item);
+#endif
 				if (!strchr(shortpath, ':')) {
 					memcpy(contents+2, shortpath, *contents = strlen(shortpath));
 					++*contents;

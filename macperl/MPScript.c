@@ -341,8 +341,7 @@ pascal Handle MakeLibraries()
 	GUSIFSpUp(&libspec);
 	libpath  				=	GUSIFSp2FullPath(&libspec);
 	libCount					=	strlen(libpath);
-	PtrAndHand(libpath, libs, libCount);
-	PtrAndHand(":",     libs, 2);
+	PtrAndHand(libpath, libs, libCount+1);
 	
 	PtrAndHand("PERL5LIB", libs, 9);
 	
