@@ -452,7 +452,7 @@ sub _gettemp {
       local $^F = 2;
 
       # Store callers umask
-      my $umask = umask() || 0;
+      my $umask = umask();
 
       # Set a known umask
       umask(066);
@@ -472,14 +472,14 @@ sub _gettemp {
       if ( $open_success ) {
 
 	# Reset umask
-	umask($umask);
+	umask($umask) if $umask;
 
 	# Opened successfully - return file handle and name
 	return ($fh, $path);
 
       } else {
 	# Reset umask
-	umask($umask);
+	umask($umask) if $umask;
 
 	# Error opening file - abort with error
 	# if the reason was anything but EEXIST
@@ -494,7 +494,7 @@ sub _gettemp {
     } elsif ($options{"mkdir"}) {
 
       # Store callers umask
-      my $umask = umask() || 0;
+      my $umask = umask();
 
       # Set a known umask
       umask(066);
@@ -503,13 +503,13 @@ sub _gettemp {
       if (mkdir( $path, 0700)) {
 	# created okay
 	# Reset umask
-	umask($umask);
+	umask($umask) if $umask;
 
 	return undef, $path;
       } else {
 
 	# Reset umask
-	umask($umask);
+	umask($umask) if $umask;
 
 	# Abort with error if the reason for failure was anything
 	# except EEXIST

@@ -5,7 +5,7 @@ use Cwd;
 use vars qw(@ISA $VERSION);
 require File::Spec::Unix;
 
-$VERSION = '1.2';
+$VERSION = '1.3';
 
 @ISA = qw(File::Spec::Unix);
 
@@ -23,7 +23,7 @@ See File::Spec::Unix for a documentation of the methods provided
 there. This package overrides the implementation of these methods, not
 the semantics.
 
-=over
+=over 4
 
 =item devnull
 
@@ -43,7 +43,6 @@ from the following list:
     $ENV{TMPDIR}
     $ENV{TEMP}
     $ENV{TMP}
-    C:/temp
     /tmp
     /
 
@@ -53,7 +52,7 @@ my $tmpdir;
 sub tmpdir {
     return $tmpdir if defined $tmpdir;
     my $self = shift;
-    foreach (@ENV{qw(TMPDIR TEMP TMP)}, qw(C:/temp /tmp /)) {
+    foreach (@ENV{qw(TMPDIR TEMP TMP)}, qw(/tmp /)) {
 	next unless defined && -d;
 	$tmpdir = $_;
 	last;
@@ -164,7 +163,7 @@ sub splitpath {
 
 =item splitdir
 
-The opposite of L</catdir()>.
+The opposite of L<catdir()|File::Spec/catdir()>.
 
     @dirs = File::Spec->splitdir( $directories );
 
