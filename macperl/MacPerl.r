@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.10  2001/10/03 19:23:16  pudge
+Sync with perforce maint-5.6/macperl
+
 Revision 1.9  2001/09/26 21:51:15  pudge
 Sync with perforce maint-5.6/macperl/macos/macperl
 
@@ -128,6 +131,7 @@ include "MercutioMDEF.rsrc";
 
 include ":Obj:FontLDEF.rsrc";
 
+include "MacPerl.rsrc" 'GU·I'(10240);
 include "MacPerl.rsrc" 'BNDL'(128);
 include "MacPerl.rsrc" 'McPL'(0);
 include "MacPerl.rsrc" 'ICN#'(128);
