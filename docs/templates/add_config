@@ -1,0 +1,74 @@
+[% BLOCK select %]
+	<td>[% label %]:</td>
+	<td><select name="[% name %]">
+[% FOR id = data.keys.nsort %]		<option value="[% id %]">[% data.$id %]</option>
+[% END %]
+	</select></td>
+
+[% END %]
+Please fill out the information below to enter a new configuration
+into the system.
+</p>
+
+<p>
+First, name the configuration (it can be anything that fits in 32
+characters).  You should include what processor you are using,
+how much RAM is on the machine, whether or not you built MacPerl on
+this configuration, and which compiler sets you used.
+</p>
+
+<p>
+Also note what version you built; if you got the source from CVS,
+check the checkbox and select the most recent release before you checked
+out.
+</p>
+
+<p>
+Add any additional notes about the configuration (including machine
+model, CPU speed, and any other relevant information), and then enter
+information about the results of the build, and the usage of it (such
+as: "the build went fine except for these things: ..." and "Application
+and MPW tool ran fine."
+</p>
+
+<p>
+Save discussion of individual tests for the tests section.
+</p>
+
+<p>
+<form action="[% env.script_name %]" method="POST">
+<input type="hidden" name="op" value="create_config">
+
+<table border="0" cellpadding="6"><tr>
+	<td>Configuration name:</td>
+	<td><input type="text" name="name" size="32" maxlength="32"></td>	
+</tr><tr>
+[% PROCESS select label => "Processor", name => "processor", data => processor %]
+</tr><tr>
+	<td>RAM (MB):</td>
+	<td><input type="text" name="ram" size="6" maxlength="6"></td>
+</tr><tr>
+[% PROCESS select label => "Version", name => "version", data => version %]
+</tr><tr>
+	<td>Was this a CVS checkout?</td>
+	<td><input type="checkbox" name="cvs"></td>
+</tr><tr>
+	<td>Was this MacPerl built on this machine?</td>
+	<td><input type="checkbox" name="build" checked></td>
+</tr><tr>
+	<td>Select the compiler sets used:</td>
+	<td>
+		<input type="checkbox" name="mwc" checked> MWC686/MWCPPC (CodeWarrior)<br />
+		<input type="checkbox" name="mpw" checked> SC/MrC (Apple MPW)
+	</td>
+</tr><tr>
+	<td>Enter additional configuration notes:</td>
+	<td><textarea name="notes"   cols="50" rows="10"></textarea></td>
+</tr><tr>
+	<td>Enter any results:</td>
+	<td><textarea name="results" cols="50" rows="20"></textarea></td>
+</tr></table>
+
+<input type="submit" value="Create Configuration"> <input type="reset" value="Clear Form">
+</form>
+</p>

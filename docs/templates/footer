@@ -1,0 +1,10 @@
+<p class="notes">
+<a href="[% env.script_name %]">mp-report</a> is
+built using <a href="http://www.template-toolkit.org/">Template Toolkit</a>
+and <a href="http://dbi.symbolstone.org/">DBI</a> on
+<a href="http://httpd.apache.org/">Apache</a> and
+<a href="http://www.mysql.com/">MySQL</a>.<br />
+$Id$
+</p>
+</body>
+</html>
