@@ -83,7 +83,7 @@
 
    /* The non-POSIX CRTL times() has void return type, so we just get the
       current time directly */
-   clock_t vms_times(struct tms *PL_bufptr) {
+   clock_t vms_times(struct tms *bufptr) {
 	dTHX;
 	clock_t retval;
 	/* Get wall time and convert to 10 ms intervals to
@@ -104,7 +104,7 @@
 	_ckvmssts(lib$ediv(&divisor,vmstime,(long int *)&retval,&remainder));
 #  endif
 	/* Fill in the struct tms using the CRTL routine . . .*/
-	times((tbuffer_t *)PL_bufptr);
+	times((tbuffer_t *)bufptr);
 	return (clock_t) retval;
    }
 #  define times(t) vms_times(t)
@@ -142,6 +142,8 @@
 #  define sigdelset(a,b)	not_here("sigdelset")
 #  define sigfillset(a)		not_here("sigfillset")
 #  define sigismember(a,b)	not_here("sigismember")
+#  define setuid(a)		not_here("setuid")
+#  define setgid(a)		not_here("setgid")
 #else
 
 #  ifndef HAS_MKFIFO
@@ -155,8 +157,6 @@
 #  endif /* !HAS_MKFIFO */
 
 #  ifdef MACOS_TRADITIONAL
-	 struct tms { time_t tms_utime, tms_stime, tms_cutime, tms_cstime; }; 
-#    define times(a) not_here("times")
 #    define ttyname(a) (char*)not_here("ttyname")
 #    define tzset() not_here("tzset")
 #  else
@@ -539,12 +539,12 @@ mini_mktime(struct tm *ptm)
 }
 
 #ifdef HAS_LONG_DOUBLE
-#  if LONG_DOUBLESIZE > DOUBLESIZE
+#  if LONG_DOUBLESIZE > NVSIZE
 #    undef HAS_LONG_DOUBLE  /* XXX until we figure out how to use them */
 #  endif
 #endif
 
-#ifndef HAS_LONG_DOUBLE 
+#ifndef HAS_LONG_DOUBLE
 #ifdef LDBL_MAX
 #undef LDBL_MAX
 #endif
@@ -564,11 +564,7 @@ not_here(char *s)
 }
 
 static
-#if defined(HAS_LONG_DOUBLE) && (LONG_DOUBLESIZE > DOUBLESIZE)
-long double
-#else
-double
-#endif
+NV
 constant(char *name, int arg)
 {
     errno = 0;
@@ -1527,6 +1523,11 @@ constant(char *name, int arg)
 	break;
     case 'H':
 	if (strEQ(name, "HUGE_VAL"))
+#if defined(USE_LONG_DOUBLE) && defined(HUGE_VALL)
+	  /* HUGE_VALL is admittedly non-POSIX but if we are using long doubles
+	   * we might as well use long doubles. --jhi */
+	    return HUGE_VALL;
+#endif
 #ifdef HUGE_VAL
 	    return HUGE_VAL;
 #else
@@ -2301,9 +2302,9 @@ constant(char *name, int arg)
 #else
 	    goto not_there;
 #endif
-	if (strEQ(name, "STRERR_FILENO"))
-#ifdef STRERR_FILENO
-	    return STRERR_FILENO;
+	if (strEQ(name, "STDERR_FILENO"))
+#ifdef STDERR_FILENO
+	    return STDERR_FILENO;
 #else
 	    goto not_there;
 #endif
@@ -3015,7 +3016,7 @@ setcc(termios_ref, ccix, cc)
 
 MODULE = POSIX		PACKAGE = POSIX
 
-double
+NV
 constant(name,arg)
 	char *		name
 	int		arg
@@ -3304,73 +3305,73 @@ setlocale(category, locale = 0)
 	RETVAL
 
 
-double
+NV
 acos(x)
-	double		x
+	NV		x
 
-double
+NV
 asin(x)
-	double		x
+	NV		x
 
-double
+NV
 atan(x)
-	double		x
+	NV		x
 
-double
+NV
 ceil(x)
-	double		x
+	NV		x
 
-double
+NV
 cosh(x)
-	double		x
+	NV		x
 
-double
+NV
 floor(x)
-	double		x
+	NV		x
 
-double
+NV
 fmod(x,y)
-	double		x
-	double		y
+	NV		x
+	NV		y
 
 void
 frexp(x)
-	double		x
+	NV		x
     PPCODE:
 	int expvar;
 	/* (We already know stack is long enough.) */
 	PUSHs(sv_2mortal(newSVnv(frexp(x,&expvar))));
 	PUSHs(sv_2mortal(newSViv(expvar)));
 
-double
+NV
 ldexp(x,exp)
-	double		x
+	NV		x
 	int		exp
 
-double
+NV
 log10(x)
-	double		x
+	NV		x
 
 void
 modf(x)
-	double		x
+	NV		x
     PPCODE:
-	double intvar;
+	NV intvar;
 	/* (We already know stack is long enough.) */
 	PUSHs(sv_2mortal(newSVnv(Perl_modf(x,&intvar))));
 	PUSHs(sv_2mortal(newSVnv(intvar)));
 
-double
+NV
 sinh(x)
-	double		x
+	NV		x
 
-double
+NV
 tan(x)
-	double		x
+	NV		x
 
-double
+NV
 tanh(x)
-	double		x
+	NV		x
 
 SysRet
 sigaction(sig, action, oldaction = 0)
@@ -3416,9 +3417,8 @@ sigaction(sig, action, oldaction = 0)
 		/* Set up any desired mask. */
 		svp = hv_fetch(action, "MASK", 4, FALSE);
 		if (svp && sv_isa(*svp, "POSIX::SigSet")) {
-		    unsigned long tmp;
-		    tmp = (unsigned long)SvNV((SV*)SvRV(*svp));
-		    sigset = (sigset_t*) tmp;
+		    IV tmp = SvIV((SV*)SvRV(*svp));
+		    sigset =  INT2PTR(sigset_t*, tmp);
 		    act.sa_mask = *sigset;
 		}
 		else
@@ -3443,9 +3443,8 @@ sigaction(sig, action, oldaction = 0)
 		/* Get back the mask. */
 		svp = hv_fetch(oldaction, "MASK", 4, TRUE);
 		if (sv_isa(*svp, "POSIX::SigSet")) {
-		    unsigned long tmp;
-		    tmp = (unsigned long)SvNV((SV*)SvRV(*svp));
-		    sigset = (sigset_t*) tmp;
+		    IV tmp = SvIV((SV*)SvRV(*svp));
+		    sigset = INT2PTR(sigset_t*, tmp);
 		}
 		else {
 		    New(0, sigset, 1, sigset_t);

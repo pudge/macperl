@@ -4,10 +4,14 @@
 
 BEGIN {
     chdir 't' if -d 't';
-    unshift @INC, '../lib';
+    @INC = '../lib';
+    require Config; import Config;
+    if (($Config{'extensions'} !~ /\b(DB|[A-Z]DBM)_File\b/) ){
+      print "1..0 # Skipping (no DB_File or [A-Z]DBM_File)\n";
+      exit 0;
+    }
 }
 require AnyDBM_File;
-#If Fcntl is not available, try 0x202 or 0x102 for O_RDWR|O_CREAT
 use Fcntl;
 
 print "1..12\n";
@@ -25,7 +29,7 @@ $Dfile = "Op_dbmx.pag";
 if (! -e $Dfile) {
 	($Dfile) = <Op_dbmx*>;
 }
-if ($Is_Dosish || $^O eq 'MacOS') {
+if ($Is_Dosish) {
     print "ok 2 # Skipped: different file permission semantics\n";
 }
 else {
@@ -146,8 +150,6 @@ else {
 untie %h;
 if ($^O eq 'VMS') {
   unlink 'Op_dbmx.sdbm_dir', $Dfile;
-} elsif ($^O eq 'MacOS') {
-  unlink 'Op_dbmx';
 } else {
   unlink 'Op_dbmx.dir', $Dfile;  
 }

@@ -3,11 +3,6 @@
 #include "perl.h"
 #include "XSUB.h"
 
-/* For older Perls */
-#ifndef dTHR
-#  define dTHR int dummy_thr
-#endif	/* dTHR */ 
-
 /*#define DBG_SUB 1      */
 /*#define DBG_TIMER 1    */
 
@@ -28,6 +23,7 @@
 #  define HZ ((I32)CLK_TCK)
 #  define DPROF_HZ HZ
 #  include <starlet.h>  /* prototype for sys$gettim() */
+#  include <lib$routines.h>
 #  define Times(ptr) (dprof_times(aTHX_ ptr))
 #else
 #  ifndef HZ
@@ -388,7 +384,6 @@ prof_mark(pTHX_ opcode ptype)
 static void
 test_time(pTHX_ clock_t *r, clock_t *u, clock_t *s)
 {
-    dTHR;
     CV *cv = perl_get_cv("Devel::DProf::NONESUCH_noxs", FALSE);
     int i, j, k = 0;
     HV *oldstash = PL_curstash;
@@ -502,7 +497,7 @@ prof_record(pTHX)
 static void
 check_depth(pTHX_ void *foo)
 {
-    U32 need_depth = (U32)foo;
+    U32 need_depth = PTR2UV(foo);
     if (need_depth != g_depth) {
 	if (need_depth > g_depth) {
 	    warn("garbled call depth when profiling");

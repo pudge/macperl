@@ -169,7 +169,7 @@ sub ReadLine {'Term::ReadLine::Stub'}
 sub readline {
   my $self = shift;
   my ($in,$out,$str) = @$self;
-  my ($prompt) = shift;
+  my $prompt = shift;
   print $out $rl_term_set[0], $prompt, $rl_term_set[1], $rl_term_set[2]; 
   $self->register_Tk 
      if not $Term::ReadLine::registered and $Term::ReadLine::toloop

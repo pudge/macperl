@@ -56,7 +56,7 @@ not_here(char *s)
 static void
 output_datum(pTHX_ SV *arg, char *str, int size)
 {
-#if !defined(MYMALLOC) || (defined(MYMALLOC) && defined(PERL_POLLUTE_MALLOC))
+#if !defined(MYMALLOC) || (defined(MYMALLOC) && defined(PERL_POLLUTE_MALLOC) && !defined(LEAKTEST))
 	sv_usepvn(arg, str, size);
 #else
 	sv_setpvn(arg, str, size);
@@ -119,6 +119,12 @@ constant(char *name, int arg)
 	if (strEQ(name, "GDBM_NEWDB"))
 #ifdef GDBM_NEWDB
 	    return GDBM_NEWDB;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "GDBM_NOLOCK"))
+#ifdef GDBM_NOLOCK
+	    return GDBM_NOLOCK;
 #else
 	    goto not_there;
 #endif

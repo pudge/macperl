@@ -178,8 +178,12 @@ sub autosplit_lib_modules{
 	    $_ = catfile($1, $2);
 	}
 	s|\\|/|g;		# bug in ksh OS/2
+	s#^lib/##s; # incase specified as lib/*.pm
 	my($lib) = catfile(curdir(), "lib");
-	s#^$lib\W+##s; # incase specified as lib/*.pm
+	if ($Is_VMS) { # may need to convert VMS-style filespecs
+	    $lib =~ s#^\[\]#.\/#;
+	}
+	s#^$lib\W+##s; # incase specified as ./lib/*.pm
 	if ($Is_VMS && /[:>\]]/) { # may need to convert VMS-style filespecs
 	    my ($dir,$name) = (/(.*])(.*)/s);
 	    $dir =~ s/.*lib[\.\]]//s;
@@ -249,6 +253,9 @@ sub autosplit_file {
     $def_package or die "Can't find 'package Name;' in $filename\n";
 
     my($modpname) = _modpname($def_package); 
+    if ($Is_VMS) {
+	$modpname = VMS::Filespec::unixify($modpname); # may have dirs
+    }
 
     # this _has_ to match so we have a reasonable timestamp file
     die "Package $def_package ($modpname.pm) does not ".
@@ -272,8 +279,8 @@ sub autosplit_file {
     print "AutoSplitting $filename ($modnamedir)\n"
 	if $Verbose;
 
-    unless (-d "$modnamedir"){
-	mkpath("$modnamedir",0,0777);
+    unless (-d $modnamedir){
+	mkpath($modnamedir,0,0777);
     }
 
     # We must try to deal with some SVR3 systems with a limit of 14
@@ -317,7 +324,7 @@ sub autosplit_file {
 	    my($lname, $sname) = ($subname, substr($subname,0,$maxflen-3));
 	    $modpname = _modpname($this_package);
     	    my($modnamedir) = catfile($autodir, $modpname);
-	    mkpath("$modnamedir",0,0777);
+	    mkpath($modnamedir,0,0777);
 	    my($lpath) = catfile($modnamedir, "$lname.al");
 	    my($spath) = catfile($modnamedir, "$sname.al");
 	    my $path;

@@ -20,7 +20,7 @@ unlink("a");
 if ($b eq "\000\000\000\000_") {
 	print "ok 1\n";
 } else { # Probably "\000bcd_"
-	printf "not ok 1 (%d:%s)\n", length($b), join '|', map ord, split //, $b;
+	print "not ok 1\n";
 }
 
 unlink 'a';
