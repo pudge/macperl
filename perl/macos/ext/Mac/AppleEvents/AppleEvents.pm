@@ -20,7 +20,7 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = 1.24;
+$VERSION = '1.25';
 
 =head2 Constants: AppleEvent Descriptor Types
 
@@ -155,63 +155,154 @@ No data.
 =cut
 
 BEGIN {
-sub typeBoolean					  () {	   "bool"; }
-sub typeChar					  () {	   "TEXT"; }
-sub typeSMInt					  () {	   "shor"; }
-sub typeInteger					  () {	   "long"; }
-sub typeSMFloat					  () {	   "sing"; }
-sub typeFloat					  () {	   "doub"; }
-sub typeLongInteger				  () {	   "long"; }
-sub typeShortInteger			  () {	   "shor"; }
-sub typeLongFloat				  () {	   "doub"; }
-sub typeShortFloat				  () {	   "sing"; }
-sub typeExtended				  () {	   "exte"; }
-sub typeComp					  () {	   "comp"; }
-sub typeMagnitude				  () {	   "magn"; }
-sub typeAEList					  () {	   "list"; }
-sub typeAERecord				  () {	   "reco"; }
-sub typeAppleEvent				  () {	   "aevt"; }
-sub typeTrue					  () {	   "true"; }
-sub typeFalse					  () {	   "fals"; }
-sub typeAlias					  () {	   "alis"; }
-sub typeEnumerated				  () {	   "enum"; }
-sub typeType					  () {	   "type"; }
-sub typeAppParameters			  () {	   "appa"; }
-sub typeProperty				  () {	   "prop"; }
-sub typeFSS						  () {	   "fss "; }
-sub typeKeyword					  () {	   "keyw"; }
-sub typeSectionH				  () {	   "sect"; }
-sub typeWildCard				  () {	   "****"; }
-sub typeApplSignature			  () {	   "sign"; }
-sub typeQDRectangle				  () {	   "qdrt"; }
-sub typeFixed					  () {	   "fixd"; }
-sub typeSessionID				  () {	   "ssid"; }
-sub typeTargetID				  () {	   "targ"; }
-sub typeProcessSerialNumber		  () {	   "psn "; }
-sub typeNull					  () {	   "null"; }
+sub typeBoolean					() { 'bool' }
+sub typeChar					() { 'TEXT' }
+sub typeSMInt					() { 'shor' }
+sub typeInteger					() { 'long' }
+sub typeSMFloat					() { 'sing' }
+sub typeFloat					() { 'doub' }
+sub typeLongInteger				() { 'long' }
+sub typeShortInteger				() { 'shor' }
+sub typeLongFloat				() { 'doub' }
+sub typeShortFloat				() { 'sing' }
+sub typeExtended				() { 'exte' }
+sub typeComp					() { 'comp' }
+sub typeMagnitude				() { 'magn' }
+sub typeAEList					() { 'list' }
+sub typeAERecord				() { 'reco' }
+sub typeAppleEvent				() { 'aevt' }
+sub typeTrue					() { 'true' }
+sub typeFalse					() { 'fals' }
+sub typeAlias					() { 'alis' }
+sub typeEnumerated				() { 'enum' }
+sub typeType					() { 'type' }
+sub typeAppParameters				() { 'appa' }
+sub typeProperty				() { 'prop' }
+sub typeFSS					() { 'fss ' }
+sub typeKeyword					() { 'keyw' }
+sub typeSectionH				() { 'sect' }
+sub typeWildCard				() { '****' }
+sub typeApplSignature				() { 'sign' }
+sub typeQDRectangle				() { 'qdrt' }
+sub typeFixed					() { 'fixd' }
+sub typeSessionID				() { 'ssid' }
+sub typeTargetID				() { 'targ' }
+sub typeProcessSerialNumber			() { 'psn ' }
+sub typeNull					() { 'null' }
+
+# registry
+sub typeAEText					() { 'tTXT' }
+sub typeArc					() { 'carc' }
+sub typeBest					() { 'best' }
+sub typeCell					() { 'ccel' }
+sub typeClassInfo				() { 'gcli' }
+sub typeColorTable				() { 'clrt' }
+sub typeColumn					() { 'ccol' }
+sub typeDashStyle				() { 'tdas' }
+sub typeData					() { 'tdta' }
+sub typeDrawingArea				() { 'cdrw' }
+sub typeElemInfo				() { 'elin' }
+sub typeEnumeration				() { 'enum' }
+sub typeEPS					() { 'EPS ' }
+sub typeEventInfo				() { 'evin' }
+sub typeFinderWindow				() { 'fwin' }
+sub typeFixedPoint				() { 'fpnt' }
+sub typeFixedRectangle				() { 'frct' }
+sub typeGraphicLine				() { 'glin' }
+sub typeGraphicText				() { 'cgtx' }
+sub typeGroupedGraphic				() { 'cpic' }
+sub typeInsertionLoc				() { 'insl' }
+sub typeIntlText				() { 'itxt' }
+sub typeIntlWritingCode				() { 'intl' }
+sub typeLongDateTime				() { 'ldt ' }
+sub typeISO8601DateTime				() { 'isot' }
+sub typeLongFixed				() { 'lfxd' }
+sub typeLongFixedPoint				() { 'lfpt' }
+sub typeLongFixedRectangle			() { 'lfrc' }
+sub typeLongPoint				() { 'lpnt' }
+sub typeLongRectangle				() { 'lrct' }
+sub typeMachineLoc				() { 'mLoc' }
+sub typeOval					() { 'covl' }
+sub typeParamInfo				() { 'pmin' }
+sub typePict					() { 'PICT' }
+sub typePixelMap				() { 'cpix' }
+sub typePixMapMinus				() { 'tpmm' }
+sub typePolygon					() { 'cpgn' }
+sub typePropInfo				() { 'pinf' }
+sub typePtr					() { 'ptr ' }
+sub typeQDPoint					() { 'QDpt' }
+sub typeQDRegion				() { 'Qrgn' }
+sub typeRectangle				() { 'crec' }
+sub typeRGB16					() { 'tr16' }
+sub typeRGB96					() { 'tr96' }
+sub typeRGBColor				() { 'cRGB' }
+sub typeRotation				() { 'trot' }
+sub typeRoundedRectangle			() { 'crrc' }
+sub typeRow					() { 'crow' }
+sub typeScrapStyles				() { 'styl' }
+sub typeScript					() { 'scpt' }
+sub typeStyledText				() { 'STXT' }
+sub typeSuiteInfo				() { 'suin' }
+sub typeTable					() { 'ctbl' }
+sub typeTextStyles				() { 'tsty' }
+sub typeTIFF					() { 'TIFF' }
+sub typeVersion					() { 'vers' }
+sub typeUnicodeText				() { 'utxt' }
+sub typeStyledUnicodeText			() { 'sutx' }
+sub typeUTF8Text				() { 'utf8' }
+sub typeEncodedString				() { 'encs' }
+sub typeCString					() { 'cstr' }
+sub typePString					() { 'pstr' }
+sub typeMeters					() { 'metr' }
+sub typeInches					() { 'inch' }
+sub typeFeet					() { 'feet' }
+sub typeYards					() { 'yard' }
+sub typeMiles					() { 'mile' }
+sub typeKilometers				() { 'kmtr' }
+sub typeCentimeters				() { 'cmtr' }
+sub typeSquareMeters				() { 'sqrm' }
+sub typeSquareFeet				() { 'sqft' }
+sub typeSquareYards				() { 'sqyd' }
+sub typeSquareMiles				() { 'sqmi' }
+sub typeSquareKilometers			() { 'sqkm' }
+sub typeLiters					() { 'litr' }
+sub typeQuarts					() { 'qrts' }
+sub typeGallons					() { 'galn' }
+sub typeCubicMeters				() { 'cmet' }
+sub typeCubicFeet				() { 'cfet' }
+sub typeCubicInches				() { 'cuin' }
+sub typeCubicCentimeter				() { 'ccmt' }
+sub typeCubicYards				() { 'cyrd' }
+sub typeKilograms				() { 'kgrm' }
+sub typeGrams					() { 'gram' }
+sub typeOunces					() { 'ozs ' }
+sub typePounds					() { 'lbs ' }
+sub typeDegreesC				() { 'degc' }
+sub typeDegreesF				() { 'degf' }
+sub typeDegreesK				() { 'degk' }
 
 
-# new for Mac OS X ... document and arrange later
-# there's more, stuff for SOAP, that we may include later
-sub typeSInt16					  () {	   "shor"; }
-sub typeSInt32					  () {	   "long"; }
-sub typeUInt32					  () {	   "magn"; }
-sub typeSInt64					  () {	   "comp"; }
-sub typeIEEE32BitFloatingPoint	  () {	   "sing"; }
-sub typeIEEE64BitFloatingPoint	  () {	   "doub"; }
-sub type128BitFloatingPoint		  () {	   "ldbl"; }
-sub typeDecimalStruct			  () {	   "decm"; }
+# new ... document and arrange later
+# there's more, incl. stuff for SOAP, that we may include later
+sub typeSInt16					() { 'shor' }
+sub typeSInt32					() { 'long' }
+sub typeUInt32					() { 'magn' }
+sub typeSInt64					() { 'comp' }
+sub typeIEEE32BitFloatingPoint			() { 'sing' }
+sub typeIEEE64BitFloatingPoint			() { 'doub' }
+sub type128BitFloatingPoint			() { 'ldbl' }
+sub typeDecimalStruct				() { 'decm' }
 
-sub typeFSRef					  () {	   "fsrf"; }
-sub typeFileURL					  () {	   "furl"; }
-sub typeApplicationURL			  () {	   "aurl"; }
+sub typeFSRef					() { 'fsrf' }
+sub typeFileURL					() { 'furl' }
+sub typeApplicationURL				() { 'aurl' }
 
-sub kAEShowPreferences			  () {	   "pref"; }
+sub kAEShowPreferences				() { 'pref' }
 
-sub typeKernelProcessID			  () {	   "kpid"; }
-sub typeMachPort				  () {	   "port"; }
+sub typeKernelProcessID				() { 'kpid' }
+sub typeMachPort				() { 'port' }
 
-sub keyAcceptTimeoutAttr		  () {	   "actm"; }
+sub keyAcceptTimeoutAttr			() { 'actm' }
 
 
 
@@ -299,25 +390,25 @@ AppleEvent Manager version.
 =back
 
 =cut
-sub keyDirectObject				  () {	   "----"; }
-sub keyErrorNumber				  () {	   "errn"; }
-sub keyErrorString				  () {	   "errs"; }
-sub keyProcessSerialNumber		  () {	   "psn "; }
-sub keyTransactionIDAttr		  () {	   "tran"; }
-sub keyReturnIDAttr				  () {	   "rtid"; }
-sub keyEventClassAttr			  () {	   "evcl"; }
-sub keyEventIDAttr				  () {	   "evid"; }
-sub keyAddressAttr				  () {	   "addr"; }
-sub keyOptionalKeywordAttr		  () {	   "optk"; }
-sub keyTimeoutAttr				  () {	   "timo"; }
-sub keyInteractLevelAttr		  () {	   "inte"; }
-sub keyEventSourceAttr			  () {	   "esrc"; }
-sub keyMissedKeywordAttr		  () {	   "miss"; }
-sub keyOriginalAddressAttr		  () {	   "from"; }
-sub keyPreDispatch				  () {	   "phac"; }
-sub keySelectProc				  () {	   "selh"; }
-sub keyAERecorderCount			  () {	   "recr"; }
-sub keyAEVersion				  () {	   "vers"; }
+sub keyDirectObject				() { '----' }
+sub keyErrorNumber				() { 'errn' }
+sub keyErrorString				() { 'errs' }
+sub keyProcessSerialNumber			() { 'psn ' }
+sub keyTransactionIDAttr			() { 'tran' }
+sub keyReturnIDAttr				() { 'rtid' }
+sub keyEventClassAttr				() { 'evcl' }
+sub keyEventIDAttr				() { 'evid' }
+sub keyAddressAttr				() { 'addr' }
+sub keyOptionalKeywordAttr			() { 'optk' }
+sub keyTimeoutAttr				() { 'timo' }
+sub keyInteractLevelAttr			() { 'inte' }
+sub keyEventSourceAttr				() { 'esrc' }
+sub keyMissedKeywordAttr			() { 'miss' }
+sub keyOriginalAddressAttr			() { 'from' }
+sub keyPreDispatch				() { 'phac' }
+sub keySelectProc				() { 'selh' }
+sub keyAERecorderCount				() { 'recr' }
+sub keyAEVersion				() { 'vers' }
 
 =head2 Constants: Core AppleEvent Suite
 
@@ -354,13 +445,13 @@ Launched application has ended.
 =back
 
 =cut
-sub kCoreEventClass				  () {	   "aevt"; }
-sub kAEOpenApplication			  () {	   "oapp"; }
-sub kAEOpenDocuments			  () {	   "odoc"; }
-sub kAEPrintDocuments			  () {	   "pdoc"; }
-sub kAEQuitApplication			  () {	   "quit"; }
-sub kAEAnswer					  () {	   "ansr"; }
-sub kAEApplicationDied			  () {	   "obit"; }
+sub kCoreEventClass				() { 'aevt' }
+sub kAEOpenApplication				() { 'oapp' }
+sub kAEOpenDocuments				() { 'odoc' }
+sub kAEPrintDocuments				() { 'pdoc' }
+sub kAEQuitApplication				() { 'quit' }
+sub kAEAnswer					() { 'ansr' }
+sub kAEApplicationDied				() { 'obit' }
 
 =head2 Constants: Miscellaneous
 
@@ -397,20 +488,20 @@ sub kAEApplicationDied			  () {	   "obit"; }
 AppleEvent sendMode flags.
 
 =cut
-sub kAENoReply					  () { 0x00000001; }
-sub kAEQueueReply				  () { 0x00000002; }
-sub kAEWaitReply				  () { 0x00000003; }
-sub kAENeverInteract			  () { 0x00000010; }
-sub kAECanInteract				  () { 0x00000020; }
-sub kAEAlwaysInteract			  () { 0x00000030; }
-sub kAECanSwitchLayer			  () { 0x00000040; }
-sub kAEDontReconnect			  () { 0x00000080; }
-sub kAEWantReceipt				  () { 0x00000200; }
-sub kAEDontRecord				  () { 0x00001000; }
-sub kAEDontExecute				  () { 0x00002000; }
-sub kAEInteractWithSelf			  () {			0; }
-sub kAEInteractWithLocal		  () {			1; }
-sub kAEInteractWithAll			  () {			2; }
+sub kAENoReply					() { 0x00000001 }
+sub kAEQueueReply				() { 0x00000002 }
+sub kAEWaitReply				() { 0x00000003 }
+sub kAENeverInteract				() { 0x00000010 }
+sub kAECanInteract				() { 0x00000020 }
+sub kAEAlwaysInteract				() { 0x00000030 }
+sub kAECanSwitchLayer				() { 0x00000040 }
+sub kAEDontReconnect				() { 0x00000080 }
+sub kAEWantReceipt				() { 0x00000200 }
+sub kAEDontRecord				() { 0x00001000 }
+sub kAEDontExecute				() { 0x00002000 }
+sub kAEInteractWithSelf				() { 0 }
+sub kAEInteractWithLocal			() { 1 }
+sub kAEInteractWithAll				() { 2 }
 
 =item  kAENormalPriority 
 
@@ -419,8 +510,8 @@ sub kAEInteractWithAll			  () {			2; }
 AppleEvent priority values.
 
 =cut
-sub kAENormalPriority			  () { 0x00000000; }
-sub kAEHighPriority				  () { 0x00000001; }
+sub kAENormalPriority				() { 0x00000000 }
+sub kAEHighPriority				() { 0x00000001 }
 
 =item  kAEStartRecording 
 
@@ -435,11 +526,11 @@ sub kAEHighPriority				  () { 0x00000001; }
 Recording events.
 
 =cut
-sub kAEStartRecording			  () {	   "reca"; }
-sub kAEStopRecording			  () {	   "recc"; }
-sub kAENotifyStartRecording		  () {	   "rec1"; }
-sub kAENotifyStopRecording		  () {	   "rec0"; }
-sub kAENotifyRecording			  () {	   "recr"; }
+sub kAEStartRecording				() { 'reca' }
+sub kAEStopRecording				() { 'recc' }
+sub kAENotifyStartRecording			() { 'rec1' }
+sub kAENotifyStopRecording			() { 'rec0' }
+sub kAENotifyRecording				() { 'recr' }
 
 =item  kAutoGenerateReturnID 
 
@@ -452,10 +543,10 @@ sub kAENotifyRecording			  () {	   "recr"; }
 Special values for return ID, transaction ID, and timeout.
 
 =cut
-sub kAutoGenerateReturnID		  () {		   -1; }
-sub kAnyTransactionID			  () {			0; }
-sub kAEDefaultTimeout			  () {		   -1; }
-sub kNoTimeOut					  () {		   -2; }
+sub kAutoGenerateReturnID			() { -1 }
+sub kAnyTransactionID				() {  0 }
+sub kAEDefaultTimeout				() { -1 }
+sub kNoTimeOut					() { -2 }
 
 =item  kAENoDispatch 
 
@@ -480,90 +571,89 @@ Options for C<AEResumeTheCurrentEvent()>.
 =back
 
 =cut
-sub kAENoDispatch				  () {			0; }
-sub kAEUseStandardDispatch		  () { 0xFFFFFFFF; }
-sub kAEDoNotIgnoreHandler		  () { 0x00000000; }
-sub kAEIgnoreAppPhacHandler		  () { 0x00000001; }
-sub kAEIgnoreAppEventHandler	  () { 0x00000002; }
-sub kAEIgnoreSysPhacHandler		  () { 0x00000004; }
-sub kAEIgnoreSysEventHandler	  () { 0x00000008; }
-sub kAEIngoreBuiltInEventHandler  () { 0x00000010; }
-sub kAEDontDisposeOnResume		  () { 0x80000000; }
+sub kAENoDispatch				() { 0 }
+sub kAEUseStandardDispatch			() { 0xFFFFFFFF }
+sub kAEDoNotIgnoreHandler			() { 0x00000000 }
+sub kAEIgnoreAppPhacHandler			() { 0x00000001 }
+sub kAEIgnoreAppEventHandler			() { 0x00000002 }
+sub kAEIgnoreSysPhacHandler			() { 0x00000004 }
+sub kAEIgnoreSysEventHandler			() { 0x00000008 }
+sub kAEIngoreBuiltInEventHandler		() { 0x00000010 }
+sub kAEDontDisposeOnResume			() { 0x80000000 }
 
-sub kAEUnknownSource			  () {			0; }
-sub kAEDirectCall				  () {			1; }
-sub kAESameProcess				  () {			2; }
-sub kAELocalProcess				  () {			3; }
-sub kAERemoteProcess			  () {			4; }
-sub kAEDataArray				  () {			0; }
-sub kAEPackedArray				  () {			1; }
-sub kAEHandleArray				  () {			2; }
-sub kAEDescArray				  () {			3; }
-sub kAEKeyDescArray				  () {			4; }
+sub kAEUnknownSource				() { 0 }
+sub kAEDirectCall				() { 1 }
+sub kAESameProcess				() { 2 }
+sub kAELocalProcess				() { 3 }
+sub kAERemoteProcess				() { 4 }
+sub kAEDataArray				() { 0 }
+sub kAEPackedArray				() { 1 }
+sub kAEHandleArray				() { 2 }
+sub kAEDescArray				() { 3 }
+sub kAEKeyDescArray				() { 4 }
 
 
 # more more more!
 
-sub kAEAND						  () {	   'AND '; }
-sub kAEOR						  () {	   'OR	'; }
-sub kAENOT						  () {	   'NOT '; }
+sub kAEAND					() { 'AND ' }
+sub kAEOR					() { 'OR  ' }
+sub kAENOT					() { 'NOT ' }
 
-sub kAEFirst					  () {	   'firs'; }
-sub kAEMiddle					  () {	   'midd'; }
-sub kAELast						  () {	   'last'; }
-sub kAEAny						  () {	   'any '; }
-sub kAEAll						  () {	   'all '; }
+sub kAEFirst					() { 'firs' }
+sub kAEMiddle					() { 'midd' }
+sub kAELast					() { 'last' }
+sub kAEAny					() { 'any ' }
+sub kAEAll					() { 'all ' }
 
-sub kAENext						  () {	   'next'; }
-sub kAEPrevious					  () {	   'prev'; }
+sub kAENext					() { 'next' }
+sub kAEPrevious					() { 'prev' }
 
-sub keyAEDesiredClass			  () {	   'want'; }
-sub keyAEContainer				  () {	   'from'; }
-sub keyAEForm					  () {	   'form'; }
-sub keyAEKeyData				  () {	   'seld'; }
+sub keyAEDesiredClass				() { 'want' }
+sub keyAEContainer				() { 'from' }
+sub keyAEForm					() { 'form' }
+sub keyAEKeyData				() { 'seld' }
 
-sub keyAERangeStart				  () {	   'star'; }
-sub keyAERangeStop				  () {	   'stop'; }
+sub keyAERangeStart				() { 'star' }
+sub keyAERangeStop				() { 'stop' }
 
-sub keyAEObject                   () {     'kobj'; }
-sub keyAEPosition                 () {     'kpos'; }
-sub kAEBefore                     () {     'befo'; }
-sub kAEAfter                      () {     'afte'; }
-sub kAEBeginning                  () {     'bgng'; }
-sub kAEEnd                        () {     'end '; }
+sub keyAEObject                 		() { 'kobj' }
+sub keyAEPosition               		() { 'kpos' }
+sub kAEBefore                   		() { 'befo' }
+sub kAEAfter                    		() { 'afte' }
+sub kAEBeginning                		() { 'bgng' }
+sub kAEEnd                      		() { 'end ' }
 
-sub formAbsolutePosition		  () {	   'indx'; }
-sub formRelativePosition		  () {	   'rele'; }
-sub formTest					  () {	   'test'; }
-sub formRange					  () {	   'rang'; }
-sub formPropertyID				  () {	   'prop'; }
-sub formName					  () {	   'name'; }
+sub formAbsolutePosition			() { 'indx' }
+sub formRelativePosition			() { 'rele' }
+sub formTest					() { 'test' }
+sub formRange					() { 'rang' }
+sub formPropertyID				() { 'prop' }
+sub formName					() { 'name' }
+sub formUniqueID				() { 'ID  ' }
 
-sub typeObjectSpecifier			  () {	   'obj '; }
-sub typeObjectBeingExamined		  () {	   'exmn'; }
-sub typeCurrentContainer		  () {	   'ccnt'; }
-sub typeToken					  () {	   'toke'; }
-sub typeAbsoluteOrdinal			  () {	   'abso'; }
-sub typeRangeDescriptor			  () {	   'rang'; }
-sub typeLogicalDescriptor		  () {	   'logi'; }
-sub typeCompDescriptor			  () {	   'cmpd'; }
+sub typeObjectSpecifier				() { 'obj ' }
+sub typeObjectBeingExamined			() { 'exmn' }
+sub typeCurrentContainer			() { 'ccnt' }
+sub typeToken					() { 'toke' }
+sub typeAbsoluteOrdinal				() { 'abso' }
+sub typeRangeDescriptor				() { 'rang' }
+sub typeLogicalDescriptor			() { 'logi' }
+sub typeCompDescriptor				() { 'cmpd' }
 
-sub keyAECompOperator			  () {	   'relo'; }
-sub keyAELogicalTerms			  () {	   'term'; }
-sub keyAELogicalOperator		  () {	   'logc'; }
-sub keyAEObject1    			  () {	   'obj1'; }
-sub keyAEObject2    			  () {	   'obj2'; }
+sub keyAECompOperator				() { 'relo' }
+sub keyAELogicalTerms				() { 'term' }
+sub keyAELogicalOperator			() { 'logc' }
+sub keyAEObject1    				() { 'obj1' }
+sub keyAEObject2    				() { 'obj2' }
 
-sub typeInsertionLoc              () {     'insl'; }
-
-sub kAEGreaterThan                () {     '>   '; }
-sub kAEGreaterThanEquals          () {     '>=  '; }
-sub kAEEquals                     () {     '=   '; }
-sub kAELessThan                   () {     '<   '; }
-sub kAELessThanEquals             () {     '<=  '; }
-sub kAEBeginsWith                 () {     'bgwt'; }
-sub kAEEndsWith                   () {     'ends'; }
-sub kAEContains                   () {     'cont'; }
+sub kAEGreaterThan              		() { '>   ' }
+sub kAEGreaterThanEquals        		() { '>=  ' }
+sub kAEEquals                   		() { '=   ' }
+sub kAELessThan                 		() { '<   ' }
+sub kAELessThanEquals           		() { '<=  ' }
+sub kAEBeginsWith               		() { 'bgwt' }
+sub kAEEndsWith                 		() { 'ends' }
+sub kAEContains                 		() { 'cont' }
 
 }
 
@@ -654,6 +744,118 @@ BEGIN {
 		typeTargetID
 		typeProcessSerialNumber
 		typeNull
+
+		typeAEText
+		typeArc
+		typeBest
+		typeCell
+		typeClassInfo
+		typeColorTable
+		typeColumn
+		typeDashStyle
+		typeData
+		typeDrawingArea
+		typeElemInfo
+		typeEnumeration
+		typeEPS
+		typeEventInfo
+		typeFinderWindow
+		typeFixedPoint
+		typeFixedRectangle
+		typeGraphicLine
+		typeGraphicText
+		typeGroupedGraphic
+		typeInsertionLoc
+		typeIntlText
+		typeIntlWritingCode
+		typeLongDateTime
+		typeISO8601DateTime
+		typeLongFixed
+		typeLongFixedPoint
+		typeLongFixedRectangle
+		typeLongPoint
+		typeLongRectangle
+		typeMachineLoc
+		typeOval
+		typeParamInfo
+		typePict
+		typePixelMap
+		typePixMapMinus
+		typePolygon
+		typePropInfo
+		typePtr
+		typeQDPoint
+		typeQDRegion
+		typeRectangle
+		typeRGB16
+		typeRGB96
+		typeRGBColor
+		typeRotation
+		typeRoundedRectangle
+		typeRow
+		typeScrapStyles
+		typeScript
+		typeStyledText
+		typeSuiteInfo
+		typeTable
+		typeTextStyles
+		typeTIFF
+		typeVersion
+		typeUnicodeText
+		typeStyledUnicodeText
+		typeUTF8Text
+		typeEncodedString
+		typeCString
+		typePString
+		typeMeters
+		typeInches
+		typeFeet
+		typeYards
+		typeMiles
+		typeKilometers
+		typeCentimeters
+		typeSquareMeters
+		typeSquareFeet
+		typeSquareYards
+		typeSquareMiles
+		typeSquareKilometers
+		typeLiters
+		typeQuarts
+		typeGallons
+		typeCubicMeters
+		typeCubicFeet
+		typeCubicInches
+		typeCubicCentimeter
+		typeCubicYards
+		typeKilograms
+		typeGrams
+		typeOunces
+		typePounds
+		typeDegreesC
+		typeDegreesF
+		typeDegreesK
+
+		typeSInt16
+		typeSInt32
+		typeUInt32
+		typeSInt64
+		typeIEEE32BitFloatingPoint
+		typeIEEE64BitFloatingPoint
+		type128BitFloatingPoint
+		typeDecimalStruct
+
+		typeFSRef
+		typeFileURL
+		typeApplicationURL
+
+		kAEShowPreferences
+
+		typeKernelProcessID
+		typeMachPort
+
+		keyAcceptTimeoutAttr
+
+
 		keyDirectObject
 		keyErrorNumber
 		keyErrorString
@@ -750,13 +952,13 @@ BEGIN {
 		keyAERangeStart
 		keyAERangeStop
 
-        keyAEObject
-        keyAEPosition
-        kAEBefore
-        kAEAfter
-        kAEBeginning
-        kAEEnd
-        kAEReplace
+		keyAEObject
+		keyAEPosition
+		kAEBefore
+		kAEAfter
+		kAEBeginning
+		kAEEnd
+		kAEReplace
 
 		formAbsolutePosition
 		formRelativePosition
@@ -764,6 +966,7 @@ BEGIN {
 		formRange
 		formPropertyID
 		formName
+		formUniqueID
 
 		typeObjectSpecifier
 		typeObjectBeingExamined
@@ -774,22 +977,20 @@ BEGIN {
 		typeLogicalDescriptor
 		typeCompDescriptor
 
-        keyAECompOperator
-        keyAELogicalTerms
-        keyAELogicalOperator
-        keyAEObject1
-        keyAEObject2
+		keyAECompOperator
+		keyAELogicalTerms
+		keyAELogicalOperator
+		keyAEObject1
+		keyAEObject2
 
-        typeInsertionLoc
-
-        kAEGreaterThan
-        kAEGreaterThanEquals
-        kAEEquals
-        kAELessThan
-        kAELessThanEquals
-        kAEBeginsWith
-        kAEEndsWith
-        kAEContains
+		kAEGreaterThan
+		kAEGreaterThanEquals
+		kAEEquals
+		kAELessThan
+		kAELessThanEquals
+		kAEBeginsWith
+		kAEEndsWith
+		kAEContains
 	);
 }
 
