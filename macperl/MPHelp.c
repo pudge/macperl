@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C
 
 $Log$
+Revision 1.3  2002/01/23 21:56:53  pudge
+Don't crash if very long word selected for help (bug #506672)
+
 Revision 1.2  2002/01/04 03:34:45  pudge
 Modifications for universal headers 3.4
 
@@ -351,6 +354,8 @@ symbolic_variable:
 	}
 }	
 
+char * gHex = "0123456789ABCDEF";
+
 void LaunchHelpURL(char * urlPtr, int urlLen)
 {
 	int		len;
@@ -379,36 +384,32 @@ void LaunchHelpURL(char * urlPtr, int urlLen)
 		urlPtr += strlen(urlPtr)+1;
 		urlPtr[-1] = ':';
 		urlPath	= url+strlen(url);
-		for (path = GUSIFSp2FullPath(&here); *path; path++)
-			switch (*path) {
-			case ':':	/* Translate directory separators */
+		for (path = GUSIFSp2FullPath(&here); *path; path++) {
+			if (*path == ':') {
 				*urlPath++ = '/';
-				break;
-			case '<':	/* Encode dangerous characters */
-			case '>':	
-			case '+':
-			case '\"':
-			case '*':
-			case '%':
-			case '&':
-			case '/':
-			case '(':
-			case ')':
-			case '=':
-			case '?':
-			case '\'':
-			case '`':
-			case '^':
-			case '$':
-			case '#':
-			case ' ':
-				sprintf(urlPath, "%%%02X", *path);
-				urlPath += 3;
-				break;
-			default:
-				*urlPath++ = *path;
-				break;
 			}
+			// encode everything *except* unreserved chars,
+			// see RFC 2396
+			else if (isalnum(*path) || // A-Z a-z 0-9
+				*path == '-' ||
+				*path == '_' ||
+				*path == '.' ||
+				*path == '!' ||
+				*path == '~' ||
+				*path == '*' ||
+				*path == '\'' ||
+				*path == '(' ||
+				*path == ')' ||
+				*path == '/') { // '/' is because this is a Mac!
+				*urlPath++ = *path;
+			}
+			else {
+				*urlPath++ = '%';
+				*urlPath++ = gHex[(*path >> 4) & 15];
+				*urlPath++ = gHex[*path & 15];
+			}
+		}
+
 		if (urlPath[-1] != '/')
 			*urlPath++ = '/';
 		memcpy(urlPath, urlPtr, urlLen);
