@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2002/12/17 16:18:37  pudge
+ * Use new constant
+ *
  * Revision 1.5  2002/12/12 15:36:26  pudge
  * Make work with gcc2
  *
@@ -65,11 +68,14 @@ typedef Ptr	PtrRet;
 /* $! and $^E will both be set together, which is fine (for now?) */
 #define gMacPerl_OSErr (short)errno
 
+// keyReplyPortAttr is not found on some Mac OS X versions ...
+// so define our own.  nyah nyah.
+#define keyPerlReplyPortAttr 'repp'
+
 /* c string to pascal string */
 static StringPtr MacPerl_CopyC2P(const char * c, StringPtr p)
 {
 	memcpy(p+1, c, *p = strlen(c));
-	
 	return p;
 }
 
@@ -132,11 +138,55 @@ static UInt32 SecondsUnix2Mac(UInt32 unixseconds)
  *
  *   * Better error handling for odd cases
  *   * Alias resolving?  Is that even necessary?
- *   * Using FSRef routines apparently means it is harder to allow
- *     use of filenames that don't exist ... do we care?  Maybe for FindFolder() ...
+ *   * Can only handle 31 characters ... yes, that sucks
  *   * Probably bugs to fix ...
  *
  */
+
+
+/* This returns an FSSpec of the directory enclosing the given FSSpec */
+static OSErr GUSIFSpUp(FSSpec * spec)
+{
+	if (spec->parID == fsRtParID) {
+		spec->vRefNum = 666;
+		spec->parID   = 0;
+		spec->name[0] = 0;
+	} else {
+		if (1) { // CatInfo(-1)
+			gMacPerl_OSErr = FSMakeFSSpec(
+				spec->vRefNum, spec->parID, NULL, spec
+			);
+		}
+	}
+
+	return gMacPerl_OSErr;
+}
+
+/* This returns an FSSpec of the named file in the directory in the given FSSpec */
+static OSErr GUSIFSpDown(FSSpec * spec, ConstStr31Param name)
+{
+	CInfoPBRec *	pb      = malloc(sizeof(CInfoPBRec));
+	UInt8 *		path    = malloc(2*PATH_MAX); // to be safe
+
+	pb->dirInfo.ioVRefNum   = spec->vRefNum;
+	pb->dirInfo.ioDrDirID   = spec->parID;
+	pb->dirInfo.ioNamePtr   = spec->name;
+	pb->dirInfo.ioFDirIndex = 0;
+
+	gMacPerl_OSErr = PBGetCatInfoSync(pb);
+
+	if (!gMacPerl_OSErr) {
+		MacPerl_CopyC2P(name, path);
+		gMacPerl_OSErr = FSMakeFSSpec(
+			pb->dirInfo.ioVRefNum, pb->dirInfo.ioDrDirID, path, spec
+		);
+	}
+
+	free(pb);
+	free(path);
+
+	return gMacPerl_OSErr;
+}
 
 
 /* Returns full POSIX-style path from FSSpec */
@@ -144,16 +194,43 @@ static UInt32 SecondsUnix2Mac(UInt32 unixseconds)
 static char * GUSIFSp2FullPath(const FSSpec * spec)
 {
 	FSRef		ref;
-	UInt8 *		path     = (UInt8 *)NewPtr(2*PATH_MAX); // to be safe
+	char *		name     = malloc(255);
+	UInt8 *		path     = malloc(2*PATH_MAX); // to be safe
 	UInt32		pathSize = 2*PATH_MAX;
 
-	// File doesn't exist, big problem
-	if ( (gMacPerl_OSErr = FSpMakeFSRef(spec, &ref)) ) { // && (gMacPerl_OSErr != fnfErr) )
-		return "";
+	// If file doesn't exist, see if dir does
+	*name = 0;
+	if ( (gMacPerl_OSErr = FSpMakeFSRef(spec, &ref)) && (gMacPerl_OSErr == fnfErr) ) {
+		FSSpec *	spec2 = malloc(sizeof(FSSpec));
+
+		spec2->vRefNum = spec->vRefNum;
+		spec2->parID   = spec->parID;
+		spec2->name[0] = 0;
+
+		if ( gMacPerl_OSErr = GUSIFSpUp(spec2) ) {
+			free(name);
+			free(spec2);
+			return "";
+		}
+
+		if ( gMacPerl_OSErr = FSpMakeFSRef(spec2, &ref) ) {
+			free(name);
+			free(spec2);
+			return "";
+		} else {
+			strncpy(name, spec->name+1, *spec->name);
+			name[*spec->name] = 0;
+			free(spec2);
+		}
 	}
 
-	if (gMacPerl_OSErr = FSRefMakePath(&ref, path, pathSize))
-		return "";
+	if (gMacPerl_OSErr = FSRefMakePath(&ref, path, pathSize)) {
+		path = "";
+	} else if (*name != 0) {
+		sprintf(path, "%s/%s", path, name);
+	}
+
+	free(name);
 
 	return (char *)path;
 }
@@ -163,6 +240,7 @@ static char * GUSIFSp2FullPath(const FSSpec * spec)
 static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 {
 	FSRef		ref;
+	char *		name = malloc(255);
 
 	// convert from GUSI-style FSSpec encoding (see GUSIFSp2Encoding)
 	if (*fileName == '\021' && fileName[13] == ':') {
@@ -184,61 +262,74 @@ static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 
  		switch (gMacPerl_OSErr = FSMakeFSSpec(spec->vRefNum, spec->parID, path, spec)) {
 		 	case fnfErr: // It is OK if file does not exist
+		 		free(name);
 				gMacPerl_OSErr = noErr;
  		 		return gMacPerl_OSErr;
 			default:
+		 		free(name);
 				return gMacPerl_OSErr;
 		}
 	}
 
-	// File doesn't exist, big problem
-	if (gMacPerl_OSErr = FSPathMakeRef((UInt8 *)fileName, &ref, NULL))
-		return gMacPerl_OSErr;
+	// If file doesn't exist, see if dir does
+	*name = 0;
+	if ( (gMacPerl_OSErr = FSPathMakeRef((UInt8 *)fileName, &ref, NULL)) && (gMacPerl_OSErr == fnfErr) ) {
+		char * fileNameCpy	= malloc(strlen(fileName));
+
+		strcpy(fileNameCpy, fileName);
+
+		if ( !(name = rindex(fileNameCpy, '/')) ) {
+			sprintf(fileNameCpy, "./%s", fileName);
+			name = rindex(fileNameCpy, '/');
+
+		} else if ( name && *name != 0 && name[1] == 0 ) {
+			fileNameCpy[name - fileNameCpy] = 0;
+			if (! (name = rindex(fileNameCpy, '/')) ) {
+				char * fileNameCpy2	= malloc(strlen(fileName));
+
+				strcpy(fileNameCpy2, fileNameCpy);
+				sprintf(fileNameCpy, "./%s", fileNameCpy2);
+				name = rindex(fileNameCpy, '/');
+
+				free(fileNameCpy2);
+			}
+		}
+
+		if ( name && *name != 0 ) {
+			char * dir		= malloc(PATH_MAX);
+
+			strncpy(dir, fileNameCpy, (name - fileNameCpy));
+			dir[name - fileNameCpy] = 0;
+			name++;
+			gMacPerl_OSErr = FSPathMakeRef((UInt8 *)dir, &ref, NULL);
+			free(dir);
+			free(fileNameCpy);
+			if (gMacPerl_OSErr) {
+		 		free(name);
+				return gMacPerl_OSErr;
+			}
+		}
+		free(fileNameCpy);
+	}
 
 	// get FSSpec
 	gMacPerl_OSErr = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, NULL, spec, NULL);
+	if ( !gMacPerl_OSErr && *name != 0 )
+		gMacPerl_OSErr = GUSIFSpDown(spec, name);
+
 	return gMacPerl_OSErr;
 }
 
 /* This returns the GUSI-specific text representation of an FSSpec */
 static char * GUSIFSp2Encoding(const FSSpec * spec)
 {
-	char * realSpec = NewPtr(255);
+	char * realSpec = malloc(255);
 	char fmt[32];
 
 	sprintf(fmt, "\021%%04hX%%08X:%%%d.%ds", *spec->name, *spec->name);
 	sprintf(realSpec, fmt, spec->vRefNum, spec->parID, spec->name+1);
 
 	return realSpec;
-}
-
-/* This returns an FSSpec of the directory enclosing the given FSSpec */
-static OSErr GUSIFSpUp(FSSpec * spec)
-{
-	if (spec->parID == fsRtParID) {
-		spec->vRefNum = 666;
-		spec->parID   = 0;
-		spec->name[0] = 0;
-	} else {
-		if (1) { // CatInfo(-1)
-			gMacPerl_OSErr = FSMakeFSSpec(
-				spec->vRefNum, spec->parID, NULL, spec
-			);
-		}
-	}
-
-	return gMacPerl_OSErr;
-}
-
-/* This returns an FSSpec of the named file in the directory in the given FSSpec */
-/* untested!! */
-static OSErr GUSIFSpDown(FSSpec * spec, ConstStr31Param name)
-{
-	gMacPerl_OSErr = FSMakeFSSpec(
-		spec->vRefNum, spec->parID, name, spec
-	);
-
-	return gMacPerl_OSErr;
 }
 
 /* Finds special folders */
@@ -255,7 +346,7 @@ static OSErr GUSISpecial2FSp(OSType object, short vol, FSSpec * desc)
 static void fsetfileinfo(char * path, OSType creator, OSType type)
 {
 	FInfo info;
-	FSSpec * spec = (FSSpec *)NewPtr(sizeof(FSSpec));
+	FSSpec * spec = malloc(sizeof(FSSpec));
 
 	if ((gMacPerl_OSErr = GUSIPath2FSp(path, spec)) == 0) {
 		if ((gMacPerl_OSErr = FSpGetFInfo(spec, &info)) == 0) {
@@ -266,13 +357,14 @@ static void fsetfileinfo(char * path, OSType creator, OSType type)
 			gMacPerl_OSErr = FSpSetFInfo(spec, &info);
 		}
 	}
-	DisposePtr((char *)spec);
+
+	free(spec);
 }
 
 static void fgetfileinfo(char * path, OSType * creator, OSType * type)
 {
 	FInfo info;
-	FSSpec * spec = (FSSpec *)NewPtr(sizeof(FSSpec));
+	FSSpec * spec = malloc(sizeof(FSSpec));
 
 	if ((gMacPerl_OSErr = GUSIPath2FSp(path, spec)) == 0) {
 		if ((gMacPerl_OSErr = FSpGetFInfo(spec, &info)) == 0) {
@@ -282,33 +374,9 @@ static void fgetfileinfo(char * path, OSType * creator, OSType * type)
 				*type    = info.fdType;
 		}
 	}
-	DisposePtr((char *)spec);
+
+	free(spec);
 }
-
-// keyReplyPortAttr is not found on some Mac OS X versions ...
-// so define our own.  nyah nyah.
-#define keyPerlReplyPortAttr 'repp'
-
-/* Maybe we'll have use for this again? *
-* 
-* static pascal Boolean SubLaunchIdle(EventRecord * ev, long * sleep, RgnHandle * rgn)
-* {
-* 	// printf("%d : %d : %d : %d\n", kHighLevelEvent, ev->what, sleep, rgn);
-* 	switch (ev->what) {
-* 		case kHighLevelEvent:
-* 			AEProcessAppleEvent(ev);
-* 			return true;
-* 		default:
-* 			break;
-* 	}		
-* 
-* 	*sleep = 0;
-* 	rgn = nil;
-* 	return false;
-* }
-*/
-
-//#define uSubLaunchIdle *(AEIdleUPP)&SubLaunchIdle
 
 #  endif /* MACOS_TRADITIONAL */
 
