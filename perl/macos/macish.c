@@ -915,7 +915,7 @@ void MacPerl_init()
 	sAsyncExit.fProc				= 	AsyncExit;
 
 	MacPerl_QueueAsyncTask(&sSpinControl.fTask);
-	MacPerl_InitCursorCtl(128);
+	MacPerl_InitCursorCtl(0);
 }
 
 void MacPerl_InitCursorCtl(short acur)
