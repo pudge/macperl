@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.8  2001/09/24 04:31:55  neeri
+Include cursors in build (MacPerl Bug #432129)
+
 Revision 1.7  2001/09/02 00:41:01  pudge
 Sync with perforce
 
@@ -226,14 +229,16 @@ resource 'STR#' (CreditID) {
 		"Vicki Brown",		"Jason Buberel",	"James Burgess",
 		"Sean Burke",
 		"Alun Carr",		"Sam Choukri",		"Jürgen Christoffel",
-		"Henry Churchyard",	"Robert Coie",		"Scott Collins",
+		"Henry Churchyard",	"Robert Coie",
+		"Scott Collins",	"Jim Correia",
 		"Brad Cox",		"Peter Creath",		"Kevin Cutts",
 		"Robert Decker",	"Christian Dippel", 	"Steve Dorner",			
 		"John Draper",
 		"Paul DuBois",		"Paul Duda",
 		"Torsten Ekedahl",	"Tim Endres",		"Gus Fernandez",
 		"Glenn Fleishman",	"brian d foy",		"David Friedlander",
-		"Alan Fry",		"Greg Galanos",		"Steve Goodwin",
+		"Alan Fry",		"Greg Galanos",
+		"Scott R. Godin",	"Steve Goodwin",
 		"Guy Greenbaum",	"Janis Greenberg",	"Michael Greenspon",
 		"Sal Gurnani",		"David Hansen",		"Steve Hampson",
 		"Brad Hanson",		"Toni Harbaugh",	"Tom Harrington",
@@ -241,7 +246,8 @@ resource 'STR#' (CreditID) {
 		"Kee Hinckley",		"Todd Hivnor",		"C. Joe Holmes",
 		"Stewart Holt",		"Tom Holub",
 		"Elton Hughes",		"David Huggins-Daines",
-		"Christian Huldt",	"Jeff Johnson",		"John Kamp",
+		"Christian Huldt",	"Nat Irons",
+		"Jeff Johnson",		"John Kamp",
 		"Dick Karpinski",	"Jim Kateley",		"Pete Keleher",
 		"Thomas Kimpton",	"Andreas König",	"Manfred Lauer",
 		"Gary LaVoy",		"Xah Lee",		"Thomas Lenggenhager",
@@ -256,7 +262,8 @@ resource 'STR#' (CreditID) {
 		"Tom Pollard",		"Simon Poole",		"Malcolm Pradhan",
 		"Quinn",		"Tim Rand",		"Alasdair Rawsthorne",
 		"Kevin Reid",		"Charlie Reiman",	"King Rhoton",
-		"Marcel Riechert",	"Diller Ryan",		"Gurusamy Sarathy",
+		"Marcel Riechert",	"Axel Rose",
+		"Diller Ryan",		"Gurusamy Sarathy",
 		"Paul Schinder",	"Matthias Schmitt",	"Adam Schneider",
 		"Shimizu Shu",		"Sandra Silcot",	"Paul Snively",
 		"Stephan Somogyi",	"Omar Souka",		"Jon Stevens",
@@ -290,7 +297,7 @@ resource 'SIZE' (-1) {
 	reserved,
 /*	3840 * 1024,
 	1536 * 1024 */
-	10 * 1024 * 1024,
+	15 * 1024 * 1024,
 	2  * 1024 * 1024
 };
 
@@ -494,8 +501,8 @@ resource 'ALRT' (SaveAlert, "", purgeable) {
 
 resource 'DITL' (SaveAlert) {
 	{	{ 74, 303,  94, 362}, Button 		{ enabled, "Save"},
-		{ 74,  65,  94, 150}, Button 		{ enabled, "Don’t Save"},
 		{ 74, 231,  94, 290}, Button 		{ enabled, "Cancel"},
+		{ 74,  65,  94, 150}, Button 		{ enabled, "Don’t Save"},
 		{ 10,  65,  59, 363}, StaticText {disabled, "Save changes to “^0”?"},
 		{ 10,  20,  42,  52}, Icon 		{disabled, 2},
 		{  0,   0,   0,   0}, HelpItem 	{disabled, HMScanhdlg { SaveAlert } },

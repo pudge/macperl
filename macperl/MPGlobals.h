@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.4  1998/04/07 01:46:38  neeri
 MacPerl 5.2.0r4b1
 
@@ -160,9 +163,9 @@ Compiles correctly
 	Save Changes Dialog Items
 */
 
-#define  aaSave 		 	1
-#define  aaDiscard 	 	2
-#define  aaCancel 		3
+#define  aaSave 	 	1
+#define  aaCancel 		2
+#define  aaDiscard 	 	3
 
 #define  kOSEvent			   		app4Evt	/*event used by MultiFinder*/
 #define  kSuspendResumeMessage		1		/*high byte of suspend/resume event message*/

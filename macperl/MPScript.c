@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C
 
 $Log$
+Revision 1.5  2001/09/13 07:28:10  neeri
+Fix signal handling (MacPerlBug #422129)
+
 Revision 1.4  2001/04/16 02:42:43  neeri
 run_perl no longer longjmps (MacPerl bug #232703)
 
@@ -1004,18 +1007,16 @@ pascal OSErr DoScript(const AppleEvent *event, AppleEvent *reply, long refCon)
 
 pascal Boolean DoRuntime()
 {
-#if 0
 	FSSpec	spec;
 	
 	if (gRuntimeScript = Get1NamedResource('TEXT', (StringPtr) "\p!")) {
 		spec.vRefNum 	= 	gAppVol;
-		spec.parID		=	gAppDir;
+		spec.parID	=	gAppDir;
 		PLstrcpy(spec.name, LMGetCurApName());
 		strcpy(gMacPerl_PseudoFileName, GUSIFSp2FullPath(&spec));
-		
+
 		DetachResource(gRuntimeScript);
 	}
-#endif
 
 	return false;
 }
