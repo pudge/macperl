@@ -7,41 +7,27 @@ __END__
 
 =head1 NAME
 
-macperldelta - what is new for MacPerl v5.6.1
+macperldelta - what is new for MacPerl v5.8.0
 
 =head1 DESCRIPTION
 
-This document describes differences between the 5.2.0r4 release
-and the 5.6.1r1 release.
+This document describes differences between the 5.6.1 release
+and the 5.8.0 release.
 
 This document covers changes specific to MacPerl.  For general changes
 to perl, you might also want to read L<perl5005delta> for changes
-between 5.004 and 5.005, and L<perldelta> for changes from 5.005
-to present.
+between 5.004 and 5.005, L<perl56delta> for changes from 5.005
+to 5.6, and L<perldelta> for changes from 5.6 to present.
 
-=head1 Highlights In MacPerl 5.6.1
+For changes from MacPerl 5.2.0r4 to 5.6.1, see L<macperl56delta>.
+
+=head1 Highlights In MacPerl 5.8.0
 
 =over 4
 
 =item *
 
-Update from 5.004 to 5.6.1 sources
-
-=item *
-
-Update to GUSI 2
-
-=item *
-
-New and improved Shuck
-
-=item *
-
-Many bugs fixed
-
-=item *
-
-More modules and utilities included
+Update to perl 5.8 sources
 
 =back
 
@@ -52,10 +38,11 @@ More modules and utilities included
 
 This is mentioned elsewhere in the perl documentation but bears repeating
 here: shared libraries made for use with perl 5.004 (and MacPerl 5.2.0r4)
-are not supported under perl 5.6 (and MacPerl 5.6.1).
+or perl 5.6 (and MacPerl 5.6.1) are not supported for use with perl 5.8
+(and MacPerl 5.8).
 
 The MacPerl Module Porters page has been updated to note whether a
-particular distribution is for 5.004 or 5.6.
+particular distribution is for 5.004, 5.6, or 5.8.
 
 	http://dev.macperl.org/mmp
 
@@ -66,168 +53,28 @@ MacPerl will fail.  Either clean it out, or remove it from the
 Libraries preferences.
 
 
-=head2 Old cpan-mac Not Supported
+=head2 See macperl56delta
 
-All of cpan-mac is now included in MacPerl, with some incompatible changes
-from the version available for MacPerl 5.2.0r4.  Continue to use cpan-mac
-for old versions of MacPerl, but for MacPerl 5.6.1, use the included
-modules and utilities.
-
-The L<CPAN> module has also been changed; some of the Mac-specific functions
-have changed, and have moved from L<ExtUtils::MM_MacOS> to L<Mac::BuildTools>.
-
-
-=head2 Path Changes
-
-All paths returned from functions end in a colon (C<:>).  Previously,
-this behavior was inconsistent.  Code that assumes a path does not
-end in a colon may break.
-
-Also, in L<File::Spec>, C<catdir> and C<catfile> will now return a relative,
-NOT absolute, path by default, as this is the expected behavior on other
-platforms.  See L<File::Spec> for more information.
-
-
-=head2 Glob Syntax Changed
-
-The built-in C<glob> and glob operator E<lt>E<gt> now use the standard
-BSD syntax instead of the modified MPW syntax.  See the L<File::Glob>
-module for more information.
-
-
-=head2 AppleTalk, Choose, PPC Sockets Not Supported
-
-Support for the GUSI Choose function and AppleTalk sockets were dropped
-from GUSI 2, so are no longer supported.  PPC sockets are not currently
-supported in MacPerl, but may be in the future.  (B<Note>:
-Apple events code, such as via L<Mac::Glue>, can still send events
-via PPC sockets, since that is handled by the OS, not MacPerl).
-
-
-=head2 GD Not Included
-
-The GD module is no longer included.  It has undergone a significant
-change since it was last included, dropping GIF support, and we
-didn't get around to porting the whole thing.
-
-
-=head2 Various .pl and .ph Libraries Not Included
-
-StandardFile.pl, CommConnect.pl, and GUSI.ph were deprecated, and
-are not included.  For StandardFile.pl functions, use
-L<Mac::StandardFile> instead.
-
-
-=head2 CFM68K Not Supported
-
-Support for CFM68K, which provided dynamic loading of shared libraries
-under 68K, is no longer supported.
-
-
-=head2 68K Modules
-
-The 68K build of MacPerl does not include the various Mac:: toolbox
-modules.  This may change in the future; please request the feature
-if you need it.
-
-
-=head2 -DDEBUGGING
-
-MacPerl standard binaries are now built with -DDEBUGGING, as we could find
-no reason not to, and some people will want access to its features on
-occasion.  If the presence of -DDEBUGGING does cause problems, please
-file a bug report explaining the problem.
-
-
-=head2 Minimum Requirements
-
-MacPerl 5.6 requires Mac OS 8.1 or above, either 68040 or PowerPC,
-and 12MB RAM.  64MB or more RAM is recommended for using certain
-modules and programs.
-
-CarbonLib 1.0.4 or greater is also required.  Mac OS 8.1 also
-requires the Navigation extension, included with CarbonLib 1.0.4.
-All versions of CarbonLib may be downloaded from Apple for free.
-
- <URL:ftp://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/
-  English-North_American/Macintosh/System/Other_System/>
-
- <URL:http://www.info.apple.com/support/downloads.html>
-
-You may also wish to increase MacPerl's memory allocation to as much
-as 30MB, 60MB, or more, depending on what you're using it for.
-
-For using just the MPW tool, Mac OS 7.5.5 and 68030 should be sufficient,
-though some of the Mac:: modules might not work.
+There are other important incompatible changes with MacPerl 5.8 and
+MacPerl 5.2.0r4 that are mentioned in L<macperl56delta>.
 
 
 =head1 Core Enhancements
 
-=head2 Update from 5.004 to 5.6.1 sources
+=head2 Update to 5.8 sources
 
 =over 4
 
 =item *
 
-MacPerl can now be built using entirely freely available
-software (although, dynamic loading is broken in some such builds;
-see L<"Known Problems">).
-
-=item *
-
-MacPerl is now using the latest (as of this writing) release of perl,
-version 5.6.1, and all core changes required for MacPerl have been
-folded into the main source repository, for both the 5.6 branch
-and the main development trunk.  So when perl 5.8 is released,
-it will already have support to build on Mac OS.
-
-=item *
-
-The versioning system of MacPerl has changed.  It used to be that
-5.2.0r4 would mean MacPerl version 2.0 of perl revision 5, version 4
-(i.e., 5.004).  Now, 5.6.1r1 means MacPerl build 1 of perl 5.6.1.
-
-=item *
-
-Many modules and tests previously not working properly under MacPerl
-now do, including major updates to File::Find, Cwd, ExtUtils::Manifest,
-File::Glob, and more.
-
-=item *
-
-MacPerl is built on sources that includes all of the fixes
-and changes to 5.6 over the past year since 5.6.1 was released;
-so MacPerl 5.6.1 is not exactly the same as perl 5.6.1.  In fact,
-MacPerl 5.6.1 is actually I<the most advanced release of
-perl ever>.  That doesn't mean as much as it sounds like it means,
-but it's fun to say.
+See the relevant perl core documentation for what all this means,
+but of particular interest note that MacPerl now has extensive
+support for Unicode and alternate character sets.
 
 =back
 
 See F<README.macos> in the perl source and L<http://dev.macperl.org/>
 for more information about the sources.
-
-
-=head2 Update to GUSI 2
-
-Matthias Neeracher -- the author of MacPerl -- wrote a library
-called GUSI, which provides sockets and POSIX support to MacPerl.
-Previous versions of MacPerl used GUSI 1.  GUSI was completely
-rewritten for version 2.  It is faster and provides some more
-functions, like the previously missing C<socketpair> and C<pipe>.
-
-
-=head2 New and improved Shuck
-
-Thomas Wegner updated Shuck in various ways, including
-conformance to perlpodspec,
-parsing fixes,
-more reliable memory handling,
-better UI feedback,
-updated look and feel,
-improved search,
-improved controls and configuration options.
-
 
 
 =head1 Modules and Pragmata
@@ -236,10 +83,12 @@ improved controls and configuration options.
 
 The modules below are, in addition to the Mac:: modules and the
 Perl standard library, included with the MacPerl distribution.
-They are included either because they have been included with
-perl 5.8.0 (so MacPerl 5.6 users can use them now, rather than
-later) or because they are basic functionality needed for using
-CPAN and installing other modules.
+They are included because they are basic functionality needed for
+using CPAN and installing other modules, or have general utility.
+
+Many extra modules included with MacPerl 5.6 are now part
+of the standard distribution, and so are still included but are
+not listed here.
 
 The modules are listed with their version number, and followed
 by any bugs or behavior differences.
@@ -281,49 +130,6 @@ Escape test encodes [ and ] in old-base.t, rfc2732.t.
 =back
 
 
-=head2 New Modules and Pragmata
-
-=over 4
-
-=item *
-
-L<Mac::err> allows selectable formatting of error output.  Default
-is the traditional MPW style from previous versions of MacPerl, but the
-standard perl style is available via this module.
-
-=item *
-
-L<Mac::BuildTools> contains functions for building modules etc.
-
-=item *
-
-L<Mac::Navigation> provides access to Navigation Services (in lieu
-of L<Mac::StandardFile>).
-
-=item *
-
-L<Mac::Notification> provides access to the Notification Manager.
-
-=item *
-
-L<Mac::Apps::Launch> launches and quits applications.
-
-=item *
-
-L<Mac::OSA::Simple> provides simple access to L<Mac::OSA> functionality.
-
-=item *
-
-L<Mac::AppleEvents::Simple> provides simple access to L<Mac::AppleEvents>
-functionality.
-
-=item *
-
-L<Mac::Glue> is a framework for controlling Mac apps, via Apple events,
-with an AppleScript vocabulary.
-
-=back
-
 
 =head2 Updated And Improved Modules and Pragmata
 
@@ -331,59 +137,12 @@ with an AppleScript vocabulary.
 
 =item *
 
-Many of the Mac:: modules have minor bugfixes.
+Some of the Mac:: modules have minor bugfixes.
 
 =item *
 
-The L<MacPerl> module has been cleaned up to export symbols
-more intelligently.
-
-=item *
-
-The C<$MacPerl::Compiler> variable has been added to L<MacPerl>,
-containing the name of the compiler used to build this version
-of MacPerl.
-
-=item *
-
-C<MacPerl::DoAppleScript> now returns error text in C<$@>.
-
-=back
-
-
-=head1 Utility Additions
-
-=over 4
-
-=item *
-
-F<p2as> is perl-to-AppleScript, a droplet using L<Mac::OSA::Simple>
-to create compiled AppleScripts from MacPerl scripts.  The compiled
-script calls the MacPerl application, passing either the text of the
-script, or an alias to the script on disk, to the MacPerl application.
-
-=item *
-
-Various utilties for L<Mac::Glue> are included.  F<gluedialect> will
-create a glue file for the system's dialect (it used to be separate,
-now it is included in the AppleScript extension).  F<gluescriptadds>
-will similarly create glue files for scripting additions.  These two
-utilities can be run by themselves, and must be run before Mac::Glue
-may be used.
-
-F<gluemac> is a droplet for creating glue files for given applications.
-Drop each application to be glued onto the droplet, including the
-Finder itself.
-
-F<glueedit> allows you to edit an existing glue, for cases when the
-aete resource of an application is lying.
-
-=item *
-
-Various utilities for modules are included.  F<installme> is a droplet
-for installing a distribution; drop either a distribution archive or
-an unpacked folder onto the droplet.  F<untarzipme> will merely unpack
-the distribution archive.  F<tarzipme> will create a distribution archive.
+ExtUtils::MM_MacOS has undergone some overhaul, as MakeMaker
+has been reworked.
 
 =back
 
@@ -394,45 +153,8 @@ the distribution archive.  F<tarzipme> will create a distribution archive.
 
 =item *
 
-Problems with DB_File and large block sizes should be gone.
-
-=item *
-
-C<require> is more liberal in what kind of Unix-style
-paths it accepts.
-
-=item *
-
-Various fixes were made for the module processing/installation
-routines.
-
-=item *
-
-%ENV contents are tainted.
-
-=item *
-
-Problems with editing of scripts via external editor (e.g., BBEdit)
-have been fixed.
-
-=item *
-
-malloc() is smarter.
-
-=item *
-
-Config.pm (and the -V command-line switch) will now give better
-information for a given system.
-
-=item *
-
-C<kill> now accepts a signal of 0, so the common idiom of using
-C<kill 0, $var> to test for taintedness works.
-
-=item *
-
-C<caller>, and some other functions, now returns the actual filename
-or window name instead of "Dev:Pseudo" in some cases.
+There have been more fixes to make @INC and lib.pm smarter about
+accepting Unix-like and Mac-like paths.
 
 =back
 
@@ -443,7 +165,7 @@ or window name instead of "Dev:Pseudo" in some cases.
 
 =item *
 
-C<system> doesn't return a good value.
+C<system> doesn't return a good value, and C<$?> is fairly useless.
 
 =item *
 
@@ -458,18 +180,26 @@ but does not.
 
 =item *
 
+taint mode thing
+
+=item *
+
+alarm stuff
+
+=item *
+
 C<%ENV> is not as magical as, or more magical than, you might want it to be.
 Among other problems, C<%ENV = ()> does not clear out C<%ENV>, and the environment
 does not carry over to C<system> calls.
 
 =item *
 
-As noted in L<"Incompatible Changes">, there is no support for the Mac::
+There is no support for the Encode module or the Mac::
 toolbox modules in the 68K builds.  This may change.
 
 =item *
 
-As noted in L<"Incompatible Changes">, there is no support for PPC sockets
+There is no support for PPC sockets
 in the Socket module.  This may change.
 
 =item *
@@ -516,6 +246,6 @@ The F<Artistic> and F<Copying> files for copyright information.
 
 Written by Chris Nandor E<lt>pudge@pobox.comE<gt>.
 
-Last modified 2002.03.07.
+Last modified 2002.06.01.
 
 =cut

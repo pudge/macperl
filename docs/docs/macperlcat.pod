@@ -11,7 +11,7 @@ macperlcat - Chris' AppleEvent Tutorial
 =head1 USAGE
 
 There are some special Mac characters in this file, out of necessity, so it
-cannot be read properly on some systems.  In order to do Apple Events from
+cannot be read properly on some systems.  In order to do Apple events from
 MacPerl, have a recent version of MacPerl on hand, the most recent of which as
 of this writing is 5.1.9r4.
 
@@ -29,14 +29,14 @@ basically allows two programs to share data; this data is often a command,
 list, string, number, boolean, or file alias.
 
 There are several components to the IAC architecture in Mac OS.  The one we
-will deal with here is Apple Events.  Apple Events are a high-level form of
-IAC, and most Mac OS applications have Apple Events capabilities built in, so
+will deal with here is Apple events.  Apple events are a high-level form of
+IAC, and most Mac OS applications have Apple events capabilities built in, so
 they can communicate directly with each other.
 
-Apple's propietary scripting language, AppleScript, also speaks Apple Events.
+Apple's propietary scripting language, AppleScript, also speaks Apple events.
 In fact, when an application is commonly referred to as "AppleScriptable",
-that really means that it is scriptable with Apple Events.  AppleScript is
-just one language used to "speak" Apple Events.
+that really means that it is scriptable with Apple events.  AppleScript is
+just one language used to "speak" Apple events.
 
 Some Mac OS scripting languages are called B<OSA> (Open Scripting
 Architecture) languages; they can be embedded into other applications and can
@@ -105,12 +105,12 @@ C<\"text\">).
 =head1 Apple Event Structure
 
 Both of the scripts above, one MacPerl script calling AppleScript, and one
-AppleScript calling MacPerl, used Apple Events.  But the Apple Events are
+AppleScript calling MacPerl, used Apple events.  But the Apple events are
 disguised well by the language on top of them, by the AppleScript. If you know
 AppleScript, that may or may not help you understand the structure of Apple
 Events.
 
-An Apple Event has two major components, attributes and parameters.
+An Apple event has two major components, attributes and parameters.
 Attributes are the portions of the event that define how it is to be used.  It
 is composed primarily of an B<event class> (suite) and an B<event ID>.
 
@@ -139,7 +139,7 @@ B<direct object parameter>.  Parameter keywords are always four characters;
 the direct object parameter has the special keyword C<'----'>.  We will see it
 again soon.
 
-The fundamental data structure of Apple Events is the B<descriptor>, which is
+The fundamental data structure of Apple events is the B<descriptor>, which is
 basically a self-contained data structure.  Two types of descriptors are
 records and lists, as Perl has scalars and arrays.  Descriptor records and
 lists are given as the value of keyword and form a parameter.
@@ -181,7 +181,7 @@ Returns:
 	  from:'null'(), form:prop, seld:type(sdsk)}}
 
 This apparently convoluted example is (somewhat unfortunately) the way to do,
-with Apple Events, the same thing the first AppleScript did above.
+with Apple events, the same thing the first AppleScript did above.
 
 As you can see, we set up a hash (C<%ae>) to store our information for use in
 the C<AEBuildAppleEvent()> function.  First our attributes: the Finder's
@@ -195,15 +195,15 @@ add as many values as necessary.  In this case, the C<TEXT(@)> notation calls
 for an additional argument (the C<@> has nothing at all to do with Perl
 arrays, which is why it is escaped in double quotes).
 
-The data is all put into an Apple Event through the C<AEBuildAppleEvent()>
+The data is all put into an Apple event through the C<AEBuildAppleEvent()>
 function.  The event returned from that function is then sent via the
 C<AESend()> function.  The C<AEPrint()> function can be used to print out text
 representations of events and descriptors.
 
 There is only one named parameter sent to this event, the direct object
-parameter.  The direct object parameter is passed an Apple Event object
+parameter.  The direct object parameter is passed an Apple event object
 specifier record, a type of descriptor record.  You may notice the strange
-syntax; all Apple Event object specifier records (objects) are of the same
+syntax; all Apple event object specifier records (objects) are of the same
 form:
 
 	obj{want:xxxx, from:xxxx, form:xxxx, seld:xxxx}
@@ -212,7 +212,7 @@ form:
 
 =item want
 
-This is the four-character B<class ID>. Apple Event objects belong to classes.
+This is the four-character B<class ID>. Apple event objects belong to classes.
  In the case of our example above, we found out that the class describing
 "items" is C<cobj>.
 
@@ -233,10 +233,10 @@ disk.
 =item seld
 
 This is the actual object data, in the form described by C<form>.  Note that
-in Apple Events, text data can be included in two ways.  One is to enclose the
+in Apple events, text data can be included in two ways.  One is to enclose the
 data in curly double quotes (as in C<seld:“$vol”>).  MacPerl itself does not
 recognize curly quotes, but these quotes are not interpreted by MacPerl, but
-by the underlying Apple Event libraries.
+by the underlying Apple event libraries.
 
 The other way is the way we did above, with C<seld:TEXT(@)>.  Then the string
 to be included as text follows as a separate argument to the
@@ -253,10 +253,10 @@ parameter.  We pass the object's class and the data, which in this case is the
 name of the startup volume.
 
 There are other similar methods.  As noted, we could change the object to use
-an index of 1, which would do the same thing:
+an index of 1 (it may not get the same item):
 
 	  params =>["'----':obj{want:type(cobj), " .
-	    "from:null(), form:enum(name), seld:shor(1)}"]
+	    "from:null(), form:indx, seld:shor(1)}"]
 
 The C<odoc> event can also accept file aliases instead of objects. This form
 is easier to construct, but doesn't give us the opportunity to learn about
@@ -310,7 +310,7 @@ in this example as it was in the previous example.
 
 =head1 Putting It Together
 
-Once you understand the basics of how Apple Events are constructed and how to
+Once you understand the basics of how Apple events are constructed and how to
 call them from MacPerl, you will probably find yourself asking, "great but how
 do I know what all these IDs are for the functions I want to perform?"
 
@@ -466,7 +466,7 @@ basic object for C<usin> too.
 
 =head1 Sending and Manipulating Apple Events
 
-Now we've seen how an Apple Event is basically constructed.  And we know it
+Now we've seen how an Apple event is basically constructed.  And we know it
 was all passed to the C<AEBuildAppleEvent()> function and sent to the target
 application via the C<AESend()> function.
 
@@ -509,7 +509,7 @@ substitution of the attribute strings with constants in
 C<AEBuildAppleEvent()>, and instead of including the parameters in that
 function, we left that undefined, to be taken care of in other ways.
 
-First we create an empty Apple Event list.  Then we make something to put in
+First we create an empty Apple event list.  Then we make something to put in
 it with C<AECreateDesc()>, a descriptor of type alias (C<typeAlias()>).  
 
 After creating this descriptor, we add it to the list by providing the
@@ -528,7 +528,7 @@ We can also retrieve and delete parameters from an event.
 	print AEPrint($list);
 	AEDeleteParam($event, keyDirectObject());
 
-Similarly, we can retrieve or delete the descriptors from an Apple Event list
+Similarly, we can retrieve or delete the descriptors from an Apple event list
 with C<AECountItems()>, C<AEGetNthDesc()>, and C<AEDeleteItem()>:
 
 	foreach (1 .. AECountItems($list)) {
@@ -553,10 +553,10 @@ memory would not get disposed.
 
 =head1 Receiving Apple Events
 
-MacPerl can also receive Apple Events from other applications.  You can set up
+MacPerl can also receive Apple events from other applications.  You can set up
 an event handler (this one is set up for the Send Data (C<DATA>) event) and
 uses the given data to make a computation and returns the result through the
-Apple Event reply object.
+Apple event reply object.
 
 	#!perl -w
 	use Mac::AppleEvents;
@@ -569,7 +569,7 @@ Apple Event reply object.
 	print "Done.\n";
 
 	sub RecData {
-	  my($event, $reply, $desc, $n) = @_;
+	  my($event, $reply) = @_;
 	  $desc = AEGetParamDesc($event, keyDirectObject());
 	  $n = AEPrint($desc);
 	  AEPutParam($reply, keyDirectObject(), typeChar(), 
@@ -603,15 +603,15 @@ should you find a use for it, here it is.
 
 =head1 TMTOWTDI
 
-There are five basic ways to speak Apple Events with MacPerl.  We saw three
+There are five basic ways to speak Apple events with MacPerl.  We saw three
 already: sending AppleScript was the first.   The second was using C<AEBuild>
 functions, which is, being the fastest and simlest, the recommended method for
-most uses. The third was the use of raw Apple Events toolbox calls to do all
+most uses. The third was the use of raw Apple events toolbox calls to do all
 the building of the descriptors.
 
 One method we did not address was the use of the C<Mac::OSA> module to compile
 an AppleScript to speed executions of the same AppleScript in a single Perl
-script.  Remember, OSA is not Apple Events, but you can do Apple Events in an
+script.  Remember, OSA is not Apple events, but you can do Apple events in an
 OSA language that is capable of them through the OSA protocol.
 
 We use the same AppleScript as we did in our first example, but we execute it
@@ -629,7 +629,7 @@ C<OpenDefaultComponent()> function from C<Mac::Components>.  If this fails
 (such as in the case where Frontier is not running and its component cannot be
 opened), we skip the rest and warn.
 
-Then we convert the text of the script into an Apple Event descriptor record
+Then we convert the text of the script into an Apple event descriptor record
 of type C<TEXT>.  C<OSACompile()> compiles the script, C<OSAExecute()>
 executes the compiled script, and C<OSADisplay()> returns a descriptor record
 containing the result of that execution.
@@ -667,9 +667,11 @@ with <OSADispose()>.
 	EOS
 
 	sub Execute {
-	  my($id, $scr, $co, $desc, $comp, $sid, $val) = @_;
-	  $co  = OpenDefaultComponent
+	  my($id, $scr) = @_;
+	  my($desc, $comp, $sid, $val);
+	  my $co = OpenDefaultComponent
 	    (kOSAComponentType(), $id);
+
 	  if ($co) {
 	    $desc = AEDesc->new('TEXT', $scr)    || die($^E);
 	    $comp = OSACompile($co, $desc, 0)    || die($^E);
@@ -688,18 +690,12 @@ with <OSADispose()>.
 	  }
 	}
 
-	sub Compile {
-	  my($co, $scr, $desc, $id) = @_;
-	  AEDisposeDesc($desc);
-	  return($id);
-	}
-
 Returns: 
 
 	AppleScript: “startup disk of Application "Finder"”
 	UserTalk: “trash”
 
-The final way we can do Apple Events from MacPerl is with a set of OOP methods
+The final way we can do Apple events from MacPerl is with a set of OOP methods
 in the C<AEStream> class.  We create a new stream by passing appropriate IDs
 to C<new()>, and then build the event one piece at a time.  The event is
 returned when closed, and then it is sent with C<AESend()>. 
@@ -740,7 +736,7 @@ executing the protoype, and analyzing the output of AETracker, you can get a
 better idea of what's going on.
 
 Don't forget to consult the resources available to you.  Read the chapters of
-Interapplication Communication in Inside Macintosh dealing with Apple Events. 
+Interapplication Communication in Inside Macintosh dealing with Apple events. 
 Read the documentation that comes with MacPerl.  Read the documentation that
 comes with the application you are scripting.  Read code from other people. 
 Seek support about the application from the author or any newsgroup or mailing

@@ -309,10 +309,14 @@ Content-type: text/plain
 # And the glue sends the data to WebStar
 #
 'WWW½'\SPar{'----':Ò--EOM
-Content-type: text/plain
 
-2
-Ó, Kmor:bool(Ç01È), Kcid:15}
+Content-type: text/plain
+
+
+
+2
+
+Ó, Kmor:bool(Ç01È), Kcid:15}
 #
 # ... and confirms the pushed data to Perl
 #

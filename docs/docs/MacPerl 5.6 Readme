@@ -22,11 +22,11 @@ Please read the READMEs that come with MacPerl, but ignore the
 installation instructions presented in the main README; they do not
 apply to the Mac OS port of perl.
 
-Read L<macperldelta> for changes since MacPerl 5.6.1.
+Read L<macperldelta> for changes since MacPerl 5.2.0r4.
 
 =head2 System Requirements
 
-MacPerl 5.8 requires Mac OS 8.1 or above, either 68040 or PowerPC,
+MacPerl 5.6 requires Mac OS 8.1 or above, either 68040 or PowerPC,
 and 12MB RAM.  64MB or more RAM is recommended for using certain
 modules and programs.
 
@@ -64,14 +64,14 @@ a full installer (around 20MB).  The web installer is recommended,
 as it only downloads the components you need.
 
 
-   MacPerl-5.8.0r1_web.bin
-   MacPerl-5.8.0r1_full.bin
+   MacPerl-5.6.1r1_web.bin
+   MacPerl-5.6.1r1_full.bin
            ^    ^^ ^    ^
            |    || |    MacBinary Suffix ("bin")
            |    || Distribution Component (web", "full")
            |    |Build Number ("1")
            |    Type ("d"evelopment, "a"lpha, "b"eta, "r"elease)
-           Perl Version ("5.8.0")
+           Perl Version ("5.6.1")
 
 
 Both the web and full installers are self-updating as new versions
@@ -176,7 +176,7 @@ MacPerl.  See the Perl mailing lists site for more information.
 
 =head2 Building
 
-The perl 5.8.0 source itself builds on Mac OS, with some additional
+The perl 5.6.1 source itself builds on Mac OS, with some additional
 pieces.  Support for Mac OS is now in the perl core, and MacPerl is
 kept in close sync with regular perl releases.
 
@@ -225,4 +225,4 @@ by Ramon M. Felciano.
 
 =head1 DATE
 
-Last modified 2002.06.02.
+Last modified 2002.03.10.
