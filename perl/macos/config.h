@@ -13,6 +13,9 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.11  2002/01/03 21:53:51  neeri
+Disable sigaction (MacPerl Bug #470321)
+
 Revision 1.10  2001/10/03 19:31:55  pudge
 Sync with perforce maint-5.6/macperl
 
@@ -1955,7 +1958,7 @@ First build released to public
  *	This symbol, if defined, indicates that Vr4's sigaction() routine
  *	is available.
  */
-#undef HAS_SIGACTION /**/
+#define HAS_SIGACTION /**/
 
 /* HAS_SIGSETJMP:
  *	This variable indicates to the C program that the sigsetjmp()
