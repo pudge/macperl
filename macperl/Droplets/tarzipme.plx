@@ -64,7 +64,10 @@ sub do_it {
     my($dir, $tar, $file, @f, $mdir, $ndir, $tdir, $edir);
     local $|;
 
-    $dir  = $ARGV[0] or die "Need directory name";
+    $dir = $ARGV[0];
+    unless ($dir && -d $dir) {
+        die "Need directory name";
+    }
     $dir  =~ s/:$//;
     $file = get_filename($dir);
     $ndir = basename($dir);
