@@ -19,11 +19,11 @@ in the notes).
 [% END %]
 	</select></td>
 </tr><tr>
-[% PROCESS select label => "Configuration", name => "config_id", data => config_id %]
+[% PROCESS get_select label => "Configuration", name => "config_id", data => config_id %]
 </tr><tr>
-[% PROCESS select label => "Compiler", name => "compiler", data => compiler %]
+[% PROCESS get_select label => "Compiler", name => "compiler", data => compiler %]
 </tr><tr>
-[% PROCESS select label => "Status", name => "status", data => status %]
+[% PROCESS get_select label => "Status", name => "status", data => status %]
 </tr><tr>
 	<td valign="top">Is this test using the MPW tool (else assume the application is used)?</td>
 	<td><input type="checkbox" name="is_tool" /></td>

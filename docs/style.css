@@ -92,7 +92,7 @@ H1.head		{ text-align: center					}
 H1		{ font-family: verdana, "Times New Roman", serif	}
 H2		{ font-family: verdana, "Times New Roman", serif	}
 
-PRE,TT		{
+PRE,TT,CODE	{
 	font-family: ProFont, Monaco;
 	font-size: 9pt;
 }

@@ -39,7 +39,7 @@ Please read the test guidelines (not yet available :-).
 <a href="[% env.script_name %]?op=view_config&amp;config_id=[% user_test.config_id %]">[% FILTER strip_literal ; configs.${user_test.config_id} ; END %]</a>
 		</td>
 		<td>[% compiler.${user_test.compiler} %]</td>
-		<td>[% user_test.date %]</td>
+		<td>[% FILTER fixdate ; user_test.date ; END %]</td>
 	</tr>
 [% END ; END %]
 </table>

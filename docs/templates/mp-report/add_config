@@ -33,12 +33,12 @@ Save discussion of individual tests for the tests section.
 	<td valign="top">Configuration name:</td>
 	<td><input type="text" name="name" size="32" maxlength="32" /></td>	
 </tr><tr>
-[% PROCESS select label => "Processor", name => "processor", data => processor %]
+[% PROCESS get_select label => "Processor", name => "processor", data => processor %]
 </tr><tr>
 	<td valign="top">RAM (MB):</td>
 	<td><input type="text" name="ram" size="6" maxlength="6" /></td>
 </tr><tr>
-[% PROCESS select label => "Version", name => "version", data => version %]
+[% PROCESS get_select label => "Version", name => "version", data => version %]
 </tr><tr>
 	<td valign="top">Was this a CVS checkout?</td>
 	<td><input type="checkbox" name="cvs" /></td>
