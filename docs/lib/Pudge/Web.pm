@@ -254,8 +254,8 @@ sub stripByMode {
 
 	# convert regular text to HTML-ized text, insert P, etc.
 	if ($fmode == PLAINTEXT || $fmode == EXTRANS || $fmode == CODE) {
-		$str =~ s/\n/<BR>/gi;  # pp breaks
-		$str =~ s/(?:<BR>\s*){2,}<BR>/<BR><BR>/gi;
+		$str =~ s|\n|<br />|gi;  # pp breaks
+		$str =~ s|(?:<br />\s*){2,}<br />|<br /><br />|gi;
 		# Preserve leading indents / spaces
 		$str =~ s/\t/    /g;  # can mess up internal tabs, oh well
 
@@ -264,11 +264,11 @@ sub stripByMode {
 				("&nbsp; " x (length($1)/2)) .
 				($2 ? "&nbsp;$2" : "")
 			}eg;
-			$str = '<CODE>' . $str . '</CODE>';
+			$str = '<code>' . $str . '</code>';
 
 		} else {
-			$str =~ s{<BR>\n?( +)} {
-				"<BR>\n" . ("&nbsp; " x length($1))
+			$str =~ s{<br />\n?( +)} {
+				"<br />\n" . ("&nbsp; " x length($1))
 			}ieg;
 		}
 

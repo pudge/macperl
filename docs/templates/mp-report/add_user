@@ -18,7 +18,7 @@ first.
 	<td><input type="text"     name="user"     size="32" maxlength="32" /></td>
 </tr><tr>
 	<td valign="top" colspan="2">Is your username the same here as on SourceForge?
-	<input type="checkbox" name="sf_match" checked="checked"></td>
+	<input type="checkbox" name="sf_match" checked="checked" /></td>
 </tr><tr>
 	<td valign="top">E-mail Address:</td>
 	<td><input type="text"     name="email"    size="32" maxlength="64" /></td>

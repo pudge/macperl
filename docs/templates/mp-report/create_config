@@ -1,4 +1,4 @@
-Configuration "[% config.name %]" (#[% config.id %]) has been added.
+Configuration "[% FILTER strip_literal ; config.name ; END %]" (#[% config.id %]) has been added.
 </p><p>
 You may now add test results for this configuration.
 </p>
