@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.6  2001/03/22 04:19:32  pudge
+Add prototypes for execv and execvp
+
 Revision 1.5  2001/03/20 02:40:25  pudge
 Add times() and struct tms
 
@@ -49,6 +52,7 @@ static	char *	gEnvpool;
 /* DISPATCH_START */
 #define ROOT_UID	0
 #define ROOT_GID	0
+
 Uid_t
 (getuid)(void)
 {
@@ -74,24 +78,23 @@ Gid_t
 }
 
 int
-(setuid)(uid_t uid)
+(setuid)(Uid_t uid)
 { 
 	return (uid==ROOT_UID?0:-1);
 }
 
 int
-(setgid)(gid_t gid)
+(setgid)(Gid_t gid)
 { 
 	return (gid==ROOT_GID?0:-1); 
 }
 
-pid_t (getpid)()
+Pid_t (getpid)()
 {
 	return 1;
 }
 
 #undef execv
-
 int (execv)(const char * file, char * const * argv)
 {
 	dTHX;
@@ -103,7 +106,6 @@ int (execv)(const char * file, char * const * argv)
 }
 
 #undef execvp
-
 int (execvp)(const char * path, char * const * argv)
 {
 	dTHX;
@@ -113,6 +115,15 @@ int (execvp)(const char * path, char * const * argv)
 	errno = EINVAL;
 	return -1;
 }
+
+/* for now, kill will just return 0, maybe do more later once we
+   get fork emulation */
+int kill(Pid_t pid, int sig)
+{
+    errno = EINVAL;
+    return -1;
+}
+
 
 static char *
 setup_argstr(SV *really, SV **mark, SV **sp)

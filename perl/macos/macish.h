@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.6  2001/03/20 02:40:25  pudge
+Add times() and struct tms
+
 Revision 1.5  2001/02/23 23:34:04  pudge
 Add xsubpp.patch; update versions; fix missing fp.h for SC/MrC
 
@@ -108,7 +111,7 @@ const char * MacPerl_CanonDir(const char * dir, char * buf);
  */
 #undef HAS_PASSWD		/**/
 
-#undef HAS_KILL
+#define HAS_KILL
 #undef HAS_WAIT
   
 /* USEMYBINMODE
