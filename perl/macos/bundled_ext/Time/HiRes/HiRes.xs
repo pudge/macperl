@@ -308,7 +308,41 @@ alarm(fseconds,finterval=0)
 #endif
 
 #ifdef HAS_GETTIMEOFDAY
+#    ifdef MACOS_TRADITIONAL	/* fix epoch TZ and use unsigned time_t */
+void
+gettimeofday()
+        PREINIT:
+        struct timeval Tp;
+        struct timezone Tz;
+        PPCODE:
+        int status;
+        status = gettimeofday (&Tp, &Tz);
+        Tp.tv_sec += Tz.tz_minuteswest * 60;	/* adjust for TZ */
 
+        if (GIMME == G_ARRAY) {
+             EXTEND(sp, 2);
+             /* Mac OS (Classic) has unsigned time_t */
+             PUSHs(sv_2mortal(newSVuv(Tp.tv_sec)));
+             PUSHs(sv_2mortal(newSViv(Tp.tv_usec)));
+        } else {
+             EXTEND(sp, 1);
+             PUSHs(sv_2mortal(newSVnv(Tp.tv_sec + (Tp.tv_usec / 1000000.0))));
+        }
+
+NV
+time()
+        PREINIT:
+        struct timeval Tp;
+        struct timezone Tz;
+        CODE:
+        int status;
+        status = gettimeofday (&Tp, &Tz);
+        Tp.tv_sec += Tz.tz_minuteswest * 60;	/* adjust for TZ */
+        RETVAL = Tp.tv_sec + (Tp.tv_usec / 1000000.0);
+	OUTPUT:
+	RETVAL
+
+#    else	/* MACOS_TRADITIONAL */
 void
 gettimeofday()
         PREINIT:
@@ -336,6 +370,7 @@ time()
 	OUTPUT:
 	RETVAL
 
+#    endif	/* MACOS_TRADITIONAL */
 #endif
 
 #if defined(HAS_GETITIMER) && defined(HAS_SETITIMER)
@@ -386,6 +421,9 @@ getitimer(which)
 # $Id$
 
 # $Log$
+# Revision 1.1  2001/07/17 01:29:52  pudge
+# Sync with perforce changes 11283 and 11386 to 11390.
+#
 # Revision 1.11  1999/03/16 02:27:38  wegscd
 # Add U2time, NVtime. Fix symbols for static link.
 #
