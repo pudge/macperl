@@ -1,3 +1,4 @@
+use Config;
 use Cwd;
 use ExtUtils::MakeMaker;
 use File::Basename;
@@ -40,6 +41,9 @@ $NAME ||= "Mac::$MOD";
 if ($^O eq 'darwin') {
 	$ARGS{'INC'}		= '-I/Developer/Headers/FlatCarbon/';
 	$ARGS{'LDDLFLAGS'}	= '-bundle -flat_namespace -undefined suppress -framework Carbon';
+	$ARGS{'CCFLAGS'}	= $Config{ccflags} . ' -fpascal-strings';
+#	$ARGS{'LDDLFLAGS'}	= '-dynamiclib -prebind -flat_namespace -undefined suppress -framework Carbon';
+#	$ARGS{'DLEXT'}          = 'dylib';
 	$ARGS{'depend'}{$C}     = catfile(updir(), 'Carbon.h');
 }
 
