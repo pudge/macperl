@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.7  2002/01/07 08:09:36  neeri
+Eliminate nested calls to exit() (MacPerl bug #469132)
+
 Revision 1.6  2002/01/04 03:34:45  pudge
 Modifications for universal headers 3.4
 
@@ -1055,6 +1058,41 @@ static short		deferredRd		= 0;
 static short		deferredWr		= 0;
 static WindowPtr	deferredWindow	= 0;
 static RgnHandle	mouseRgn;
+static EventRecord sDeferredEvent;
+static Boolean     sHasDeferredEvent;
+
+#if !defined(powerc) && !defined(__powerc)
+#pragma segment Main
+#endif
+
+pascal void DoAppleEvent(EventRecord * ev)
+{
+	static Boolean sFirstHighLevelEvent = true;
+	
+	if (sFirstHighLevelEvent) {
+		/* If some weirdo starts a runtime with a weird AppleEvent, we simulate an oapp */
+		sFirstHighLevelEvent = false;
+		if (gRuntimeScript) {
+			if ((OSType)ev->message != kCoreEventClass 
+			|| (*(OSType *)&ev->where != kAEOpenApplication && *(OSType *)&ev->where != kAEOpenDocuments)
+			) {
+				AEDesc	desc;
+
+				/* Send this event around the event loop again */
+				sDeferredEvent 		= *ev;
+				sHasDeferredEvent 	= true;
+				
+				/* Call DoScript */
+				AECreateDesc(typeNull, nil , 0, &desc);
+				DoScript(&desc, &desc, 0);
+	
+				return;
+			}
+		}
+	}
+	
+	AEProcessAppleEvent(ev);
+}
 
 #if !defined(powerc) && !defined(__powerc)
 #pragma segment MPMain
@@ -1064,7 +1102,7 @@ void HandleEvent(EventRecord * myEvent)
 {
 	char        theChar;
 	Boolean     activate;
-	Point			mouse;
+	Point		mouse;
 	WindowPtr   theWindow;
 	DPtr        theDoc;
 
@@ -1134,7 +1172,7 @@ void HandleEvent(EventRecord * myEvent)
 
 	case kHighLevelEvent:
 		FlushAndRecordTypingBuffer();
-		DoAppleEvent(*myEvent);
+		DoAppleEvent(myEvent);
 		
 		if (gDelayedScript.dataHandle) {
 			AppleEvent	awakenedScript = gDelayedScript;
@@ -1165,9 +1203,6 @@ void HandleEvent(EventRecord * myEvent)
 		}
 	}
 }
-
-static EventRecord sDeferredEvent;
-static Boolean     sHasDeferredEvent;
 
 void MainEvent(Boolean busy, long sleep, RgnHandle rgn)
 {

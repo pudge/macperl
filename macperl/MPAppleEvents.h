@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:28  neeri
+Sources & Resources
+
 Revision 1.2  1997/08/08 16:57:52  neeri
 MacPerl 5.1.4b1
 
@@ -59,7 +62,6 @@ US  = 0x1F  /* Down arrow key on keypad        */
 
 pascal Boolean AllSelected(TEHandle te);
 pascal void InitAppleEvents(void);
-pascal void DoAppleEvent(EventRecord theEvent);
 pascal OSErr MakeSelfAddress(AEAddressDesc *selfAddress);
 pascal OSErr MakeSelfPSN(ProcessSerialNumber *selfPSN);
 

@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.6  2002/03/01 04:24:59  pudge
+Various bugfixes from Thomas Wegner
+
 Revision 1.5  2002/02/04 07:46:28  neeri
 Empty path is ENOENT (MacPerl Bug #512351)
 
@@ -409,24 +412,6 @@ pascal OSErr MyQuit(const AppleEvent *message, const AppleEvent *reply, long ref
 		DoQuit(saveOpt);
 
 	return myErr;
-}
-
-/**-----------------------------------------------------------------------
-		Name: 		DoAppleEvent
-		Purpose:		Process and despatch the AppleEvent
-	-----------------------------------------------------------------------**/
-
-#if !defined(powerc) && !defined(__powerc)
-#pragma segment Main
-#endif
-
-pascal void DoAppleEvent(EventRecord theEvent)
-{
-  OSErr err;
-
-  /*should check for your own event message types here - if you have any*/
-
-	err = AEProcessAppleEvent(&theEvent);
 }
 
 /**-----------------------------------------------------------------------
