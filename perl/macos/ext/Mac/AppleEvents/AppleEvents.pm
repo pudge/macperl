@@ -20,7 +20,7 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = 1.23;
+$VERSION = 1.24;
 
 =head2 Constants: AppleEvent Descriptor Types
 

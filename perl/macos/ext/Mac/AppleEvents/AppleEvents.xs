@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2002/12/10 03:06:23  pudge
+ * Big update for Carbon support
+ *
  * Revision 1.2  2000/09/09 22:18:25  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -59,18 +62,7 @@ _new(package, type='null', data=0)
 		RETVAL.descriptorType	=	type;
 		RETVAL.dataHandle			=	data;
 #else
-		Ptr  theData;
-		Size theLength;
-
 		AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL));
-		
-		theLength = AEGetDescDataSize(&RETVAL);
-		theData = malloc(theLength);
-		if (theData != NULL) {
-			AEFail(AEGetDescData(&RETVAL, theData, theLength));
-			printf("%d:%s:%d\n", theLength, theData, strlen(theData));
-		}
-		printf("%s", RETVAL.dataHandle);
 #endif
 	}
 	OUTPUT:
@@ -105,13 +97,13 @@ data(desc, newData=0)
 			AEReplaceDescData(desc.descriptorType, *newData,
 				GetHandleSize(newData), &desc);
 		}
-		char * descData;
-		STRLEN descLen;
+		Ptr  descData;
+		Size descLen;
 
 		descLen = AEGetDescDataSize(&desc);
 		descData = NewPtr(descLen);
-		AEGetDescData(&desc, descData, descLen);
-		PtrToHand(descData, &RETVAL, strlen(descData));
+		AEFail(AEGetDescData(&desc, descData, descLen));
+		PtrToHand(descData, &RETVAL, descLen);
 #endif
 	}
 	OUTPUT:
@@ -133,7 +125,7 @@ _new(package, key=0, type='null', data=0)
 		RETVAL.descContent.descriptorType	=	type;
 		RETVAL.descContent.dataHandle			=	data;
 #else
-		AEReplaceDescData(type, *data, GetHandleSize(data), &RETVAL.descContent);
+		AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL.descContent));
 #endif
 	}
 	OUTPUT:
@@ -182,13 +174,13 @@ data(desc, newData=0)
 			AEReplaceDescData(desc.descContent.descriptorType, *newData,
 				GetHandleSize(newData), &desc.descContent);
 		}
-		char * descData;
-		STRLEN descLen;
+		Ptr  descData;
+		Size descLen;
 
 		descLen = AEGetDescDataSize(&desc.descContent);
 		descData = NewPtr(descLen);
-		AEGetDescData(&desc.descContent, descData, descLen);
-		PtrToHand(descData, &RETVAL, strlen(descData));
+		AEFail(AEGetDescData(&desc.descContent, descData, descLen));
+		PtrToHand(descData, &RETVAL, descLen);
 #endif
 	}
 	OUTPUT:
