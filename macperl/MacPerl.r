@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.4  2001/03/22 04:29:04  pudge
+Update version
+
 Revision 1.3  2001/02/23 23:33:06  pudge
 Update versions
 
@@ -190,7 +193,6 @@ resource 'vers' (2) {
 
 resource 'STR#' (CreditID) {
 	{
-		"Chris Nandor (Maintainer)",
 		"Kenneth Albanowski",	"Charles Albrecht",		"Larry Allen-Tonar",
 		"Kevin Altis",				"Frank Alvani",			"Phil Ames",				
 		"Roberto Avanzi",
