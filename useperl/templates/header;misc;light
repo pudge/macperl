@@ -22,7 +22,7 @@ __template__
 <A HREF="[% constants.real_rootdir %]/"><IMG SRC="[% constants.rdfimg %]" BORDER="0"></A>
 
 <P>[% PROCESS useperlmenu %]</P>
-[% IF user.is_admin %]<P>[% Slash.createMenu('admin') %]</P>[% END %]
+[% IF user.is_admin %]<P>[% Slash.createMenu(adminmenu) %]</P>[% END %]
 
 __seclev__
 10000

@@ -3,7 +3,7 @@ default
 __description__
 Text that makes up the top of a page
 
-No specially passed variables
+* link, an optional variable with data for the <LINK> tags
 __title__
 
 __page__
@@ -61,7 +61,7 @@ in this block -->
 
 	<TABLE BORDER="0" WIDTH="100%" CELLPADDING="2" CELLSPACING="0"><TR><TD>
 <P>[% PROCESS useperlmenu %]
-[%- IF user.is_admin; Slash.createMenu('admin'); END %]
+[%- IF user.is_admin; Slash.createMenu(adminmenu); END %]
 	</TD></TR></TABLE>
 
 <FONT COLOR="[% user.fg.1 %]">
