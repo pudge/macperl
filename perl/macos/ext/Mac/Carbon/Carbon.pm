@@ -130,6 +130,10 @@ of the issues, including bugs and possibilities for bugs, involved.
 
 =item *
 
+When creating FSSpecs, the file must exist.  This is Bad.
+
+=item *
+
 Docs not updated for Carbon incompatibilities (including changes to
 Processes fields).  Generate list of all unsupported functions.
 
@@ -260,6 +264,7 @@ Nandor E<lt>pudge@pobox.comE<gt>.
 =head1 THANKS
 
 Michael Blakeley E<lt>mike@blakeley.comE<gt>,
+Gero Herrmann E<lt>herr@ils.uec.ac.jpE<gt>,
 Dan Sugalksi E<lt>dan@sidhe.orgE<gt>.
 
 =head1 SEE ALSO
