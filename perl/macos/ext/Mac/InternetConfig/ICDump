@@ -1,6 +1,0 @@
-#!my/perl
-use InternetConfig;
-
-while (($key,$value) = each %InternetConfig) {
-    print "$key=$value\n";
-}
