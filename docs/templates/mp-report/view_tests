@@ -37,7 +37,7 @@ is marked OK, feel free to test it anyway, because we want to make sure it is OK
 [% FOR test = tests %]
 	<tr class="[% PROCESS get_status st => test.status %]">
 		<td>
-<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/macperl/perl/t/[% test.test %].t?content-type=text/plain">[% test.test %]</a>
+<a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/~checkout~/macperl/perl/t/[% test.test %].t?content-type=text/plain">[% test.test %]</a>
 		</td>
 		<td colspan="4">&nbsp;</td>
 	</tr>
@@ -50,7 +50,7 @@ is marked OK, feel free to test it anyway, because we want to make sure it is OK
 	<tr class="[% PROCESS get_status st => user_test.status %]">
 		<td align="right"><a href="[% env.script_name %]?op=view_test&amp;test_id=[% user_test.id %]">*</a></td>
 		<td>[% IF myuser.sf_match %]
-<a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
+<a href="http://sf.net/users/[% myuser.user %]">[% myuser.user %]</a>
 		[% ELSE; myuser.user; END %]</td>
 		<td>
 <a href="[% env.script_name %]?op=view_config&amp;config_id=[% user_test.config_id %]">[% FILTER strip_literal ; configs.${user_test.config_id}.name ; END %]</a>

@@ -10,7 +10,7 @@ just for testing purposes.
 <table border="0" cellpadding="6"><tr>
         <td valign="top" width="200">User:</td>
         <td>[% IF myuser.sf_match %]
-<a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
+<a href="http://sf.net/users/[% myuser.user %]">[% myuser.user %]</a>
         [% ELSE; myuser.user; END %]</td>
 </tr><tr>
 	<td valign="top">Configuration name:</td>

@@ -7,7 +7,7 @@ use LWP::Simple;
 use vars qw(%data $group $print);
 
 $group ||= shift || 7940;  # macperl is 7940, slash is 4421
-my $url = "http://sourceforge.net/export/projhtml.php?group_id=$group&mode=full&no_table=1";
+my $url = "http://sf.net/export/projhtml.php?group_id=$group&mode=full&no_table=1";
 my $text = get $url;
 $text =~ s/\015?\012/\n/g;
 

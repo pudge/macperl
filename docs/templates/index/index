@@ -32,7 +32,7 @@ an overview of what is going on, and see
 <a href="http://use.perl.org/~pudge/">Chris Nandor's
 use Perl page</a> for his journal of development.  If you would like
 to build MacPerl yourself, please read the
-<a href="/build.html">Build Instructions</a>.  If you feel like it,
+<a href="/?build">Build Instructions</a>.  If you feel like it,
 please report what happened (for building and using)
 on our <a href="/cgi-bin/mp-report">Testing</a> page.  See much of what
 is going on over at the

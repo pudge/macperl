@@ -12,12 +12,12 @@ just for testing purposes.
 <table border="0" cellpadding="6"><tr>
 	<td valign="top" width="200">User:</td>
 	<td>[% IF myuser.sf_match %]
-<a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
+<a href="http://sf.net/users/[% myuser.user %]">[% myuser.user %]</a>
 	[% ELSE; myuser.user; END %]</td>
 </tr><tr>
 	<td valign="top">Test:</td>
 	<td>
-<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/macperl/perl/t/[% tests.${test.test_id} %].t?content-type=text/plain">[% tests.${test.test_id} %]</a>
+<a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/~checkout~/macperl/perl/t/[% tests.${test.test_id} %].t?content-type=text/plain">[% tests.${test.test_id} %]</a>
 	</td>
 </tr><tr>
 	<td valign="top">Configuration:</td>

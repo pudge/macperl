@@ -32,8 +32,8 @@
 
 	[% dot %]<a href="http://sf.net/project/showfiles.php?group_id=7940">Downloads</a><br />
 	[% dot %]<a href="http://dev.macperl.org/files/">Related Files</a><br />
-	[% dot %]<a href="/build.html">Build Instructions</a><br />
-	[% dot %]<a href="/build.html#cvs">CVS</a>
+	[% dot %]<a href="/?build">Build Instructions</a><br />
+	[% dot %]<a href="/?build.#cvs">CVS</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/macperl/">Browse</a> ]
 			<br />&nbsp; &nbsp; &nbsp;( <!-- CVS|commit -->1502 / <!-- CVS|add -->966 )
 			<br />
@@ -59,8 +59,8 @@
 	[% dot %]<a href="http://sf.net/pm/?group_id=7940">Task Manager</a>
 		<ul>
 			<!-- Tasks|begin -->
-			<li><a href="http://sourceforge.net/pm/task.php?group_project_id=6928&amp;group_id=7940&amp;func=browse">5.6.1 alpha</a></li>
-			<li><a href="http://sourceforge.net/pm/task.php?group_project_id=9632&amp;group_id=7940&amp;func=browse">5.6.1 beta</a></li>
+			<li><a href="http://sf.net/pm/task.php?group_project_id=6928&amp;group_id=7940&amp;func=browse">5.6.1 alpha</a></li>
+			<li><a href="http://sf.net/pm/task.php?group_project_id=9632&amp;group_id=7940&amp;func=browse">5.6.1 beta</a></li>
 			<!-- Tasks|end -->
 		</ul>
 		<br />
