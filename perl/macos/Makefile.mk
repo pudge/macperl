@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.14  2001/03/20 02:34:06  pudge
+#  Add in missing extensions
+#
 #  Revision 1.13  2001/01/30 13:21:12  pudge
 #  Re-add
 #
@@ -76,11 +79,11 @@ MACPERL_SRC	= {$(PWD)}:
 
 .INCLUDE : $(MACPERL_SRC)BuildRules.mk
 
-DB			= :::db:
-XL			= :::XL:
-GD			= :ext:GD:libgd:
+DB		= :::db:
+XL		= :::XL:
+GD		= :ext:GD:libgd:
 AEGizmos	= :::AEGizmos:
-IC 			= :::IC:
+IC 		= :::IC:
 SFIO		= "{{SFIO}}"
 GUSI		= "{{GUSI}}"
 MoreFiles	= :::MoreFiles:
@@ -189,28 +192,26 @@ MoLibsMrC	=	"$(DB)lib:db.Sfio.MrC.Lib"				\
 LNS = Perl -e 'symlink($ARGV[0], $ARGV[1])'
 RMS = delete -y 
 
-public			=	perl translators 
+public		=	perl translators 
 Dynamic_Ext_Mac	=	Mac
 Dynamic_Ext_Std	=	
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
-Static_Ext_Std	= \
+Static_Ext_Std	= 	\
 	B:B ByteLoader:ByteLoader Data:Dumper:Dumper DB_File:DB_File \
-	Devel:Peek:Peek DynaLoader:DynaLoader \
+	Devel:DProf:DProf Devel:Peek:Peek DynaLoader:DynaLoader \
 	Fcntl:Fcntl File:Glob:Glob IO:IO \
 	NDBM_File:NDBM_File Opcode:Opcode POSIX:POSIX \
 	Socket:Socket Sys:Hostname:Hostname \
  	attrs:attrs re:re
-
-	# Devel:DProf:DProf problems with times()
-	# Errno:Errno ? ... copy it from :macos:lib:
-
+	# Errno:Errno done, in from :macos:lib:
+	# not going to be built:
 	# GDBM_File:GDBM_File ODBM_File:ODBM_File IPC:IPC:SysV
 	# SDBM_File:SDBM_File Sys:Syslog:Syslog Thread:Thread
 
 Static_Ext_AutoInit	= 	$(Static_Ext_Mac) $(Static_Ext_Std)
 More_Static_Ext		= 	OSA XL
-Static_Ext_Prefix		= 	:ext:{$(Static_Ext_Mac)} ::ext:{$(Static_Ext_Std)}
+Static_Ext_Prefix	= 	:ext:{$(Static_Ext_Mac)} ::ext:{$(Static_Ext_Std)}
 Static_Ext_AutoInit_PPC	=	{$(Static_Ext_Prefix)}.Lib.PPC
 Static_Ext_AutoInit_68K	=	{$(Static_Ext_Prefix)}.Lib.68K
 Static_Ext_AutoInit_SC	=	{$(Static_Ext_Prefix)}.Lib.SC

@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.12  2001/03/20 02:26:13  pudge
+#  Add in missing extensions
+#
 #  Revision 1.11  2001/01/30 05:17:05  pudge
 #  Minor change
 #
@@ -114,11 +117,15 @@ Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= \
 	B:B ByteLoader:ByteLoader Data:Dumper:Dumper DB_File:DB_File \
-	Devel:Peek:Peek DynaLoader:DynaLoader \
+	Devel:DProf:DProf Devel:Peek:Peek DynaLoader:DynaLoader \
 	Fcntl:Fcntl File:Glob:Glob IO:IO \
 	NDBM_File:NDBM_File Opcode:Opcode POSIX:POSIX \
 	Socket:Socket Sys:Hostname:Hostname \
  	attrs:attrs re:re
+	# Errno:Errno done, in from :macos:lib:
+	# not going to be built:
+	# GDBM_File:GDBM_File ODBM_File:ODBM_File IPC:IPC:SysV
+	# SDBM_File:SDBM_File Sys:Syslog:Syslog Thread:Thread
 Static_Ext_Prefix		= 	$(MACPERL_SRC)ext:{$(Static_Ext_Mac)} $(PERL_SRC)ext:{$(Static_Ext_Std)}
 Static_Ext_AutoInit_PPC	=	{$(Static_Ext_Prefix)}.Lib.PPC
 Static_Ext_AutoInit_68K	=	{$(Static_Ext_Prefix)}.Lib.68K
