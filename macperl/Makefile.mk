@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.5  2001/01/09 21:44:59  pudge
+#  Add more extensions
+#
 #  Revision 1.4  2000/12/29 00:30:16  pudge
 #  Temporary change for my setup
 #
@@ -81,7 +84,10 @@ MacPerlSources	=		\
 	MPPseudoFile.cp		\
 	MPAEVTStream.cp
 
-.SOURCE : $(MACPERL_SRC)
+.SOURCE.c : $(MACPERL_SRC)
+.SOURCE.h : $(MACPERL_SRC)
+
+.INIT : Obj
 
 PerlSources = runperl.c
 
@@ -227,27 +233,27 @@ clean	:
 realclean	:	clean
 	Delete -i MacPerl MacPerl.PPC MacPerl.68K MacPerl.SC MacPerl.MrC
 
-MacPerl.PPC : $(ObjectsPPC) $(PerlObjPPC)
+MacPerl.PPC : Obj $(ObjectsPPC) $(PerlObjPPC)
 	$(ApplLinkPPC) -name Perl -o MacPerl.PPC :Obj:{$(ObjectsPPC)} $(PerlObjPPC) $(MacPerlLibPPC)
 	MergeFragment "$(AEGizmos)AEGizmos4Perl.shlb.PPC" MacPerl.PPC
 MacPerl.PPC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.PPC
 	SetFile -a B MacPerl.PPC
 
-MacPerl.MrC : $(ObjectsMrC) $(PerlObjMrC)
+MacPerl.MrC : Obj $(ObjectsMrC) $(PerlObjMrC)
 	$(ApplLinkMrC) -fragname Perl -o MacPerl.MrC :Obj:{$(ObjectsMrC)} $(PerlObjMrC) $(MacPerlLibMrC)
 	MergeFragment "$(AEGizmos)AEGizmos4Perl.shlb.PPC" MacPerl.MrC
 MacPerl.MrC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.MrC
 	SetFile -a B MacPerl.MrC
 
-MacPerl.68K : $(Objects68K) $(PerlObj68K)
+MacPerl.68K : Obj $(Objects68K) $(PerlObj68K)
 	$(ApplLink68K) -o MacPerl.68K :Obj:{$(Objects68K)} $(PerlObj68K) $(MacPerlLib68K)
 MacPerl.68K	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -o MacPerl.68K
 	SetFile -a B MacPerl.68K
 
-MacPerl.SC : $(ObjectsSC) $(PerlObjSC)
+MacPerl.SC : Obj $(ObjectsSC) $(PerlObjSC)
 	$(ApplLinkSC) -o MacPerl.SC :Obj:{$(ObjectsSC)} $(PerlObjSC) $(MacPerlLibSC)
 MacPerl.SC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.SC
@@ -290,11 +296,12 @@ MacPerlTest.Script	:	MakeMacPerlTest
 		::perl:t:Å:Å.t> MacPerlTest.Script
 
 MPDroplet.code : MPDrop.c.68K.o
-	$(ApplLink68K) -t 'rsrc' -c 'RSED' -sym on		¶
-		:Obj:MPDrop.c.68K.o					¶
-		"$(OldMW68KLibraries)ANSIFa(N/4i/8d)C.68K.Lib"	¶
-		"{{MW68KLibraries}}MathLib68K Fa(4i_8d).Lib"	¶
-		"{{MW68KLibraries}}MacOS.Lib" -o MPDroplet.code	
+	$(ApplLink68K) -t 'rsrc' -c 'RSED' -sym on			¶
+		:Obj:MPDrop.c.68K.o								¶
+		"{{MW68KLibraries}}MSL Runtime68K.Lib"			¶
+		"{{MW68KLibraries}}MacOS.Lib"					¶
+		"{{MW68KLibraries}}MSL C.68K MPW(NL_4i_8d).Lib"	¶
+		"{{MW68KLibraries}}MathLib68K (4i_8d).Lib" -o MPDroplet.code	
 
 MPDroplet : ":MacPerl Extensions:Droplet"	
 
