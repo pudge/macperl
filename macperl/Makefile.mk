@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.13  2001/03/22 04:28:42  pudge
+#  Misc. updates
+#
 #  Revision 1.12  2001/03/20 02:26:13  pudge
 #  Add in missing extensions
 #
@@ -62,17 +65,17 @@ MACPERL_SRC	= $(PERL_SRC)macos:
 
 .INCLUDE : $(MACPERL_SRC)BuildRules.mk
 
-DB			= ::db:
-XL			= ::XL:
-GD			= :perl:macos:ext:GD:libgd:
+DB		= ::db:
+XL		= ::XL:
+GD		= :perl:macos:ext:GD:libgd:
 AEGizmos	= ::AEGizmos:
-IC 			= ::IC:
+IC 		= ::IC:
 SFIO		= "{{SFIO}}"
 GUSI		= "{{GUSI}}"
 MoreFiles	= ::MoreFiles:
 
 COpt += -i $(MACPERL_SRC) -i $(PERL_SRC) -i $(DB)include: -i ::IC: -i $(AEGizmos)include:
-ApplRez 		= 	Rez -a -t APPL -c McPL
+ApplRez 		= 	Rez -a -t APPL -c McPL -i $(MACPERL_SRC)
 ApplMWLOpt		=	${LOpt} -xm application -d -warn
 ApplLink68K		=	MWLink68K ${ApplMWLOpt} -model far
 ApplLinkPPC		=	MWLinkPPC ${ApplMWLOpt} 
