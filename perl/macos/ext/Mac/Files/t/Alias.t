@@ -39,7 +39,7 @@ SKIP: {
 	if ($^O eq 'MacOS') {
 		($vol = $alias_path) =~ s/^([^:]+?).+$/$1/;
 	} else {
-		if ($alias_path =~ m|^/Volumes/([^/]+?)|) {
+		if ($alias_path =~ m|^/Volumes/([^/]+)|) {
 			$vol = $1;
 		} else {
 			$vol = "/";
