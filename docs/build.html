@@ -7,13 +7,14 @@
 	<title>MacPerl Build Process</title>
 	<meta name="generator" content="BBEdit 6.0.2" />
 	<base href="http://macperl.sourceforge.net/build.html" />
-	<link rel="stylesheet" type="text/css" href="/style.css" />
+	<link rel="stylesheet" type="text/css" href="style.css" />
 	<script type="text/javascript" charset="iso-8859-1">
 		// <![CDATA[
 
 			var notes = new Array();
 			notes[1] = 'Later versions of SC/MrC may not be fully compatible.';
-			notes[2] = 'In MPW you must hit "enter" or "cmd"+"return" to execute a command on a line.';
+			notes[2] = 'If you run out of memory in the middle of a build, save, quit, and try again.';
+			notes[3] = 'In MPW you must hit "enter" or "cmd"+"return" to execute a command on a line.';
 
 			function set_status (num) {
 				self.status = notes[num];
@@ -41,7 +42,7 @@
 <img src="/MacPerl.gif" width="32" height="32" alt="*" />
 
 These are the install procedures for
-<a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.  Please send feedback to the
+<a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.0.  Please send feedback to the
 <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a> list,
 and <a href="http://sourceforge.net/bugs/?func=addbug&amp;group_id=7940">submit bugs
 at SourceForge</a>.
@@ -50,9 +51,7 @@ at SourceForge</a>.
 
 <p>
 To build MacPerl, you will need a Mac and plenty of RAM.  The build goes
-fine with my PowerBook G3/400 with 256MB, but has some problems on my
-iBook 333 with 128MB.  Sometimes MPW runs out of memory, and I need to
-restart MPW -- or the machine -- to continue.
+fine with my PowerBook G3/400 with 256MB, and on my iBook 333 with 128MB RAM.
 </p>
 
 <p>
@@ -105,7 +104,9 @@ recommended versions for building with.
 
 	<li><strong><a href="http://www.stlport.org/">STLport</a></strong> (3.12.3), if building with SC / MrC</li>
 
-	<li>(Perl and MacPerl source)</li>
+	<li><strong><a href="http://www.cpan.org/src/5.0/perl-5.6.0.tar.gz">perl-5.6.0 source</a></strong></li>
+
+	<li><strong><a href="#">MacPerl source kit</a></strong></li>
 </ul>
 
 
@@ -114,7 +115,7 @@ recommended versions for building with.
 
 <ol>
 	<li><p>Unpack the macperl_build_libs.sit archive, which will create
-		a folder called <i>macperl</i>.  Put it in a location
+		a folder called <em>macperl</em>.  Put it in a location
 		such that the path to the directory has
 		no whitespace or odd characters in it.  So "HD:macperl:" is fine, but
 		"Macintosh HD:macperl:" is not.  Yes, you may need to change your
@@ -127,9 +128,9 @@ recommended versions for building with.
 		and drag the folder in the image to your drive.</p></li>
 
 	<li><p>Copy the patch and dmake tools, and the startup.mk file from
-		the dmake distribution, to the MPW <i>Tools</i> folder.
+		the dmake distribution, to the MPW <em>Tools</em> folder.
 		Copy the BuildProgram and BuildCommands scripts from
-		the dmake folder to the MPW <i>Scripts</i> folder,
+		the dmake folder to the MPW <em>Scripts</em> folder,
 		overwriting the existing scripts of the same name
 		(backup the old ones if you want to).</p></li>
 
@@ -140,26 +141,27 @@ recommended versions for building with.
 		the GUSI distribution is unpacked, so each folder is
 		within the same enclosing folder.</p></li>
 
-	<li><p>Give the <i>MPW Shell</i> application plenty of RAM (I
+	<li><p>Give the <em>MPW Shell</em> application plenty of RAM (I
 		gave it 30MB) and make sure you have plenty of extra RAM
 		while the app is running (another 30MB might be sufficient).
+		<sup><a href="#" onmouseover="set_status(2);" onclick="return no_click(2);">2</a></sup>
 		Then run the application.  If you wish, create a new document to
 		work in.</p></li>
 
 	<li><p>Change directory (using the "directory" command) in MPW to the
-		GUSI directory, and run the <i>GUSI_Install.MPW</i> script.
-		<sup><a href="#" onmouseover="set_status(2);" onclick="return no_click(2);">2</a></sup></p><pre>
+		GUSI directory, and run the <em>GUSI_Install.MPW</em> script.
+		<sup><a href="#" onmouseover="set_status(3);" onclick="return no_click(3);">3</a></sup></p><pre>
 			directory "Bourque:Prog:src:GUSI_215"
 			GUSI_Install.MPW</pre>
 		
 		<p>If using STLport (SC/MrC builds), also run the
-		<i>STLport_Install.MPW</i> script here.</p></li>
+		<em>STLport_Install.MPW</em> script here.</p></li>
 
 	<li><p>Change directory to the sfio directory, and execute the
-		<i>Sfio_Install.MPW</i> script.</p></li>
+		<em>Sfio_Install.MPW</em> script.</p></li>
 
 	<li><p>If using the Metrowerks compilers, execute the
-		<i>CW_Max_NoDup_Update</i> script.</p></li>
+		<em>CW_Max_NoDup_Update</em> script.</p></li>
 
 	<li><p>If not already installed, install MacPerl, and the perl MPW tool.
 		The main MacPerl distribution must be installed for
@@ -167,24 +169,33 @@ recommended versions for building with.
 		To install the MPW tool, see the documentation that
 		comes with it.</p></li>
 
-	<li><p><i>Instructions for setting up perl src goes here.</i></p></li>
+	<li><p>Unpack the perl-5.6.0 archive.  Change the folder name to
+		<em>perl</em> and drop it in the working folder with
+		everything else.</p></li>
 
-	<li><p>Open <i>:macperl:perl:macos:MacPerlConfig.mk</i> and
+	<li><p>Unpack the MacPerl source kit.  Put the <em>macperl</em>
+		folder inside the working directory with everything
+		else.  Put the <em>macos</em> folder inside the
+		<em>perl</em> folder created in the last step.</p></li>
+
+	<li><p>Change directory to the macos directory and apply the patch.</p><pre>
+		directory "Bourque:Prog:src:macperl:perl:macos:"
+		patch &lt; MacPerl.patch</pre></li>
+
+	<li><p>Open <em>:macperl:perl:macos:MacPerlConfig.mk</em> and
 		change the preferences there for the compilers you will
-		be using.  If using SC/MrC: open
-		<i>:macperl:perl:macos:Makefile.mk</i> and comment out
-		the "BuildProgram all" part of the "translators" target.</p></li>
+		be using.  (CodeWarrior is 68K/PPC, Apple is SC/MrC.)</p></li>
 
 	<li><p>Quit and restart MPW Shell, so the startup files will
 		be executed, or execute the MPW startup files
 		manually.</p></li>
 
-	<li><p>Change directory in MPW to <i>:macperl:perl:macos:</i> and
+	<li><p>Change directory in MPW to <em>:macperl:perl:macos:</em> and
 		execute <tt>buildprogram all</tt>.  This could take up
 		to an hour, and will build all of the MPW tools
 		and perl modules for the compilers you chose.</p></li>
 
-	<li><p>Change directory in MPW to <i>:macperl:macos:</i> and
+	<li><p>Change directory in MPW to <em>:macperl:macos:</em> and
 		execute <tt>buildprogram all</tt>.  This will build
 		the MacPerl application and supporting files.</p></li>
 
@@ -214,14 +225,16 @@ via the web.
 <noscript>
 <p class="notes">
 	<sup>1</sup> Later versions of SC/MrC may not be fully compatible.<br />
-	<sup>2</sup> In MPW you must hit "enter" or "cmd"+"return" to
+	<sup>2</sup> If you run out of memory in the middle of a build, save,
+		quit, and try again.<br />
+	<sup>3</sup> In MPW you must hit "enter" or "cmd"+"return" to
 		execute a command on a line.<br />
 </p>
 </noscript>
 
 <p>Good luck, and have fun.</p>
 
-<p><i>Matthias Neeracher &amp; Chris Nandor</i></p>
+<p><em>Matthias Neeracher &amp; Chris Nandor</em></p>
 
 <p class="notes">
 $Id$
