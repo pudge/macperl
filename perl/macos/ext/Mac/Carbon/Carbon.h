@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2002/11/13 02:04:50  pudge
+ * Aieeeeee!  Big ol' Carbon update.
+ *
  *
  */
 
@@ -48,7 +51,7 @@ typedef Ptr	PtrRet;
 #include <errno.h>
 
 /* $! and $^E will both be set together, which is fine (for now?) */
-#define gMacPerl_OSErr errno
+#define gMacPerl_OSErr (short)errno
 
 /* c string to pascal string */
 static StringPtr MacPerl_CopyC2P(const char * c, StringPtr p)
