@@ -47,28 +47,15 @@ SKIP: {
 		:  -e catfile($dir2, $ofil)	? $dir2
 		: '';
 
-	# try to fix forks ... it's ok if we can't, we'll live
-	if ($^O eq 'darwin') {
-		my $ifil = $ofil;
-		$ofil = 'Sound.rsrc';
-
-		# already been here?
-		unless (-e catfile($dir, $ofil)) {
-			my $no = 0;
-			if (open(my $df, '>', catfile($dir, $ofil))) {
-			if (open(my $rf, '>', catfile($dir, $ofil, '..namedfork', 'rsrc'))) {
-			if (open($df, '<', catfile($dir, $ifil))) {
-				print $rf $_ while <$df>;
-			}}}
-
-			$ofil = $ifil unless -e catfile($dir, $ofil);
-		}
-	}
-
 	my $file = catdir($dir, $ofil);
 
 	my($res, $snd);
-	$res = FSpOpenResFile($file, 0) if $file;
+	if ($file && $^O eq 'MacOS') {
+		$res = FSpOpenResFile($file, 0);
+	} elsif ($file) {
+		$res = FSOpenResourceFile($file, 'rsrc', 0) ||
+		       FSOpenResourceFile($file, 'data', 0);
+	}
 
 	if ($res) {
 		ok($res,				'open resource file');
