@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2002/12/12 15:36:26  pudge
+ * Make work with gcc2
+ *
  * Revision 1.4  2002/12/12 14:57:08  pudge
  * Update POD and docs
  *
@@ -281,6 +284,10 @@ static void fgetfileinfo(char * path, OSType * creator, OSType * type)
 	}
 	DisposePtr((char *)spec);
 }
+
+// keyReplyPortAttr is not found on some Mac OS X versions ...
+// so define our own.  nyah nyah.
+#define keyPerlReplyPortAttr 'repp'
 
 /* Maybe we'll have use for this again? *
 * 

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2002/12/12 15:36:33  pudge
+ * Make work with gcc2
+ *
  * Revision 1.5  2002/12/12 14:57:16  pudge
  * Update POD and docs
  *
@@ -621,7 +624,7 @@ AESend(theAppleEvent, sendMode, sendPriority=kAENormalPriority, timeout=kAEDefau
 	mach_port_t port;
 
 	mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port);
-	AEPutAttributePtr(&theAppleEvent, keyReplyPortAttr, typeMachPort, &port, sizeof(port));
+	AEPutAttributePtr(&theAppleEvent, keyPerlReplyPortAttr, typeMachPort, &port, sizeof(port));
 	AEFail(
 		AESendMessage(
 			&theAppleEvent, &RETVAL, 
