@@ -5,13 +5,14 @@ use strict;
 use Data::Dumper;
 use LWP::Simple;
 use vars qw(%data $group $print);
+$print = 1;
 
 $group ||= shift || 7940;  # macperl is 7940, slash is 4421
 my $url = "http://sourceforge.net/export/projhtml.php?group_id=$group&mode=full&no_table=1";
 my $text = get $url;
 $text =~ s/\015?\012/\n/g;
 
-my($in_tasks);
+my($in_tasks, $in_track);
 
 for my $line (split /\n/, $text) {
 
@@ -28,19 +29,32 @@ for my $line (split /\n/, $text) {
 		next;
 	}
 
-	undef $_;
-	($_) = $line =~ / ALT="([^"]+)" /;
-	next unless $_;
+	unless ($in_track) {
+		undef $_;
+		($_) = $line =~ / ALT="([^"]+)" /;
+		unless ($_) {
+			($_) = $line =~ m|tracker/\?atid=.+?">(.+?)</A>|;
+			$in_track = 1 if $_;
+		}
+		next unless $_;
+		($data{$_}{href}) = $line =~ / href="([^"]+)">/i;
+		next if $in_track;
+	}
 
-	($data{$_}{href}) = $line =~ / href="([^"]+)">/;
-
-	if (/^Bugs$/) {
-		(@{$data{$_}}{'open', 'total'}) =
-			$line =~ m{ \( <B>(\d+)</B> open bugs, <B>(\d+)</B> total \)};
+	if ($in_track) {
+		(@{$data{$_}}{'items'}) =
+			$line =~ m{\( <B>(\d+)</B> items\)};
+		$in_track = 0;
 
 	} elsif (/^Patches$/) {
-		(@{$data{$_}}{'open', 'total'}) =
-			$line =~ m{ \( <B>(\d+)</B> open patches, <B>(\d+)</B> total \)};
+		(@{$data{$_}}{'items'}) =
+			$line =~ m{\( <B>(\d+)</B> items\)};
+		$in_track = 0;
+
+	} elsif (/^Feature Requests$/) {
+		(@{$data{$_}}{'items'}) =
+			$line =~ m{\( <B>(\d+)</B> items\)};
+		$in_track = 0;
 
 	} elsif (/^CVS$/) {
 		(@{$data{$_}}{'commit', 'add'}) =
