@@ -1,14 +1,15 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -sw
 use strict;
 use Data::Dumper;
 use LWP::Simple;
+use vars qw(%data $group $print);
 
-my $group = shift || 7940;  # macperl is 7940, slash is 4421
+$group ||= shift || 7940;  # macperl is 7940, slash is 4421
 my $url = "http://sourceforge.net/export/projhtml.php?group_id=$group&mode=full&no_table=1";
 my $text = get $url;
 $text =~ s/\015?\012/\n/g;
 
-my(%data, $in_tasks);
+my($in_tasks);
 
 for my $line (split /\n/, $text) {
 
@@ -32,11 +33,11 @@ for my $line (split /\n/, $text) {
 	($data{$_}{href}) = $line =~ / href="([^"]+)">/;
 
 	if (/^Bugs$/) {
-		(@{$data{$_}}{'open', 'closed'}) =
+		(@{$data{$_}}{'open', 'total'}) =
 			$line =~ m{ \( <B>(\d+)</B> open bugs, <B>(\d+)</B> total \)};
 
 	} elsif (/^Patches$/) {
-		(@{$data{$_}}{'open', 'closed'}) =
+		(@{$data{$_}}{'open', 'total'}) =
 			$line =~ m{ \( <B>(\d+)</B> open patches, <B>(\d+)</B> total \)};
 
 	} elsif (/^CVS$/) {
@@ -54,4 +55,6 @@ for my $line (split /\n/, $text) {
 
 }
 
-print Dumper \%data;
+print Dumper \%data if $print;
+
+1;

@@ -6,36 +6,39 @@
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 	<title>MacPerl Build Process</title>
 	<meta name="generator" content="BBEdit 6.0.2" />
+	<link rel="stylesheet" type="text/css" href="/style.css" />
+	<base href="http://macperl.sourceforge.net" />
 </head>
 <body>
 
-<h1>MacPerl Build Process</h1>
+<h1 class="head">MacPerl Build Process</h1>
 
 <p>
-<a name="bar">These</a> are the install procedures for <a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.
+These are the install procedures for <a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.
 </p>
 
 <h2>Ingredients</h2>
 
 <ul>
-	<li>The <a href="ftp://sunsite.cnlab-switch.ch//software/platform/macos/src/mpw_c/dmake_40m2.sit.bin">dmake</a> MPW tool</li>
-	<li>The <a href="ftp://sunsite.cnlab-switch.ch/software/platform/macos/src/mpw_c/Patch_21.sit.bin">Patch</a> MPW tool</li>
+	<li>The <a href="ftp://sunsite.cnlab-switch.ch//software/platform/macos/src/mpw_c/dmake_40m2.sit.bin">dmake</a> MPW tool *</li>
+	<li>The <a href="ftp://sunsite.cnlab-switch.ch/software/platform/macos/src/mpw_c/Patch_21.sit.bin">Patch</a> MPW tool *</li>
 	<li>The latest version of a number of <a href="ftp://sunsite.cnlab-switch.ch//software/platform/macos/src/mw_c/">packages:</a>
 		<ul>
-			<li>GUSI 2 (GUSI_215 or later)</li>
-			<li>sfio (sfio_04Aug99 or later)</li>
-			<li>(Berekeley) db (db_186 or later)</li>
-			<li>XL (XL_15 or later)</li>
+			<li><a href="http://sourceforge.net/projects/gusi/">GUSI 2</a> (GUSI_215 or later) (SF)</li>
+			<li>sfio (sfio_04Aug99 or later) *</li>
+			<li>(Berekeley) db (db_186 or later) *</li>
+			<li>XL (XL_15 or later) *</li>
 		</ul></li>
-	<li>AEGizmos</li>
-	<li><a href="http://devworld.apple.com/samplecode/Sample_Code/Files/MoreFiles.htm">MoreFiles 1.5</a></li>
-	<li>IC source</li>
+	<li>AEGizmos (shall I post it here, or is there another place ?  should i post _everything here_?)</li>
+	<li><a href="http://devworld.apple.com/samplecode/Sample_Code/Files/MoreFiles.htm">MoreFiles 1.5</a> (recheck location)</li>
+	<li><a href="ftp://ftp.stairways.com/icprogkit-202-source.sit">Internet Config kit source</a></li>
 	<li>A complete installation of <a href="http://developer.apple.com/tools/mpw-tools/">MPW</a></li>
-	<li>A reasonably recent version of the Metrowerks CodeWarrior compilers for MPW (Pro 5 recommended) 
+	<li>A reasonably recent version of the <a href="http://www.metrowerks.com/">Metrowerks</a>
+		CodeWarrior compilers for MPW (Pro 5 recommended) 
 		<em>or</em> of the MPW C/C++ compilers (I used SC 8.8.4f1, MrC 4.1.0f1c1,
 		MWCPPC 2.3.2 build 75, and MWC68K 2.3.2 build 79)
 	</li>
-	<li>STLport 3.12.3 if MrC/SC</li>
+	<li><a href="http://www.stlport.org/">STLport</a> 3.12.3 if MrC/SC</li>
 	<li>(Perl and MacPerl source)</li>
 </ul>
 
@@ -58,7 +61,7 @@
 </ol>
 
 <ul>
-	<li><a name="foo">Put</a> the the MacPerl distribution (the "macos" folder) inside the perl distribution 
+	<li>Put the the MacPerl distribution (the "macos" folder) inside the perl distribution 
 		(perl-5.6.0).</li>
 	<li>Change your directory to the macos folder.</li>
 	<li>Apply the patch by executing the command "patch &lt; MacPerl-patch-5.6.0"</li>
@@ -66,9 +69,16 @@
 	<li>Build the "all" target. It will fail at the "x2p" point.</li>
 </ul>
 
-<p>Good luck, and have fun
+<p>Good luck, and have fun.  See the <a href="http://lists.perl.org/">macperl-porters</a>
+mailing list for more information and discussion, and use the
+<a href="http://sourceforge.net/projects/macperl/">MacPerl page on SourceForge</a>
+for bug reports, patches, CVS, and more.</p>
 
-Matthias Neeracher 09Apr00</p>
+<p>Matthias Neeracher &amp; Chris Nandor</p>
+
+<p class="notes">
+$Id$
+</p>
 
 </body>
 </html>

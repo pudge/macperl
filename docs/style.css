@@ -1,0 +1,68 @@
+BODY		{
+	background-color: rgb(255, 255, 255);
+	color: rgb(0, 0, 0);
+}
+
+A:link		{
+	color: rgb(  0,   0, 170);
+	text-decoration: none;
+}
+
+A:visited	{
+	color: rgb(  0,   0, 170);
+	text-decoration: none;
+}
+
+A:active	{
+	background-color: yellow;
+	color: rgb(170,   0,  0);
+	text-decoration: none;
+}
+
+A:hover		{
+	background-color: yellow;
+	color: rgb(170,   0,  0);
+	text-decoration: none;
+}
+
+.even		{
+	background-color: rgb(170, 170, 255);
+	color: rgb(0, 0, 0);
+}
+
+.neutral	{
+	background-color: rgb(255, 170, 170);
+	color: rgb(0, 0, 0);
+}
+
+.odd		{
+	background-color: rgb(170, 170, 170);
+	color: rgb(0, 0, 0);
+}
+
+IMG		{
+	border-style: none;
+	float: left;
+}
+
+.center		{
+	text-align: center;
+	float: none;
+}
+
+P.menu		{
+	text-align: center;
+	font-weight: bold;
+}
+
+P.rr		{
+	text-align: center;
+	font-family: "Hoefler Text", Garamond, "Times New Roman", serif;
+	font-size: 24pt;
+	font-style: italic;
+	font-weight: bold;
+}
+
+P.notes		{ font-size: small			}
+
+H1.head		{ text-align: center			}
