@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.17  2002/03/08 04:12:03  pudge
+Cosmetic fixes (Thomas Wegner)
+
 Revision 1.16  2002/03/01 06:18:31  pudge
 Update resources
 
@@ -874,6 +877,92 @@ resource 'DITL' (302) {
 		}
 	}
 };
+
+
+/************* Custom Standard File Choose Folder Dialog *********************/
+
+resource 'DLOG' (193, "Std File CustomGetFolder", purgeable) {
+	{45, 25, 257, 368},
+	dBoxProc,
+	invisible,
+	noGoAway,
+	0x0,
+	193,
+	"",
+	noAutoCenter
+};
+
+
+resource 'DITL' (193, "Std File CustomGetFolder", purgeable) {
+	{	/* array DITLarray: 11 elements */
+		/* [1] */
+		{141, 244, 161, 334},
+		Button {
+			enabled,
+			"Open"
+		},
+		/* [2] */
+		{110, 244, 130, 334},
+		Button {
+			enabled,
+			"Cancel"
+		},
+		/* [3] */
+		{0, 0, 0, 0},
+		HelpItem {
+			disabled,
+			HMScanhdlg {
+				-6042
+			}
+		},
+		/* [4] */
+		{16, 235, 32, 337},
+		UserItem {
+			enabled
+		},
+		/* [5] */
+		{40, 244, 60, 334},
+		Button {
+			enabled,
+			"Eject"
+		},
+		/* [6] */
+		{68, 244, 88, 334},
+		Button {
+			enabled,
+			"Desktop"
+		},
+		/* [7] */
+		{63, 12, 193, 230},
+		UserItem {
+			enabled
+		},
+		/* [8] */
+		{40, 12, 59, 230},
+		UserItem {
+			enabled
+		},
+		/* [9] */
+		{99, 243, 100, 335},
+		Picture {
+			disabled,
+			11
+		},
+		/* [10] */
+		{171, 244, 191, 334},
+		Button {
+			enabled,
+			"Directory"
+		},
+		/* [11] */
+		{14, 29, 34, 214},
+		Button {
+			enabled,
+			"Select Current Directory:"
+		}
+	}
+};
+
 
 /************************** Save Dialog **************************/
 
