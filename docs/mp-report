@@ -446,7 +446,7 @@ Look around, click around, have fun.
 </p>
 
 <table border="0" cellpadding="4">
-	<tr class="neutral">
+	<tr class="mp">
 		<th>Test Name</th>
 		<th>User</th>
 		<th>Config</th>
@@ -457,7 +457,7 @@ Look around, click around, have fun.
 
 [% FOR test = tests %]
 	<tr class="[% PROCESS status status => test.status %]">
-		<td><a name="[% test.test %]">[% test.test %]</a></td>
+		<td><strong><a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/~checkout~/perl/t/[% test.test %].t?cvsroot=macperl" name="[% test.test %]">[% test.test %]</a></strong></td>
 		<td colspan="5">&nbsp;</td>
 	</tr>
 	[% FOR user_test = user_tests.${test.id};
