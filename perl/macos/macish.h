@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.3  2000/09/09 22:18:25  neeri
+Dynamic libraries compile under 5.6
+
 Revision 1.2  2000/08/21 08:22:04  neeri
 Build tweaks & forgotten files
 
@@ -184,8 +187,10 @@ const char * MacPerl_CanonDir(const char * dir, char * buf);
 #define Fflush(fp)         fflush(fp)
 #define Mkdir(path,mode)   mkdir((path),(mode))
 
-#ifndef PERL_SYS_INIT
-#	define PERL_SYS_INIT(c,v) PL_opargs[OP_TIME] &= ~OA_RETINTEGER; MALLOC_INIT
+#ifndef PERL_SYS_INIT3
+#	define PERL_SYS_INIT3(c,v,e) \
+				init_env(*e);	\
+				PL_opargs[OP_TIME] &= ~OA_RETINTEGER; MALLOC_INIT
 #endif
 
 #ifndef PERL_SYS_TERM

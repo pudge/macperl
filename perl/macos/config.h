@@ -13,6 +13,9 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.1  2000/08/14 01:48:17  neeri
+Checked into Sourceforge
+
 Revision 1.1  2000/05/14 21:45:03  neeri
 First build released to public
 
@@ -37,7 +40,7 @@ First build released to public
  *	This symbol indicates the C compiler can check for function attributes,
  *	such as printf formats. This is normally only supported by GNU cc.
  */
-#define HASATTRIBUTE 	/**/
+#undef HASATTRIBUTE 	/**/
 #ifndef HASATTRIBUTE
 #define __attribute__(_arg_)
 #endif

@@ -25,7 +25,7 @@ Opt68K		=	-model far -mc68020 -mbg on
 OptPPC		=	-tb on
 MWCOpt		=	${COpt} ${MWCInc} ${CInc} 
 MPWOpt		=	${COpt} ${MPWInc} ${CInc} -includes unix -w 2,3,6,7,35,29
-MPWCpOpt	=	-ER -bool on 
+MPWCpOpt	=	-i "{{STLport}}stl:" -ER -bool on 
 C68K		=	MWC68K ${MWCOpt} ${Opt68K}
 CPPC		=	MWCPPC ${MWCOpt} ${OptPPC}
 CSC			=	SC ${MPWOpt} ${Opt68K}
@@ -67,13 +67,6 @@ SharedLibPPC=	MWLinkPPC -xm sharedlibrary -sym on -msg nodup
 # Pattern rules
 #
 
-%.rsrc  			: %.rsrc.r 
-	Rez Types.r $< -o $@
-	Echo > $@.stamp
-%.rsrc.stamp	: %.rsrc
-	DeRez $< Types.r > $<.r
-	SetFile -m . $<
-	Echo > $@                       
 %.c.68K.o		:	%.c
 	$(C68K) $< -o $@
 %.cp.68K.o		:	%.cp

@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.3  2000/09/09 22:18:25  neeri
+#  Dynamic libraries compile under 5.6
+#
 #  Revision 1.2  2000/08/21 08:22:04  neeri
 #  Build tweaks & forgotten files
 #
@@ -169,7 +172,7 @@ LNS = Perl -e 'symlink($ARGV[0], $ARGV[1])'
 RMS = delete -y 
 
 public			=	perl translators 
-Dynamic_Ext_Mac	=	Mac GD
+Dynamic_Ext_Mac	=	Mac
 Dynamic_Ext_Std	=	
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 

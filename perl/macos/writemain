@@ -20,8 +20,8 @@ foreach (@ARGV) {
 open(MAIN, "::miniperlmain.c") || die "Couldn't open ::miniperlmain.c: $!";
 
 while (<MAIN>) {
-    s/perl_destruct/perl_destruct_level = 2;\n\n    perl_destruct/ if $runperl;
-    s/^main\(/run_perl\(/ if $runperl;
+    s/\bperl_destruct\b/PL_perl_destruct_level = 2;\n\n    perl_destruct/ if $runperl;
+    s|^main\(|#define exit(x) /*Null*/\n\nrun_perl\(| if $runperl;
     last if /Do not delete this line--writemain depends on it/;
     print;
 }
@@ -80,7 +80,7 @@ if ($#ARGV > -1) {
     av_push(PL_preambleav, newSVpv("BEGIN { $ai }",0));
 END_AUTOBOOT
     }
-    print "    av_push(GvAVn(incgv), newSVpv(\"Dev:Pseudo:\", 0));\n" if ($runperl);
+    print "    av_push(GvAVn(PL_incgv), newSVpv(\"Dev:Pseudo:\", 0));\n" if ($runperl);
 }
 print "}\n";
 
@@ -118,14 +118,4 @@ int main(int argc, char ** argv, char ** env)
 	}
 }
 END_MAIN
-} elsif ($runperl) {
-	print <<'END_EXIT';
-
-#undef exit
-
-void (exit)(int status)
-{
-	my_exit(status);
-}
-END_EXIT
-}
+} 

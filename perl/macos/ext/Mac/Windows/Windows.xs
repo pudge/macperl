@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:29  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:34  neeri
  * Checked into Sourceforge
  *
@@ -215,7 +218,8 @@ STRUCT * GrafPtr
 			XS_OUTPUT(Rect, ((PerlWDEFDataHdl)STRUCT->dataHandle)[0]->userState, $arg);
 			HUnlock(STRUCT->dataHandle);
 		} else {
-			XS_OUTPUT(Rect, GlobalBounds((WindowPtr)STRUCT), $arg);
+			Rect	r = GlobalBounds((WindowPtr)STRUCT);
+			XS_OUTPUT(Rect, r, $arg);
 		}
 	Rect 			stdState;
 		INPUT:
@@ -230,7 +234,8 @@ STRUCT * GrafPtr
 			XS_OUTPUT(Rect, ((PerlWDEFDataHdl)STRUCT->dataHandle)[0]->stdState, $arg);
 			HUnlock(STRUCT->dataHandle);
 		} else {
-			XS_OUTPUT(Rect, GlobalBounds((WindowPtr)STRUCT), $arg);
+			Rect	r = GlobalBounds((WindowPtr)STRUCT);
+			XS_OUTPUT(Rect, r, $arg);
 		}
 
 =head2 Functions
