@@ -132,7 +132,7 @@ sub DoPodIndex {
 		$url =~ s|:|/|g;		
 		$url = "pod://$url";
 	}
-	open(INDEX, $file) ||Êdie "Can't open index file \"$file\"";
+	open(INDEX, "::perl$file") ||Êdie "Can't open index file \"$file\"";
 	while (<>) {
 		if (/\@end/) {
 			goto startindex;

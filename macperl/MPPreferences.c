@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.7  2001/01/30 05:17:22  pudge
+Temp. change to pref file name
+
 Revision 1.6  2001/01/24 09:51:30  neeri
 Fix library paths (Bug 129817)
 
@@ -100,10 +103,10 @@ pascal void OpenPreferenceFile(FSSpec * spec)
 	if (!Get1Resource('STR#', EnvironmentVars)) {
 		Handle	env;
 		Handle	userString;
-		short		count = 2;
-		char		state;
+		short	count = 2;
+		char	state;
 		char *	tmp;
-		int		tmplen;
+		int	tmplen;
 		FSSpec	tmpspec;
 		
 		PtrToHand((Ptr) &count, &env, sizeof(short));
@@ -122,8 +125,7 @@ pascal void OpenPreferenceFile(FSSpec * spec)
 		tmplen = strlen(tmp);
 		PtrAndHand((Ptr) "\pTMPDIR=", env, 8);
 		PtrAndHand(tmp, env, tmplen);
-		PtrAndHand(":", env, 1);
-		(*env)[3+(*env)[2]] += tmplen+1;
+		(*env)[3+(*env)[2]] += tmplen;
 		
 		AddResource(env, 'STR#', EnvironmentVars, (StringPtr) "\p");
 	}
