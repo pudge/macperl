@@ -41,7 +41,7 @@ __template__
 <A HREF="[% constants.rootdir %]/~[% nickname | fixparam %]/journal/[% diatribe.id %]">#[% diatribe.id %]</A>
 ]
  			</FONT>
-[% PROCESS zoo_icons person=uid bonus=1 %]
+[%# PROCESS zoo_icons person=uid bonus=1 %]
 			<P>
 			[% diatribe.article %]
 		<BR><BR></DIV>
