@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.4  2000/12/29 00:30:16  pudge
+#  Temporary change for my setup
+#
 #  Revision 1.3  2000/12/25 09:47:39  neeri
 #  Fix libraries for 68K build
 #
@@ -90,8 +93,10 @@ ObjectsMrC 		= {$(MacPerlSources) $(PerlSources)}.MrC.o
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= \
+	re:re Fcntl:Fcntl File:Glob:Glob Sys:Hostname:Hostname \
 	DynaLoader:DynaLoader NDBM_File:NDBM_File DB_File:DB_File Socket:Socket \
-	Opcode:Opcode POSIX:POSIX IO:IO
+	Opcode:Opcode POSIX:POSIX IO:IO attrs:attrs Data:Dumper:Dumper \
+	Devel:Peek:Peek
 Static_Ext_Prefix		= 	$(MACPERL_SRC)ext:{$(Static_Ext_Mac)} $(PERL_SRC)ext:{$(Static_Ext_Std)}
 Static_Ext_AutoInit_PPC	=	{$(Static_Ext_Prefix)}.Lib.PPC
 Static_Ext_AutoInit_68K	=	{$(Static_Ext_Prefix)}.Lib.68K
