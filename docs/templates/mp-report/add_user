@@ -1,7 +1,8 @@
-Please enter a user name, your email address (which will not be shown,
-but will be used in case I need to contact you directly), your chosen
-password (twice for verification), and select the checkbox for whether
-or not your chosen user name is the same as your user name on SoureForge.
+Please enter a user name (using only [a-z0-9_]), your email address
+(which will not be shown, but will be used in case I need to contact you
+directly), your chosen password (twice for verification), and select the
+checkbox for whether or not your chosen user name is the same as your
+user name on SoureForge.
 </p>
 <p>
 Please do use the same user name for both this and SourceForge,

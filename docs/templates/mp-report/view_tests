@@ -38,7 +38,7 @@ Please read the test guidelines (not yet available :-).
 		<td>[% IF myuser.sf_match %]
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
 		[% ELSE; myuser.name; END %]</td>
-		<td>[% configs.${user_test.config_id} %]</td>
+		<td>[% FILTER strip_literal ; configs.${user_test.config_id} ; END %]</td>
 		<td>[% compiler.${user_test.compiler} %]</td>
 		<td>[% user_test.date %]</td>
 	</tr>

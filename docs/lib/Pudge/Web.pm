@@ -31,6 +31,15 @@ use vars qw($VERSION);
 use constant ALLOWED	=> 0;
 use constant FUNCTION	=> 1;
 
+# for Slash::Utility functions
+use constant ATTRIBUTE	=> -2;
+use constant LITERAL	=> -1;
+use constant NOHTML	=> 0;
+use constant PLAINTEXT	=> 1;
+use constant HTML	=> 2;
+use constant EXTRANS	=> 3;
+use constant CODE	=> 4;
+
 sub new {
 	my($class, %args) = @_;
 	return unless $class;
@@ -114,9 +123,30 @@ sub get_cookie {
 
 sub template {
 	my($self) = @_;
+	require Template::Filters;
+
+	my $strip_mode = sub {
+		my($context, @args) = @_;
+		return sub { strip_mode($_[0], @args) };
+	};
+
+	my $filters = Template::Filters->new({ FILTERS => {
+		fixparam	=> \&fixparam,
+		fixurl		=> \&fixurl,
+		strip_attribute	=> \&strip_attribute,
+		strip_code	=> \&strip_code,
+		strip_extrans	=> \&strip_extrans,
+		strip_html	=> \&strip_html,
+		strip_literal	=> \&strip_literal,
+		strip_nohtml	=> \&strip_nohtml,
+		strip_plaintext	=> \&strip_plaintext,
+		strip_mode	=> [ $strip_mode, 1 ]
+	}});
+
 	my $template = Template->new(
 		TRIM		=> 1,
-		INCLUDE_PATH	=> $self->{tt_path}
+		INCLUDE_PATH	=> $self->{tt_path},
+		LOAD_FILTERS	=> $filters,
 	);
 }
 
@@ -147,9 +177,168 @@ sub get_sth {
 	return $sth;
 }
 
+sub get_dbarray {
+	my($self, $id, $st, @args) = @_;
+
+	my $sql = $self->compose_select($st);
+	my $sth = $self->get_sth($sql, @args);
+
+	return $sth->fetchrow_array;
+}
+
+sub get_dbhash {
+	my($self, $id, $st, @args) = @_;
+
+	my $sql = $self->compose_select($st);
+	my $sth = $self->get_sth($sql, @args);
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_hashref) {
+		$data->{$row->{$id}} = $row;
+	}
+	return $data;
+}
+
+sub get_dbhashdesc {
+	my($self, $id, $st, @args) = @_;
+
+	my $sql = $self->compose_select($st);
+	my $sth = $self->get_sth($sql, @args);
+
+	my $data = {};
+	while (my $row = $sth->fetchrow_arrayref) {
+		$data->{$row->[0]} = $row->[1];
+	}
+	return $data;
+}
+
+sub compose_select {
+	my($self, $args) = @_;
+	my $sql = "SELECT $args->[0]";
+	$sql   .= " FROM $args->[1]"  if $args->[1];
+	$sql   .= " WHERE $args->[2]" if $args->[2];
+	$sql   .= " $args->[3]"       if $args->[3];
+
+}
+
 sub DESTROY {
 	my($self) = @_;
 	$self->{dbh}->disconnect if $self->{dbh};
+}
+
+
+# extra functions from Slash::Utility
+
+sub stripByMode {
+	my($str, $fmode, $no_white_fix) = @_;
+	$fmode ||= NOHTML;
+	$no_white_fix = defined($no_white_fix) ? $no_white_fix : $fmode == LITERAL;
+
+	# insert whitespace into long words, convert <>& to HTML entities
+	if ($fmode == LITERAL || $fmode == EXTRANS || $fmode == ATTRIBUTE || $fmode == CODE) {
+		$str = breakHtml($str) unless $no_white_fix;
+		# Encode all HTML tags
+		$str =~ s/&/&amp;/g;
+		$str =~ s/</&lt;/g;
+		$str =~ s/>/&gt;/g;
+
+	} elsif ($fmode == PLAINTEXT) {
+		$str = stripBadHtml($str);
+		$str = breakHtml($str) unless $no_white_fix;
+	}
+
+	# convert regular text to HTML-ized text, insert P, etc.
+	if ($fmode == PLAINTEXT || $fmode == EXTRANS || $fmode == CODE) {
+		$str =~ s/\n/<BR>/gi;  # pp breaks
+		$str =~ s/(?:<BR>\s*){2,}<BR>/<BR><BR>/gi;
+		# Preserve leading indents / spaces
+		$str =~ s/\t/    /g;  # can mess up internal tabs, oh well
+
+		if ($fmode == CODE) {
+			$str =~ s{((?:  )+)(?: (\S))?} {
+				("&nbsp; " x (length($1)/2)) .
+				($2 ? "&nbsp;$2" : "")
+			}eg;
+			$str = '<CODE>' . $str . '</CODE>';
+
+		} else {
+			$str =~ s{<BR>\n?( +)} {
+				"<BR>\n" . ("&nbsp; " x length($1))
+			}ieg;
+		}
+
+	# strip out all HTML
+	} elsif ($fmode == NOHTML) {
+		$str =~ s/<.*?>//g;
+		$str =~ s/<//g;
+		$str =~ s/>//g;
+		$str =~ s/&/&amp;/g;
+
+	# convert HTML attribute to allowed text (just convert ")
+	} elsif ($fmode == ATTRIBUTE) {
+		$str =~ s/"/&#34;/g;
+
+	# probably 'html'
+	} else {
+		$str = stripBadHtml($str);
+		$str = breakHtml($str) unless $no_white_fix;
+	}
+
+	return $str;
+}
+
+sub strip_mode {
+	my($string, $mode, @args) = @_;
+	return if !$mode || $mode < 1;	# user-supplied modes > 0
+	return stripByMode($string, $mode, @args);
+}
+
+sub strip_attribute	{ stripByMode($_[0], ATTRIBUTE,	@_[1 .. $#_]) }
+sub strip_code		{ stripByMode($_[0], CODE,	@_[1 .. $#_]) }
+sub strip_extrans	{ stripByMode($_[0], EXTRANS,	@_[1 .. $#_]) }
+sub strip_html		{ stripByMode($_[0], HTML,	@_[1 .. $#_]) }
+sub strip_literal	{ stripByMode($_[0], LITERAL,	@_[1 .. $#_]) }
+sub strip_nohtml	{ stripByMode($_[0], NOHTML,	@_[1 .. $#_]) }
+sub strip_plaintext	{ stripByMode($_[0], PLAINTEXT,	@_[1 .. $#_]) }
+
+sub fixparam {
+	fixurl($_[0], 1);
+}
+
+sub fixurl {
+	my($url, $parameter) = @_;
+
+	my $stripauth = 1;
+
+	if ($parameter) {
+		$url =~ s/([^$URI::unreserved])/$URI::Escape::escapes{$1}/oge;
+		return $url;
+	} else {
+		$url =~ s/[" ]//g;
+		# strip surrounding ' if exists
+		$url =~ s/^'(.+?)'$/$1/g;
+		# add '#' to allowed characters
+		$url =~ s/([^$URI::uric#])/$URI::Escape::escapes{$1}/oge;
+		$url = fixHref($url) || $url;
+
+		if ($stripauth) {
+			my $uri = new URI $url;
+			if ($uri && $uri->can('host') && $uri->can('authority')) {
+				# don't need to print the port if we
+				# already have the correct port
+				my $host = $uri->can('host_port') &&
+					$uri->port != $uri->default_port
+					? $uri->host_port
+					: $uri->host;
+				$uri->authority($host);
+				$url = $uri->as_string;
+			}
+		}
+
+		# we don't like SCRIPT a the beginning of a URL
+		my $decoded_url = decode_entities($url);
+		return $decoded_url =~ s|^\s*\w+script\b.*$||i ? undef : $url;
+	}
 }
 
 1;

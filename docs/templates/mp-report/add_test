@@ -1,7 +1,7 @@
 [% BLOCK select %]
 	<td>[% label %]:</td>
 	<td><select name="[% name %]">
-[% FOR id = data.keys.nsort %]		<option value="[% id %]">[% data.$id %]</option>
+[% FOR id = data.keys.nsort %]		<option value="[% FILTER strip_attribute ; id ; END %]">[% data.$id %]</option>
 [% END %]
 	</select></td>
 
