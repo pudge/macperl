@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.5  2001/03/20 02:40:25  pudge
+Add times() and struct tms
+
 Revision 1.4  2001/02/14 03:31:55  pudge
 Little fixes for bleadperl
 
@@ -89,7 +92,7 @@ pid_t (getpid)()
 
 #undef execv
 
-int (execv)()
+int (execv)(const char * file, char * const * argv)
 {
 	dTHX;
 	
@@ -101,7 +104,7 @@ int (execv)()
 
 #undef execvp
 
-int (execvp)()
+int (execvp)(const char * path, char * const * argv)
 {
 	dTHX;
 	
