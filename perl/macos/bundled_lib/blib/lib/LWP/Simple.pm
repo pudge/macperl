@@ -281,6 +281,12 @@ sub _get
 	return _trivial_http_get($host, $port, $path);
     } else {
         _init_ua() unless $ua;
+	if (@_ && $url !~ /^\w+:/) {
+	    # non-absolute redirect from &_trivial_http_get
+	    my($host, $port, $path) = @_;
+	    require URI;
+	    $url = URI->new_abs($url, "http://$host:$port$path");
+	}
 	my $request = HTTP::Request->new(GET => $url);
 	my $response = $ua->request($request);
 	return $response->is_success ? $response->content : undef;
@@ -320,7 +326,7 @@ sub _trivial_http_get
            # redirect
            my $url = $1;
            return undef if $loop_check{$url}++;
-           return _get($url);
+           return _get($url, $host, $port, $path);
        }
        return undef unless $code =~ /^2/;
        $buf =~ s/.+?\015?\012\015?\012//s;  # zap header

@@ -101,10 +101,14 @@ sub uri
 	if (!defined $uri) {
 	    # that's ok
 	} elsif (ref $uri) {
+	    Carp::croak("A URI can't be a " . ref($uri) . " reference")
+		if ref($uri) eq 'HASH' or ref($uri) eq 'ARRAY';
+	    Carp::croak("Can't use a " . ref($uri) . " object as a URI")
+		unless $uri->can('scheme');
 	    $uri = $uri->clone;
 	    unless ($HTTP::URI_CLASS eq "URI") {
 		# Argh!! Hate this... old LWP legacy!
-		eval { $uri = $uri->abs; };
+		eval { local $SIG{__DIE__}; $uri = $uri->abs; };
 		die $@ if $@ && $@ !~ /Missing base argument/;
 	    }
 	} else {

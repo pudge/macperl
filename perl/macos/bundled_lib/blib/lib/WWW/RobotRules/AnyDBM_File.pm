@@ -71,6 +71,7 @@ sub agent {
 	    my $file = $self->{'filename'};
 	    untie %{$self->{'dbm'}};
 	    tie %{$self->{'dbm'}}, 'AnyDBM_File', $file, O_TRUNC|O_RDWR, 0640;
+	    %{$self->{'dbm'}} = ();
 	    $self->{'dbm'}{"|ua-name|"} = $newname;
 	}
     }

@@ -147,7 +147,6 @@ A "Content-Base:" or a "Content-Location:" header in the response.
 For backwards compatability with older HTTP implementations we will
 also look for the "Base:" header.
 
-
 =item 3.
 
 The URI used to request this response. This might not be the original
@@ -171,6 +170,8 @@ sub base
                $self->header('Content-Location') ||  # HTTP/1.1
                $self->header('Base');                # HTTP/1.0
     return $HTTP::URI_CLASS->new_abs($base, $self->request->uri);
+    # So yes, if $base is undef, the return value is effectively
+    # just a copy of $self->request->uri.
 }
 
 
@@ -242,7 +243,7 @@ sub error_as_HTML
 <HTML>
 <HEAD><TITLE>$title</TITLE></HEAD>
 <BODY>
-<H1>$title</h1>
+<H1>$title</H1>
 $body
 </BODY>
 </HTML>

@@ -34,7 +34,7 @@ use strict;
 use vars qw($VERSION $AUTOLOAD);
 $VERSION = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
 
-$HTTP::URI_CLASS ||= "URI::URL";
+$HTTP::URI_CLASS ||= $ENV{PERL_HTTP_URI_CLASS} || "URI";
 eval "require $HTTP::URI_CLASS"; die $@ if $@;
 
 =item $mess = new HTTP::Message;

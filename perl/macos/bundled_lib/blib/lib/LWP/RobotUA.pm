@@ -231,7 +231,7 @@ sub simple_request
 	  &HTTP::Status::RC_FORBIDDEN, 'Forbidden by robots.txt';
     }
 
-    my $netloc = $request->url->host_port;
+    my $netloc = eval { local $SIG{__DIE__}; $request->url->host_port; };
     my $wait = $self->host_wait($netloc);
 
     if ($wait) {

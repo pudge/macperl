@@ -85,7 +85,7 @@ attribute-value pairs as parameters to the constructor.  I<E.g.>:
  $h = new HTTP::Headers
      Date         => 'Thu, 03 Feb 1994 00:00:00 GMT',
      Content_Type => 'text/html; version=3.2',
-     Content_Base => 'http://www.sn.no/';
+     Content_Base => 'http://www.perl.org/';
 
 =cut
 
