@@ -18,6 +18,7 @@ $tmpfile = "misctmp000";
 END { while($tmpfile && unlink $tmpfile){} }
 
 $CAT = (($^O eq 'MSWin32') ? '.\perl -e "print <>"' : 'cat');
+$CAT = (($^O eq 'MSWin32') ? '.\perl -e "print <>"' : ($^O eq 'MacOS') ? 'catenate' : 'cat');
 
 for (@prgs){
     my $switch;
@@ -34,6 +35,8 @@ for (@prgs){
 
     if ($^O eq 'MSWin32') {
       $results = `.\\perl -I../lib $switch $tmpfile 2>&1`;
+    } elsif ($^O eq 'MacOS') {
+      $results = `$^X -I::lib $switch $tmpfile`;
     }
     else {
       $results = `./perl $switch $tmpfile 2>&1`;

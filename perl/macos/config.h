@@ -13,6 +13,9 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.7  2001/03/20 02:38:55  pudge
+Fixes for STDIO and TIMES
+
 Revision 1.6  2001/03/07 04:13:20  pudge
 More Config stuff, wheeeeee
 
@@ -975,7 +978,7 @@ First build released to public
  *	This symbol, if defined, signifies that we our
  *	build process is a cross-compilation.
  */
-#undef CROSSCOMPILE		/**/
+#define CROSSCOMPILE		/**/
 
 /* INTSIZE:
  *	This symbol contains the value of sizeof(int) so that the C
@@ -1131,7 +1134,7 @@ First build released to public
  *	so the default case (for NeXT) is big endian to catch them. 
  *	This might matter for NeXT 3.0.
  */
-#if defined(CROSSCOMPILE) || defined(MULTIARCH)
+#if (defined(CROSSCOMPILE) || defined(MULTIARCH)) && !defined(MACOS_TRADITIONAL)
 #  ifdef __LITTLE_ENDIAN__
 #    if LONGSIZE == 4
 #      define BYTEORDER 0x1234

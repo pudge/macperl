@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.8  2001/04/17 03:53:44  pudge
+Minor version/config changes, plus sync with maint-5.6/perl
+
 Revision 1.7  2001/03/30 21:59:38  pudge
 Add basic support for kill, which does nothing
 
@@ -183,6 +186,11 @@ const char * MacPerl_CanonDir(const char * dir, char * buf);
  *	shebang sequence that might be legal Perl code.)
  */
 /* #define ALTERNATE_SHEBANG "#!" / **/
+
+/* Since we have CROSSCOMPILE and MULTIARCH defined, we need to make
+ * sure everyone knows we are big-endian.
+ */
+#define __BIG_ENDIAN__
 
 #if !defined(NSIG) || defined(M_UNIX) || defined(M_XENIX) || defined(__NetBSD__)
 # include <signal.h>

@@ -3,17 +3,16 @@
 
 my %Expect;
 my $symlink_exists = eval { symlink("",""); 1 };
+my $warn_msg;
 
 BEGIN {
     chdir 't' if -d 't';
-    if ($^O eq 'MacOS') { 
-        @INC = qw(: ::lib ::macos:lib); 
-    } else {
-        @INC = '../lib';
-    }
+    @INC = '../lib';
+
+    $SIG{'__WARN__'} = sub { $warn_msg = $_[0]; warn "# $_[0]"; }
 }
 
-if ( $symlink_exists ) { print "1..117\n"; }
+if ( $symlink_exists ) { print "1..167\n"; }
 else                   { print "1..61\n"; }
 
 use File::Find;
@@ -41,6 +40,7 @@ END {
       rmdir ':fb';
       chdir '::';
       rmdir ':for_find';
+
     } else {
       unlink 'fa/fa_ord','fa/fsl','fa/faa/faa_ord',
          'fa/fab/fab_ord','fa/fab/faba/faba_ord','fb/fb_ord','fb/fba/fba_ord';
@@ -119,6 +119,12 @@ sub d_wanted {
   delete $Expect{$_};
 }
 
+sub simple_wanted {
+  print "# \$File::Find::dir => '$File::Find::dir'\n";
+  print "# \$_ => '$_'\n";
+}
+
+
 if ($^O eq 'MacOS') {
 
     MkDir( 'for_find',0770 );
@@ -128,7 +134,6 @@ if ($^O eq 'MacOS') {
     touch(':fb:fb_ord');
     MkDir( ':fb:fba',0770  );
     touch(':fb:fba:fba_ord');
-
     CheckDie( symlink(':fb',':fa:fsl') ) if $symlink_exists;
     touch(':fa:fa_ord');
 
@@ -216,6 +221,74 @@ if ($^O eq 'MacOS') {
                      ':fb' => 1, ':fb:fba' => 1);
       File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},':fa' );
       Check( scalar(keys %Expect) == 0 );
+
+      # tests below added by Thomas Wegner, 25-04-2001
+
+      print "# check dangling symbolic links\n";
+      MkDir( 'dangling_dir',0770 );
+      CheckDie( symlink('dangling_dir','dangling_dir_sl') );
+      rmdir 'dangling_dir';
+      touch('dangling_file');
+      CheckDie( symlink('dangling_file',':fa:dangling_file_sl') );
+      unlink 'dangling_file';
+
+      %Expect=(':' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
+               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
+               'faa' => 1, 'faa_ord' => 1);
+      %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
+                     'fb' => 1, 'fba' => 1);	  
+      File::Find::find( {wanted => \&d_wanted, follow => 1}, 'dangling_dir_sl', ':fa' );
+      Check( $warn_msg =~ m|dangling_dir_sl is a dangling symbolic link| );	  
+      unlink ':fa:dangling_file_sl', 'dangling_dir_sl';
+
+      print "# check recursion\n";
+      CheckDie( symlink(':fa:faa',':fa:faa:faa_sl') );
+      undef $@;
+      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1},':fa' ); };
+      print "# Died: $@";
+      Check( $@ =~ m|:for_find:fa:faa:faa_sl is a recursive symbolic link| );	  
+      unlink 'faa_sl'; 
+      chdir ':::'; # chdir '../..';
+
+      print "# check follow_skip (file)\n";
+      CheckDie( symlink(':fa:fa_ord',':fa:fa_ord_sl') ); # symlink to a file
+      undef $@;
+      eval {File::Find::finddepth( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},':fa' );};
+      print "# Died: $@";
+      Check( $@ =~ m|:for_find:fa:fa_ord encountered a second time| );
+      chdir '::'; # chdir '..';
+
+      %Expect=(':' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
+               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
+               'faa' => 1, 'faa_ord' => 1);
+      %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
+                     'fb' => 1, 'fba' => 1);	   
+      File::Find::finddepth( {wanted => \&d_wanted, follow => 1, follow_skip => 1},':fa' );
+      Check( scalar(keys %Expect) == 0 );
+      unlink ':fa:fa_ord_sl';
+
+      print "# check follow_skip (directory)\n";
+      CheckDie( symlink(':fa:faa',':fa:faa_sl') ); # symlink to a directory
+      undef $@;
+      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},':fa' );};
+      print "# Died: $@";
+      Check( $@ =~ m|:for_find:fa:faa: encountered a second time| );
+      chdir '::'; # chdir '..';
+
+      undef $@;
+      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 1},':fa' );};
+      print "# Died: $@";
+      Check( $@ =~ m|:for_find:fa:faa: encountered a second time| );
+      chdir '::'; # chdir '..';	  
+
+      %Expect=(':' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
+               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
+               'faa' => 1, 'faa_ord' => 1);
+      %Expect_Dir = (':' => 1, 'fa' => 1, 'faa' => 1, 'fab' => 1, 'faba' => 1, 
+                     'fb' => 1, 'fba' => 1);	   
+      File::Find::find( {wanted => \&d_wanted, follow => 1, follow_skip => 2},':fa' );
+      Check( scalar(keys %Expect) == 0 );
+      unlink ':fa:faa_sl';	  
     }
 
 } else {
@@ -314,6 +387,75 @@ if ($^O eq 'MacOS') {
                      'fb' => 1, 'fb/fba' => 1);
       File::Find::finddepth( {wanted => \&d_wanted, follow_fast => 1, no_chdir => 1},'fa' );
       Check( scalar(keys %Expect) == 0 );
+
+      # tests below added by Thomas Wegner, 25-04-2001
+
+      print "# check dangling symbolic links\n";
+      MkDir( 'dangling_dir',0770 );
+      CheckDie( symlink('dangling_dir','dangling_dir_sl') );
+      rmdir 'dangling_dir';
+      touch('dangling_file');
+      CheckDie( symlink('dangling_file','fa/dangling_file_sl') );
+      unlink 'dangling_file';
+
+      %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
+               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
+               'faa' => 1, 'faa_ord' => 1);
+      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, 'fa/fab' => 1, 'fa/fab/faba' => 1, 
+                     'fb' => 1, 'fb/fba' => 1);
+      File::Find::find( {wanted => \&d_wanted, follow => 1}, 'dangling_dir_sl', 'fa' );
+      Check( $warn_msg =~ m|dangling_dir_sl is a dangling symbolic link| );	  
+      unlink 'fa/dangling_file_sl', 'dangling_dir_sl';
+
+      print "# check recursion\n";
+      CheckDie( symlink('fa/faa','fa/faa/faa_sl') );
+      undef $@;
+      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1},'fa' ); };
+      print "# Died: $@";
+      Check( $@ =~ m|for_find/fa/faa/faa_sl is a recursive symbolic link| );	  
+      unlink 'faa_sl'; 
+      chdir '../..';
+      
+      print "# check follow_skip (file)\n";
+      CheckDie( symlink('fa/fa_ord','fa/fa_ord_sl') ); # symlink to a file
+      undef $@;
+      eval {File::Find::finddepth( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},'fa' );};
+      print "# Died: $@";
+      Check( $@ =~ m|for_find/fa/fa_ord encountered a second time| );
+      chdir '..';
+      
+      %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
+               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
+               'faa' => 1, 'faa_ord' => 1);
+      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, 'fa/fab' => 1, 'fa/fab/faba' => 1, 
+                     'fb' => 1, 'fb/fba' => 1);	   
+      File::Find::finddepth( {wanted => \&d_wanted, follow => 1, follow_skip => 1},'fa' );
+      Check( scalar(keys %Expect) == 0 );
+      unlink 'fa/fa_ord_sl';
+
+      print "# check follow_skip (directory)\n";
+      CheckDie( symlink('fa/faa','fa/faa_sl') ); # symlink to a directory
+      undef $@;
+      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 0},'fa' );};
+      print "# Died: $@";
+      Check( $@ =~ m|for_find/fa/faa encountered a second time| );
+      chdir '..';
+
+      undef $@;
+      eval {File::Find::find( {wanted => \&simple_wanted, follow => 1, follow_skip => 1},'fa' );};
+      print "# Died: $@";
+      Check( $@ =~ m|for_find/fa/faa encountered a second time| );
+      chdir '..';
+
+      %Expect=('.' => 1, 'fa_ord' => 1, 'fsl' => 1, 'fb_ord' => 1, 'fba' => 1,
+               'fba_ord' => 1, 'fab' => 1, 'fab_ord' => 1, 'faba' => 1, 'faba_ord' => 1,
+               'faa' => 1, 'faa_ord' => 1);
+      %Expect_Dir = ('fa' => 1, 'fa/faa' => 1, 'fa/fab' => 1, 'fa/fab/faba' => 1, 
+                     'fb' => 1, 'fb/fba' => 1);		   
+      File::Find::find( {wanted => \&d_wanted, follow => 1, follow_skip => 2},'fa' );
+      Check( scalar(keys %Expect) == 0 );
+      unlink 'fa/faa_sl';
+
     }
 }
 

@@ -1,5 +1,6 @@
 package File::Find;
-use 5.005_64;
+use warnings;
+use 5.6.0;
 require Exporter;
 require Cwd;
 
@@ -196,7 +197,7 @@ Mac OS (Classic) users should note a few differences:
 
 =item *   
 
-The path separator is ':', not '/' and the current directory is denoted 
+The path separator is ':', not '/', and the current directory is denoted 
 as ':', not '.'. You should be careful about specifying relative pathnames. 
 While a full path always begins with a volume name, a relative pathname 
 should always begin with a ':'.  If specifying a volume name only, a 
@@ -213,12 +214,47 @@ may or may not end with a ':'.
 
 =item *   
 
-The invisible file "Icon\015" is ignored.
+The default C<untaint_pattern> (see above) on Mac OS is set to  
+C<qr|^(.+)$|s>. Note that the parentheses are vital.
 
 =item *   
 
-The default C<untaint_pattern> (see above) on Mac OS is set to  
-C<qr|^(.+)$|s>. Note that the parantheses are vital.
+The invisible system file "Icon\015" is ignored. While this file may 
+appear in every directory, there are some more invisible system files 
+on every volume, which are all located at the volume root level (i.e. 
+"MacintoshHD:"). These system files are B<not> excluded automatically. 
+Your filter may use the following code to recognize invisible files or 
+directories (requires Mac::Files):
+
+ use Mac::Files;
+
+ # invisible():  returns 1 if file/directory is invisible,  
+ # 0 if it's visible or undef if an error occured
+
+ sub invisible($) { 
+   my $file = shift;
+   my ($fileCat, $fileInfo); 
+   my $invisible_flag =  1 << 14; 
+
+   if ( $fileCat = FSpGetCatInfo($file) ) {
+     if ($fileInfo = $fileCat->ioFlFndrInfo() ) {
+       return (($fileInfo->fdFlags & $invisible_flag) && 1);
+     }
+   }
+   return undef;
+ }
+
+Generally, invisible files are system files, unless an odd application 
+decides to use invisible files for it's own purposes. To distinguish 
+such files from system files, you have to look at the B<type> and B<creator> 
+file attributes. The MacPerl built-in functions C<GetFileInfo(FILE)> and 
+C<SetFileInfo(CREATOR, TYPE, FILES)> offer access to these attributes 
+(see MacPerl.pm for details).
+
+Files that appear on the desktop actually reside in an (hidden) directory
+named "Desktop Folder" on the particular disk volume. Note that, although
+all desktop files appear to be on the same "virtual" desktop, each disk 
+volume actually maintains its own "Desktop Folder" directory.
 
 =back
 
@@ -290,10 +326,9 @@ sub contract_name_Mac {
     }
     else {
 
-	# $fn may be a valid full path (volume name),
-	# without leading ':'
-	# $fn may be a valid full path or a file, without leading ':'
-	if (-e $fn) { # valid directory/file
+	# $fn may be a valid path to a directory or file or (dangling)
+	# symlink, without a leading ':'
+	if ( (-e $fn) || (-l $fn) ) {
 	    if ($fn =~ /^[^:]+:/) { # a volume name like DataHD:*
 		return $fn; # $fn is already an absolut path
 	    }
@@ -318,7 +353,7 @@ sub PathCombine($$) {
 	$AbsName = $Name; 
 
 	# (simple) check for recursion
-	if ($Base =~ /^$AbsName/) { # recursion
+	if ( ( $Base =~ /^$AbsName/) && (-d $AbsName) ) { # recursion
 	    return undef;
 	}
     }
@@ -375,7 +410,7 @@ sub Follow_SymLink($) {
     }
 
     if ($full_check && $SLnkSeen{$DEV, $INO}++) {
-	if ($follow_skip < 1) {
+	if ( ($follow_skip < 1) || ((-d _) && ($follow_skip < 2)) ) {
 	    die "$AbsName encountered a second time";
 	}
 	else {
@@ -560,7 +595,7 @@ sub _find_dir($$$) {
 
     local ($dir, $name, $prune, *DIR);
 
-    unless ($no_chdir or ($p_dir eq $File::Find::current_dir) ) {
+    unless ( $no_chdir || ($p_dir eq $File::Find::current_dir) ) {
 	my $udir = $p_dir;
 	if ($untaint) {
 	    $udir = $1 if $p_dir =~ m|$untaint_pat|;
@@ -583,13 +618,13 @@ sub _find_dir($$$) {
     push @Stack,[$CdLvl,$p_dir,$dir_rel,-1]  if  $bydepth;
 
     if ($Is_MacOS) {
-	$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
+	$p_dir = $dir_pref;
     }
 
     while (defined $SE) {
 	unless ($bydepth) {
 	    $dir= $p_dir; # $File::Find::dir 
-	    $name= $dir_name; # $File::Find::dir 
+	    $name= $dir_name; # $File::Find::name 
 	    $_= ($no_chdir ? $dir_name : $dir_rel ); # $_
 	    # prune may happen here
 	    $prune= 0;
@@ -608,9 +643,7 @@ sub _find_dir($$$) {
 			    die "directory ($p_dir) $dir_rel is still tainted";
 			}
 			else {
-			    die "directory ("
-				. ($p_dir ne '/' ? $p_dir : '')
-				. "/) $dir_rel is still tainted";
+			    die "directory (" . ($p_dir ne '/' ? $p_dir : '') . "/) $dir_rel is still tainted";
 			}
 		    }
 		}
@@ -620,9 +653,7 @@ sub _find_dir($$$) {
 		    warn "Can't cd to ($p_dir) $udir: $!\n";
 		}
 		else {
-		    warn "Can't cd to ("
-			. ($p_dir ne '/' ? $p_dir : '')
-			. "/) $udir: $!\n";
+		    warn "Can't cd to (" . ($p_dir ne '/' ? $p_dir : '') . "/) $udir: $!\n";
 		}
 		next;
 	    }
@@ -695,7 +726,7 @@ sub _find_dir($$$) {
 		if ($Is_MacOS) {
 		    $tmp = (':' x ($CdLvl-$Level)) . ':';
 		}
-		else{
+		else {
 		    $tmp = join('/',('..') x ($CdLvl-$Level));
 		}
 		die "Can't cd to $dir_name" . $tmp
@@ -728,7 +759,7 @@ sub _find_dir($$$) {
 		$name = $dir_name;
 		if ($Is_MacOS) {
 		    if ($dir_rel eq ':') { # must be the top dir, where we started
-			$name =~ s|:$||;
+			$name =~ s|:$||; # $File::Find::name
 			$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
 		    }
 		    $dir = $p_dir; # $File::Find::dir
@@ -809,7 +840,7 @@ sub _find_dir_symlnk($$$) {
     push @Stack,[$dir_loc,$pdir_loc,$p_dir,$dir_rel,-1]  if  $bydepth;
 
     if ($Is_MacOS) {
-	$p_dir = "$p_dir:" unless ($p_dir =~ /:$/);
+	$p_dir = $dir_pref;
     }
 
     while (defined $SE) {
@@ -896,7 +927,7 @@ sub _find_dir_symlnk($$$) {
 	while (defined($SE = pop @Stack)) {
 	    ($dir_loc, $pdir_loc, $p_dir, $dir_rel, $byd_flag) = @$SE;
 	    if ($Is_MacOS) {
-		# $pdir always has a trailing ':', except for the starting dir,
+		# $p_dir always has a trailing ':', except for the starting dir,
 		# where $dir_rel == ':'
 		$dir_name = "$p_dir$dir_rel";
 		$dir_pref = "$dir_name:";
@@ -933,7 +964,7 @@ sub _find_dir_symlnk($$$) {
 			$name =~ s|/\.$||;
 		    }
 		    $dir = $p_dir; # $File::Find::dir
-		    $_ = ($no_chdir ? $dir_name : $dir_rel);
+		    $_ = ($no_chdir ? $dir_name : $dir_rel); # $_
 		    if ( substr($_,-2) eq '/.' ) {
 			s|/\.$||;
 		    }
@@ -971,12 +1002,14 @@ sub wrap_wanted {
 
 sub find {
     my $wanted = shift;
+    %SLnkSeen= (); # clear hash first
     _find_opt(wrap_wanted($wanted), @_);
     %SLnkSeen= ();  # free memory
 }
 
 sub finddepth {
     my $wanted = wrap_wanted(shift);
+    %SLnkSeen= (); # clear hash first
     $wanted->{bydepth} = 1;
     _find_opt($wanted, @_);
     %SLnkSeen= ();  # free memory

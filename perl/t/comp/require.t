@@ -2,7 +2,7 @@
 
 BEGIN {
     chdir 't' if -d 't';
-    @INC = '.';
+    @INC = $^O eq 'MacOS' ? ':' : '.';
     push @INC, '../lib';
 }
 

@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.16  2001/03/22 04:30:36  pudge
+#  Fix MrC resouce thing
+#
 #  Revision 1.15  2001/03/22 04:23:58  pudge
 #  Misc. updates
 #
@@ -195,7 +198,7 @@ MoLibsMrC	=	"$(DB)lib:db.Sfio.MrC.Lib"				\
 LNS = Perl -e 'symlink($ARGV[0], $ARGV[1])'
 RMS = delete -y 
 
-public		=	perl translators 
+public		=	perl translators sitelib_install 
 Dynamic_Ext_Mac	=	Mac
 Dynamic_Ext_Std	=	
 Static_Ext_Mac	= 	\
@@ -211,6 +214,9 @@ Static_Ext_Std	= 	\
 	# not going to be built:
 	# GDBM_File:GDBM_File ODBM_File:ODBM_File IPC:IPC:SysV
 	# SDBM_File:SDBM_File Sys:Syslog:Syslog Thread:Thread
+Static_Lib_Mac	= \
+	ExtUtils:MM_MacOS ExtUtils:Miniperl Config Errno \
+	Mac:Hooks Mac:Pane
 
 Static_Ext_AutoInit	= 	$(Static_Ext_Mac) $(Static_Ext_Std)
 More_Static_Ext		= 	OSA XL
@@ -259,7 +265,7 @@ LibObjectsPPC = {$(libc)}.PPC.o
 LibObjectsSC = {$(libc)}.SC.o
 LibObjectsMRC = {$(libc)}.MrC.o
 
-.PHONY : translators
+.PHONY : translators sitelib_install
 
 all: PLib Obj miniperl $(private) $(plextract) $(public) dynlibrary runperl 
 	@echo " "; echo "	Everything is up to date."
@@ -276,6 +282,14 @@ translators:	miniperl :lib:Config.pm
 		set echo 1
 	Directory ::
 .END
+
+sitelib_install: 
+	Directory :lib:
+	$(MACPERL_SRC)InstallBLIB "" ¶
+		"::perl -I: -I:::lib: -e 'use File::Path; mkpath(\@ARGV, 1);'" ¶
+		$(Static_Lib_Mac:^":":+".pm")
+	$(MACPERL_SRC)PerlInstall -l :::lib: 
+	Directory ::
 
 
 # This is now done by installman only if you actually want the man pages.
