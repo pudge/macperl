@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.3  1998/04/07 01:46:43  neeri
 MacPerl 5.2.0r4b1
 
@@ -240,6 +243,8 @@ OwnerList ancientOwner[] = {
 	'MENU', 192,
 	'McPL', 0,
 	'MrP#', 128,
+	'MrP3', 128,
+	'MrP7', 128,
 	'MrP4', 128,
 	'MrP8', 128,
 	'MrPA', 4096,
@@ -633,6 +638,8 @@ ShoppingList Runtime7Shopping[] =
 	{ 'MrP4', 'icl4', 128, 128 },
 	{ 'MrP8', 'icl8', 128, 128 },
 	{ 'MrP#', 'ics#', 128, 128 },
+	{ 'MrP3', 'ics4', 128, 128 },
+	{ 'MrP7', 'ics8', 128, 128 },
 	{ 		 0,    0,     0,	 0 }
 };
 

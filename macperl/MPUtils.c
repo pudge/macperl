@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.1  2000/11/30 08:37:29  neeri
+Sources & Resources
+
 Revision 1.3  1998/04/07 01:46:46  neeri
 MacPerl 5.2.0r4b1
 
@@ -462,7 +465,7 @@ pascal void DoAbout(Boolean easter)
 	
 	SetCursor(&qd.arrow);
 	
-	dlg 	= GetNewAppDialog(AboutDialog);
+	dlg 	= GetNewAppDialog(AboutDialog+easter);
 	sound 	= GetAppResource('snd ', AlertSoundID+easter);
 	hdl 	= GetAppResource('STR#', CreditID);
 	count	= **(short **) hdl;
