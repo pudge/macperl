@@ -64,8 +64,8 @@ a full installer (around 20MB).  The web installer is recommended,
 as it only downloads the components you need.
 
 
-   MacPerl-5.6.1r1_web.bin
-   MacPerl-5.6.1r1_full.bin
+   MacPerl-5.6.1r2_web.bin
+   MacPerl-5.6.1r2_full.bin
            ^    ^^ ^    ^
            |    || |    MacBinary Suffix ("bin")
            |    || Distribution Component (web", "full")
@@ -225,4 +225,4 @@ by Ramon M. Felciano.
 
 =head1 DATE
 
-Last modified 2002.03.10.
+Last modified 2002.12.02.

@@ -12,7 +12,7 @@ macperldelta - what is new for MacPerl v5.6.1
 =head1 DESCRIPTION
 
 This document describes differences between the 5.2.0r4 release
-and the 5.6.1r1 release.
+and the 5.6.1r1/r2 release.
 
 This document covers changes specific to MacPerl.  For general changes
 to perl, you might also want to read L<perl5005delta> for changes
@@ -226,7 +226,9 @@ more reliable memory handling,
 better UI feedback,
 updated look and feel,
 improved search,
-improved controls and configuration options.
+improved controls and configuration options,
+section menu,
+and printing.
 
 
 
@@ -258,7 +260,7 @@ by any bugs or behavior differences.
 
 =item Digest::MD5 2.16
 
-=item File::Sort 1.00
+=item File::Sort 1.01
 
 =item Filter::Simple 0.77
 
@@ -349,6 +351,11 @@ functionality.
 
 L<Mac::Glue> is a framework for controlling Mac apps, via Apple events,
 with an AppleScript vocabulary.
+
+=item *
+
+L<Mac::Carbon> is a frontend to some of the Mac:: modules, provided primarily
+for use with Mac OS X.
 
 =back
 
@@ -544,6 +551,6 @@ The F<Artistic> and F<Copying> files for copyright information.
 
 Written by Chris Nandor E<lt>pudge@pobox.comE<gt>.
 
-Last modified 2002.03.07.
+Last modified 2002.12.03.
 
 =cut
