@@ -113,7 +113,8 @@ dist:
 
 .PHONY : Objects68K ObjectsPPC ObjectsSC ObjectsMrC
 
-ProcessPL :: $(NOOP)
+ProcessPL :: 
+	echo > ProcessPL
 
 Objects68K: Obj ProcessPL $(Objects68K)
 ObjectsPPC: Obj ProcessPL $(ObjectsPPC)
