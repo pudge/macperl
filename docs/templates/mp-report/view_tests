@@ -11,7 +11,7 @@ is marked OK, feel free to test it anyway, because we want to make sure it is OK
 
 <form action="[% env.script_name %]" method="post">
 
-<p>Select a MacPerl version to view:
+<p>Select a MacPerl version to view
 [% version.0 = "All";
    PROCESS get_select label => "", name => "version",
 	data => version, seldef => form.version;
