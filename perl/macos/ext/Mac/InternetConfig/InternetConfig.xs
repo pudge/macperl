@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:27  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:31  neeri
  * Checked into Sourceforge
  *
@@ -70,16 +73,16 @@ MODULE = Mac::InternetConfig  PACKAGE = Mac::InternetConfig
 
 An entry in the file map. Fields are:
 
-	short 	version;
-	OSType 	file_type;
-	OSType 	file_creator;
-	OSType 	post_creator;
-	long 	flags;
-	Str255 	extension;
-	Str255 	creator_app_name;
-	Str255 	post_app_name;
-	Str255 	MIME_type;
-	Str255 	entry_name;
+    short     version;
+    OSType    file_type;
+    OSType    file_creator;
+    OSType    post_creator;
+    long      flags;
+    Str255    extension;
+    Str255    creator_app_name;
+    Str255    post_app_name;
+    Str255    MIME_type;
+    Str255    entry_name;
 
 =cut
 STRUCT ICMapEntry
@@ -713,8 +716,8 @@ ICCountMapEntries(inst, entries)
 
 Returns the position of a map entry and the entry itself.
 
-	$map = ICGetIndMapEntry $inst, $entries, 5;
-	($pos, $map) = ICGetIndMapEntry $inst, $entries, 5;
+    $map = ICGetIndMapEntry $inst, $entries, 5;
+    ($pos, $map) = ICGetIndMapEntry $inst, $entries, 5;
 
 =cut
 void

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:28  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:33  neeri
  * Checked into Sourceforge
  *
@@ -80,7 +83,7 @@ current resource file. You can call this function when your application starts u
 (before opening the resource fork of any other file) to get the file reference
 number of your application's resource fork.
 
-	$RFD = CurResFile;
+    $RFD = CurResFile;
 
 =cut
 short
@@ -95,7 +98,7 @@ function returns the result code resNotFound. If HomeResFile returns 0, the
 resource is in the System file's resource fork. If HomeResFile returns 1, the
 resource is ROM-resident.
 
-	$RFD = HomeResFile($Resource);
+    $RFD = HomeResFile($Resource);
 
 =cut
 short
@@ -108,11 +111,11 @@ HomeResFile(theResource)
 
 The CreateResFile procedure creates an empty resource file.
 
-	if ( CreateResFile("Resource.rsrc")) {
-		# error occurred
-	} else {
-		# proceed
-	}
+    if ( CreateResFile("Resource.rsrc")) {
+        # error occurred
+    } else {
+        # proceed
+    }
 
 =cut
 void
@@ -126,11 +129,11 @@ CreateResFile(fileName)
 The OpenResFile function opens an existing resource file. It also makes this file
 the current resource file.
 
-	if ( defined($RFD = OpenResFile("Resource.rsrc")) ) {
-		# proceed
-	} else {
-		# error occurred
-	}
+    if ( defined($RFD = OpenResFile("Resource.rsrc")) ) {
+        # proceed
+    } else {
+        # error occurred
+    }
 
 =cut
 short
@@ -148,11 +151,11 @@ file. If there's no resource fork open for a file with that reference number,
 UseResFile does nothing. To set the current resource file to the System file, use
 0 for the refNum parameter.
 
-	if (UseResFile($RFD)) {
-		# error occurred
-	} else {
-		# proceed
-	}
+    if (UseResFile($RFD)) {
+        # error occurred
+    } else {
+        # proceed
+    }
 
 =cut
 void
@@ -170,7 +173,7 @@ The CountTypes (Count1Types) function reads the resource maps in memory for all 
 (the current resource fork) open to your application. It returns an integer representing the 
 total number of unique resource types.
 
-	$types = Count1Types;
+    $types = Count1Types;
 
 =cut
 short
@@ -192,10 +195,10 @@ types available in all resource forks open to your application. If the given
 index isn't in the range from 1 to the number of resource types as returned by
 CountTypes, undef() is returned.
 
-	# Load up @resourceTypes with the types from the current file.
-	for (1 .. Count1Types) {
-		$resourceTypes[$_-1] = Get1IndType($_);
-	}
+    # Load up @resourceTypes with the types from the current file.
+    for (1 .. Count1Types) {
+        $resourceTypes[$_-1] = Get1IndType($_);
+    }
 
 =cut
 OSType
@@ -235,7 +238,7 @@ SetResLoad(load)
 Get the total number of available resources of a given type. Count1Resources
 looks only at the current resource fork.
 
-	$totalDialogsAvailable = CountResources "DITL";
+    $totalDialogsAvailable = CountResources "DITL";
 
 =cut
 short
@@ -257,10 +260,10 @@ handle to a resource of the given type. If you call GetIndResource repeatedly ov
 entire range of the index, it returns handles to all resources of the given type
 in all resource forks open to your application.
 
-	# Load up handles of this type of resource
-	for (1 .. CountResources("DITL")) {
-		$dialogs[$_] = GetIndResource("DITL", $_);
-	}
+    # Load up handles of this type of resource
+    for (1 .. CountResources("DITL")) {
+        $dialogs[$_] = GetIndResource("DITL", $_);
+    }
 
 =cut
 Handle
@@ -283,10 +286,10 @@ Get1IndResource(theType, index)
 
 Get resource data for a resource specified by resource type and resource ID.
 
-	$SFGdialog = GetResource("DITL", 6042);
-	if ( defined $SFGdialog ) {
-		# proceed
-	}
+    $SFGdialog = GetResource("DITL", 6042);
+    if ( defined $SFGdialog ) {
+        # proceed
+    }
 
 =cut
 Handle
@@ -310,10 +313,10 @@ Get1Resource(theType, theID)
 The GetNamedResource (Get1NamedResource) function searches the resource maps in memory for the
 resource specified by the parameters $TYPE and $NAME.
 
-	$SFGdialog = GetNamedResource("DITL", "Standard Get");
-	if ( defined $SFGdialog ) {
-		# proceed
-	}
+    $SFGdialog = GetNamedResource("DITL", "Standard Get");
+    if ( defined $SFGdialog ) {
+        # proceed
+    }
 
 =cut
 Handle
@@ -336,11 +339,11 @@ Given a handle to a resource, LoadResource reads the resource data into memory.
 If the HANDLE parameter doesn't contain a handle to a resource, then LoadResource
 returns undef.
 
-	if (LoadResource($HANDLE) ) {
-		# proceed
-	} else {
-		# error occurred
-	}
+    if (LoadResource($HANDLE) ) {
+        # proceed
+    } else {
+        # error occurred
+    }
 
 =cut
 void
@@ -358,11 +361,11 @@ handle to that resource, the handle is no longer valid. If your application
 subsequently calls the Resource Manager to get the released resource, the
 Resource Manager assigns a new handle. 
 
-	if ( ReleaseResource($HANDLE) ) {
-		# proceed
-	} else {
-		# error occurred
-	}
+    if ( ReleaseResource($HANDLE) ) {
+        # proceed
+    } else {
+        # error occurred
+    }
 
 =cut
 void
@@ -380,11 +383,11 @@ handle to that resource, the handle is no longer valid. If your application
 subsequently calls the Resource Manager to get the released resource, the
 Resource Manager assigns a new handle. 
 
-	if ( DetachResource($HANDLE) ) {
-		# proceed
-	} else {
-		# error occurred
-	}
+    if ( DetachResource($HANDLE) ) {
+        # proceed
+    } else {
+        # error occurred
+    }
 
 =cut
 void
@@ -403,7 +406,7 @@ resource fork. You should use this function before adding a new resource to
 ensure that you don't duplicate a resource ID and override an existing resource.
 Unique1ID ensures uniqueness within the current resource fork.
 
-	$id = Unique1ID("DITL");
+    $id = Unique1ID("DITL");
 
 =cut
 short
@@ -421,10 +424,10 @@ Given a handle to a resource, the GetResAttrs function returns the resource's
 attributes as recorded in its entry in the resource map in memory. If the value
 of the theResource parameter isn't a handle to a valid resource, undef is returned.
 
-	$resAttrs = GetResAttrs($HANDLE);
-	if ( defined $resAttrs ) {
-		# proceed
-	}
+    $resAttrs = GetResAttrs($HANDLE);
+    if ( defined $resAttrs ) {
+        # proceed
+    }
 
 =cut
 short
@@ -439,10 +442,10 @@ Given a handle to a resource, the GetResInfo procedure returns the resource's
 resource ID, resource type, and resource name. If the handle isn't a valid handle
 to a resource, undef is returned.
 
-	($id, $type, $name) = GetResInfo($HANDLE);
-	if ( defined $id ) {
-		# proceed
-	}
+    ($id, $type, $name) = GetResInfo($HANDLE);
+    if ( defined $id ) {
+        # proceed
+    }
 
 =cut
 void
@@ -528,10 +531,10 @@ indicate because the file has not yet been compacted. If you want the exact size
 of a resource on disk, either call &GetResourceSizeOnDisk or call &UpdateResFile
 before calling GetMaxResourceSize.
 
-	$size = GetMaxResourceSize($HANDLE);
-	if ( defined $size ) {
-		# proceed
-	}
+    $size = GetMaxResourceSize($HANDLE);
+    if ( defined $size ) {
+        # proceed
+    }
 
 =cut
 long
@@ -548,10 +551,10 @@ find the resource entry, RsrcMapEntry returns 0, and the ResError function
 returns the result code resNotFound. If you pass a handle whose value is NIL,
 RsrcMapEntry returns arbitrary data. 
 
-	$offset = RsrcMapEntry($HANDLE);
-	if ( defined $offset ) {
-		# proceed
-	}
+    $offset = RsrcMapEntry($HANDLE);
+    if ( defined $offset ) {
+        # proceed
+    }
 
 =cut
 long
@@ -569,11 +572,11 @@ The resProtected attribute changes immediately. Other attribute changes take
 effect the next time the specified resource is read into memory but are not made
 permanent until the Resource Manager updates the resource fork.
 
-	if ( SetResAttrs($HANDLE, $ATTRS) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( SetResAttrs($HANDLE, $ATTRS) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -594,11 +597,11 @@ map to the resource fork of the corresponding file on disk. If the resChanged
 attribute for a resource has been set and your application calls &WriteResource,
 the Resource Manager writes only the resource data for that resource to disk.
 
-	if ( ChangedResource($HANDLE) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( ChangedResource($HANDLE) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -613,11 +616,11 @@ Given a handle to a resource in the current resource file, RemoveResource remove
 the resource entry (resource type, resource ID, resource name, if any, and
 resource attributes) from the current resource file's resource map in memory. 
 
-	if ( RemoveResource($HANDLE) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( RemoveResource($HANDLE) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -636,11 +639,11 @@ set by a successful call to &ChangedResource or &AddResource. The UpdateResFile
 procedure calls the &WriteResource procedure to write changed or added resources
 to the resource fork.
 
-	if ( UpdateResFile($RFD) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( UpdateResFile($RFD) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -657,11 +660,11 @@ to the &ChangedResource or &AddResource procedure), WriteResource writes the
 resource data in memory to the resource fork, then clears the resChanged
 attribute in the resource's resource map in memory.
 
-	if ( WriteResource($HANDLE) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( WriteResource($HANDLE) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -684,11 +687,11 @@ Specify FALSE in the install parameter to restore the normal state, so that the
 Memory Manager purges resource data when it needs to without calling the Resource
 Manager.
 
-	if ( SetResPurge(1) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( SetResPurge(1) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -704,10 +707,10 @@ attributes of the file's resource fork. Specify 0 in $RFD to get
 the attributes of the System file's resource fork. If there's no open resource
 fork for the given file reference number, undef is returned.
 
-	$rfa = GetResFileAttrs($RFD);
-	if ( defined $rfa ) {
-		# proceed
-	}
+    $rfa = GetResFileAttrs($RFD);
+    if ( defined $rfa ) {
+        # proceed
+    }
 
 =cut
 short
@@ -725,11 +728,11 @@ you shouldn't change the attributes of the System file's resource fork. If
 there's no resource fork with the given reference number, SetResFileAttrs does
 nothing, and the ResError function returns the result code noErr.
 
-	if ( SetResFileAttrs($RFD, $ATTRS) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( SetResFileAttrs($RFD, $ATTRS) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -755,10 +758,10 @@ GetResource again. In response, GetResource performs the same search, but this
 time it looks in the resource map of the ROM-resident resources before searching
 the resource map of the System file. 
 
-	$handle = RGetResource("DITL", 6042);
-	if ( defined $handle ) {
-		# proceed
-	}
+    $handle = RGetResource("DITL", 6042);
+    if ( defined $handle ) {
+        # proceed
+    }
 
 =cut
 Handle
@@ -773,10 +776,10 @@ RGetResource(theType, theID)
 The FSpOpenResFile function opens the resource fork of the file identified by the
 spec parameter. It also makes this file the current resource file.
 
-	$sp = FSpOpenResFile($SPEC);
-	if ( defined $sp ) {
-		# proceed
-	}
+    $sp = FSpOpenResFile($SPEC);
+    if ( defined $sp ) {
+        # proceed
+    }
 
 In addition to opening the resource fork for the file with the specified name,
 FSpOpenResFile lets you specify in the permission parameter the read/write permission
@@ -797,11 +800,11 @@ specified $FILETYPE, $CREATOR, and $SCRIPTTAG in the location and with the name
 designated by the spec parameter. (An empty resource fork contains no resource
 data but does include a resource map.) 
 
-	if ( FSpCreateResFile($SPEC, $CREATOR, $FILETYPE, $SCRIPTTAG) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( FSpCreateResFile($SPEC, $CREATOR, $FILETYPE, $SCRIPTTAG) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -818,7 +821,7 @@ FSpCreateResFile(spec, creator, fileType, scriptTag)
 The ReadPartialResource procedure reads the resource subsection identified by the
 theResource, offset, and count parameters.
 
-   $data = ReadPartialResource($rsrc, 2000, 256);
+    $data = ReadPartialResource($rsrc, 2000, 256);
 
 =cut
 SV *
@@ -838,11 +841,11 @@ ReadPartialResource(theResource, offset, count)
 The WritePartialResource procedure writes the data specified by DATA 
 to the resource subsection identified by the HANDLE and OFFSET parameters.
 
-	if ( WritePartialResource($HANDLE, $OFFSET, $DATA) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( WritePartialResource($HANDLE, $OFFSET, $DATA) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void
@@ -864,11 +867,11 @@ Given a handle to a resource, SetResourceSize sets the size field of the
 specified resource on disk without writing the resource data. You can change the
 size of any resource, regardless of the amount of memory you have available.
 
-	if ( SetResource($HANDLE, $SIZE) ) {
-		# proceed
-	} else {
-		# error
-	}
+    if ( SetResource($HANDLE, $SIZE) ) {
+        # proceed
+    } else {
+        # error
+    }
 
 =cut
 void

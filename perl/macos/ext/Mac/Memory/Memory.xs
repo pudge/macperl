@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2002/01/05 02:21:54  pudge
+ * Sync with perforce
+ *
  * Revision 1.4  2002/01/04 03:38:19  pudge
  * Disable Mac::Memory::_open (HandleSocket::OpenHandle) for now
  *
@@ -62,8 +65,8 @@ The interface is simpler than the more general memory management functions.
 Create a new handle and return it. Copy $STRING into the handle if present.
 Return a 0 value if a handle could not be created.
 
-	$h = new Handle;
-	$hs = new Handle("This string will now exist in hyperspace");
+    $h = new Handle;
+    $hs = new Handle("This string will now exist in hyperspace");
 
 =cut
 
@@ -87,8 +90,8 @@ new(package,data=0)
 
 Return the size of a handle (i.e., its data portion).
 
-	die unless (new Handle)->size == 0;
-	die unless $hs->size == 40;
+    die unless (new Handle)->size == 0;
+    die unless $hs->size == 40;
 
 =cut
 
@@ -105,8 +108,8 @@ size(hand)
 Appends the DATA to the end of the handle
 and returns the success as the result.
 
-	$h->append("This string will now exist in hyperspace");
-	die unless $h->size == 40;
+    $h->append("This string will now exist in hyperspace");
+    die unless $h->size == 40;
 
 =cut
 
@@ -135,11 +138,11 @@ Munge the contents of the handle with the $DATA (deleting if not present), for t
 $LENGTH (through to the end of the handle contents if not present), starting at
 $OFFSET (the beginning if not present).
 
-	$h->set(5, 6, "datum");
-	
+    $h->set(5, 6, "datum");
+
 yields
 
-	"This datum will now exist in hyperspace"
+    "This datum will now exist in hyperspace"
 
 
 =cut
@@ -175,7 +178,7 @@ Return a datum which is the contents of the memory referenced by $HANDLE,
 starting at $OFFSET (default zero), of length $LENGTH (default the rest
 of the handle).
 
-	die unless $hs->get(5, 6) eq "string";
+    die unless $hs->get(5, 6) eq "string";
 
 =cut
 
@@ -221,10 +224,10 @@ address(hand)
 Return the (locked) state of the handle, or return TRUE if the $NEWSTATE
 of the handle is installed.
 
-	my $state = $h->state;
-	HLock($h);
-	# bunch of operations requiring $h to be locked
-	$h->state($state);	# so nested locks exit properly
+    my $state = $h->state;
+    HLock($h);
+    # bunch of operations requiring $h to be locked
+    $h->state($state);	# so nested locks exit properly
 
 More than the lock state is stored here, so restoring the actual state on leaving
 a scope is required.
@@ -255,6 +258,7 @@ NOT DEFINED AT THE MOMENT
 
 #ifdef NOT_YET
 
+=cut
 SysRet
 _open(hand, mode)
 	Handle	hand
@@ -263,7 +267,7 @@ _open(hand, mode)
 	RETVAL = OpenHandle(hand, mode);
 	OUTPUT:
 	RETVAL
-	
+
 #endif
 
 =item dispose
@@ -309,7 +313,7 @@ new(package,len)
 
 Return the size of a pointer (i.e., its data portion).
 
-	die unless $ptr->size == 40;
+    die unless $ptr->size == 40;
 
 
 =cut
@@ -350,7 +354,7 @@ Return a datum which is the contents of the memory referenced by PTR,
 starting at $OFFSET (default zero), of length $LENGTH (default the rest
 of the block).
 
-	die unless $ps->get(5, 6) eq "string";
+    die unless $ps->get(5, 6) eq "string";
 
 
 =cut
@@ -640,7 +644,7 @@ TempNewHandle(logicalSize)
 The TempMaxMem function compacts the current heap zone and returns the size of
 the largest contiguous block available for temporary allocation.
 
-	$SIZE = &TempMaxMem;
+    $SIZE = &TempMaxMem;
 
 
 =cut
@@ -662,7 +666,7 @@ number of free bytes. Because these bytes might be dispersed throughout memory,
 it is ordinarily not possible to allocate a single relocatable block of that
 size.
 
-	$SIZE = &TempFreeMem;
+    $SIZE = &TempFreeMem;
 
 
 =cut
@@ -770,7 +774,7 @@ Use the MaxMem function to compact and purge the current heap zone. The values
 returned are the amount of memory available and the amount by which the zone can
 grow.
 
-	($SIZE, $GROW) = &MaxMem;
+    ($SIZE, $GROW) = &MaxMem;
 
 MaxMemSys does the purge and compact of the system heap zone, and the $GROW value
 is set to zero.
@@ -965,7 +969,7 @@ BlockMoveData(srcPtr, destPtr, byteCount)
 Determine the total amount of free memory and the size of the largest allocatable
 block after a purge of the heap.
 
-	($Total, $Contiguous) = &PurgeSpace;
+    ($Total, $Contiguous) = &PurgeSpace;
 
 
 =cut
