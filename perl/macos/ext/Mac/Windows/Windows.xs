@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2000/12/22 08:31:47  neeri
+ * Some build tweaks
+ *
  * Revision 1.2  2000/09/09 22:18:29  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -49,7 +52,7 @@ CallWDEF(short varCode, WindowPeek win, short message, long param)
 {
 	SV * 	wdef;
 	
-	dXSARGS;
+	dSP;
 	
 	wdef = ((PerlWDEFDataHdl)win->dataHandle)[0]->wdef;
 	

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2001/04/16 04:45:15  neeri
+ * Switch from atexit() to Perl_call_atexit (MacPerl bug #232158)
+ *
  * Revision 1.2  2000/09/09 22:18:27  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -92,7 +95,7 @@ static Boolean FilterMenu(long menuSelection)
 static pascal void CallMDEF(
 	short message, MenuHandle menu, Rect * menuRect, Point hitPt, short * item)
 {
-	dXSARGS ;
+	dSP ;
 
 	ENTER ;
 	SAVETMPS;
