@@ -1010,7 +1010,7 @@ S_parse_body(pTHX_ char **env, XSINIT_t xsinit)
 #ifdef MACOS_TRADITIONAL
 	    /* ignore -e for Dev:Pseudo argument */
 	    if (argv[1] && !strcmp(argv[1], "Dev:Pseudo"))
-	    	break; 
+		break;
 #endif
 	    if (PL_euid != PL_uid || PL_egid != PL_gid)
 		Perl_croak(aTHX_ "No -e allowed in setuid scripts");
@@ -1452,7 +1452,9 @@ S_run_body(pTHX_ I32 oldscope)
 
 	if (PL_minus_c) {
 #ifdef MACOS_TRADITIONAL
-	    PerlIO_printf(Perl_error_log, "# %s syntax OK\n", MacPerl_MPWFileName(PL_origfilename));
+	    PerlIO_printf(Perl_error_log, "%s%s syntax OK\n",
+		(gMacPerl_ErrorFormat ? "# " : ""),
+		MacPerl_MPWFileName(PL_origfilename));
 #else
 	    PerlIO_printf(Perl_error_log, "%s syntax OK\n", PL_origfilename);
 #endif
@@ -3063,6 +3065,7 @@ S_find_beginning(pTHX)
     forbid_setid("-x");
 #ifdef MACOS_TRADITIONAL
     /* Since the Mac OS does not honor #! arguments for us, we do it ourselves */
+
     while (PL_doextract || gMacPerl_AlwaysExtract) {
 	if ((s = sv_gets(PL_linestr, PL_rsfp, 0)) == Nullch) {
 	    if (!gMacPerl_AlwaysExtract)
@@ -3073,10 +3076,10 @@ S_find_beginning(pTHX)
 		    Perl_croak(aTHX_ "User aborted script\n");
 		else
 		    PL_doextract = FALSE;
-		
+
 	    /* Pater peccavi, file does not have #! */
 	    PerlIO_rewind(PL_rsfp);
-	    
+
 	    break;
 	}
 #else
