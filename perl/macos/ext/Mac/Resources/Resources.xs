@@ -6,6 +6,10 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2003/04/06 21:45:41  pudge
+ * Add FSCreateResourceFile and FSOpenResourceFile for creating/opening resource
+ * files from data fork instead of resource fork
+ *
  * Revision 1.4  2002/11/13 02:04:52  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -928,7 +932,7 @@ oath of the directory where the new $FILENAME will be located.  $FORKNAME is
 "rsrc" for a resource fork; else the data fork will be used.
 
 =cut
-OSErr
+void
 FSCreateResourceFile(parentRef, name, forkName)
 	FSRef		&parentRef
 	Str255		name
@@ -959,16 +963,19 @@ FSCreateResourceFile(parentRef, name, forkName)
 		else
 			FSGetDataForkName(&forkNameU);
 
-		RETVAL = gMacPerl_OSErr = FSCreateResourceFile(&parentRef,
-			uNameLength, uName,
+		gMacPerl_OSErr = FSCreateResourceFile(&parentRef,
+			(uNameLength / sizeof(UniChar)), uName,
 			NULL, NULL,
 			forkNameU.length, forkNameU.unicode,
 			NULL, NULL
 		);
-#endif
+
+		free(uName);
+		free(iUnicodeMapping);
 	}
-	OUTPUT:
-	RETVAL
+#endif
+	CLEANUP:
+	ResErrorReturn;
 
 =item ReadPartialResource HANDLE, OFFSET, BYTECOUNT
 
