@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.9  2001/04/16 04:45:15  neeri
+Switch from atexit() to Perl_call_atexit (MacPerl bug #232158)
+
 Revision 1.8  2001/04/03 12:56:57  pudge
 Make kill die if sig != 0
 
@@ -418,7 +421,6 @@ char ** init_env(char ** env)
 		strcpy(envpool, "TMPDIR=");
 		envpool += 7;
 		strcpy(envpool, GUSIFSp2FullPath(&tmpspec));
-		strcat(envpool, ":");
 	}
 
 	environ[envcnt] = 0;
@@ -721,6 +723,11 @@ const char * MacPerl_CanonDir(const char * dir, char * buf)
 
 	while (dir[0] == '.') {
 		switch (dir[1]) {
+		case NULL:
+			if (out == buf)
+				*out++ = ':';
+			dir += 1;
+			break;
 		case '/':
 			if (out == buf)
 				*out++	= ':';
