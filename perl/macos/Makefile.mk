@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.17  2001/05/05 20:32:41  pudge
+#  Prepare for 5.6.1a2, mostly updates to tests, and File::Find, and latest changes from main repository
+#
 #  Revision 1.16  2001/03/22 04:30:36  pudge
 #  Fix MrC resouce thing
 #
@@ -201,6 +204,11 @@ RMS = delete -y
 public		=	perl translators sitelib_install 
 Dynamic_Ext_Mac	=	Mac
 Dynamic_Ext_Std	=	
+Dynamic_Ext_Xtr =	# \
+#	Compress:Zlib Digest:MD5 HTML:Parser MIME:Base64 Storable
+Static_Ext_Xtr =	\
+	Compress:Zlib:Zlib Digest:MD5:MD5 HTML:Parser:Parser \
+	MIME:Base64:Base64 Storable:Storable
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= 	\
@@ -218,9 +226,9 @@ Static_Lib_Mac	= \
 	ExtUtils:MM_MacOS ExtUtils:Miniperl Config Errno \
 	Mac:Hooks Mac:Pane
 
-Static_Ext_AutoInit	= 	$(Static_Ext_Mac) $(Static_Ext_Std)
+Static_Ext_AutoInit	= 	$(Static_Ext_Mac) $(Static_Ext_Std) $(Static_Ext_Xtr)
 More_Static_Ext		= 	OSA XL
-Static_Ext_Prefix	= 	:ext:{$(Static_Ext_Mac)} ::ext:{$(Static_Ext_Std)}
+Static_Ext_Prefix	= 	:ext:{$(Static_Ext_Mac)} ::ext:{$(Static_Ext_Std)} :bundled_ext:{$(Static_Ext_Xtr)}
 Static_Ext_AutoInit_PPC	=	{$(Static_Ext_Prefix)}.Lib.PPC
 Static_Ext_AutoInit_68K	=	{$(Static_Ext_Prefix)}.Lib.68K
 Static_Ext_AutoInit_SC	=	{$(Static_Ext_Prefix)}.Lib.SC
@@ -267,7 +275,7 @@ LibObjectsMRC = {$(libc)}.MrC.o
 
 .PHONY : translators sitelib_install
 
-all: PLib Obj miniperl $(private) $(plextract) $(public) dynlibrary runperl 
+all: PLib Obj miniperl $(private) $(plextract) $(public) dynlibrary runperl extrlibrary
 	@echo " "; echo "	Everything is up to date."
 
 PLib: 
@@ -289,6 +297,8 @@ sitelib_install:
 		"::perl -I: -I:::lib: -e 'use File::Path; mkpath(\@ARGV, 1);'" ¶
 		$(Static_Lib_Mac:^":":+".pm")
 	$(MACPERL_SRC)PerlInstall -l :::lib: 
+	Directory ::bundled_lib:
+	$(MACPERL_SRC)PerlInstall -l :::lib:
 	Directory ::
 
 
@@ -340,7 +350,7 @@ runperl: runperl.c
 # to prevent further builds until it is deleted.
 #
 preplibrary: miniperl
-	For i in :ext:{$(Static_Ext_Mac:d)} ::ext:{$(Static_Ext_Std:d)}
+	For i in :ext:{$(Static_Ext_Mac:d)} ::ext:{$(Static_Ext_Std:d)} :bundled_ext:{$(Static_Ext_Xtr:d)}
 		directory {{i}}
 		Set Echo 0
 		If `Newer Makefile.PL Makefile.mk` == "Makefile.PL"
@@ -372,6 +382,22 @@ dynlibrary: perl PerlStub
 		Set Echo 1
 	end
 	Echo > dynlibrary
+
+extrlibrary: dynlibrary
+	For i in :bundled_ext:{$(Dynamic_Ext_Xtr)}
+		directory {{i}}
+		Set Echo 0
+		If `Exists Makefile.PL` != ""
+			If `Newer Makefile.PL Makefile.mk` == "Makefile.PL"
+				$(MACPERL_SRC)perl -I$(MACPERL_SRC)lib -I$(MACPERL_SRC):lib Makefile.PL
+			End
+		End
+		BuildProgram all
+		BuildProgram install
+		directory $(MACPERL_SRC)
+		Set Echo 1
+	end
+	Echo > extrlibrary
 
 perl: perl.{$(MACPERL_BUILD_TOOL)}
 	FatBuild perl $(MACPERL_INST_TOOL_PPC) $(MACPERL_INST_TOOL_68K)

@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.14  2001/04/17 03:59:58  pudge
+#  Minor version/config changes
+#
 #  Revision 1.13  2001/03/22 04:28:42  pudge
 #  Misc. updates
 #
@@ -116,6 +119,9 @@ ObjectsPPC 		= {$(MacPerlSources) $(PerlSources)}.PPC.o
 ObjectsSC 		= {$(MacPerlSources) $(PerlSources)}.SC.o
 ObjectsMrC 		= {$(MacPerlSources) $(PerlSources)}.MrC.o
 
+Static_Ext_Xtr =	\
+	Compress:Zlib:Zlib Digest:MD5:MD5 HTML:Parser:Parser \
+	MIME:Base64:Base64 Storable:Storable
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= \
@@ -129,7 +135,7 @@ Static_Ext_Std	= \
 	# not going to be built:
 	# GDBM_File:GDBM_File ODBM_File:ODBM_File IPC:IPC:SysV
 	# SDBM_File:SDBM_File Sys:Syslog:Syslog Thread:Thread
-Static_Ext_Prefix		= 	$(MACPERL_SRC)ext:{$(Static_Ext_Mac)} $(PERL_SRC)ext:{$(Static_Ext_Std)}
+Static_Ext_Prefix		= 	$(MACPERL_SRC)ext:{$(Static_Ext_Mac)} $(PERL_SRC)ext:{$(Static_Ext_Std)} $(MACPERL_SRC)bundled_ext:{$(Static_Ext_Xtr)}
 Static_Ext_AutoInit_PPC	=	{$(Static_Ext_Prefix)}.Lib.PPC
 Static_Ext_AutoInit_68K	=	{$(Static_Ext_Prefix)}.Lib.68K
 Static_Ext_AutoInit_SC	=	{$(Static_Ext_Prefix)}.Lib.SC
