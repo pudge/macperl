@@ -3,12 +3,12 @@ use File::Spec::Functions;
 use Test::More;
 use strict;
 
-BEGIN { plan tests => 10 }
+BEGIN { plan tests => 13 }
 
 use MacPerl ':all';
 
 SKIP: {
-#	skip "MacPerl", 10;
+#	skip "MacPerl", 13;
 
 	my @volumes = Volumes();
 	ok(@volumes, 'Volumes: ' . join(', ', @volumes));	
@@ -83,6 +83,15 @@ EOS
 		ok(0, "No file '$testfile'") for 1..4;
 	}
 	unlink $testfile;
+
+	my $pick = MacPerl::Pick('Select the number between two and four', 0..5);
+	is($pick, 3, 'Pick()');
+
+	my $ask  = MacPerl::Ask('Remove the brackets and hit OK', "[$ENV{USER}]");
+	is($ENV{USER}, $ask, 'Ask()');
+
+	my $answer = MacPerl::Answer("Please click Cancel", "OK", "Cancel", "Booya!");
+	is($answer, 1, 'Answer()');
 }
 
 __END__
