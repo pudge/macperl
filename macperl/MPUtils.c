@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.3  2002/01/04 03:34:45  pudge
+Modifications for universal headers 3.4
+
 Revision 1.2  2001/10/03 19:23:16  pudge
 Sync with perforce maint-5.6/macperl
 
@@ -470,7 +473,7 @@ pascal void DoAbout(Boolean easter)
 	
 	SetCursor(&qd.arrow);
 	
-	dlg 	= GetNewAppDialog(AboutDialog+easter);
+	dlg 	= GetNewAppDialog(AboutDialog); // +easter);
 	sound 	= GetAppResource('snd ', AlertSoundID+easter);
 	hdl 	= GetAppResource('STR#', CreditID);
 	count	= **(short **) hdl;
