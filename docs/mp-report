@@ -3,8 +3,9 @@
 use lib "../perl/lib";
 use strict;
 use Digest::MD5 'md5_hex';
-use Pudge::Web;
+use File::Find;
 use File::Spec::Functions;
+use Pudge::Web;
 use vars '$compile';
 
 {
@@ -54,13 +55,20 @@ sub main {
 }
 
 sub compile {
-    my($pw) = @_;
-    close STDOUT;
-    close STDERR;
-    for my $op (keys %{$pw->{ops}}) {
-	$pw->{ops}{$op}[1]->($pw);
-    }
-    exit;
+	my($pw) = @_;
+	close STDOUT;
+	close STDERR;
+	
+	for my $dir (@{$pw->{tt_path}}) {
+		find(sub {
+			my $name = $File::Find::name;
+			return if $name =~ /\bCVS\b/ || ! -f $name;
+			$name =~ s/^\Q$dir\E[\/:]//;
+			$pw->process($name);
+		}, $dir);
+	}
+
+	exit;
 }
 
 # view data
@@ -118,10 +126,10 @@ sub create_user {
 
 	if (!$pw->{form}{pass1} || !$pw->{form}{pass2}) {
 		$pw->error('No password given.  Please try again.');
-		return unless $compile;
+		return;
 	} elsif ($pw->{form}{pass1} ne $pw->{form}{pass2}) {
 		$pw->error("Passwords do not match.  Please try again.");
-		return unless $compile;
+		return;
 	} else {
 		$pass = md5_hex($pw->{form}{pass1});
 	}
@@ -129,10 +137,10 @@ sub create_user {
 	($name = lc $pw->{form}{user}) =~ s/[^a-zA-Z0-9_]+//g;
 	if (!$name) {
 		$pw->error('No user name given.  Please try again.');
-		return unless $compile;
+		return;
 	} elsif (user_exists($pw, $name)) {
 		$pw->error("Sorry, that user name is already in use.  Please select another.");
-		return unless $compile;
+		return;
 	}
 
 	$email = $pw->{form}{email};
@@ -161,7 +169,7 @@ sub create_config {
 
 	if (!$pw->{form}{name}) {
 		$pw->error("Configuration must have a name.  Please go back and try again.");
-		return unless $compile;
+		return;
 	}
 
 	for (qw(cvs build mwc mpw)) {
@@ -227,7 +235,7 @@ sub add_test {
 	my $test_id   = get_tests($pw);
 	if (! keys %$config_id) {
 		$pw->error("Please add a configuration before entering test results.");
-		return unless $compile;
+		return;
 	}
 
 	$pw->header('Add Test');
@@ -259,7 +267,7 @@ sub login {
 	$pw->{user} = {};
 
 	if ($pw->{form}{op} && $pw->{form}{op} eq 'logout') {
-		return unless $compile;
+		return;
 
 	} elsif ($pw->{form}{user} && $pw->{form}{pass}) {
 		@data = $pw->get_dbarray(
@@ -269,7 +277,7 @@ sub login {
 		
 	} else {
 		my($id, $pass) = $pw->get_cookie();
-		return unless ($compile || $id && $pass);
+		return unless $id && $pass;
 		@data = $pw->get_dbarray(
 			['id,user,email,pass,sf_match', 'users', 'id=? AND pass=?'],
 			$id, $pass
