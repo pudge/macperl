@@ -1486,7 +1486,12 @@ Ap	|int	|do_binmode	|PerlIO *fp|int iotype|int mode
 p	|void	|do_chop	|SV* asv|SV* sv
 Ap	|bool	|do_close	|GV* gv|bool not_implicit
 p	|bool	|do_eof		|GV* gv
-p	|bool	|do_exec	|char* cmd
+Ap	|bool	|do_exec	|char* cmd
+#if defined(WIN32)
+Ap	|int	|do_aspawn	|SV* really|SV** mark|SV** sp
+Ap	|int	|do_spawn	|char* cmd
+Ap	|int	|do_spawn_nowait|char* cmd
+#endif
 #if !defined(WIN32)
 p	|bool	|do_exec3	|char* cmd|int fd|int flag
 #endif
@@ -2230,6 +2235,13 @@ END_EXTERN_C
 #if defined(PERL_IN_AV_C) || defined(PERL_DECL_PROT)
 s	|I32	|avhv_index_sv	|SV* sv
 s	|I32	|avhv_index	|AV* av|SV* sv|U32 hash
+#endif
+
+#if defined(PERL_IN_DOIO_C) || defined(PERL_DECL_PROT)
+s	|int	|io_sock_close	|IO *io
+#if defined(USE_ITHREADS)
+s	|void	|invalidate_fileno|PerlIO *f
+#endif
 #endif
 
 #if defined(PERL_IN_DOOP_C) || defined(PERL_DECL_PROT)

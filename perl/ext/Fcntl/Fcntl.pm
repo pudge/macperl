@@ -201,6 +201,7 @@ sub S_ISENFMT  { ( $_[0] & _S_IFMT() ) == S_IFENFMT() }
 
 sub AUTOLOAD {
     (my $constname = $AUTOLOAD) =~ s/.*:://;
+    local $! = 0;
     my $val = constant($constname, 0);
     if ($! != 0) {
 	if ($! =~ /Invalid/ || $!{EINVAL}) {

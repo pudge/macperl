@@ -241,13 +241,19 @@ if ($PLATFORM eq 'win32') {
 		     PL_cshlen
 		     PL_cshname
 		     PL_opsave
-		     Perl_do_exec
 		     Perl_getenv_len
 		     Perl_my_pclose
 		     Perl_my_popen
 		     )];
 }
-elsif ($PLATFORM eq 'aix') {
+else {
+    skip_symbols [qw(
+		     Perl_do_spawn
+		     Perl_do_spawn_nowait
+		     Perl_do_aspawn
+		     )];
+}
+if ($PLATFORM eq 'aix') {
     skip_symbols([qw(
 		     Perl_dump_fds
 		     Perl_ErrorNo

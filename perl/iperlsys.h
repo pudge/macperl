@@ -1056,12 +1056,8 @@ typedef int		(*LPProcGetpid)(struct IPerlProc*);
 typedef void*		(*LPProcDynaLoader)(struct IPerlProc*, const char*);
 typedef void		(*LPProcGetOSError)(struct IPerlProc*,
 			    SV* sv, DWORD dwErr);
-typedef void		(*LPProcFreeBuf)(struct IPerlProc*, char*);
-typedef BOOL		(*LPProcDoCmd)(struct IPerlProc*, char*);
-typedef int		(*LPProcSpawn)(struct IPerlProc*, char*);
 typedef int		(*LPProcSpawnvp)(struct IPerlProc*, int, const char*,
 			    const char*const*);
-typedef int		(*LPProcASpawn)(struct IPerlProc*, void*, void**, void**);
 #endif
 
 struct IPerlProc
@@ -1096,10 +1092,10 @@ struct IPerlProc
 #ifdef WIN32
     LPProcDynaLoader	pDynaLoader;
     LPProcGetOSError	pGetOSError;
-    LPProcDoCmd		pDoCmd;
-    LPProcSpawn		pSpawn;
-    LPProcSpawnvp	pSpawnvp;
-    LPProcASpawn	pASpawn;
+    void *		__unused1;	/* XXX unused, retained for bincompat */
+    void *		__unused2;
+    LPProcSpawnvp	pSpawnvp;	/* XXX unused, retained for bincompat */
+    void *		__unused3;	/* XXX unused, retained for bincompat */
 #endif
 };
 
@@ -1171,14 +1167,8 @@ struct IPerlProcInfo
 	(*PL_Proc->pDynaLoader)(PL_Proc, (f))
 #define PerlProc_GetOSError(s,e)					\
 	(*PL_Proc->pGetOSError)(PL_Proc, (s), (e))
-#define PerlProc_Cmd(s)							\
-	(*PL_Proc->pDoCmd)(PL_Proc, (s))
-#define do_spawn(s)							\
-	(*PL_Proc->pSpawn)(PL_Proc, (s))
-#define do_spawnvp(m, c, a)						\
+#define PerlProc_spawnvp(m, c, a)					\
 	(*PL_Proc->pSpawnvp)(PL_Proc, (m), (c), (a))
-#define PerlProc_aspawn(m,c,a)						\
-	(*PL_Proc->pASpawn)(PL_Proc, (m), (c), (a))
 #endif
 
 #else	/* PERL_IMPLICIT_SYS */
@@ -1219,6 +1209,8 @@ struct IPerlProcInfo
 	win32_dynaload((f))
 #define PerlProc_GetOSError(s,e)					\
 	win32_str_os_error((s), (e))
+#define PerlProc_spawnvp(m, c, a)					\
+	win32_spawnvp((m), (c), (a))
 #endif
 #endif	/* PERL_IMPLICIT_SYS */
 

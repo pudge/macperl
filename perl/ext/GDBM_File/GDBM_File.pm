@@ -66,6 +66,7 @@ $VERSION = "1.05";
 sub AUTOLOAD {
     my($constname);
     ($constname = $AUTOLOAD) =~ s/.*:://;
+    local $! = 0;
     my $val = constant($constname, @_ ? $_[0] : 0);
     if ($! != 0) {
 	if ($! =~ /Invalid/ || $!{EINVAL}) {

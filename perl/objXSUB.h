@@ -313,6 +313,24 @@
 #define Perl_do_close		pPerl->Perl_do_close
 #undef  do_close
 #define do_close		Perl_do_close
+#undef  Perl_do_exec
+#define Perl_do_exec		pPerl->Perl_do_exec
+#undef  do_exec
+#define do_exec			Perl_do_exec
+#if defined(WIN32)
+#undef  Perl_do_aspawn
+#define Perl_do_aspawn		pPerl->Perl_do_aspawn
+#undef  do_aspawn
+#define do_aspawn		Perl_do_aspawn
+#undef  Perl_do_spawn
+#define Perl_do_spawn		pPerl->Perl_do_spawn
+#undef  do_spawn
+#define do_spawn		Perl_do_spawn
+#undef  Perl_do_spawn_nowait
+#define Perl_do_spawn_nowait	pPerl->Perl_do_spawn_nowait
+#undef  do_spawn_nowait
+#define do_spawn_nowait		Perl_do_spawn_nowait
+#endif
 #if !defined(WIN32)
 #endif
 #if defined(HAS_MSG) || defined(HAS_SEM) || defined(HAS_SHM)
@@ -2267,6 +2285,10 @@
 #else
 #endif
 #if defined(PERL_IN_AV_C) || defined(PERL_DECL_PROT)
+#endif
+#if defined(PERL_IN_DOIO_C) || defined(PERL_DECL_PROT)
+#if defined(USE_ITHREADS)
+#endif
 #endif
 #if defined(PERL_IN_DOOP_C) || defined(PERL_DECL_PROT)
 #endif

@@ -906,7 +906,12 @@ Perl_magic_clear_all_env(pTHX_ SV *sv, MAGIC *mg)
     PerlEnv_clearenv();
 #   else
 #if !defined(MACOS_TRADITIONAL)
-#	    ifndef PERL_USE_SAFE_PUTENV
+#  if defined(USE_ITHREADS)
+    /* only the parent thread can clobber the process environment */
+    if (PL_curinterp == aTHX)
+#  endif
+    {
+#  ifndef PERL_USE_SAFE_PUTENV
     I32 i;
 
     if (environ == PL_origenviron)
@@ -914,10 +919,10 @@ Perl_magic_clear_all_env(pTHX_ SV *sv, MAGIC *mg)
     else
 	for (i = 0; environ[i]; i++)
 	    safesysfree(environ[i]);
-#	    endif /* PERL_USE_SAFE_PUTENV */
+#  endif /* PERL_USE_SAFE_PUTENV */
 
     environ[0] = Nullch;
-
+    }
 #endif /* !defined(MACOS_TRADITIONAL) */
 #   endif /* PERL_IMPLICIT_SYS */
 #endif /* VMS */
@@ -2023,9 +2028,13 @@ Perl_magic_set(pTHX_ SV *sv, MAGIC *mg)
 		    break;
 	    }
 	    /* can grab env area too? */
-	    if (PL_origenviron && (PL_origenviron[0] == s + 1
+	    if (PL_origenviron
+#ifdef USE_ITHREADS
+		&& PL_curinterp == aTHX
+#endif
+	        && (PL_origenviron[0] == s + 1
 #ifdef OS2
-				|| (PL_origenviron[0] == s + 9 && (s += 8))
+		    || (PL_origenviron[0] == s + 9 && (s += 8))
 #endif 
 	       )) {
 		my_setenv("NoNe  SuCh", Nullch);
@@ -2055,8 +2064,7 @@ Perl_magic_set(pTHX_ SV *sv, MAGIC *mg)
 	    s = PL_origargv[0]+i;
 	    *s++ = '\0';
 	    while (++i < (I32)PL_origalen)
-		*s++ = ' ';
-	    s = PL_origargv[0]+i;
+		*s++ = '\0';
 	    for (i = 1; i < PL_origargc; i++)
 		PL_origargv[i] = Nullch;
 	}

@@ -895,6 +895,7 @@ sub AUTOLOAD {
     $tmp
     (\$constname = \$AUTOLOAD) =~ s/.*:://;
     croak "&$module::constant not defined" if \$constname eq 'constant';
+    local \$! = 0;
     my \$val = constant(\$constname, \@_ ? \$_[0] : 0);
     if (\$! != 0) {
 	if (\$! =~ /Invalid/ || \$!{EINVAL}) {

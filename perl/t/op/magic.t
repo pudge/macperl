@@ -183,7 +183,18 @@ EOF
     s/\.exe//i if $Is_Dos or $Is_os2;
     s{\\}{/}g;
     ok 24, (($Is_MSWin32 || $Is_os2) ? uc($_) eq uc($s1) : $_ eq $s1), " :$_:!=:$s1: after `$perl $script`";
-    ok 25, unlink($script), $!;
+
+    local $ENV{PATH}= ".";
+    (my $script_name = $script) =~ s/.*(show-shebang)/$1/;
+    $s1 = "\$^X is $perl, \$0 is $script_name\n" if $Is_MSWin32 || $Is_MacOS;
+    $_ = $Is_MacOS ? `$perl $script_name` : `$script_name`;
+    s/\.exe//i if $Is_Dos or $Is_Cygwin or $Is_os2;
+    s{\bminiperl\b}{perl}; # so that test doesn't fail with miniperl
+    s{is perl}{is $perl}; # for systems where $^X is only a basename
+    s{\\}{/}g;
+    ok 25, (($Is_MSWin32 || $Is_os2) ? uc($_) eq uc($s1) : $_ eq $s1), " :$_:!=:$s1:";
+
+    unlink($script) || die "unlink($script): $!";
 }
 
 # $], $^O, $^T

@@ -51,6 +51,61 @@
 #include <signal.h>
 #endif
 
+#if defined(USE_ITHREADS)
+STATIC void
+S_invalidate_fileno(pTHX_ PerlIO *f)
+{
+    int fd = PerlIO_fileno(f);
+    PerlIO_flush(f);
+#  if defined(USE_SFIO)
+#    error "dont know how to set FILE.fileno under sfio"
+#  endif
+    /* XXX this could use PerlIO_canset_fileno() and
+     * PerlIO_set_fileno() support from Configure */
+#  if defined(__GLIBC__)
+    ((FILE*)f)->_fileno = -1;
+#  elif defined(__sun__)
+    /* _file is just a char :-( */
+    ((FILE*)f)->_file = PerlLIO_dup(fd);
+#  elif defined(__hpux)
+    ((FILE*)f)->__fileH = 0xff;
+    ((FILE*)f)->__fileL = 0xff;
+#  elif defined(__FreeBSD__)
+    ((FILE*)f)->_file = -1;
+#  elif defined(WIN32)
+#    if defined(__BORLANDC__)
+    ((FILE*)f)->fd = PerlLIO_dup(fd);
+#    else
+    ((FILE*)f)->_file = -1;
+#    endif
+#  else
+#    error "dont know how to set FILE.fileno on your platform"
+#  endif
+}
+#endif
+
+STATIC int
+S_io_sock_close(pTHX_ IO *io)
+{
+    int result;
+
+#if defined(USE_ITHREADS)
+    /* Avoid race condition: without this, the second fclose() will
+     * attempt to close() the same fd, and that fd could have been
+     * allocated by another thread between the two fclose() calls.
+     * It is potentially better to keep the two fds separate by making
+     * one a dup() of the other, but doing so muddies the perl-level
+     * semantics more than this hack.  What should fileno(SOCK) return
+     * in that case?  How about fcntl(SOCK,...)? Etc. */
+    if (PerlIO_fileno(IoIFP(io)) == PerlIO_fileno(IoOFP(io)))
+	invalidate_fileno(IoIFP(io));
+#endif
+    result = PerlIO_close(IoOFP(io));
+    PerlIO_close(IoIFP(io)); /* clear stdio, fd already closed */
+
+    return result;
+}
+
 bool
 Perl_do_open(pTHX_ GV *gv, register char *name, I32 len, int as_raw,
 	     int rawmode, int rawperm, PerlIO *supplied_fp)
@@ -99,10 +154,8 @@ Perl_do_open9(pTHX_ GV *gv, register char *name, I32 len, int as_raw,
 	else if (IoTYPE(io) == IoTYPE_PIPE)
 	    result = PerlProc_pclose(IoIFP(io));
 	else if (IoIFP(io) != IoOFP(io)) {
-	    if (IoOFP(io)) {
-		result = PerlIO_close(IoOFP(io));
-		PerlIO_close(IoIFP(io)); /* clear stdio, fd already closed */
-	    }
+	    if (IoOFP(io))
+		result = io_sock_close(io);
 	    else
 		result = PerlIO_close(IoIFP(io));
 	}
@@ -458,6 +511,10 @@ Perl_do_open9(pTHX_ GV *gv, register char *name, I32 len, int as_raw,
 	if (saveofp) {
 	    PerlIO_flush(saveofp);		/* emulate PerlIO_close() */
 	    if (saveofp != saveifp) {		/* was a socket? */
+#if defined(USE_ITHREADS)
+		if (fd == PerlIO_fileno(saveofp))
+		    invalidate_fileno(saveofp);
+#endif
 		PerlIO_close(saveofp);
 	    }
 	}
@@ -496,11 +553,21 @@ Perl_do_open9(pTHX_ GV *gv, register char *name, I32 len, int as_raw,
 
 	    if (was_fdopen) {
 		/* need to close fp without closing underlying fd */
+#if defined(USE_THREADS)
+		/* we do do this only in the non-ithreads case because of
+		 * the platform-specific nature of invalidate_fileno() */
+		invalidate_fileno(fp);
+		PerlIO_close(fp);
+#else
 		int ofd = PerlIO_fileno(fp);
 		int dupfd = PerlLIO_dup(ofd);
 		PerlIO_close(fp);
+		/* there is a race condition here that makes this code
+		 * thread-unsafe.  ofd could have been allocated by
+		 * another thread at this point. */
 		PerlLIO_dup2(dupfd,ofd);
 		PerlLIO_close(dupfd);
+#endif
 	    }
 	    else
 		PerlIO_close(fp);
@@ -785,6 +852,7 @@ Perl_do_pipe(pTHX_ SV *sv, GV *rgv, GV *wgv)
 	goto badexit;
     IoIFP(rstio) = PerlIO_fdopen(fd[0], "r");
     IoOFP(wstio) = PerlIO_fdopen(fd[1], "w");
+    IoOFP(rstio) = IoIFP(rstio);
     IoIFP(wstio) = IoOFP(wstio);
     IoTYPE(rstio) = IoTYPE_RDONLY;
     IoTYPE(wstio) = IoTYPE_WRONLY;
@@ -858,10 +926,8 @@ Perl_io_close(pTHX_ IO *io, bool not_implicit)
 	else if (IoTYPE(io) == IoTYPE_STD)
 	    retval = TRUE;
 	else {
-	    if (IoOFP(io) && IoOFP(io) != IoIFP(io)) {		/* a socket */
-		retval = (PerlIO_close(IoOFP(io)) != EOF);
-		PerlIO_close(IoIFP(io));	/* clear stdio, fd already closed */
-	    }
+	    if (IoOFP(io) && IoOFP(io) != IoIFP(io))		/* a socket */
+		retval = (io_sock_close(io) != EOF);
 	    else
 		retval = (PerlIO_close(IoIFP(io)) != EOF);
 	}
@@ -1399,7 +1465,7 @@ Perl_do_exec3(pTHX_ char *cmd, int fd, int do_report)
 
 		while (*t && isSPACE(*t))
 		    ++t;
-		if (!*t && (dup2(1,2) != -1)) {
+		if (!*t && (PerlLIO_dup2(1,2) != -1)) {
 		    s[-2] = '\0';
 		    break;
 		}

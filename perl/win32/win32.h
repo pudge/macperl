@@ -341,9 +341,6 @@ extern FILE *		my_fdopen(int, char *);
 #endif
 extern int		my_fclose(FILE *);
 extern int		my_fstat(int fd, struct stat *sbufptr);
-extern int		do_aspawn(void *really, void **mark, void **sp);
-extern int		do_spawn(char *cmd);
-extern int		do_spawn_nowait(char *cmd);
 extern char *		win32_get_privlib(const char *pl);
 extern char *		win32_get_sitelib(const char *pl);
 extern char *		win32_get_vendorlib(const char *pl);
@@ -422,7 +419,7 @@ struct interp_intern {
     long	perlshell_items;
     struct av *	fdpid;
     child_tab *	children;
-#ifdef USE_ITHREADS
+#if defined(USE_ITHREADS) || defined(PERL_OBJECT)
     DWORD	pseudo_id;
     child_tab *	pseudo_children;
 #endif

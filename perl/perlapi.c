@@ -632,6 +632,36 @@ Perl_do_close(pTHXo_ GV* gv, bool not_implicit)
 {
     return ((CPerlObj*)pPerl)->Perl_do_close(gv, not_implicit);
 }
+
+#undef  Perl_do_exec
+bool
+Perl_do_exec(pTHXo_ char* cmd)
+{
+    return ((CPerlObj*)pPerl)->Perl_do_exec(cmd);
+}
+#if defined(WIN32)
+
+#undef  Perl_do_aspawn
+int
+Perl_do_aspawn(pTHXo_ SV* really, SV** mark, SV** sp)
+{
+    return ((CPerlObj*)pPerl)->Perl_do_aspawn(really, mark, sp);
+}
+
+#undef  Perl_do_spawn
+int
+Perl_do_spawn(pTHXo_ char* cmd)
+{
+    return ((CPerlObj*)pPerl)->Perl_do_spawn(cmd);
+}
+
+#undef  Perl_do_spawn_nowait
+int
+Perl_do_spawn_nowait(pTHXo_ char* cmd)
+{
+    return ((CPerlObj*)pPerl)->Perl_do_spawn_nowait(cmd);
+}
+#endif
 #if !defined(WIN32)
 #endif
 #if defined(HAS_MSG) || defined(HAS_SEM) || defined(HAS_SHM)
@@ -4081,6 +4111,10 @@ Perl_sys_intern_init(pTHXo)
 #else
 #endif
 #if defined(PERL_IN_AV_C) || defined(PERL_DECL_PROT)
+#endif
+#if defined(PERL_IN_DOIO_C) || defined(PERL_DECL_PROT)
+#if defined(USE_ITHREADS)
+#endif
 #endif
 #if defined(PERL_IN_DOOP_C) || defined(PERL_DECL_PROT)
 #endif

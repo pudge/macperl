@@ -440,7 +440,13 @@ perl_destruct(pTHXx)
     /* jettison our possibly duplicated environment */
 
 #ifdef USE_ENVIRON_ARRAY
-    if (environ != PL_origenviron) {
+    if (environ != PL_origenviron
+#ifdef USE_ITHREADS
+	/* only main thread can free environ[0] contents */
+	&& PL_curinterp == aTHX
+#endif
+       )
+    {
 	I32 i;
 
 	for (i = 0; environ[i]; i++)
@@ -3048,6 +3054,9 @@ STATIC void
 S_find_beginning(pTHX)
 {
     register char *s, *s2;
+#ifdef MACOS_TRADITIONAL
+    int maclines = 0;
+#endif
 
     /* skip forward in input to the real script? */
 
@@ -3058,7 +3067,7 @@ S_find_beginning(pTHX)
 	if ((s = sv_gets(PL_linestr, PL_rsfp, 0)) == Nullch) {
 	    if (!gMacPerl_AlwaysExtract)
 		Perl_croak(aTHX_ "No Perl script found in input\n");
-		
+
 	    if (PL_doextract)			/* require explicit override ? */
 		if (!OverrideExtract(PL_origfilename))
 		    Perl_croak(aTHX_ "User aborted script\n");
@@ -3089,7 +3098,18 @@ S_find_beginning(pTHX)
 			;
 	    }
 #ifdef MACOS_TRADITIONAL
+	    /* We are always searching for the #!perl line in MacPerl,
+	     * so if we find it, still keep the line count correct
+	     * by counting lines we already skipped over
+	     */
+	    for (; maclines > 0 ; maclines--)
+		PerlIO_ungetc(PL_rsfp, '\n');
+
 	    break;
+
+	/* gMacPerl_AlwaysExtract is false in MPW tool */
+	} else if (gMacPerl_AlwaysExtract) {
+	    ++maclines;
 #endif
 	}
     }
@@ -3329,8 +3349,14 @@ S_init_postdump_symbols(pTHX_ register int argc, register char **argv, register 
 	*/
 	if (!env)
 	    env = environ;
-	if (env != environ)
+	if (env != environ
+#  ifdef USE_ITHREADS
+	    && PL_curinterp == aTHX
+#  endif
+	   )
+	{
 	    environ[0] = Nullch;
+	}
 #ifdef NEED_ENVIRON_DUP_FOR_MODIFY
 	{
 	    char **env_base;

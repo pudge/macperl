@@ -4132,7 +4132,8 @@ Perl_cv_undef(pTHX_ CV *cv)
 	if (SvREFCNT(CvPADLIST(cv))) {
 	    AV *padlist = CvPADLIST(cv);
 	    I32 ix;
-	    if (is_eval) {
+	    /* pads may be cleared out already during global destruction */
+	    if (is_eval && !PL_dirty) {
 		/* inner references to eval's cv must be fixed up */
 		AV *comppad_name = (AV*)AvARRAY(padlist)[0];
 		AV *comppad = (AV*)AvARRAY(padlist)[1];

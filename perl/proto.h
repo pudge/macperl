@@ -224,6 +224,11 @@ PERL_CALLCONV void	Perl_do_chop(pTHX_ SV* asv, SV* sv);
 PERL_CALLCONV bool	Perl_do_close(pTHX_ GV* gv, bool not_implicit);
 PERL_CALLCONV bool	Perl_do_eof(pTHX_ GV* gv);
 PERL_CALLCONV bool	Perl_do_exec(pTHX_ char* cmd);
+#if defined(WIN32)
+PERL_CALLCONV int	Perl_do_aspawn(pTHX_ SV* really, SV** mark, SV** sp);
+PERL_CALLCONV int	Perl_do_spawn(pTHX_ char* cmd);
+PERL_CALLCONV int	Perl_do_spawn_nowait(pTHX_ char* cmd);
+#endif
 #if !defined(WIN32)
 PERL_CALLCONV bool	Perl_do_exec3(pTHX_ char* cmd, int fd, int flag);
 #endif
@@ -970,6 +975,13 @@ END_EXTERN_C
 #if defined(PERL_IN_AV_C) || defined(PERL_DECL_PROT)
 STATIC I32	S_avhv_index_sv(pTHX_ SV* sv);
 STATIC I32	S_avhv_index(pTHX_ AV* av, SV* sv, U32 hash);
+#endif
+
+#if defined(PERL_IN_DOIO_C) || defined(PERL_DECL_PROT)
+STATIC int	S_io_sock_close(pTHX_ IO *io);
+#if defined(USE_ITHREADS)
+STATIC void	S_invalidate_fileno(pTHX_ PerlIO *f);
+#endif
 #endif
 
 #if defined(PERL_IN_DOOP_C) || defined(PERL_DECL_PROT)

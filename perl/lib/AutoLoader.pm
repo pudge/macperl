@@ -252,6 +252,7 @@ lines:
     sub AUTOLOAD {
         my $sub = $AUTOLOAD;
         (my $constname = $sub) =~ s/.*:://;
+	local $! = 0;
         my $val = constant($constname, @_ ? $_[0] : 0);
         if ($! != 0) {
             if ($! =~ /Invalid/ || $!{EINVAL}) {

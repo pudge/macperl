@@ -54,20 +54,6 @@ CPerlObj::operator delete(void *pPerl, IPerlMem *pvtbl)
 }
 #endif
 
-#ifdef WIN32		/* XXX why are these needed? */
-bool
-Perl_do_exec(char *cmd)
-{
-    return PerlProc_Cmd(cmd);
-}
-
-int
-CPerlObj::do_aspawn(void *vreally, void **vmark, void **vsp)
-{
-    return PerlProc_aspawn(vreally, vmark, vsp);
-}
-#endif  /* WIN32 */
-
 #endif   /* PERL_OBJECT */
 
 int

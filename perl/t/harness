@@ -38,7 +38,7 @@ foreach (keys %datahandle) {
 }
 
 @tests = @ARGV;
-@tests = <base/*.t comp/*.t cmd/*.t run/*.t io/*.t op/*.t pragma/*.t lib/*.t pod/*.t>
+@tests = <base/*.t comp/*.t cmd/*.t run/*.t io/*.t op/*.t pragma/*.t lib/*.t pod/*.t win32/*.t>
     unless @tests;
 
 Test::Harness::runtests @tests;

@@ -1982,9 +1982,16 @@ Perl_vwarner(pTHX_ U32  err, const char* pat, va_list* args)
 void
 Perl_my_setenv(pTHX_ char *nam, char *val)
 {
+#ifdef USE_ITHREADS
+  /* only parent thread can modify process environment */
+  if (PL_curinterp == aTHX)
+#endif
+  {
 #ifndef PERL_USE_SAFE_PUTENV
     /* most putenv()s leak, so we manipulate environ directly */
-    register I32 i=setenv_getix(nam);		/* where does it go? */
+    register I32 i;
+
+    i = setenv_getix(nam);		/* where does it go? */
 
     if (environ == PL_origenviron) {	/* need we copy environment? */
 	I32 j;
@@ -2030,6 +2037,7 @@ Perl_my_setenv(pTHX_ char *nam, char *val)
     (void)putenv(new_env);
 #   endif /* __CYGWIN__ */
 #endif  /* PERL_USE_SAFE_PUTENV */
+  }
 }
 
 #else /* WIN32 */
@@ -2339,6 +2347,7 @@ Perl_my_popen(pTHX_ char *cmd, char *mode)
     while ((pid = (doexec?vfork():fork())) < 0) {
 	if (errno != EAGAIN) {
 	    PerlLIO_close(p[This]);
+	    PerlLIO_close(p[that]);
 	    if (did_pipes) {
 		PerlLIO_close(pp[0]);
 		PerlLIO_close(pp[1]);
@@ -2356,7 +2365,6 @@ Perl_my_popen(pTHX_ char *cmd, char *mode)
 #undef THAT
 #define THIS that
 #define THAT This
-	PerlLIO_close(p[THAT]);
 	if (did_pipes) {
 	    PerlLIO_close(pp[0]);
 #if defined(HAS_FCNTL) && defined(F_SETFD)
@@ -2366,7 +2374,11 @@ Perl_my_popen(pTHX_ char *cmd, char *mode)
 	if (p[THIS] != (*mode == 'r')) {
 	    PerlLIO_dup2(p[THIS], *mode == 'r');
 	    PerlLIO_close(p[THIS]);
+	    if (p[THAT] != (*mode == 'r'))	/* if dup2() didn't close it */
+		PerlLIO_close(p[THAT]);
 	}
+	else
+	    PerlLIO_close(p[THAT]);
 #ifndef OS2
 	if (doexec) {
 #if !defined(HAS_FCNTL) || !defined(F_SETFD)
@@ -2393,7 +2405,6 @@ Perl_my_popen(pTHX_ char *cmd, char *mode)
 #undef THAT
     }
     do_execfree();	/* free any memory malloced by child on vfork */
-    PerlLIO_close(p[that]);
     if (did_pipes)
 	PerlLIO_close(pp[1]);
     if (p[that] < p[This]) {
@@ -2401,6 +2412,9 @@ Perl_my_popen(pTHX_ char *cmd, char *mode)
 	PerlLIO_close(p[This]);
 	p[This] = p[that];
     }
+    else
+	PerlLIO_close(p[that]);
+
     LOCK_FDPID_MUTEX;
     sv = *av_fetch(PL_fdpid,p[This],TRUE);
     UNLOCK_FDPID_MUTEX;
@@ -2510,6 +2524,12 @@ Perl_rsignal(pTHX_ int signo, Sighandler_t handler)
 {
     struct sigaction act, oact;
 
+#ifdef USE_ITHREADS
+    /* only "parent" interpreter can diddle signals */
+    if (PL_curinterp != aTHX)
+	return SIG_ERR;
+#endif
+
     act.sa_handler = handler;
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
@@ -2542,6 +2562,12 @@ Perl_rsignal_save(pTHX_ int signo, Sighandler_t handler, Sigsave_t *save)
 {
     struct sigaction act;
 
+#ifdef USE_ITHREADS
+    /* only "parent" interpreter can diddle signals */
+    if (PL_curinterp != aTHX)
+	return -1;
+#endif
+
     act.sa_handler = handler;
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
@@ -2558,6 +2584,12 @@ Perl_rsignal_save(pTHX_ int signo, Sighandler_t handler, Sigsave_t *save)
 int
 Perl_rsignal_restore(pTHX_ int signo, Sigsave_t *save)
 {
+#ifdef USE_ITHREADS
+    /* only "parent" interpreter can diddle signals */
+    if (PL_curinterp != aTHX)
+	return -1;
+#endif
+
     return sigaction(signo, save, (struct sigaction *)NULL);
 }
 
@@ -2566,6 +2598,12 @@ Perl_rsignal_restore(pTHX_ int signo, Sigsave_t *save)
 Sighandler_t
 Perl_rsignal(pTHX_ int signo, Sighandler_t handler)
 {
+#ifdef USE_ITHREADS
+    /* only "parent" interpreter can diddle signals */
+    if (PL_curinterp != aTHX)
+	return SIG_ERR;
+#endif
+
     return PerlProc_signal(signo, handler);
 }
 
@@ -2584,6 +2622,12 @@ Perl_rsignal_state(pTHX_ int signo)
 {
     Sighandler_t oldsig;
 
+#ifdef USE_ITHREADS
+    /* only "parent" interpreter can diddle signals */
+    if (PL_curinterp != aTHX)
+	return SIG_ERR;
+#endif
+
     sig_trapped = 0;
     oldsig = PerlProc_signal(signo, sig_trap);
     PerlProc_signal(signo, oldsig);
@@ -2595,6 +2639,11 @@ Perl_rsignal_state(pTHX_ int signo)
 int
 Perl_rsignal_save(pTHX_ int signo, Sighandler_t handler, Sigsave_t *save)
 {
+#ifdef USE_ITHREADS
+    /* only "parent" interpreter can diddle signals */
+    if (PL_curinterp != aTHX)
+	return -1;
+#endif
     *save = PerlProc_signal(signo, handler);
     return (*save == SIG_ERR) ? -1 : 0;
 }
@@ -2602,6 +2651,11 @@ Perl_rsignal_save(pTHX_ int signo, Sighandler_t handler, Sigsave_t *save)
 int
 Perl_rsignal_restore(pTHX_ int signo, Sigsave_t *save)
 {
+#ifdef USE_ITHREADS
+    /* only "parent" interpreter can diddle signals */
+    if (PL_curinterp != aTHX)
+	return -1;
+#endif
     return (PerlProc_signal(signo, *save) == SIG_ERR) ? -1 : 0;
 }
 

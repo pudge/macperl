@@ -591,6 +591,7 @@ PP(pp_pipe_op)
 
     IoIFP(rstio) = PerlIO_fdopen(fd[0], "r");
     IoOFP(wstio) = PerlIO_fdopen(fd[1], "w");
+    IoOFP(rstio) = IoIFP(rstio);
     IoIFP(wstio) = IoOFP(wstio);
     IoTYPE(rstio) = IoTYPE_RDONLY;
     IoTYPE(wstio) = IoTYPE_WRONLY;
@@ -3864,10 +3865,10 @@ PP(pp_system)
     result = 0;
     if (PL_op->op_flags & OPf_STACKED) {
 	SV *really = *++MARK;
-	value = (I32)do_aspawn(really, (void **)MARK, (void **)SP);
+	value = (I32)do_aspawn(really, MARK, SP);
     }
     else if (SP - MARK != 1)
-	value = (I32)do_aspawn(Nullsv, (void **)MARK, (void **)SP);
+	value = (I32)do_aspawn(Nullsv, MARK, SP);
     else {
 	value = (I32)do_spawn(SvPVx(sv_mortalcopy(*SP), n_a));
     }

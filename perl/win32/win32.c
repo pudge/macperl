@@ -85,22 +85,22 @@ int _fcloseall();
 #  define win32_get_sitelib g_win32_get_sitelib
 #  undef win32_get_vendorlib
 #  define win32_get_vendorlib g_win32_get_vendorlib
-#  undef do_spawn
-#  define do_spawn g_do_spawn
 #  undef getlogin
 #  define getlogin g_getlogin
 #endif
 
-#if defined(PERL_OBJECT)
-#  undef do_aspawn
-#  define do_aspawn g_do_aspawn
-#  undef Perl_do_exec
-#  define Perl_do_exec g_do_exec
-#endif
+#  ifdef PERL_OBJECT
+#    undef Perl_do_aspawn
+#    define Perl_do_aspawn CPerlObj::Perl_do_aspawn
+#    undef Perl_do_spawn
+#    define Perl_do_spawn CPerlObj::Perl_do_spawn
+#    undef Perl_do_spawn_nowait
+#    define Perl_do_spawn_nowait CPerlObj::Perl_do_spawn_nowait
+#  endif
 
 static void		get_shell(void);
 static long		tokenize(const char *str, char **dest, char ***destv);
-	int		do_spawn2(char *cmd, int exectype);
+static	int		do_spawn2(pTHXo_ char *cmd, int exectype);
 static BOOL		has_shell_metachars(char *ptr);
 static long		filetime_to_clock(PFILETIME ft);
 static BOOL		filetime_from_time(PFILETIME ft, time_t t);
@@ -120,6 +120,18 @@ START_EXTERN_C
 HANDLE	w32_perldll_handle = INVALID_HANDLE_VALUE;
 char	w32_module_name[MAX_PATH+1];
 END_EXTERN_C
+
+#define MY_CXT_KEY "CORE::Win32::_guts"
+
+typedef struct {
+    BOOL               use_showwindow;
+    unsigned short     showwindow;
+} my_cxt_t;
+
+#define w32_use_showwindow	(MY_CXT.use_showwindow)
+#define w32_showwindow  	(MY_CXT.showwindow)
+
+START_MY_CXT
 
 static DWORD	w32_platform = (DWORD)-1;
 
@@ -523,12 +535,8 @@ get_shell(void)
 }
 
 int
-do_aspawn(void *vreally, void **vmark, void **vsp)
+Perl_do_aspawn(pTHX_ SV *really, SV **mark, SV **sp)
 {
-    dTHXo;
-    SV *really = (SV*)vreally;
-    SV **mark = (SV**)vmark;
-    SV **sp = (SV**)vsp;
     char **argv;
     char *str;
     int status;
@@ -614,10 +622,9 @@ find_next_space(const char *s)
     return (char*)s;
 }
 
-int
-do_spawn2(char *cmd, int exectype)
+static int
+do_spawn2(pTHXo_ char *cmd, int exectype)
 {
-    dTHXo;
     char **a;
     char *s;
     char **argv;
@@ -707,21 +714,21 @@ do_spawn2(char *cmd, int exectype)
 }
 
 int
-do_spawn(char *cmd)
+Perl_do_spawn(pTHX_ char *cmd)
 {
-    return do_spawn2(cmd, EXECF_SPAWN);
+    return do_spawn2(aTHXo_ cmd, EXECF_SPAWN);
 }
 
 int
-do_spawn_nowait(char *cmd)
+Perl_do_spawn_nowait(pTHX_ char *cmd)
 {
-    return do_spawn2(cmd, EXECF_SPAWN_NOWAIT);
+    return do_spawn2(aTHXo_ cmd, EXECF_SPAWN_NOWAIT);
 }
 
 bool
 Perl_do_exec(pTHX_ char *cmd)
 {
-    do_spawn2(cmd, EXECF_EXEC);
+    do_spawn2(aTHXo_ cmd, EXECF_EXEC);
     return FALSE;
 }
 
@@ -1240,6 +1247,18 @@ win32_stat(const char *path, struct stat *sbuf)
     return res;
 }
 
+#define isSLASH(c) ((c) == '/' || (c) == '\\')
+#define SKIP_SLASHES(s) \
+    STMT_START {				\
+	while (*(s) && isSLASH(*(s)))		\
+	    ++(s);				\
+    } STMT_END
+#define COPY_NONSLASHES(d,s) \
+    STMT_START {				\
+	while (*(s) && !isSLASH(*(s)))		\
+	    *(d)++ = *(s)++;			\
+    } STMT_END
+
 /* Find the longname of a given path.  path is destructively modified.
  * It should have space for at least MAX_PATH characters. */
 DllExport char *
@@ -1255,61 +1274,74 @@ win32_longpath(char *path)
 	return Nullch;
 
     /* drive prefix */
-    if (isALPHA(path[0]) && path[1] == ':' &&
-	(path[2] == '/' || path[2] == '\\'))
-    {
+    if (isALPHA(path[0]) && path[1] == ':') {
 	start = path + 2;
 	*tmpstart++ = path[0];
 	*tmpstart++ = ':';
     }
     /* UNC prefix */
-    else if ((path[0] == '/' || path[0] == '\\') &&
-	     (path[1] == '/' || path[1] == '\\'))
-    {
+    else if (isSLASH(path[0]) && isSLASH(path[1])) {
 	start = path + 2;
 	*tmpstart++ = path[0];
 	*tmpstart++ = path[1];
-	/* copy machine name */
-	while (*start && *start != '/' && *start != '\\')
-	    *tmpstart++ = *start++;
+	SKIP_SLASHES(start);
+	COPY_NONSLASHES(tmpstart,start);	/* copy machine name */
 	if (*start) {
-	    *tmpstart++ = *start;
-	    start++;
-	    /* copy share name */
-	    while (*start && *start != '/' && *start != '\\')
-		*tmpstart++ = *start++;
+	    *tmpstart++ = *start++;
+	    SKIP_SLASHES(start);
+	    COPY_NONSLASHES(tmpstart,start);	/* copy share name */
 	}
     }
-    sep = *start++;
-    if (sep == '/' || sep == '\\')
-	*tmpstart++ = sep;
     *tmpstart = '\0';
-    while (sep) {
-	/* walk up to slash */
-	while (*start && *start != '/' && *start != '\\')
-	    ++start;
+    while (*start) {
+	/* copy initial slash, if any */
+	if (isSLASH(*start)) {
+	    *tmpstart++ = *start++;
+	    *tmpstart = '\0';
+	    SKIP_SLASHES(start);
+	}
 
-	/* discard doubled slashes */
-	while (*start && (start[1] == '/' || start[1] == '\\'))
+	/* FindFirstFile() expands "." and "..", so we need to pass
+	 * those through unmolested */
+	if (*start == '.'
+	    && (!start[1] || isSLASH(start[1])
+		|| (start[1] == '.' && (!start[2] || isSLASH(start[2])))))
+	{
+	    COPY_NONSLASHES(tmpstart,start);	/* copy "." or ".." */
+	    *tmpstart = '\0';
+	    continue;
+	}
+
+	/* if this is the end, bust outta here */
+	if (!*start)
+	    break;
+
+	/* now we're at a non-slash; walk up to next slash */
+	while (*start && !isSLASH(*start))
 	    ++start;
-	sep = *start;
 
 	/* stop and find full name of component */
+	sep = *start;
 	*start = '\0';
 	fhand = FindFirstFile(path,&fdata);
+	*start = sep;
 	if (fhand != INVALID_HANDLE_VALUE) {
-	    strcpy(tmpstart, fdata.cFileName);
-	    tmpstart += strlen(fdata.cFileName);
-	    if (sep)
-		*tmpstart++ = sep;
-	    *tmpstart = '\0';
-	    *start++ = sep;
-	    FindClose(fhand);
+	    STRLEN len = strlen(fdata.cFileName);
+	    if ((STRLEN)(tmpbuf + sizeof(tmpbuf) - tmpstart) > len) {
+		strcpy(tmpstart, fdata.cFileName);
+		tmpstart += len;
+		FindClose(fhand);
+	    }
+	    else {
+		FindClose(fhand);
+		errno = ERANGE;
+		return Nullch;
+	    }
 	}
 	else {
 	    /* failed a step, just return without side effects */
 	    /*PerlIO_printf(Perl_debug_log, "Failed to find %s\n", path);*/
-	    *start = sep;
+	    errno = EINVAL;
 	    return Nullch;
 	}
     }
@@ -2390,17 +2422,22 @@ win32_popen(const char *command, const char *mode)
     int stdfd, oldfd;
     int ourmode;
     int childpid;
+    DWORD nhandle;
+    HANDLE old_h;
+    int lock_held = 0;
 
     /* establish which ends read and write */
     if (strchr(mode,'w')) {
         stdfd = 0;		/* stdin */
         parent = 1;
         child = 0;
+	nhandle = STD_INPUT_HANDLE;
     }
     else if (strchr(mode,'r')) {
         stdfd = 1;		/* stdout */
         parent = 0;
         child = 1;
+	nhandle = STD_OUTPUT_HANDLE;
     }
     else
         return NULL;
@@ -2416,7 +2453,7 @@ win32_popen(const char *command, const char *mode)
     /* the child doesn't inherit handles */
     ourmode |= O_NOINHERIT;
 
-    if (win32_pipe( p, 512, ourmode) == -1)
+    if (win32_pipe(p, 512, ourmode) == -1)
         return NULL;
 
     /* save current stdfd */
@@ -2431,11 +2468,24 @@ win32_popen(const char *command, const char *mode)
     /* close the child end in parent */
     win32_close(p[child]);
 
+    /* save the old std handle, and set the std handle */
+    OP_REFCNT_LOCK;
+    lock_held = 1;
+    old_h = GetStdHandle(nhandle);
+    SetStdHandle(nhandle, (HANDLE)_get_osfhandle(stdfd));
+
     /* start the child */
     {
 	dTHXo;
 	if ((childpid = do_spawn_nowait((char*)command)) == -1)
 	    goto cleanup;
+
+	/* restore the old std handle */
+	if (lock_held) {
+	    SetStdHandle(nhandle, old_h);
+	    OP_REFCNT_UNLOCK;
+	    lock_held = 0;
+	}
 
 	/* revert stdfd to whatever it was before */
 	if (win32_dup2(oldfd, stdfd) == -1)
@@ -2459,6 +2509,11 @@ cleanup:
     /* we don't need to check for errors here */
     win32_close(p[0]);
     win32_close(p[1]);
+    if (lock_held) {
+	SetStdHandle(nhandle, old_h);
+	OP_REFCNT_UNLOCK;
+	lock_held = 0;
+    }
     if (oldfd != -1) {
         win32_dup2(oldfd, stdfd);
         win32_close(oldfd);
@@ -3382,6 +3437,7 @@ win32_spawnvp(int mode, const char *cmdname, const char *const *argv)
     return spawnvp(mode, cmdname, (char * const *)argv);
 #else
     dTHXo;
+    dMY_CXT;
     int ret;
     void* env;
     char* dir;
@@ -3448,14 +3504,18 @@ win32_spawnvp(int mode, const char *cmdname, const char *const *argv)
     StartupInfo.hStdInput	= tbl.childStdIn;
     StartupInfo.hStdOutput	= tbl.childStdOut;
     StartupInfo.hStdError	= tbl.childStdErr;
-    if (StartupInfo.hStdInput != INVALID_HANDLE_VALUE &&
-	StartupInfo.hStdOutput != INVALID_HANDLE_VALUE &&
-	StartupInfo.hStdError != INVALID_HANDLE_VALUE)
+    if (StartupInfo.hStdInput == INVALID_HANDLE_VALUE &&
+	StartupInfo.hStdOutput == INVALID_HANDLE_VALUE &&
+	StartupInfo.hStdError == INVALID_HANDLE_VALUE)
     {
-	StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
+	create |= CREATE_NEW_CONSOLE;
     }
     else {
-	create |= CREATE_NEW_CONSOLE;
+	StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
+    }
+    if (w32_use_showwindow) {
+        StartupInfo.dwFlags |= STARTF_USESHOWWINDOW;
+        StartupInfo.wShowWindow = w32_showwindow;
     }
 
     DEBUG_p(PerlIO_printf(Perl_debug_log, "Spawning [%s] with [%s]\n",
@@ -3804,6 +3864,32 @@ XS(w32_GetCwd)
 	XSRETURN(1);
     }
     XSRETURN_UNDEF;
+}
+
+ static
+XS(w32_SetChildShowWindow)
+{
+    dXSARGS;
+    dMY_CXT;
+    BOOL use_showwindow = w32_use_showwindow;
+    unsigned short showwindow = w32_showwindow;
+
+    if (items > 1)
+	Perl_croak(aTHX_ "usage: Win32::SetChildShowWindow($showwindow)");
+
+    if (items == 0 || !SvOK(ST(0)))
+        w32_use_showwindow = FALSE;
+    else {
+        w32_use_showwindow = TRUE;
+        w32_showwindow = (unsigned short)SvIV(ST(0));
+    }
+
+    EXTEND(SP, 1);
+    if (use_showwindow)
+        ST(0) = sv_2mortal(newSViv(showwindow));
+    else
+        ST(0) = &PL_sv_undef;
+    XSRETURN(1);
 }
 
 static
@@ -4235,6 +4321,8 @@ Perl_init_os_extras(void)
     dTHXo;
     char *file = __FILE__;
     dXSUB_SYS;
+    /* dXSUB_SYS may be empty, or contain statements */
+    {MY_CXT_INIT;}
 
     /* these names are Activeware compatible */
     newXS("Win32::GetCwd", w32_GetCwd, file);
@@ -4257,6 +4345,7 @@ Perl_init_os_extras(void)
     newXS("Win32::GetLongPathName", w32_GetLongPathName, file);
     newXS("Win32::CopyFile", w32_CopyFile, file);
     newXS("Win32::Sleep", w32_Sleep, file);
+    newXS("Win32::SetChildShowWindow", w32_SetChildShowWindow, file);
 
     /* XXX Bloat Alert! The following Activeware preloads really
      * ought to be part of Win32::Sys::*, so they're not included

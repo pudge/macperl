@@ -166,6 +166,11 @@
 #define do_close		Perl_do_close
 #define do_eof			Perl_do_eof
 #define do_exec			Perl_do_exec
+#if defined(WIN32)
+#define do_aspawn		Perl_do_aspawn
+#define do_spawn		Perl_do_spawn
+#define do_spawn_nowait		Perl_do_spawn_nowait
+#endif
 #if !defined(WIN32)
 #define do_exec3		Perl_do_exec3
 #endif
@@ -862,6 +867,12 @@
 #if defined(PERL_IN_AV_C) || defined(PERL_DECL_PROT)
 #define avhv_index_sv		S_avhv_index_sv
 #define avhv_index		S_avhv_index
+#endif
+#if defined(PERL_IN_DOIO_C) || defined(PERL_DECL_PROT)
+#define io_sock_close		S_io_sock_close
+#if defined(USE_ITHREADS)
+#define invalidate_fileno	S_invalidate_fileno
+#endif
 #endif
 #if defined(PERL_IN_DOOP_C) || defined(PERL_DECL_PROT)
 #define do_trans_simple		S_do_trans_simple
@@ -1637,6 +1648,11 @@
 #define do_close(a,b)		Perl_do_close(aTHX_ a,b)
 #define do_eof(a)		Perl_do_eof(aTHX_ a)
 #define do_exec(a)		Perl_do_exec(aTHX_ a)
+#if defined(WIN32)
+#define do_aspawn(a,b,c)	Perl_do_aspawn(aTHX_ a,b,c)
+#define do_spawn(a)		Perl_do_spawn(aTHX_ a)
+#define do_spawn_nowait(a)	Perl_do_spawn_nowait(aTHX_ a)
+#endif
 #if !defined(WIN32)
 #define do_exec3(a,b,c)		Perl_do_exec3(aTHX_ a,b,c)
 #endif
@@ -2321,6 +2337,12 @@
 #if defined(PERL_IN_AV_C) || defined(PERL_DECL_PROT)
 #define avhv_index_sv(a)	S_avhv_index_sv(aTHX_ a)
 #define avhv_index(a,b,c)	S_avhv_index(aTHX_ a,b,c)
+#endif
+#if defined(PERL_IN_DOIO_C) || defined(PERL_DECL_PROT)
+#define io_sock_close(a)	S_io_sock_close(aTHX_ a)
+#if defined(USE_ITHREADS)
+#define invalidate_fileno(a)	S_invalidate_fileno(aTHX_ a)
+#endif
 #endif
 #if defined(PERL_IN_DOOP_C) || defined(PERL_DECL_PROT)
 #define do_trans_simple(a)	S_do_trans_simple(aTHX_ a)
@@ -3212,6 +3234,14 @@
 #define do_eof			Perl_do_eof
 #define Perl_do_exec		CPerlObj::Perl_do_exec
 #define do_exec			Perl_do_exec
+#if defined(WIN32)
+#define Perl_do_aspawn		CPerlObj::Perl_do_aspawn
+#define do_aspawn		Perl_do_aspawn
+#define Perl_do_spawn		CPerlObj::Perl_do_spawn
+#define do_spawn		Perl_do_spawn
+#define Perl_do_spawn_nowait	CPerlObj::Perl_do_spawn_nowait
+#define do_spawn_nowait		Perl_do_spawn_nowait
+#endif
 #if !defined(WIN32)
 #define Perl_do_exec3		CPerlObj::Perl_do_exec3
 #define do_exec3		Perl_do_exec3
@@ -4545,6 +4575,14 @@
 #define avhv_index_sv		S_avhv_index_sv
 #define S_avhv_index		CPerlObj::S_avhv_index
 #define avhv_index		S_avhv_index
+#endif
+#if defined(PERL_IN_DOIO_C) || defined(PERL_DECL_PROT)
+#define S_io_sock_close		CPerlObj::S_io_sock_close
+#define io_sock_close		S_io_sock_close
+#if defined(USE_ITHREADS)
+#define S_invalidate_fileno	CPerlObj::S_invalidate_fileno
+#define invalidate_fileno	S_invalidate_fileno
+#endif
 #endif
 #if defined(PERL_IN_DOOP_C) || defined(PERL_DECL_PROT)
 #define S_do_trans_simple	CPerlObj::S_do_trans_simple

@@ -22,14 +22,8 @@ extern char *		g_win32_get_privlib(const char *pl);
 extern char *		g_win32_get_sitelib(const char *pl);
 extern char *		g_win32_get_vendorlib(const char *pl);
 extern char *		g_getlogin(void);
-extern int		do_spawn2(char *cmd, int exectype);
 #if !defined(PERL_OBJECT)
 END_EXTERN_C
-#endif
-
-#ifdef PERL_OBJECT
-extern int		g_do_aspawn(void *vreally, void **vmark, void **vsp);
-#define do_aspawn	g_do_aspawn
 #endif
 
 class CPerlHost
@@ -1821,30 +1815,34 @@ PerlProcGetOSError(struct IPerlProc* piPerl, SV* sv, DWORD dwErr)
     win32_str_os_error(sv, dwErr);
 }
 
-BOOL
-PerlProcDoCmd(struct IPerlProc* piPerl, char *cmd)
-{
-    do_spawn2(cmd, EXECF_EXEC);
-    return FALSE;
-}
-
-int
-PerlProcSpawn(struct IPerlProc* piPerl, char* cmds)
-{
-    return do_spawn2(cmds, EXECF_SPAWN);
-}
-
 int
 PerlProcSpawnvp(struct IPerlProc* piPerl, int mode, const char *cmdname, const char *const *argv)
 {
     return win32_spawnvp(mode, cmdname, argv);
 }
 
-int
-PerlProcASpawn(struct IPerlProc* piPerl, void *vreally, void **vmark, void **vsp)
+/* XXX these three are only here for binary compatibility */
+BOOL
+PerlProcDoCmd(struct IPerlProc* piPerl, char *cmd)
 {
-    return do_aspawn(vreally, vmark, vsp);
+    dTHXo;
+    return do_exec(cmd);
 }
+
+int
+PerlProcSpawn(struct IPerlProc* piPerl, char* cmds)
+{
+    dTHXo;
+    return do_spawn(cmds);
+}
+
+int
+PerlProcASpawn(struct IPerlProc* piPerl, SV *really, SV **mark, SV **sp)
+{
+    dTHXo;
+    return do_aspawn(really, mark, sp);
+}
+/* XXX above three are only here for binary compatibility */
 
 struct IPerlProc perlProc =
 {
