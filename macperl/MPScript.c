@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C
 
 $Log$
+Revision 1.3  2001/01/24 09:51:30  neeri
+Fix library paths (Bug 129817)
+
 Revision 1.5  1999/01/24 05:07:00  neeri
 Tweak alias handling
 
@@ -616,8 +619,9 @@ pascal Boolean RunScript(ArgExtractor extractor, void * data)
 	setvbuf(stderr, NULL, _IOLBF, BUFSIZ);
 	
 	if (!(returnCode = setjmp(gExitPerl))) {
-		run_perl(ArgC, PerlArgs, PerlEnviron);
-		/* Noone here gets out alive */
+		returnCode = run_perl(ArgC, PerlArgs, PerlEnviron);
+		if (!returnCode)	/* Emulate longjmp */
+			returnCode = -1; 
 	}	
 
 	for (i=DynamicArgs; PerlArgs[i]; ++i)
