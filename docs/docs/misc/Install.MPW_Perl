@@ -8,7 +8,7 @@
 # 	- Install the MacPerl application package
 #	- Install the MacPerl MPW tool package onto the same disk
 #	- Start MPW
-#	- Change the directory to the ÒMacPerl ÄÓ folder using the directory command
+#	- Change the directory to the ÒMacPerl Ä:MPW:Ó folder using the directory command
 #	  or the ÒSet DirectoryÉÓ menu item.
 # 	- Execute the ÒInstall.MPW_PerlÓ command. This will create a configuration 
 #	  file and open it.

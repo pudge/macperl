@@ -1,0 +1,221 @@
+#!perl -w
+# run this document through perl to check its syntax
+use Pod::Checker;
+podchecker(\*DATA);
+__END__
+
+=head1 NAME
+
+macperl - MacPerl specific features
+
+=head1 DESCRIPTION
+
+This file describes differences between MacPerl and a typical Unix perl
+implementation. 
+
+=head2 VARIA
+
+All time related functions measure time in seconds from 1904-01-01 00:00:00
+local time, not 1970-01-01 00:00:00 GMT as in Unix.
+
+"\n" on a Mac means ASCII 13, as opposed to Unix, where it means ASCII 10. If 
+you want ASCII 10, write "\012".
+
+Pathnames are specified as:
+
+	volume:folder:file              for absolute pathnames
+	volume:folder:folder:           for absolute pathnames
+
+	:folder:file                    for relative pathnames
+	:folder:folder:                 for relative pathnames
+
+	:file                           for relative pathnames
+	file                            for relative pathnames
+	:folder:                        for relative pathnames
+
+B<NOTE>: In previous versions of MacPerl, folders were not always returned
+wit a trailing ":".  This should always be the case now.  Any instance of a
+routine not returning a directory with a trailing ":" should be considered a bug,
+unless otherwise specified.  Programs that ran under MacPerl 5.2.0r4 and
+earlier might have to make slight modifications to work under current versions
+of MacPerl.
+
+MacPerl has a limited capability to handle constructs like `command` or
+C<open(F, "|command")>, if you are the lucky owner of ToolServer. Additionally, 
+whether you have toolserver or not, a few commands are implemented:
+
+See L<perlport> for more portability information.
+
+=over 5
+
+=item *
+
+`pwd` and `Directory` (case is significant) always return the current directory, 
+followed by a newline.
+
+=item *
+
+`hostname` returns the name of the current Mac if TCP/IP is available.
+
+=item *
+
+`stty raw` or `stty -sane` in the MacPerl application switch the console window
+to "raw" mode, i.e. turn off eching to the window and editing. `stty sane` or
+`stty -raw` restores normal mode.
+
+=back
+
+=head2 SOCKETS
+
+[Note: Choose is not currently implemented.  AppleTalk is no longer implemented.
+For Internet, Unix, and PPC sockets, see L<Socket>.]
+
+MacPerl has more Socket families than Unix Perl. Additionally, there is a call
+choose() to allow the user to interactively specify addresses or file names. As
+there are lots of rather complicated data types, there is a library header "GUSI.ph"
+which defines packing/unpacking procedures.
+
+Choose() is called as follows:
+
+=over 8
+
+=item MacPerl::Choose DOMAIN, TYPE, PROMPT, CONSTRAINT, FLAGS, DEFAULT
+
+=item MacPerl::Choose DOMAIN, TYPE, PROMPT, CONSTRAINT, FLAGS
+
+=item MacPerl::Choose DOMAIN, TYPE, PROMPT, CONSTRAINT
+
+=item MacPerl::Choose DOMAIN, TYPE, PROMPT
+
+Puts up a modal dialog prompting the user to choose an address. DOMAIN specifies 
+the communication domain, like for socket(). TYPE may be used by future 
+communication domains to further differentiate within a domain, but is ignored by 
+current domains. PROMPT is a message that will appear in the dialog. CONSTRAINT 
+may be set to a suitable packed value to restrict the types of acceptable addresses.
+
+Examples:
+
+     require "GUSI.ph";
+
+     $file = 
+        MacPerl::Choose(
+           GUSI::AF_FILE, 0, "", 
+           GUSI::pack_sa_constr_file("OBJ ", "TEXT"));
+
+Return the full pathname of an existing text
+or MPW object file.
+
+     $dir = MacPerl::Choose(GUSI::AF_FILE, 0, "", "", GUSI::CHOOSE_DIR);
+
+Return the full pathname of an existing directory.
+
+     $file = 
+        MacPerl::Choose(
+           GUSI::AF_FILE, 0, "", "", 
+           GUSI::CHOOSE_NEW + GUSI::CHOOSE_DEFAULT, "yo");
+
+Return the pathname of a new file to be created.
+
+=back 
+
+Socket families are:
+
+=over 8
+
+=item Internet
+
+Packing an address:
+
+    GUSI::pack_sockaddr_in(GUSI::AF_INET, address, port);
+
+Unpacking an address:
+
+    (family, address, port) = GUSI::unpack_sockaddr_in(addr);
+
+Choose is not available.
+
+=item Unix
+
+Packing an address:
+
+    GUSI::pack_sockaddr_un(GUSI::AF_UNIX, path)
+
+Unpacking an address:
+
+    (family, path) = GUSI::unpack_sockaddr_un(addr);
+
+Choose: looking up an existing address:
+
+    MacPerl::Choose(GUSI::AF_UNIX, 0, "", "", 0, "");
+
+Creating a new address (No constraints may be specified):
+
+    MacPerl::Choose(GUSI::AF_UNIX, 0, "Yes ?", "", 
+           GUSI::CHOOSE_NEW + GUSI::CHOOSE_DEFAULT, "yo");
+
+=item Appletalk (ADSP)
+
+Packing an address (numerical):
+
+    GUSI::pack_sockaddr_atlk(GUSI::AF_APPLETALK, net, node, socket) 
+
+Packing an address (symbolic):
+
+    GUSI::pack_sockaddr_atlk_sym(GUSI::ATALK_SYMADDR, obj, type, zone)
+
+Unpacking an address:
+
+    (family, net, node, socket) = GUSI::unpack_sockaddr_atlk(addr)
+    (family, obj, type, zone)   = GUSI::unpack_sockaddr_atlk_sym(addr)
+
+Choose: look up an existing address:
+
+    MacPerl::Choose(GUSI::AF_APPLETALK, 0, "Eh ?", 
+           GUSI::pack_sa_constr_atlk("LaserWriter", "GorillaWriter"),
+           0, "");
+
+New addresses may not currently be created with choose.
+
+=item PPC Toolbox
+
+Packing an address:
+
+    GUSI::pack_sockaddr_ppc(GUSI::AF_PPC, type, name, porttype)
+
+Unpacking addresses not available.
+
+Choose: look up an existing address:
+
+    MacPerl::Choose(GUSI::AF_PPC, 0, "Eh ?", 
+        GUSI::pack_sa_constr_ppc("Gonkulator"),
+        0, "");
+
+New addresses may not currently be created with choose.
+
+=back
+
+=head2 ADDITIONAL FUNCTIONS AVAILABLE IN MACPERL
+
+See L<MacPerl>.
+
+=head2 MACPERL SPECIFIC LIBRARIES
+
+=over 8
+
+=item Toolbox Modules
+
+See L<Mac::Toolbox>.
+
+=item CommConnect.pl   
+
+Library for accessing the serial port.
+
+=item GUSI.ph           
+
+Definitions for socket related calls.
+
+=item FAccess.ph        
+
+Definitions for MacPerl::FAccess() (MPW tool only).
+
+=back

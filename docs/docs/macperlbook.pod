@@ -1,0 +1,29 @@
+#!perl -w
+# run this document through perl to check its syntax
+use Pod::Checker;
+podchecker(\*DATA);
+__END__
+
+=head1 NAME
+
+macperlbook - Perl book information
+
+=head1 DESCRIPTION
+
+I<MacPerl: Power and Ease> combines essential information for beginning programmers and programmers new to Perl with more advanced Macintosh-specific information.
+
+	MacPerl: Power and Ease
+	ISBN 1-881957-32-2
+	MSRP US$ 40.00
+
+You can order the MacPerl book from Prime Time Freeware, or at a fine technical or professional bookstore near you.
+
+	Prime Time Freeware
+	370 Altair Way, Suite 150
+	Sunnyvale, CA  94086 USA
+	p: 408/433-9662
+	f: 408/433-0727
+	mailto:info@ptf.com
+	http://www.ptf.com/
+
+Look L<perlbook> for information on important general Perl books.

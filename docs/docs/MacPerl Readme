@@ -1,7 +1,12 @@
+#!perl -w
+# run this document through perl to check its syntax
+use Pod::Checker;
+podchecker(\*DATA);
+__END__
+
 =head1 NAME
 
 MacPerl Readme
-
 
 =head1 SYNOPSIS
 
@@ -10,20 +15,17 @@ the programming language and environment, on Mac OS (Classic).
 If you are running perl under Mac OS X, you don't want to be here
 (unless you are in the Classic environment under Mac OS X).
 
-
 =head1 DESCRIPTION
 
 Please read the READMEs that come with MacPerl, but ignore the
 installation instructions presented in the main README; they do not
 apply to the Mac OS port of perl.
 
-
 =head2 System Requirements
 
 MacPerl 5.6 requires System 7.5 or above, and 8MB RAM.
 You will be much better off with 64MB RAM, System 8.1,
 and a PowerPC Macintosh.
-
 
 =head2 Installing
 
@@ -32,7 +34,6 @@ the Online Help as described below.
 
 To install the MPW perl tool, additionally follow the instructions
 in F<Install.MPW_Perl>.
-
 
 =head2 Online Help
 
@@ -56,7 +57,8 @@ A recent version of Internet Config, or the Internet control panel
 shipped with recent versions of Mac OS.
 
 [Currently, Internet Config is not shipped with MacPerl; this can
-be remedied if necessary.]
+be remedied if necessary.  Please let me know if you find it to be
+necessary.]
 
 =item *
 
@@ -66,14 +68,12 @@ for "http", set to your web browser of choice, and the a helper for
 
 =back
 
-
 =head2 Mailing list
 
 There are several MacPerl mailing lists covering various aspects of
 MacPerl.  See the Perl mailing lists site for more information.
 
 	http://lists.perl.org/
-
 
 =head2 Distribution
 
@@ -128,7 +128,6 @@ This installs the source and the SYM files for debugging.
 
 =back
 
-
 =head2 Building
 
 The perl 5.6.1 source itself builds on Mac OS, with some additional
@@ -140,13 +139,11 @@ available.  These are linked to from the development site at
 http://dev.macperl.org/. Go to that site for all things having to
 do with MacPerl development.
 
-
 =head1 CONTACT
 
 Please send your bug reports, patches, and feature requests for MacPerl
 to the MacPerl development site at http://dev.macperl.org/.  Also head
 over there for the latest source and links to other sites.
-
 
 =head1 CREDITS
 
@@ -168,7 +165,6 @@ Software. For more information on Installer VISE, contact:
 The MacPerl application uses Mercutio MDEF, Copyright 1992-1998
 by Ramon M. Felciano.
 
-
 =head1 DATE
 
-Last modified 2001.10.02.
+Last modified 2001.11.19.

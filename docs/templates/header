@@ -31,7 +31,7 @@
 [% IF user.id %]<p><strong>Hi, [% user.user %], you're logged in.</strong></p>
 
 [% END %]	[% dot %]<a href="/">Home</a><br />
-	<img src="/dot.gif" width="5" height="9" alt="* " /><a href="http://sf.net/projects/macperl/">SourceForge</a><br />
+	<img src="/dot.gif" width="5" height="9" alt="* " /><a href="http://sf.net/projects/macperl/">SourceForge.net</a><br />
 		<br />
 
 	[% dot %]<a href="http://sf.net/project/showfiles.php?group_id=7940">Downloads</a><br />
@@ -70,13 +70,13 @@
 		<br />
 
 	[% dot %]<a href="/state.txt">State of MacPerl</a><br />
-	[% dot %]<a href="http://use.perl.org/~pudge/">Development Journal</a><br />
+	[% dot %]<a href="http://use.perl.org/~pudge/journal/">Development Journal</a><br />
 	[% dot %]<a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a><br />
 	[% dot %]<a href="http://lists.perl.org/showlist.cgi?name=perl5-changes-mac">perl5-changes-mac</a><br />
 	[% dot %]#macperl on irc.macperl.org (<a href="http://openprojects.nu/irc_servers.shtml">OPN</a>)<br />
 
 <p>
-	<img src="http://sf.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="[ SourceForge ]" />
+	<img src="http://sf.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="[ SourceForge.net ]" />
 </p>
 
 		</td>

@@ -1,0 +1,47 @@
+Perl -Sx "{0}"; Exit {Status}
+#!perl
+
+use Text::ParseWords;
+use Mac::AppleEvents;
+
+$line = MacPerl::Ask("Command line to execute:") 
+	or exit 0;
+
+$line =~ s/\\/\\\\/g;
+
+@cooked = &quotewords('\s+', 0, $line);
+@raw = &quotewords('\s+', 0, $line);
+
+for $cooked (@cooked) {
+	$raw = shift @raw;
+	if ($cooked !~ /[*?Å]/ ||Ê$raw =~ /['"\\]/) {
+		push(@done, $cooked);
+	} else {
+		push(@done, glob $cooked);
+	}
+}
+
+if ($done[0] eq "perl") {
+	shift @done;
+}
+
+$args = "{\"" . join("\", \"", map { s/(["'])/\\$1/g; $_ } @done) . "\"}";
+
+MacPerl::DoAppleScript qq{
+	tell the current application
+		ignoring application responses
+			do script $args
+		end ignoring
+	end tell
+}
+
+# $args = "[Ò" . join("Ó, Ò", @done) . "Ó]";
+# 
+# $evt = AEBuildAppleEvent("misc", "dosc", typeApplSignature, "McPL", 0, 0,
+# 	"'----': $args") or die $^E;
+# $rep = AESend($evt, kAENoReply) or die $^E;
+# 
+# AEDisposeDesc $evt;
+# AEDisposeDesc $rep;
+
+	

@@ -1,0 +1,87 @@
+#!perl -w
+# run this document through perl to check its syntax
+use Pod::Checker;
+podchecker(\*DATA);
+__END__
+
+=head1 NAME
+
+macperlbundled - Modules Bundled with MacPerl
+
+=head1 DESCRIPTION
+
+The modules below are, in addition to the Mac:: modules and the
+Perl standard library, included with the MacPerl distribution.
+They are included either because they have been included with
+perl 5.8.0 (so MacPerl 5.6 users can use them now, rather than
+later) or because they are basic functionality needed for using
+CPAN and installing other modules.
+
+For more modules, please see http://search.cpan.org/ and
+http://dev.macperl.org/mmp/.
+
+=over 4
+
+=item Archive::Tar 0.22
+
+=item Class::ISA 0.32
+
+=item Compress::Zlib 1.14
+
+=item Convert::BinHex 1.119
+
+=item Digest 1.00
+
+=item Digest::MD5 2.16
+
+=item File::Sort 1.00
+
+=item Filter::Simple 0.61
+
+=item Filter::Util::Call 1.05
+
+=item HTML::Parser 3.25
+
+=item HTML::Tagset 3.03
+
+=item libnet 1.09
+
+=item List::Util 1.05
+
+=item LWP 5.60
+
+Problems with jigsaw-te tests.
+
+=item Mac::Conversions 1.04
+
+=item Mac::FileSpec::Unixish 1.11
+
+=item MailTools 1.40
+
+=item MD5 2.02
+
+=item Memoize 0.66
+
+=item MIME::Base64 2.12
+
+=item MLDBM 2.00
+
+=item Net::Telnet 3.02
+
+=item NEXT 0.02
+
+=item Storable 1.013
+
+=item Switch 2.05
+
+=item Text::Balanced 1.86
+
+=item Time::HiRes 1.20
+
+=item URI 1.17
+
+file:foo.txt != file:./foo.txt in heuristics.t.
+
+Escape test encodes [ and ] in old-base.t, rfc2732.t.
+
+=back

@@ -1,0 +1,802 @@
+#!perl -w
+# run this document through perl to check its syntax
+use Pod::Checker;
+podchecker(\*DATA);
+__END__
+
+=head1 NAME
+
+macperlcat - Chris' AppleEvent Tutorial
+
+=head1 USAGE
+
+There are some special Mac characters in this file, out of necessity, so it
+cannot be read properly on some systems.  In order to do Apple Events from
+MacPerl, have a recent version of MacPerl on hand, the most recent of which as
+of this writing is 5.1.9r4.
+
+B<NOTE>: this document is slightly out of date, but still applies; the most
+important change since the creation of this document is the addition of
+the Mac::Glue module, which is the recommended way to do IAC in many
+cases.  See L<Mac::Glue> for more information.
+
+=head1 DESCRIPTION
+
+One of the main purposes of scripting languages is to talk to other programs
+or processes.  On Unix systems, this is often called B<IPC> (interprocess
+communication); Apple calls it B<IAC> (interapplication communication). IAC
+basically allows two programs to share data; this data is often a command,
+list, string, number, boolean, or file alias.
+
+There are several components to the IAC architecture in Mac OS.  The one we
+will deal with here is Apple Events.  Apple Events are a high-level form of
+IAC, and most Mac OS applications have Apple Events capabilities built in, so
+they can communicate directly with each other.
+
+Apple's propietary scripting language, AppleScript, also speaks Apple Events.
+In fact, when an application is commonly referred to as "AppleScriptable",
+that really means that it is scriptable with Apple Events.  AppleScript is
+just one language used to "speak" Apple Events.
+
+Some Mac OS scripting languages are called B<OSA> (Open Scripting
+Architecture) languages; they can be embedded into other applications and can
+speak to each other using the OSA component protocol.  AppleScript is the most
+popular of the OSA languages.
+
+=head1 AppleScript
+
+AppleScript, of course, can do a lot more than just IAC.  But that is probably
+what it is best at.  With various AppleScript extensions,  AppleScript can be
+extended to perform most any function, such as regular expressions or access
+to system resurces like users and groups, audio CD information, or monitor
+resolution and depth. 
+
+The simplest way to do IAC from MacPerl is through the function
+C<MacPerl::DoAppleScript()>. The function is very simple; it takes a single
+argument, the complete text of an AppleScript, and it returns a text
+representation of whatever the AppleScript returns. 
+
+	$vol = MacPerl::MakePath((MacPerl::Volumes())[0]);
+	$script = <<EOS;
+	tell application "Finder"
+	  open item "$vol"
+	end tell
+	EOS
+
+	print MacPerl::DoAppleScript($script)
+	  || die "Could not compile script\n";
+
+
+Returns:
+
+	startup disk of Application "Finder"
+
+AppleScript is quite slow from MacPerl, however. AppleScripts are compiled
+before execution, just like any other scripting language.  But AppleScripts
+are normally saved in a compiled format to make execution faster; since the
+script is in text format in a MacPerl script, MacPerl has to take the time to
+compile the script before executing it, which can add a significant amount of
+time to the execution of the entire MacPerl script.
+
+Communication can also go the other way, originating with an AppleScript
+rather than MacPerl.  In this case, MacPerl responds back to the AppleScript
+via the C<MacPerl::Reply()> function.  The script below is executed from
+within Apple's Script Editor or a compatible AppleScript editor.
+
+	tell application "MacPerl"
+	  return Â
+	    "Days until the year 2000: " & (Do Script "
+	  use Time::Local;
+	  $d1 = timelocal(0,0,0,1,0,100);
+	  $d2 = ($d1 - time()) / 60 / 60 / 24;
+	  MacPerl::Reply(int($d2))
+	  ")
+	end tell
+
+Returns (on April 1, 1998):
+
+	"Days until the year 2000: 640"
+
+As you can see, you can do pretty much anything in the Do Script command that
+you would do in a regular MacPerl script.  If you need to use double quotes in
+the MacPerl script, you can escape them as you would in Perl (i.e.,
+C<\"text\">).
+
+=head1 Apple Event Structure
+
+Both of the scripts above, one MacPerl script calling AppleScript, and one
+AppleScript calling MacPerl, used Apple Events.  But the Apple Events are
+disguised well by the language on top of them, by the AppleScript. If you know
+AppleScript, that may or may not help you understand the structure of Apple
+Events.
+
+An Apple Event has two major components, attributes and parameters.
+Attributes are the portions of the event that define how it is to be used.  It
+is composed primarily of an B<event class> (suite) and an B<event ID>.
+
+An event ID is like the name of a function in Perl, and an event must be
+defined in the program in order to use it.  We cannot define arbitrary events
+for another application, so we can only use the events that application has
+provided.  The events all belong to some event class, or suite, as funtions in
+Perl all belong to a particular class or package.  To open an item, as in our
+first example, we would use the C<odoc> event ID in the class C<aevt>.
+
+Also given as attributes are such items as the target application for the
+event.  In the case of our first example, the target application is the
+Finder, which has the C<MACS> as its B<creator ID>.
+
+B<Parameters> are a set of data structures similar to a Perl hash, with a
+B<keyword> as the key and some data as the value of that key.
+
+Parameters often describe information about an application's built-in classes 
+and properties of those classes.  For instance, an application might have a
+window class, and the name of the window and its position and size on the
+screen are properties.
+
+A parameter might also be a simpler type of data, such as a string or file
+alias.  Often, the most important data in an event is passed through the
+B<direct object parameter>.  Parameter keywords are always four characters;
+the direct object parameter has the special keyword C<'----'>.  We will see it
+again soon.
+
+The fundamental data structure of Apple Events is the B<descriptor>, which is
+basically a self-contained data structure.  Two types of descriptors are
+records and lists, as Perl has scalars and arrays.  Descriptor records and
+lists are given as the value of keyword and form a parameter.
+
+Here is an example of bringing it all together, which does the same thing as
+our AppleScript above that opened the startup volume in the Finder. We will
+explain C<Mac::AppleEvents> more fully later on.
+
+	#!perl -w
+	use Mac::AppleEvents;
+	my(%ae, $vol, $event, $reply);
+
+	$vol = MacPerl::MakePath((MacPerl::Volumes())[0]);
+	%ae = (
+	  target =>'MACS',
+	  class  =>'aevt',
+	  id     =>'odoc',
+	  params =>["'----':obj {want:type(cobj), " .
+	    "from:null(), form:enum(name), seld:TEXT(\@)}",
+	    $vol]
+	);
+
+	$event  = AEBuildAppleEvent(
+	  $ae{'class'}, $ae{'id'}, 'sign',
+	  $ae{'target'},0, 0, @{$ae{'params'}} 
+	) || die($^E);
+	$reply  = AESend($event, kAEWaitReply) || die($^E);
+	print AEPrint($event), "\n";
+	print AEPrint($reply), "\n";
+	AEDisposeDesc($event);
+	AEDisposeDesc($reply);
+
+Returns:
+
+	aevt\odoc{'----':obj {want:type(cobj), 
+	  from:'null'(), form:name, seld:ÒHD:Ó}, 
+	  &inte:cans, &timo:3600}
+	aevt\ansr{'----':obj {want:type(prop), 
+	  from:'null'(), form:prop, seld:type(sdsk)}}
+
+This apparently convoluted example is (somewhat unfortunately) the way to do,
+with Apple Events, the same thing the first AppleScript did above.
+
+As you can see, we set up a hash (C<%ae>) to store our information for use in
+the C<AEBuildAppleEvent()> function.  First our attributes: the Finder's
+creator ID (C<MACS>), then the event class (C<aevt>) and the event ID
+(C<odoc>). 
+
+Our build function takes all parameters as one argument, with additional
+arguments to the function if the parameters call for them, like C<sprintf()>
+in Perl; we make the value of C<$ae{'params'}> an anomymous array, so we can
+add as many values as necessary.  In this case, the C<TEXT(@)> notation calls
+for an additional argument (the C<@> has nothing at all to do with Perl
+arrays, which is why it is escaped in double quotes).
+
+The data is all put into an Apple Event through the C<AEBuildAppleEvent()>
+function.  The event returned from that function is then sent via the
+C<AESend()> function.  The C<AEPrint()> function can be used to print out text
+representations of events and descriptors.
+
+There is only one named parameter sent to this event, the direct object
+parameter.  The direct object parameter is passed an Apple Event object
+specifier record, a type of descriptor record.  You may notice the strange
+syntax; all Apple Event object specifier records (objects) are of the same
+form:
+
+	obj{want:xxxx, from:xxxx, form:xxxx, seld:xxxx}
+
+=over 4
+
+=item want
+
+This is the four-character B<class ID>. Apple Event objects belong to classes.
+ In the case of our example above, we found out that the class describing
+"items" is C<cobj>.
+
+=item from
+
+This is a description of the object's B<container>.  In this way, objects can
+contain other objects.  In this case, the object is not contained by any
+other, so the value is C<null()>.
+
+=item form
+
+This is the four-character form the object's data is in.  In this case, we
+give it a name, the name of the startup disk.  However, we could also give it
+an index (C<indx>) and C<seld> would be 1 and of type C<shor> (short integer),
+representing the first element available, which in the Finder is the startup
+disk.
+
+=item seld
+
+This is the actual object data, in the form described by C<form>.  Note that
+in Apple Events, text data can be included in two ways.  One is to enclose the
+data in curly double quotes (as in C<seld:Ò$volÓ>).  MacPerl itself does not
+recognize curly quotes, but these quotes are not interpreted by MacPerl, but
+by the underlying Apple Event libraries.
+
+The other way is the way we did above, with C<seld:TEXT(@)>.  Then the string
+to be included as text follows as a separate argument to the
+C<AEBuildAppleEvent()> function, similarly to C<sprintf()>.  Multiple calls of
+C<TEXT(@)> are followed by as many additional strings passed to the function.
+
+=back
+
+So, aside from explaining how we figured out what the event class and ID and
+object class ID are, this pretty much tells you how to construct the given
+event.  You take your creator, event class, and event ID.  You construct your
+parameters, which in this case is an object passed to the direct object
+parameter.  We pass the object's class and the data, which in this case is the
+name of the startup volume.
+
+There are other similar methods.  As noted, we could change the object to use
+an index of 1, which would do the same thing:
+
+	  params =>["'----':obj{want:type(cobj), " .
+	    "from:null(), form:enum(name), seld:shor(1)}"]
+
+The C<odoc> event can also accept file aliases instead of objects. This form
+is easier to construct, but doesn't give us the opportunity to learn about
+objects.  It does introduce other important concepts, particularly file
+aliases. 
+
+	#!perl -w
+	use Mac::AppleEvents;
+	use Mac::Files;
+	my(%ae, $vol, $event, $reply);
+
+	$vol = NewAliasMinimal(
+	  MacPerl::MakePath((MacPerl::Volumes())[0])
+	);
+	%ae = (
+	  target =>'MACS',
+	  class  =>'aevt',
+	  id     =>'odoc',
+	  params =>["'----':alis(\@\@)", $vol]
+	);
+	# ... rest same as above ...
+
+Returns:
+
+	aevt\odoc{'----':alis(Ç00...00È), 
+	  &inte:cans, &timo:3600}
+	aevt\ansr{'----':obj {want:type(prop), 
+	  from:'null'(), form:prop, seld:type(sdsk)}}
+
+This time, we passed the path to the startup volume through the
+C<NewAliasMinimal()> function from C<Mac::Files>, which is the same type of
+data stored in the actual resource fork of an alias file in Mac OS.  The way
+that an alias gets passed into the parameter is with the C<alis(@@)> notation,
+which works the same way as the C<TEXT(@)> notation discussed above, except
+we've got two C<@> signs instead of one.
+
+One more item of note we have not addressed is the return values.  You
+probably recognize the printing of C<$event> via C<AEPrint()> as similar to
+what we actually passed to the C<AEBuildAppleEvent()> function; although, the
+value next to C<alis> is actually a lot longer than is shown (we cut out most
+of the data for space).  The trailing parameters -- C<&inte> and C<&timo>
+--Êare added by C<AESend()> to describe the communication parameters between
+the two apps.
+
+The printing of C<$reply> is similar, but obviously describes something a bit
+different.  This tells us what was actually opened; in this case, C<sdsk>
+tells us that we opened the startup disk.  If the trash had been selected, it
+would have said C<trsh> instead.  In other cases, it might return the name of
+what was selected.  In any event, you may have noticed it is exactly the same
+in this example as it was in the previous example.
+
+=head1 Putting It Together
+
+Once you understand the basics of how Apple Events are constructed and how to
+call them from MacPerl, you will probably find yourself asking, "great but how
+do I know what all these IDs are for the functions I want to perform?"
+
+The first step is to get the creator ID of the target application.  There are
+innumerable ways to do it, including various utilities.  One easy way is to
+run the application, and then this script:
+
+	#!perl -w
+	use Mac::Processes;
+	foreach my $psi (values %Process) {
+	  printf("%s %s\n",
+	    $psi->processSignature(),
+	    $psi->processName()
+	  );
+	}
+
+Returns:
+
+	MACS Finder
+	ToyS Script Editor
+	R*ch BBEdit 4.5
+	McPL MacPerl
+	·uck Shuck
+
+That's the easy part.  Now we need to find the suite and event IDs.
+
+This information is stored in the aete resource of a scriptable application. 
+Script Editor can open an application as a dictionary and show the AppleScript
+version of these resources.  For instance, Script Editor can tell you about
+the Finder's open command; but it does not tell you that the ID for that event
+is odoc.  AppleScript is nice enough (somewhat unfortunately, for our
+purposes) to take care of that in the background.
+
+Often, when considering how to script an app in MacPerl, it is good to use
+AppleScript to determine what scripting capabilities the app has.  So while
+you won't learn much AppleScript in this book, learning a bit about it won't
+hurt.  But even if you can use AppleScript to do something, you still need to
+know more about the guts of the events to do it in MacPerl.
+
+Frontier can give you the vital information of these events.  Go to the
+Commercial Developers suite, select Enter your App's Name, and then type in
+the four-letter creator ID of the application.  Select the app in the dialog
+box, and have Frontier create aete glue for the app.  Then the events (verbs)
+of the app are detailed in a new window.
+
+Probably the easiest way to get this vital information is a droplet called
+B<aete.converter> by David C. Schooley. It writes a text file in the same
+location as the app dropped on it containing detailed information about the
+app. 
+
+Don't drop an app that is currently running on aete.converter.  If you want to
+drop MacPerl or the Finder or another running application or process on the
+droplet, you can make a copy of the application first, and drop the
+non-running copy on the droplet.
+
+So to find out how to do the open operation in the Finder from above, we make
+a copy of the Finder on the desktop, and drop it on aete.converter.  The
+droplet makes a file, also on the desktop, called "Finder(aete)". We then scan
+through the file in a text editor for something about opening documents.  In
+fact, you can search for the exact text given by Script Editor when the Finder
+is opened as a dictionary: "Open the specified object(s)".  The lines we find
+are these (again, these C<@> signs have nothing to do with Perl arrays):
+
+	@EVENT "open", "Open the specified object(s)", 
+	  'aevt', 'odoc'
+	@REPLY 'null', "", OPT, SINGLE, NOENUM
+	@DIRECT 'alis', "list of objects to open", REQ, LIST, 
+	  NOENUM, CHANGE
+
+If you continue with your search, you will find the alternate form of the
+event as well:
+
+	@EVENT "open", "Open the specified object(s)", 
+	  'aevt', 'odoc'
+	@REPLY 'null', "", OPT, SINGLE, NOENUM
+	@DIRECT 'obj ', "list of objects to open", REQ, SINGLE, 
+	  NOENUM, CHANGE
+	@PARAM  "using", 'usin', 'obj ', "the application file to 
+	  open the object with", OPT, SINGLE, NOENUM
+	@PARAM  "with properties", 'prdt', 'reco', "the initial  
+	  values for the properties, to be sent along with the 
+	  open event sent to the application that opens the 
+	  direct object", OPT, SINGLE, NOENUM
+
+The final two elements in the list describing the open event are C<aevt> and
+C<odoc>.  Those are, respectively, the suite and event IDs.  So we are most of
+the way home now.  We have creator, suite, and event IDs.  Now we need the
+parameters.
+
+The C<odoc> event comes in two forms, accepting either an alias or a an object
+as the direct object (noted by C<@DIRECT>).  We already saw how these look
+when they are built.  In the case of the first, we create an alias to the file
+and pass that to the direct object parameter:
+
+	@{$ae{'params'}} = ("'----':alis(\@\@)", $alias);
+
+In the case of the second, we have to create an object to pass to the direct
+object parameter.  So we have to figure out what to put into the four parts of
+the object: C<want>, C<from>, C<form>, and C<seld>.  It is usually best to go
+at these in order.  
+
+Some of this is guesswork, so be patient.  See the troubleshooting section at
+the end for some tips on what to do when you hit a wall.
+
+Remember, C<want> is the class ID.  Searching through the aete.converter
+output for lines matching C</^\@CLASS/>, we find several things it could
+possibly be: a file, a folder, a desktop object, a disk, an item, etc.  We
+don't want to hardcode whether this is a file or a folder or a disk, because
+we want to use this code to open up any item.  We could specify it as a
+desktop object, but the item might not be on the desktop (we could, after all,
+give a full pathname to open).  So we decide on the item class, which seems
+like it should do the trick. 
+
+Now this item doesn't appear to need to be contained by anything, so from is
+simply C<null()>.  That just leaves the data.  You will find that often, the
+object's C<form> is simply C<name> or C<indx>, where the former is a text
+string and the latter is an index number (where the first element is 1).  We
+could use either; but obviously, the name is more easily determined, so we'll
+try that.   Since a name would be of data type C<TEXT>, we assign C<TEXT(@)>
+to C<seld> and add the text in as an additional argument to the function.
+
+NOTE: Sometimes it is easier to put the text of the object into a separate
+scalar, so it is doesn't clutter up the event and in case you need to use it
+more than once, as we will later.
+
+	$obj = 'obj{want:type(cobj), from:null(), ' .
+	  'form:enum(name), seld:TEXT(@)}';
+	@{$ae{'params'}} = ("'----':$obj", $path);
+
+You may also have noticed that the aete.converter output mentions the event
+takes a list of objects to open; for this, we can use the aforementioned
+descriptor list data structure.  Descriptor lists use a syntax similar to the
+anonymous array syntax, with square brackets, and elements separated by
+commas.
+
+	@{$ae{'params'}} = (
+	  "'----':[alis(\@\@), alis(\@\@)]",
+	  $alias1, $alias2
+	);
+
+We can do the same thing with the object form, too.  But while we are, let's
+look at one of the optional parameters for the C<odoc> event.  We can open
+this list of objects using an application with the C<usin> keyword.  Since the
+application we want to open is also an item, we should try using the same
+basic object for C<usin> too.
+
+	$obj = 'obj{want:type(cobj), from:null(), ' .
+	  'form:enum(name), seld:TEXT(@)}';
+	@{$ae{'params'}} = (
+	  "'----':[$obj, $obj], usin:$obj",
+	  $path1, $path2, $appath
+	);
+
+=head1 Sending and Manipulating Apple Events
+
+Now we've seen how an Apple Event is basically constructed.  And we know it
+was all passed to the C<AEBuildAppleEvent()> function and sent to the target
+application via the C<AESend()> function.
+
+C<AESend()> takes two primary arguments, the event and a parameter like
+C<kAEWaitReply()>.  If you don't want to wait, you can use C<kAENoReply()>
+instead.  If you are not going to check the return value, or you don't want to
+wait for the event to finish before going on to the next part of your program,
+then there is usually no need to wait for the reply.
+
+C<AESend()> can also take two additional parameters, a priority (defaults to
+C<kAENormalPriority()>) and a timeout (C<kAEDefaultTimeout()>).  See the
+module documentation for other options if your event has special needs.
+
+There are other options in the construction of the event, too.  Predefined
+constants can be used instead of many strings, and several functions can be
+used together to build a given event.  So before we did this:
+
+	$event = AEBuildAppleEvent(
+	  'aevt', 'odoc', 'sign', 'MACS',
+	  0, 0, "'----':[alis(\@\@), alis(\@\@)]",
+	  $alias1, $alias2
+	);
+
+But we can also do this:
+
+	use Mac::Memory;
+	$event = AEBuildAppleEvent(
+	  typeAppleEvent(), kAEOpenDocuments(),
+	  typeApplSignature(), 'MACS', 0, 0, ''
+	);
+	$list = AECreateList('',0);
+	$desc = AEDesc->new(typeAlias(), $alias1);
+	AEPutDesc($list, 1, $desc);
+	AEPut($list, 2, typeAlias(), $alias2->get());
+	AEPutParamDesc($event, keyDirectObject(), $list);
+
+The first thing you should notice about this, aside from its use of a bunch of
+different functions to build the event instead of just one, is the
+substitution of the attribute strings with constants in
+C<AEBuildAppleEvent()>, and instead of including the parameters in that
+function, we left that undefined, to be taken care of in other ways.
+
+First we create an empty Apple Event list.  Then we make something to put in
+it with C<AECreateDesc()>, a descriptor of type alias (C<typeAlias()>).  
+
+After creating this descriptor, we add it to the list by providing the
+C<AEPutDesc()> function with the list, an index number, and the descriptor. 
+The other element is added to the list similarly via the C<AEPut()> function,
+which creates the descriptor and then adds it to the list.
+
+But this time, the alias data needs to be retrieved from the alias variable
+via the C<get()> method from the C<Mac::Memory> module, because of the
+different way the functions work.  Then the list is added as the direct object
+parameter with the C<AEPutParamDesc()> function.
+
+We can also retrieve and delete parameters from an event.
+
+	$list = AEGetParamDesc($event, keyDirectObject());
+	print AEPrint($list);
+	AEDeleteParam($event, keyDirectObject());
+
+Similarly, we can retrieve or delete the descriptors from an Apple Event list
+with C<AECountItems()>, C<AEGetNthDesc()>, and C<AEDeleteItem()>:
+
+	foreach (1 .. AECountItems($list)) {
+	# print AEPrint(AEGetNthDesc($list, $_)); # wrong
+	  my $desc = AEGetNthDesc($list, $_);
+	  AEPrint($desc);
+	  AEDisposeDesc($desc);
+	  AEDeleteItem($list, $_);
+	}
+
+One thing to always remember is to dispose of the memory allocated to an Apple
+Event descriptor, whether it represents a list, a parameter, or an event. 
+That's why the commented line above is wrong; if we pass the return value of
+C<AEGetNthDesc()> to C<AEPrint()> instead of assigning it to a scalar first,
+there is no way to dipose of it.  It would still print properly, but the
+memory would not get disposed.
+
+	AEDisposeDesc($list);
+	AEDisposeDesc($desc);
+	AEDisposeDesc($event);
+	AEDisposeDesc($reply);
+
+=head1 Receiving Apple Events
+
+MacPerl can also receive Apple Events from other applications.  You can set up
+an event handler (this one is set up for the Send Data (C<DATA>) event) and
+uses the given data to make a computation and returns the result through the
+Apple Event reply object.
+
+	#!perl -w
+	use Mac::AppleEvents;
+	my($ok);
+
+	# set handler for app McPL and event id DATA
+	$AppleEvent{'McPL', 'DATA'} = \&RecData;
+	print "Starting ...\n";
+	while(!$ok){sleep(1)}
+	print "Done.\n";
+
+	sub RecData {
+	  my($event, $reply, $desc, $n) = @_;
+	  $desc = AEGetParamDesc($event, keyDirectObject());
+	  $n = AEPrint($desc);
+	  AEPutParam($reply, keyDirectObject(), typeChar(), 
+	    sprintf('%.f + %.f = %.f', $n, $n, $n+$n)
+	  );
+	  print AEPrint($event), "\n";
+	  print AEPrint($reply), "\n";
+	  AEDisposeDesc($desc);
+	  $ok = 1;
+	  0;
+	}
+
+Don't dispose of C<$event> and C<$reply> here!  They are used by the event
+handler after being manipulated by our C<RecData()> routine.
+
+Here is an AppleScript to talk to the above script.  Start the script in
+MacPerl first, then run the simple AppleScript from Script Editor.
+
+	tell application "MacPerl"
+	  Send Data 2.4
+	end tell
+
+Returns:
+
+	"2 + 2 = 5"
+
+This is not often done; most of the time, it is easier to send the text of a
+MacPerl program via the Do Script event, because by setting up an event
+handler in MacPerl, the script has to be running to deal with the event.  But
+should you find a use for it, here it is.
+
+=head1 TMTOWTDI
+
+There are five basic ways to speak Apple Events with MacPerl.  We saw three
+already: sending AppleScript was the first.   The second was using C<AEBuild>
+functions, which is, being the fastest and simlest, the recommended method for
+most uses. The third was the use of raw Apple Events toolbox calls to do all
+the building of the descriptors.
+
+One method we did not address was the use of the C<Mac::OSA> module to compile
+an AppleScript to speed executions of the same AppleScript in a single Perl
+script.  Remember, OSA is not Apple Events, but you can do Apple Events in an
+OSA language that is capable of them through the OSA protocol.
+
+We use the same AppleScript as we did in our first example, but we execute it
+differently.  We now have a Frontier (B<UserTalk>) version of the script, too,
+which is sent in the exact same way as the AppleScript version.  The UserTalk
+version, though, opens the Trash instead of the startup disk, since that is
+the only other item guaranteed to be on the desktop.
+
+There is only one difference between the execution of the AppleScript and
+Frontier script (besides the text of the scripts themselves) the scripting
+component name for AppleScript is C<ascr> and for Frontier it is C<LAND>.
+
+First we need to access the scripting component with the
+C<OpenDefaultComponent()> function from C<Mac::Components>.  If this fails
+(such as in the case where Frontier is not running and its component cannot be
+opened), we skip the rest and warn.
+
+Then we convert the text of the script into an Apple Event descriptor record
+of type C<TEXT>.  C<OSACompile()> compiles the script, C<OSAExecute()>
+executes the compiled script, and C<OSADisplay()> returns a descriptor record
+containing the result of that execution.
+
+All of these functions can be replaced by one call to C<OSADoScript()>, which
+returns the same descriptor record returned by C<OSADisplay()>; but if you
+want to use the same script more than once, you will compile it only once and
+execute it multiple times to save time.  In that event, you would separate the
+C<OSACompile()> call to another part of the code, so you wouldn't waste time
+doing it more than once.
+
+Note that each OSA function takes the component as its first argument.  Don't
+forget to dispose of descriptors with C<AEDisposeDesc()> and OSA script IDs
+with <OSADispose()>.
+
+	#!perl -w
+	use Mac::OSA;
+	use Mac::Components;
+	use Mac::AppleEvents;
+	use Mac::Files;
+	my($vol, $trash);
+
+	$vol  = MacPerl::MakePath((MacPerl::Volumes())[0]);
+	$trsh = FindFolder(kOnSystemDisk(),kTrashFolderType());
+
+	Execute('ascr', <<EOS);
+	tell application "Finder"
+	  open item "$vol"
+	end tell
+	EOS
+
+	Execute('LAND', <<EOS);
+	return appleEvent
+	  (Finder.id, 'aevt', 'odoc', '----', alias("$trsh"))
+	EOS
+
+	sub Execute {
+	  my($id, $scr, $co, $desc, $comp, $sid, $val) = @_;
+	  $co  = OpenDefaultComponent
+	    (kOSAComponentType(), $id);
+	  if ($co) {
+	    $desc = AEDesc->new('TEXT', $scr)    || die($^E);
+	    $comp = OSACompile($co, $desc, 0)    || die($^E);
+	    $sid  = OSAExecute($co, $comp, 0, 0) || die($^E);
+	    $val  = OSADisplay
+	      ($co, $sid, 'TEXT', 0) || die($^E);
+	    printf("%s: %s\n", 
+	      (GetComponentInfo($co))[5], AEPrint($val));
+
+	    AEDisposeDesc($desc);
+	    OSADispose($co, $comp);
+	    OSADispose($co, $sid);
+	    AEDisposeDesc($val);
+	  } else {
+	    warn "Scripting component '$id' not available";
+	  }
+	}
+
+	sub Compile {
+	  my($co, $scr, $desc, $id) = @_;
+	  AEDisposeDesc($desc);
+	  return($id);
+	}
+
+Returns: 
+
+	AppleScript: Òstartup disk of Application "Finder"Ó
+	UserTalk: ÒtrashÓ
+
+The final way we can do Apple Events from MacPerl is with a set of OOP methods
+in the C<AEStream> class.  We create a new stream by passing appropriate IDs
+to C<new()>, and then build the event one piece at a time.  The event is
+returned when closed, and then it is sent with C<AESend()>. 
+
+	#!perl -w
+	use Mac::AppleEvents;
+	use Mac::MoreFiles;
+	my($vol, $app, $stream, $event, $reply);
+
+	$vol = MacPerl::MakePath((MacPerl::Volumes())[0]);
+	$app = $Application{'R*ch'};
+
+	$stream = AEStream->new(
+	  'aevt', 'odoc', typeApplSignature(), 'MACS'
+	) || die($^E);
+	$stream->WriteKey(keyDirectObject());
+	$stream->OpenRecord('obj ');
+	$stream->WriteKeyDesc('want', 'type', 'cobj');
+	$stream->WriteKeyDesc('from', 'null', '');
+	$stream->WriteKeyDesc('form', 'enum', 'name');
+	$stream->WriteKeyDesc('seld', 'TEXT', $vol);
+	$stream->CloseRecord();
+
+	$event = $stream->Close()             || die($^E);
+	$reply = AESend($event, kAEWaitReply) || die($^E);
+	AEDisposeDesc($event);
+	AEDisposeDesc($reply);
+
+=head1 Troubleshooting
+
+If you get stuck, there are several things you can do.  You might want to
+write the troubling event in AppleScript or UserTalk and execute it in Script
+Editor or Frontier to make sure it works.
+
+Also, you can use a control panel called B<AETracker> to capture all events in
+your system.  So by prototyping in another language, running AETracker,
+executing the protoype, and analyzing the output of AETracker, you can get a
+better idea of what's going on.
+
+Don't forget to consult the resources available to you.  Read the chapters of
+Interapplication Communication in Inside Macintosh dealing with Apple Events. 
+Read the documentation that comes with MacPerl.  Read the documentation that
+comes with the application you are scripting.  Read code from other people. 
+Seek support about the application from the author or any newsgroup or mailing
+list dealing with the application.  And, as always, consult the MacPerl
+mailing list.
+
+=head1 AUTHOR
+
+Chris Nandor F<E<lt>pudge@pobox.comE<gt>>
+http://pudge.net/
+
+Please send any bugs or comments to the author.  Please direct discussion to
+the MacPerl mailing list.
+
+=head1 COPYRIGHT
+
+Copyright (c) 1998 Chris Nandor.  All rights reserved.  Some content is
+adapted from I<MacPerl: Power and Ease>, by Vicki Brown and Chris Nandor,
+published by Prime Time Freeware.
+
+Because of events which have led to misappropriation of similar documents, I
+appropriate the reproduction information from perlfaq.
+
+=head2 Noncommercial Reproduction
+
+Permission is granted to distribute this document, in part or in full, via
+electronic means or printed copy providing that (1) that all credits and
+copyright notices be retained, (2) that no charges beyond reproduction be
+involved, and (3) that a reasonable attempt be made to use the most current
+version available.
+
+Furthermore, you may include this document in any distribution of the full
+MacPerl source or binaries, in its verbatim documentation, or on a complete
+dump of the CPAN archive, providing that the three stipulations given above
+continue to be met.
+
+=head2 Commercial Reproduction
+
+Requests for all other distribution rights, including the incorporation in
+part or in full of this text or its code into commercial products such as but
+not limited to books, magazine articles, or CD-ROMs, must be made to
+pudge@pobox.com.  Any commercial use of any portion of this document without
+prior written authorization by its authors will be subject to appropriate
+action.
+
+=head2 Disclaimer
+
+This information is offered in good faith and in the hope that it may be of
+use, but is not guaranteed to be correct, up to date, or suitable for any
+particular purpose whatsoever.  The authors accept no liability in respect of
+this information or its use.
+
+=head1 CHANGES
+
+None!
+
+=head1 VERSION
+
+Version 0.31 (12 April 1998)

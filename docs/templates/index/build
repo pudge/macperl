@@ -2,7 +2,7 @@ These are the build procedures for
 <a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1b1.  Please send feedback to the
 <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a> list,
 and <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">submit bugs
-at SourceForge</a>.
+at SourceForge.net</a>.
 </p>
 
 <script type="text/javascript" charset="iso-8859-1">
@@ -234,7 +234,7 @@ an MPW tool and a GUI application.  You will log in anonymously
 to check out the source.  The host is <tt>cvs.macperl.org</tt>,
 the cvsroot is <tt>/cvsroot/macperl</tt>, and the CVS modules are
 "macperl", "perl", and "docs" (for the web site).  See the
-<a href="http://sf.net/cvs/?group_id=7940">SourceForge</a>
+<a href="http://sf.net/cvs/?group_id=7940">SourceForge.net</a>
 page for more information.  You can also
 <a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/macperl/">browse the repository</a>
 via the web.

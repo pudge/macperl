@@ -5,8 +5,8 @@ checkbox for whether or not your chosen user name is the same as your
 user name on SoureForge.
 </p>
 <p>
-Please do use the same user name for both this and SourceForge,
-if you have a SourceForge user name.  If you do not, please
+Please do use the same user name for both this and SourceForge.net,
+if you have a SourceForge.net user name.  If you do not, please
 <a href="http://sf.net/account/register.php">register</a> there
 first.
 </p>
@@ -17,7 +17,7 @@ first.
 	<td valign="top" width="200">User name:</td>
 	<td><input type="text"     name="user"     size="32" maxlength="32" /></td>
 </tr><tr>
-	<td valign="top" colspan="2">Is your username the same here as on SourceForge?
+	<td valign="top" colspan="2">Is your username the same here as on SourceForge.net?
 	<input type="checkbox" name="sf_match" checked="checked" /></td>
 </tr><tr>
 	<td valign="top">E-mail Address:</td>
