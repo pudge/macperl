@@ -1,3 +1,10 @@
+* v0.66, 23 March 2004
+
+   Fix _Unix2Mac to be more robust, by making it more limited: it must point
+   to a file (existing or not) in an existing directory.  This limitation is
+   not unusual, and it is extremely rare that you would want to pass a path
+   to a file in a directory that did not already exist.
+
 * v0.65, 9 March 2004
 
    DirectoryCopy.c and FileCopy.c in MoreFiles have issues with G5 optimization

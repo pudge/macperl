@@ -123,8 +123,14 @@ SKIP: {
 	ok(!FSpDelete($file4),                                       "FSpDelete");
 }
 
+SKIP: {
+#	skip "Mac::Files Unix2Mac", 1;
+
+#	*Unix2Mac = *Mac::Files::_Unix2Mac{CODE};
+}
+
 #SKIP: {
-#	skip "Mac::Files Volumes", 1;
+#	skip "Mac::Files misc.", 1;
 
 	# UnmountVol
 	# Eject

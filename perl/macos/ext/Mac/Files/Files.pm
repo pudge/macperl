@@ -15,7 +15,7 @@ use base 'DynaLoader';
 use base 'Exporter';
 use vars qw(@EXPORT %EXPORT_TAGS $VERSION);
 
-$VERSION = '1.08';
+$VERSION = '1.09';
 @EXPORT = qw(
 	FSpGetCatInfo
 	FSpSetCatInfo
@@ -1613,33 +1613,37 @@ if ($^O ne 'MacOS') {
 
 sub _Unix2Mac {
 	require MacPerl;
-	my($unix) = @_;
-	my $mac;
+	my($path) = @_;
+
+	# normalize
+	# for this reason, either file, or path to file, must exist already
+	my $path2 = MacPerl::MakeFSSpec($path);
+	$path = MacPerl::MakePath($path2);
 
 	# is this a relative url?
-	if (substr($unix, 0, 1) ne '/') {
-		$unix =~ tr|/:|:/|;
-		$mac = ':' . $unix;
+	if (substr($path, 0, 1) ne '/') {
+		$path =~ tr|/:|:/|;
+		$path = ':' . $path;
 	}
 
 	# is this an absolute url with another Volume?
-	elsif ($unix =~ m|^/Volumes/([^/]+)(/.*)|) {
+	elsif ($path =~ m|^/Volumes/([^/]+)(/.*)|) {
 		my $volume = $1;
-		my $path   = $2;
+		my $rest   = $2;
 
-		$path =~ tr|/:|:/|;
-		$mac = $volume . $path;
+		$rest =~ tr|/:|:/|;
+		$path = $volume . $rest;
 	}
 
 	# absolute path off of startup volume
-	elsif (substr($unix, 0, 1) eq '/') {
+	elsif (substr($path, 0, 1) eq '/') {
 		(my $volume = scalar MacPerl::Volumes()) =~ s/^.+?:(.+)$/$1/;
 
-		$unix =~ tr|/:|:/|;
-		$mac = $volume . $unix;
+		$path =~ tr|/:|:/|;
+		$path = $volume . $path;
 	}
 
-	return $mac;
+	return $path;
 }
 
 
