@@ -23,7 +23,7 @@ use Mac::Types;
 %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
 $REVISION = '$Id$';
-$VERSION  = '1.00';
+$VERSION  = '1.01';
 $DEBUG	||= 0;
 $SWITCH ||= 0;
 $WARN	||= 0;
