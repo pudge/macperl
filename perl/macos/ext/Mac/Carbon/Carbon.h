@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.10  2003/08/13 21:41:30  pudge
+ * undef DEBUG for the sake of gcc 3.3 (perl's DEBUG conflicts with Mac's)
+ *
  * Revision 1.9  2003/04/07 01:25:31  pudge
  * Handle directory case
  *
@@ -44,6 +47,7 @@
 
 /* Perl defines Move too */
 #undef Move
+#undef I_POLL
 #undef DEBUG
 #include <Events.h>
 #include <Dialogs.h>

@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	Metrowerks C++
 
 $Log$
+Revision 1.4  2003/08/13 21:41:30  pudge
+undef DEBUG for the sake of gcc 3.3 (perl's DEBUG conflicts with Mac's)
+
 Revision 1.3  2003/04/06 21:16:10  pudge
 Don't suck in Carbon.h, just #undef Move
 
@@ -21,6 +24,7 @@ Synchronized with MacPerl 5.1.4a1
 
 #ifndef MACOS_TRADITIONAL
 #undef Move
+#undef I_POLL
 #undef DEBUG
 #endif
 #include <AppleEvents.h>
