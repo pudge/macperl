@@ -180,7 +180,8 @@ http://sourceforge.net/projects/shuck/	Shuck Project on SourceForge.net
 @alias	^	Bitwise Or and Exclusive Or
 @alias 	&&	C-style Logical And
 @alias	||	C-style Logical Or
-@alias 	..	Range Operator
+@alias 	..	Range Operators
+@alias 	...	Range Operators
 @alias 	?	Conditional Operator
 @alias	:	Conditional Operator
 @alias	=	Assignment Operators
