@@ -133,6 +133,7 @@ sub template {
 	};
 
 	my $filters = Template::Filters->new({ FILTERS => {
+		fixdate		=> \&fixdate,
 		fixparam	=> \&fixparam,
 		fixurl		=> \&fixurl,
 		strip_attribute	=> \&strip_attribute,
@@ -233,6 +234,13 @@ sub DESTROY {
 
 
 # extra functions from Slash::Utility
+
+sub fixdate {
+	my($date) = @_;
+	$date =~ s{^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$}
+		  {"$1-$2-$3 $4:$5:$6"}e;
+	return $date;
+}
 
 sub stripByMode {
 	my($str, $fmode, $no_white_fix) = @_;
