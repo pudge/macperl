@@ -1313,6 +1313,18 @@ We'll work to cut down that start time, too.
 
 So, now that you are convinced this is cool, let's continue.
 
+
+=head2 Mac OS X
+
+Mac::Glue is MacPerl only, and does not work with perl under Mac OS X.
+However, it works with MacPerl under the Classic environment in Mac OS X.
+Mac::Glue now has ininitial support to create glues for Mac OS X apps,
+under Classic.  You won't be able to create glues for many apps while
+running Mac OS natively, since Mac OS X will need to launch the app;
+also, there are known problems with launching the apps, so you may need
+to start the app manually first before creating the glue.
+
+
 =head2 Creating a Glue
 
 In order to script an application with Mac::Glue, a glue must be created
@@ -1333,7 +1345,6 @@ similar to the F<gluemac> program.  They are saved in
 Along with the glue file is a POD file containing documentation for the
 glue, listing all the events (with parameters), classes (with
 properties), and enumerators, and descriptions of each.
-
 
 =head2 Using a Glue
 
