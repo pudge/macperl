@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.13  2001/01/30 13:21:12  pudge
+#  Re-add
+#
 #  Revision 1.11  2001/01/30 13:13:29  pudge
 #  Do translators only for 68K (for now)
 #
@@ -192,12 +195,18 @@ Dynamic_Ext_Std	=
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= \
-	re:re Fcntl:Fcntl File:Glob:Glob Sys:Hostname:Hostname \
-	DynaLoader:DynaLoader NDBM_File:NDBM_File DB_File:DB_File Socket:Socket \
-	Opcode:Opcode POSIX:POSIX IO:IO attrs:attrs Data:Dumper:Dumper \
-	Devel:Peek:Peek
-	# Devel:DProf:DProf bad errors
-	# Errno no idea
+	B:B ByteLoader:ByteLoader Data:Dumper:Dumper DB_File:DB_File \
+	Devel:Peek:Peek DynaLoader:DynaLoader \
+	Fcntl:Fcntl File:Glob:Glob IO:IO \
+	NDBM_File:NDBM_File Opcode:Opcode POSIX:POSIX \
+	Socket:Socket Sys:Hostname:Hostname \
+ 	attrs:attrs re:re
+
+	# Devel:DProf:DProf problems with times()
+	# Errno:Errno ? ... copy it from :macos:lib:
+
+	# GDBM_File:GDBM_File ODBM_File:ODBM_File IPC:IPC:SysV
+	# SDBM_File:SDBM_File Sys:Syslog:Syslog Thread:Thread
 
 Static_Ext_AutoInit	= 	$(Static_Ext_Mac) $(Static_Ext_Std)
 More_Static_Ext		= 	OSA XL
