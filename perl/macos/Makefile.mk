@@ -330,7 +330,7 @@ preplibrary: miniperl
 	end
 	:miniperl -Ilib -I::lib -e 'use AutoSplit; autosplit_lib_modules(@ARGV)' :lib:Å.pm :lib:Å:Å.pm
 	directory ::
-	:macos:miniperl -Ilib -I:macos:lib -e 'use AutoSplit; autosplit_lib_modules(@ARGV)' :lib:Å.pm :lib:Å:Å.pm
+	:macos:miniperl -Ilib -I:macos:lib -e 'use AutoSplit; autosplit_lib_modules(@ARGV)' :lib:Å.pm :lib:Å:Å.pm :lib:Å:Å:Å.pm
 	directory macos
 	Echo > preplibrary
 
