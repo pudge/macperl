@@ -1,5 +1,5 @@
 These are the build procedures for
-<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1a4.  Please send feedback to the
+<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1a5.  Please send feedback to the
 <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a> list,
 and <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">submit bugs
 at SourceForge</a>.
@@ -57,8 +57,9 @@ just download the perl and MacPerl source kits and take it from there.
 You should upgrade GUSI if it has changed since your last build.
 <b>Note:</b> if you don't already have it, you will need to
 upgrade your db to 
-a href="http://dev.macperl.org/files/macperl_build_libs/">db_186a</a>,
-nre for MacPerl 5.6.1a5.
+<a href="http://dev.macperl.org/files/macperl_build_libs/">db_186b</a>,
+nre for MacPerl 5.6.1a5 (or re-fetch all of the macperl_build_libs
+archive).
 </p>
 
 <h2><a name="ingredients">Ingredients</a></h2>
@@ -164,7 +165,7 @@ will be properly unpacked.
 	<li><p>Change directory (using the "directory" command) in MPW to the
 		GUSI directory, and run the <em>GUSI_Install.MPW</em> script.
 		<sup><a href="#" onmouseover="return set_status(4);" onclick="return no_click(4);">4</a></sup></p><pre>
-			directory "HD:macperl_src:GUSI_218:"
+			directory "HD:macperl_src:GUSI_219:"
 			GUSI_Install.MPW</pre>
 		
 		<p>If using STLport (SC/MrC builds), also run the
