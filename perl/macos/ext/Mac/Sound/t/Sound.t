@@ -5,8 +5,6 @@ use strict;
 
 BEGIN { plan tests => 14 }
 
-require Fcntl;
-require POSIX;
 use Mac::Resources;
 use Mac::Sound;
 
