@@ -22,6 +22,13 @@ The current development release is
 of perl.
 </p>
 
+<p>
+MacPerl 5.6.1r2 will be released once certain bugs are fixed in the application code and
+POSIX library.  MacPerl 5.8.0 will go to beta once those bugs are fixed, plus a few new bugs,
+plus a handful of other things we want to add (possibly including UI enhancements).
+There's no specific timeline.
+</p>
+
 
 <h2>MacPerl Development</h2>
 
