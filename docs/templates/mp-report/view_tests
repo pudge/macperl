@@ -24,7 +24,7 @@ write something up?).
 [% FOR test = tests %]
 	<tr class="[% PROCESS get_status st => test.status %]">
 		<td>
-<a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/~checkout~/perl/t/[% test.test %].t?cvsroot=macperl">[% test.test %]</a>
+<a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/macperl/perl/t/[% test.test %].t?content-type=text/plain">[% test.test %]</a>
 		</td>
 		<td colspan="4">&nbsp;</td>
 	</tr>
