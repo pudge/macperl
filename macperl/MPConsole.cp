@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.7  2001/11/09 06:48:57  neeri
+Fix Ctrl-D handling (MacPerl Bug #471436)
+
 Revision 1.6  2001/11/02 22:36:17  pudge
 Sync with perforce
 
@@ -723,3 +726,8 @@ void ResetConsole()
 	gWantConsoleInput	= false;
 	ShowWindowStatus();
 }
+
+/* Dummy implementations for SIOUX */
+extern "C" void InstallConsole() {}
+extern "C" void ReadCharsFromConsole() {}
+extern "C" void WriteCharsToConsole() {}
