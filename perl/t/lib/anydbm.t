@@ -25,7 +25,7 @@ $Dfile = "Op_dbmx.pag";
 if (! -e $Dfile) {
 	($Dfile) = <Op_dbmx*>;
 }
-if ($Is_Dosish) {
+if ($Is_Dosish || $^O eq 'MacOS') {
     print "ok 2 # Skipped: different file permission semantics\n";
 }
 else {
@@ -146,6 +146,8 @@ else {
 untie %h;
 if ($^O eq 'VMS') {
   unlink 'Op_dbmx.sdbm_dir', $Dfile;
+} elsif ($^O eq 'MacOS') {
+  unlink 'Op_dbmx';
 } else {
   unlink 'Op_dbmx.dir', $Dfile;  
 }

@@ -11,18 +11,21 @@ use strict;
 my $count = 0;
 use warnings;
 
+my @dirs = ('foo', 'foo/bar');
+@dirs = (':foo', ':foo:bar') if $^O eq 'MacOS';
+
 print "1..4\n";
 
 # first check for stupid permissions second for full, so we clean up
 # behind ourselves
 for my $perm (0111,0777) {
-    mkpath("foo/bar");
-    chmod $perm, "foo", "foo/bar";
+    mkpath($dirs[1]);
+#    chmod $perm, $dirs[0], $dirs[1];
 
-    print "not " unless -d "foo" && -d "foo/bar";
+    print "not " unless -d $dirs[0] && -d $dirs[1];
     print "ok ", ++$count, "\n";
 
-    rmtree("foo");
-    print "not " if -e "foo";
+    rmtree($dirs[0]);
+    print "not " if -e $dirs[0];
     print "ok ", ++$count, "\n";
 }

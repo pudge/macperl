@@ -84,18 +84,23 @@ for my $pass (@pass) {
   print "# foo=`$foo'\nnot " unless $foo eq sprintf "ok %d\n", 3+$loopconst;
   printf "ok %d\n", 9+$loopconst;
 
-  copy "file-$$", "lib";
-  open(R, "lib/file-$$") or die; $foo = <R>; close(R);
+  my $file = "lib/file-$$";
+  $file = ":lib:file-$$" if $^O eq 'MacOS';
+  my $dir = "lib";
+  $dir = ":lib" if $^O eq 'MacOS';
+
+  copy "file-$$", $dir;
+  open(R, $file) or die; $foo = <R>; close(R);
   print "not " unless $foo eq sprintf "ok %d\n", 3+$loopconst;
   printf "ok %d\n", 10+$loopconst;
-  unlink "lib/file-$$" or die "unlink: $!";
+  unlink $file or die "unlink: $!";
 
-  move "file-$$", "lib";
-  open(R, "lib/file-$$") or die "open lib/file-$$: $!"; $foo = <R>; close(R);
+  move "file-$$", $dir;
+  open(R, $file) or die "open $file: $!"; $foo = <R>; close(R);
   print "not " unless $foo eq sprintf("ok %d\n", 3+$loopconst)
       and not -e "file-$$";;
   printf "ok %d\n", 11+$loopconst;
-  unlink "lib/file-$$" or die "unlink: $!";
+  unlink $file or die "unlink: $!";
 
   # warn sprintf "INC->".$INC{"File/Copy.pm"};
   delete $INC{"File/Copy.pm"};
@@ -105,5 +110,5 @@ for my $pass (@pass) {
 
 END {
     1 while unlink "file-$$";
-    1 while unlink "lib/file-$$";
+    1 while unlink $file;
 }
