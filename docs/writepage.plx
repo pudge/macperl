@@ -29,7 +29,7 @@ if (exists $data{Patches}) {
 }
 
 if (exists $data{'Feature Requests'}) {
-	fixnum('Feature Requests', 'items'));
+	fixnum('Feature Requests', 'items');
 }
 
 if (exists $data{CVS}) {
