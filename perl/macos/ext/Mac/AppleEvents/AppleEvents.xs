@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.7  2002/12/17 16:16:07  pudge
+ * Use new constant
+ *
  * Revision 1.6  2002/12/12 15:36:33  pudge
  * Make work with gcc2
  *
@@ -71,7 +74,11 @@ _new(package, type='null', data=0)
 		RETVAL.descriptorType	=	type;
 		RETVAL.dataHandle			=	data;
 #else
-		AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL));
+		if (data == NULL) {
+			AEFail(AECreateDesc(type, NULL, 0, &RETVAL));
+		} else {
+			AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL));
+		}
 #endif
 	}
 	OUTPUT:
@@ -135,7 +142,11 @@ _new(package, key=0, type='null', data=0)
 		RETVAL.descContent.descriptorType	=	type;
 		RETVAL.descContent.dataHandle			=	data;
 #else
-		AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL.descContent));
+		if (data == NULL) {
+			AEFail(AECreateDesc(type, NULL, 0, &RETVAL.descContent));
+		} else {
+			AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL.descContent));
+		}
 #endif
 	}
 	OUTPUT:
