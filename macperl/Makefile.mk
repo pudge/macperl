@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.9  2001/01/23 07:35:16  neeri
+#  Support fat builds involving SC (Task 24871)
+#
 #  Revision 1.8  2001/01/23 05:31:47  neeri
 #  Make Droplet and Font LDEF buildable with SC (Tasks 24870, 24872)
 #
@@ -239,14 +242,14 @@ realclean	:	clean
 	Delete -i MacPerl MacPerl.PPC MacPerl.68K MacPerl.SC MacPerl.MrC
 
 MacPerl.PPC : Obj $(ObjectsPPC) $(PerlObjPPC)
-	$(ApplLinkPPC) -name Perl -o MacPerl.PPC :Obj:{$(ObjectsPPC)} $(PerlObjPPC) $(MacPerlLibPPC)
+	$(ApplLinkPPC) -name Perl  -@export $(MACPERL_SRC)perl.exp -o MacPerl.PPC :Obj:{$(ObjectsPPC)} $(PerlObjPPC) $(MacPerlLibPPC)
 	MergeFragment "$(AEGizmos)AEGizmos4Perl.shlb.PPC" MacPerl.PPC
 MacPerl.PPC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.PPC
 	SetFile -a B MacPerl.PPC
 
 MacPerl.MrC : Obj $(ObjectsMrC) $(PerlObjMrC)
-	$(ApplLinkMrC) -fragname Perl -o MacPerl.MrC :Obj:{$(ObjectsMrC)} $(PerlObjMrC) $(MacPerlLibMrC)
+	$(ApplLinkMrC) -fragname Perl  -@export $(MACPERL_SRC)perl.exp -o MacPerl.MrC :Obj:{$(ObjectsMrC)} $(PerlObjMrC) $(MacPerlLibMrC)
 	MergeFragment "$(AEGizmos)AEGizmos4Perl.shlb.PPC" MacPerl.MrC
 MacPerl.MrC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.MrC
