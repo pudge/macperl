@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.11  2002/01/23 05:46:04  pudge
+ * Bump version
+ *
  * Revision 1.10  2002/01/05 02:21:54  pudge
  * Sync with perforce
  *
@@ -38,11 +41,11 @@
  *
  */
 
-#define MPVersionStr	"5.6.1b4"
+#define MPVersionStr	"5.6.1r1"
 #define MPRevision	0x05
 #define MPVersion	0x61
-#define MPBuild		0x04
-#define MPState		beta
+#define MPBuild		0x01
+#define MPState		release
 #define MPCopyright	"ported by Matthias Neeracher, maintained by Chris Nandor"
 #define MPDate		$$Format("%4.4d-%2.2d-%2.2d", $$Year,  $$Month, $$Day)
 
