@@ -1,20 +1,22 @@
-<!-- ?xml version="1.0" encoding="iso-8859-1"? -->
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 	<title>MacPerl Build Instructions</title>
-	<meta name="generator" content="BBEdit 6.0.2" />
+	<meta name="generator" content="BBEdit 6.1" />
 	<base href="http://macperl.sourceforge.net/build.html" />
 	<link rel="stylesheet" type="text/css" href="/style.css" />
 	<script type="text/javascript" charset="iso-8859-1">
 		// <![CDATA[
 
 			var notes = new Array();
-			notes[1] = 'Later versions of SC/MrC may not be fully compatible.';
-			notes[2] = 'If you run out of memory in the middle of a build, save, quit, and try again.';
-			notes[3] = 'In MPW you must hit "enter" or "cmd"+"return" to execute a command on a line.';
+			notes[0] = 'Later versions of SC/MrC may not be fully compatible.';
+			notes[1] = 'Later versions of STLport may not be fully compatible.';
+			notes[2] = 'This is the unreleased in-development version of perl 5.6.1 from the main Perl source repository.';
+			notes[3] = 'If you run out of memory in the middle of a build, save, quit, and try again.';
+			notes[4] = 'In MPW you must hit "enter" or "cmd"+"return" to execute a command on a line.';
 
 			function set_status (num) {
 				self.status = notes[num];
@@ -41,8 +43,8 @@
 
 <img src="/MacPerl.gif" width="32" height="32" alt="*" />
 
-These are the install procedures for
-<a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.0.  Please send feedback to the
+These are the build procedures for
+<a href="http://macperl.sourceforge.net/">MacPerl</a> version 5.6.1.  Please send feedback to the
 <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a> list,
 and <a href="http://sourceforge.net/bugs/?func=addbug&amp;group_id=7940">submit bugs
 at SourceForge</a>.
@@ -66,6 +68,10 @@ For now, the x2p translators cannot be built
 with an SC/MrC-only build, and there is no CFM68K support.
 </p>
 
+<p>
+If you have already built MacPerl 5.6.x before, you can probably
+just download the perl and MacPerl source kits and take it from there.
+</p>
 
 <h2><a name="ingredients">Ingredients</a></h2>
 
@@ -80,8 +86,8 @@ is the recommended way to unpack the files below.  It should
 handle the .sit, .tar.gz, and any other files necessary for
 this build.  However, you should consider selecting
 the "Convert text files to Macintosh format ... When a file is
-known to contain text" option, so the STLport and perl-5.6.0
-archives will be properly unpacked.
+known to contain text" option, so the STLport archive
+will be properly unpacked.
 </p>
 
 <ul>
@@ -107,20 +113,22 @@ archives will be properly unpacked.
 		CodeWarrior compilers for MPW</strong> (Pro 5 recommended; MWC68K 2.3.2 build 79, MWCPPC 2.3.2 build 75) 
 		<em>or</em> of the <strong>MPW C/C++ compilers</strong>
 		(SC 8.8.4f1, MrC 4.1.0f1c1)
-		<sup><a href="#" onmouseover="return set_status(1);" onclick="return no_click(1);">1</a></sup>
+		<sup><a href="#" onmouseover="return set_status(0);" onclick="return no_click(0);">0</a></sup>
 	</li>
 
 	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=20742">MacPerl and the perl MPW tool</a></strong>
 		(the current releases; perl itself is used for part of the build)</li>
 
-	<li><strong><a href="http://www.stlport.org/">STLport</a></strong> (3.12.3), if building with SC / MrC</li>
-
-	<li>
-		<strong><a href="ftp://macperl.sourceforge.net//pub/macperl/perl-5.6.0.sit.bin">perl-5.6.0 source</a></strong> (Stuffit Archive; recommended), or
-		<strong><a href="http://www.cpan.org/src/5.0/perl-5.6.0.tar.gz">perl-5.6.0 source</a></strong> (.tar.gz)
+	<li><strong><a href="http://www.stlport.org/">STLport</a></strong> (3.12.3), if building with SC / MrC
+		<sup><a href="#" onmouseover="return set_status(1);" onclick="return no_click(1);">1</a></sup>
 	</li>
 
-	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=22346">MacPerl 5.6.0 source kit</a></strong></li>
+	<li>
+		<strong><a href="ftp://macperl.sourceforge.net//pub/macperl/perl-5.6.1.sit.bin">perl 5.6.1 source</a></strong>
+		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
+	</li>
+
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=22346">MacPerl 5.6.1 source kit</a></strong></li>
 </ul>
 
 
@@ -143,8 +151,9 @@ archives will be properly unpacked.
 		be anywhere on your system, but you may wish to keep it
 		in "HD:macperl_src:" for convenience.</p></li>
 
-	<li><p>Copy the patch and dmake tools, and the startup.mk file from
-		the dmake distribution, to the MPW <em>Tools</em> folder.
+	<li><p>Copy the dmake tool, and the startup.mk file from
+		the dmake distribution, and the patch tool from the gPatch
+		distribution, to the MPW <em>Tools</em> folder.
 		Copy the BuildProgram and BuildCommands scripts from
 		the dmake folder to the MPW <em>Scripts</em> folder,
 		overwriting the existing scripts of the same name
@@ -162,13 +171,13 @@ archives will be properly unpacked.
 	<li><p>Give the <em>MPW Shell</em> application plenty of RAM (I
 		gave it 30MB) and make sure you have plenty of extra RAM
 		while the app is running (another 30MB might be sufficient).
-		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
+		<sup><a href="#" onmouseover="return set_status(3);" onclick="return no_click(3);">3</a></sup>
 		Then run the application.  If you wish, create a new document to
 		work in.</p></li>
 
 	<li><p>Change directory (using the "directory" command) in MPW to the
 		GUSI directory, and run the <em>GUSI_Install.MPW</em> script.
-		<sup><a href="#" onmouseover="return set_status(3);" onclick="return no_click(3);">3</a></sup></p><pre>
+		<sup><a href="#" onmouseover="return set_status(4);" onclick="return no_click(4);">4</a></sup></p><pre>
 			directory "HD:macperl_src:GUSI_215:"
 			GUSI_Install.MPW</pre>
 		
@@ -187,9 +196,8 @@ archives will be properly unpacked.
 		To install the perl MPW tool, see the documentation that
 		comes with it.</p></li>
 
-	<li><p>Unpack the perl-5.6.0 archive.  Change the folder name to
-		"perl" and drop it in "HD:macperl_src:" with
-		everything else.</p></li>
+	<li><p>Unpack the perl-5.6.1 archive and drop it in "HD:macperl_src:"
+		with everything else.</p></li>
 
 	<li><p>Unpack the MacPerl source kit.  Put the "macperl"
 		folder inside "HD:macperl_src:".  Put the "macos" folder inside
@@ -197,7 +205,7 @@ archives will be properly unpacked.
 
 	<li><p>Change directory to the macos directory and apply the patch.</p><pre>
 		directory "HD:macperl_src:perl:macos:"
-		patch &lt; MacPerl.patch</pre></li>
+		patch &lt; xsubpp.patch</pre></li>
 
 	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
 		change the preferences there for the compilers you will
@@ -222,7 +230,10 @@ archives will be properly unpacked.
 		plenty of bugs, so some things will not work.  Set
 		your library path to "HD:macperl_src:perl:lib:" and
 		you should have access to most of the standard perl
-		and MacPerl library.</p></li>
+		and MacPerl library.  Note that the standard perl
+		library is currently only installed as static libraries,
+		while the MacPerl modules are installed as dynamic
+		libraries (for PPC/MrC only).</p></li>
 
 </ol>
 
@@ -247,10 +258,13 @@ via the web.
 
 <noscript>
 <p class="notes">
-	<sup>1</sup> Later versions of SC/MrC may not be fully compatible.<br />
-	<sup>2</sup> If you run out of memory in the middle of a build, save,
+	<sup>0</sup> Later versions of SC/MrC may not be fully compatible.<br />
+	<sup>1</sup> Later versions of STLport may not be fully compatible.<br />
+	<sup>2</sup> This is the unreleased in-development version of perl 5.6.1
+		from the main Perl source repository.<br />
+	<sup>3</sup> If you run out of memory in the middle of a build, save,
 		quit, and try again.<br />
-	<sup>3</sup> In MPW you must hit "enter" or "cmd"+"return" to
+	<sup>4</sup> In MPW you must hit "enter" or "cmd"+"return" to
 		execute a command on a line.<br />
 </p>
 </noscript>
