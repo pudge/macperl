@@ -505,12 +505,6 @@ void CleanupPerl()
 
 	UseResFile(gAppFile);
 
-	/* Borrowed from GUSI
-	
-	// Close stdio files (necessary to flush buffers)
-	// This implementation is not nice, but who cares ?
-	// In case you wonder, _iob is defined in <stdio.h>
-	*/
 	GUSIStdioFlush();
 	GUSIStdioClose();	
 	

@@ -379,7 +379,7 @@ GUSISocket * MPAEVTDevice::open(GUSIFileToken & file, int flags)
 	default:
 		if (file.Path()[8]) {
 			key = '    ';
-			memcpy(&key, file.Path()+9, min(strlen(file.Path()+9), 4UL));
+			memcpy(&key, file.Path()+9, min((unsigned long)strlen(file.Path()+9), 4UL));
 		} else
 			key = '----';
 	}

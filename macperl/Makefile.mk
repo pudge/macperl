@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.1  2000/12/07 08:52:13  neeri
+#  PPC app compiles and sort of runs
+#
 #  Revision 1.5  1998/04/21 22:27:03  neeri
 #  MacPerl 5.2.0r4
 #
@@ -35,7 +38,7 @@ SFIO		= "{{SFIO}}"
 GUSI		= "{{GUSI}}"
 MoreFiles	= ::MoreFiles:
 
-COpt += -i $(MACPERL_SRC) -i $(PERL_SRC) -i ::db:include: -i ::IC: -i ::AEGizmos:include -d MALLOC_LOG -w nopossible
+COpt += -i $(MACPERL_SRC) -i $(PERL_SRC) -i ::db:include: -i ::IC: -i ::AEGizmos:include
 ApplRez 		= 	Rez -a -t APPL -c McPL
 ApplMWLOpt		=	${LOpt} -xm application -d
 ApplLink68K		=	MWLink68K ${ApplMWLOpt} -model far
@@ -70,6 +73,8 @@ PerlSources = runperl.c
 
 Objects68K 		= {$(MacPerlSources) $(PerlSources)}.68K.o
 ObjectsPPC 		= {$(MacPerlSources) $(PerlSources)}.PPC.o
+ObjectsSC 		= {$(MacPerlSources) $(PerlSources)}.SC.o
+ObjectsMrC 		= {$(MacPerlSources) $(PerlSources)}.MrC.o
 
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
@@ -92,8 +97,17 @@ PerlObjPPC	=				\
 	$(MACPERL_SRC)PLib:Perl.PPC.Lib		\
 	$(Static_Ext_AutoInit_PPC)
 
+PerlObjSC	=				\
+	$(MACPERL_SRC)PLib:PerlLib.SC.Lib		\
+	$(MACPERL_SRC)PLib:Perl.SC.Lib		\
+	$(Static_Ext_AutoInit_SC)
+
+PerlObjMrC	=				\
+	$(MACPERL_SRC)PLib:PerlLib.MrC.Lib		\
+	$(MACPERL_SRC)PLib:Perl.MrC.Lib		\
+	$(Static_Ext_AutoInit_MrC)
+
 MacPerlLibPPC	=					\
-			"$(GUSI)lib:GUSI_MPW.PPC.Lib"					\
 			"$(GUSI)lib:GUSI_Sfio.PPC.Lib"					\
 			"$(GUSI)lib:GUSI_Core.PPC.Lib"					\
 			"{{MWPPCLibraries}}MSL MPWCRuntime.Lib"			\
@@ -112,9 +126,35 @@ MacPerlLibPPC	=					\
 			"{{PPCLibraries}}OpenTptInetPPC.o"				\
 			"{{PPCLibraries}}PPCToolLibs.o"					\
 			"$(IC)InternetConfigLib"						\
-			"$(AEGizmos)AEGizmos4Perl.Lib.PPC"				\
+			"$(AEGizmos)AEGizmos4Perl.shlb.PPC"				\
 			"$(DB)lib:db.Sfio.PPC.Lib"						\
 			"$(XL)"XL.PPC.Lib								\
+			"{{SharedLibraries}}AppleScriptLib"
+
+MacPerlLibMrC	= 	\
+			"$(GUSI)lib:GUSI_Sfio.MrC.Lib"					\
+			"$(GUSI)lib:GUSI_Core.MrC.Lib"					\
+			"$(SFIO)lib:sfio.MrC.Lib"						\
+			"{{PPCLibraries}}MrCPlusLib.o"					\
+			"{{PPCLibraries}}PPCStdCLib.o"					\
+			"{{PPCLibraries}}StdCRuntime.o"					\
+			"{{PPCLibraries}}PPCCRuntime.o"					\
+			"{{SharedLibraries}}MathLib"					\
+			"{{PPCLibraries}}PPCToolLibs.o"					\
+			"{{SharedLibraries}}InterfaceLib"				\
+			"{{SharedLibraries}}ThreadsLib"					\
+			"{{SharedLibraries}}NavigationLib"				\
+			"{{PPCLibraries}}MrCIOStreams.o"				\
+			"{{SharedLibraries}}ObjectSupportLib"			\
+			"{{SharedLibraries}}StdCLib"					\
+			"{{SharedLibraries}}OpenTransportLib"			\
+			"{{SharedLibraries}}OpenTptInternetLib"			\
+			"{{PPCLibraries}}OpenTransportAppPPC.o"			\
+			"{{PPCLibraries}}OpenTptInetPPC.o"				\
+			"$(IC)InternetConfigLib"						\
+			"$(AEGizmos)AEGizmos4Perl.shlb.PPC"				\
+			"$(DB)lib:db.Sfio.MrC.Lib"						\
+			"$(XL)"XL.MrC.Lib								\
 			"{{SharedLibraries}}AppleScriptLib"
 
 MacPerlLib68K	=					\
@@ -137,25 +177,62 @@ MacPerlLib68K	=					\
 	"$(XL)XL.Lib.68K"			\
 	"{{MW68KLibraries}}OSACompLib.o"
 
+
+MacPerlLibSC	=	\
+	"$(GUSI)lib:GUSI_Sfio.SC.Lib"					\
+	"$(GUSI)lib:GUSI_Core.SC.Lib"					\
+	"$(SFIO)lib:sfio.SC.Lib"						\
+	"{{CLibraries}}CPlusLib.far.o"					\
+	"{{CLibraries}}StdCLib.far.o"					\
+	"{{Libraries}}MacRuntime.o"						\
+	"{{Libraries}}Interface.o"						\
+	"{{Libraries}}IntEnv.far.o"						\
+	"{{Libraries}}MathLib.far.o"					\
+	"{{Libraries}}ToolLibs.far.o"					\
+	"{{CLibraries}}IOStreams.far.o"					\
+	"{{Libraries}}AEObjectSupportLib.o"				\
+	"{{Libraries}}Navigation.far.o"					\
+	"{{Libraries}}OpenTransport.o"					\
+	"{{Libraries}}OpenTransportApp.o"				\
+	"{{Libraries}}OpenTptInet.o"					\
+	"$(AEGizmos)AEGizmos4Perl.Lib.SC"				\
+	"$(DB)lib:db.Sfio.SC.Lib"						\
+	"$(IC)ICGlueFar.o"								\
+	"$(XL)"XL.SC.Lib
+
 all	: MacPerl "MacPerl Help" MacPerlTest.Script MPDroplet
 
 clean	:	
 	Delete :Obj:Å
 
 realclean	:	clean
-	Delete -i MacPerl MacPerl.PPC MacPerl.68K
+	Delete -i MacPerl MacPerl.PPC MacPerl.68K MacPerl.SC MacPerl.MrC
 
 MacPerl.PPC : $(ObjectsPPC) $(PerlObjPPC)
 	$(ApplLinkPPC) -name Perl -o MacPerl.PPC :Obj:{$(ObjectsPPC)} $(PerlObjPPC) $(MacPerlLibPPC)
+	MergeFragment "$(AEGizmos)AEGizmos4Perl.shlb.PPC" MacPerl.PPC
 MacPerl.PPC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.PPC
 	SetFile -a B MacPerl.PPC
 
+MacPerl.MrC : $(ObjectsMrC) $(PerlObjMrC)
+	$(ApplLinkMrC) -fragname Perl -o MacPerl.MrC :Obj:{$(ObjectsMrC)} $(PerlObjMrC) $(MacPerlLibMrC)
+	MergeFragment "$(AEGizmos)AEGizmos4Perl.shlb.PPC" MacPerl.MrC
+MacPerl.MrC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
+	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.MrC
+	SetFile -a B MacPerl.MrC
+
 MacPerl.68K : $(Objects68K) $(PerlObj68K)
-	$(ApplLink68K) -o MacPerl.68K :Obj:{$(Objects68K)} -sb PerlCore $(PerlObj68K) $(MacPerlLib68K)
+	$(ApplLink68K) -o MacPerl.68K :Obj:{$(Objects68K)} $(PerlObj68K) $(MacPerlLib68K)
 MacPerl.68K	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
 	$(ApplRez) MacPerl.r -o MacPerl.68K
 	SetFile -a B MacPerl.68K
+
+MacPerl.SC : $(ObjectsSC) $(PerlObjSC)
+	$(ApplLinkSC) -o MacPerl.SC :Obj:{$(ObjectsSC)} $(PerlObjSC) $(MacPerlLibSC)
+MacPerl.SC	::	MacPerl.r MacPerl.rsrc MPTerminology.r MPBalloons.r :Obj:FontLDEF.rsrc
+	$(ApplRez) MacPerl.r -d APPNAME=¶"Perl¶" -o MacPerl.SC
+	SetFile -a B MacPerl.SC
 
 macperl.exp: ::perl:perl.stubsymbols
 	perl -ne 'print unless /^#|^__/' ::perl:perl.stubsymbols>macperl.exp

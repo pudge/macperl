@@ -1404,8 +1404,6 @@ void main()
 	/* gPerlPool			= new_malloc_pool('PERL', SUGGESTED_BLK_SIZE); */
 	gMacPerl_WaitEvent	= MainEvent;
 
-	setvbuf(stderr, NULL, _IOLBF, BUFSIZ);
-
 	if (err = AEObjectInit()) {
 		ShowError((StringPtr) "\pAEObjectInit", err);
 		gQuitting = true;
@@ -1428,6 +1426,8 @@ void main()
 	InitHelp();
 	InitHelpIndex();
 	EndHelp();
+
+	setvbuf(stderr, NULL, _IOLBF, BUFSIZ);
 
 	gSavedFontForce = GetScriptManagerVariable(smFontForce);
 	(void) SetScriptManagerVariable(smFontForce, 0);

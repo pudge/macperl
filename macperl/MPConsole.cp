@@ -522,6 +522,8 @@ GUSISocket * MPConsoleDevice::open(GUSIFileToken & file, int flags)
 		flags = O_WRONLY;
 		
 		break;
+	case GUSIFileToken::kConsole:
+		break;
 	default:
 		userConsole	= true;
 		break;
