@@ -69,7 +69,7 @@
 	[% dot %]<a href="http://use.perl.org/~pudge/">Development Journal</a><br />
 	[% dot %]<a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a><br />
 	[% dot %]<a href="http://lists.perl.org/showlist.cgi?name=perl5-changes-mac">perl5-changes-mac</a><br />
-	[% dot %]#macperl (<a href="http://openprojects.nu/irc_servers.shtml">OPN</a>)<br />
+	[% dot %]#macperl on irc.macperl.org<br />
 
 <p>
 	<img src="http://sf.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="[ SourceForge ]" />
