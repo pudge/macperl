@@ -4,6 +4,9 @@ File		:	macish.h			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.9  2001/05/05 20:32:41  pudge
+Prepare for 5.6.1a2, mostly updates to tests, and File::Find, and latest changes from main repository
+
 Revision 1.8  2001/04/17 03:53:44  pudge
 Minor version/config changes, plus sync with maint-5.6/perl
 
@@ -71,6 +74,7 @@ extern char * sys_errlist[];
 MP_EXT char	gMacPerl_AlwaysExtract		MP_INIT(false);
 MP_EXT char	gMacPerl_SyntaxError;
 MP_EXT char	gMacPerl_MustPrime;
+MP_EXT char *	gMacPerl_Perl5DB;
 MP_EXT char	gMacPerl_InModalDialog		MP_INIT(false);
 MP_EXT short	gMacPerl_OSErr;
 MP_EXT char 	gMacPerl_PseudoFileName[256];
