@@ -18,12 +18,22 @@ Components/typemap
 Files/Files.pm
 Files/Files.xs
 Files/Makefile.PL
+Files/t/Alias.t
+Files/t/Constants.t
 Files/t/Files.t
+Files/t/Info.t
 Files/typemap
 Gestalt/Gestalt.pm
 Gestalt/Gestalt.xs
 Gestalt/Makefile.PL
 Gestalt/t/Gestalt.t
+InternetConfig/InternetConfig.pm
+InternetConfig/InternetConfig.xs
+InternetConfig/Makefile.PL
+InternetConfig/eg/IC.plx
+InternetConfig/eg/ICDump.plx
+InternetConfig/eg/ICDumpMap.plx
+InternetConfig/typemap
 MANIFEST			This list of files
 MANIFEST.SKIP			Files to skip
 MacPerl/MacPerl.pm
