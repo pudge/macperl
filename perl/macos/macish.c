@@ -18,6 +18,7 @@ Author	:	Matthias Neeracher
 #undef modff
 #include <fp.h>
 #include <LowMem.h>
+#include <Timer.h>
 
 char **environ;
 static  char ** gEnviron;
@@ -775,9 +776,130 @@ clock_t MacPerl_times(struct tms * t)
 	return t->tms_utime;
 }
 
+/********************* Asynchronous Event management ************
+ * MacPerl maintains an os queue of tasks to be executed at a 
+ * reasonably "sane" time (in runops, to be more exact).
+ */
+
+static QHdr sMacPerlAsyncQueue;
+
+Boolean MacPerl_QueueAsyncTask(MacPerl_AsyncTask * task)
+{
+	if (task->fPending) /* Already queued. Race condition resolved below */
+		return false;
+	task->fPending = true;
+	if (!Dequeue((QElemPtr) task, &sMacPerlAsyncQueue)) /* Just in case somebody beat us in the race */
+		return false;
+	Enqueue((QElemPtr) task, &sMacPerlAsyncQueue);
+	
+	gMacPerl_HasAsyncTasks = true;	/* Flag for main loop to call async event processing */
+	
+	return true;
+}
+
+void MacPerl_DoAsyncTasks()
+{
+	QElemPtr			elem;
+	MacPerl_AsyncTask * task;
+	
+	gMacPerl_HasAsyncTasks = false; /* Though this might be set again while we process */
+	while (elem = sMacPerlAsyncQueue.qHead) {
+		Dequeue(elem, &sMacPerlAsyncQueue);
+		task = (MacPerl_AsyncTask *) elem;	/* Remove from queue */
+		task->fProc(task);						/* Call procedure */
+		task->fPending = false;					/* Allow it to be queued again */
+	}
+}
+
+/*
+ * Asynchronous tasks come in handy to exit gracefully from the middle of a script
+ */
+static MacPerl_AsyncTask	sAsyncExit;
+static int					sExitStatus;
+
+static void AsyncExit(MacPerl_AsyncTask * task) 
+{
+	dTHX;
+	
+	my_exit(sExitStatus);
+}
+
+void _exit(int status)
+{
+	if (MacPerl_QueueAsyncTask(&sAsyncExit))
+		sExitStatus = status;
+}
+
+/********************* Cursor Spin management *******************
+ * The other built in asynchronous task is cursor spinning.
+ */
+
+static struct SpinControlRec {
+	TMTask				fTimer;
+	MacPerl_AsyncTask	fTask;
+} sSpinControl;
+
+#define SPIN_FREQUENCY	200
+
+static void SpinTimer(struct SpinControlRec * spin)
+{
+	MacPerl_QueueAsyncTask(&spin->fTask);	/* Queue task for a safe time */
+	PrimeTime((QElem *) &spin->fTimer, SPIN_FREQUENCY);
+}
+
+#if GENERATINGCFM
+static RoutineDescriptor	uSpinTimer =
+		BUILD_ROUTINE_DESCRIPTOR(uppTimerProcInfo, SpinTimer);
+#elif defined(__MWERKS__)
+static pascal void uSpinTimer(struct SpinControlRec * param : __A1) { SpinTimer(param); }
+#else
+void * GetA1()  ONEWORDINLINE(0x2009);
+static pascal void uSpinTimer() 		\
+		{ SpinTimer((struct SpinControlRec *)GetA1()); }
+#endif
+
+static void SpinMacCursor(MacPerl_AsyncTask * task) 
+{
+	sleep(0);
+}
+
+static void StopSpinControl()
+{	
+	RmvTime((QElem *) &sSpinControl.fTimer);
+}
+
+/*
+ * It seeems that calling Perl_call_atexit at init time is suicidal, so
+ * we don't kick off the whole thing until we are well within the interpreter
+ */
+
+static void StartSpinControl(MacPerl_AsyncTask * task)
+{
+  	dTHX;
+	
+	sSpinControl.fTimer.tmAddr		=	(TimerUPP)&uSpinTimer;
+	sSpinControl.fTimer.tmCount		=	0;
+	sSpinControl.fTimer.tmWakeUp	=	0;
+	sSpinControl.fTimer.tmReserved	=	0;
+	sSpinControl.fTask.fProc		= 	SpinMacCursor;
+		
+	InsTime((QElem *) &sSpinControl.fTimer);
+	PrimeTime((QElem *) &sSpinControl.fTimer, SPIN_FREQUENCY);
+
+	Perl_call_atexit(aTHX_ StopSpinControl, NULL);
+}
+
 void MacPerl_init()
 {
 	gMacPerl_StartClock = LMGetTicks();
+
+	sSpinControl.fTask.fPending		=  	false;
+	sSpinControl.fTask.fProc		= 	StartSpinControl;
+
+	sAsyncExit.fPending				=  	false;
+	sAsyncExit.fProc				= 	AsyncExit;
+
+	MacPerl_QueueAsyncTask(&sSpinControl.fTask);
 }
 
 void
