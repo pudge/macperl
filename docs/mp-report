@@ -50,8 +50,11 @@ sub view_config {
 	my($pw) = @_;
 	my $config = get_config($pw, $pw->{form}{config_id});
 
-	$pw->header("View Configuration $config->{name} ($config->{id})");
-	$pw->process('view_config', { config => $config });
+	$pw->header("View Configuration #$config->{id}");
+	$pw->process('view_config', { config => $config,
+				  map { ($_ => get_param($pw, $_)) }
+				  qw ( processor version )
+				  });
 }
 
 sub view_tests {
@@ -266,7 +269,8 @@ sub get_configsdesc {
 
 sub get_config {
 	my($pw, $id) = @_;
-	return $pw->get_dbhash(['*', 'configs', 'id=?'], 'id', $id);
+	my $data = $pw->get_dbhash(['*', 'configs', 'id=?'], 'id', $id);
+	return $data->{$id};
 }
 
 sub get_usertests {

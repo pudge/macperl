@@ -1,0 +1,41 @@
+Listed below is configuration information for a system that is used for testing
+MacPerl.
+</p>
+
+<p>
+It is not intended as a guide to where MacPerl will and won't work.  It is
+just for testing purposes.
+</p>
+
+<table border="0" cellpadding="6"><tr>
+	<td>Configuration name:</td>
+	<td>[% FILTER strip_literal ; config.name ; END %]</td>
+</tr><tr>
+	<td>Processor:</td>
+	<td>[% processor.${config.processor} %]</td>
+</tr><tr>
+	<td>RAM (MB):</td>
+	<td>[% config.ram %]</td>
+</tr><tr>
+	<td>Version:</td>
+	<td>[% version.${config.version} %]</td>
+</tr><tr>
+	<td>Was this a CVS checkout?</td>
+	<td>[% config.cvs ? "Yes" : "No" %]</td>
+</tr><tr>
+	<td>Was this MacPerl built on this machine?</td>
+	<td>[% config.build ? "Yes" : "No" %]</td>
+</tr><tr>
+	<td>The compiler sets used:</td>
+	<td>
+		[% IF config.mwc; "MWC68K/MWCPPC (CodeWarrior)"; END %]
+		[% IF config.mwc && config.mpw; "<br />"; END %]
+		[% IF config.mpw; "SC/MrC (Apple MPW)"; END %]
+	</td>
+</tr><tr>
+	<td>Additional configuration notes:</td>
+	<td>[% FILTER strip_literal ; config.notes ; END %]</td>
+</tr><tr>
+	<td>Results:</td>
+	<td>[% FILTER strip_code ; config.results ; END %]</td>
+</tr></table>
