@@ -101,7 +101,7 @@ sub prep_cookie {
 
 sub get_cookie {
 	my($self) = @_;
-	my $cookie = $pw->{cgi}->cookie($pw->{cookie_name});
+	my $cookie = $self->{cgi}->cookie($self->{cookie_name});
 	if ($cookie) {
 		my($id, $pass) = split /:/, $cookie, 2;
 		return($id, $pass);
