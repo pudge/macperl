@@ -12,9 +12,13 @@ if ($ARGV[0] eq "-runperl") {
 }
 
 foreach (@ARGV) {
-    s/\.o$//; s/\.o\.PPC$//; s/\.o\.68K$//; 
-    s/ext:(.*):[^:]*/$1/ && next;
-    s/.*:(.*)/$1/;
+	if (/:/) {
+		s/\b(\w+):\1\b/$1/;
+		s/(\w):(\w)/${1}::${2}/g;
+	}
+#    s/\.o$//; s/\.o\.PPC$//; s/\.o\.68K$//; 
+#    s/ext:(.*):[^:]*/$1/ && next;
+#    s/.*:(.*)/$1/;
 }
 
 open(MAIN, "::miniperlmain.c") || die "Couldn't open ::miniperlmain.c: $!";
@@ -41,6 +45,7 @@ if ($#ARGV > -1) {
     foreach $ext (@ARGV) {
 	($mname = $ext) =~ s!/!::!g;
 	($cname = $mname) =~ s!:!_!g;
+	print STDERR "$mname / $cname\n";
 		
 	print "    {   extern void boot_${cname}(pTHX_ CV* cv);\n";
 		

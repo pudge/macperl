@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.6  2000/12/29 00:28:23  pudge
+#  Add additional standard extensions
+#
 #  Revision 1.5  2000/12/25 09:49:19  neeri
 #  Tweak makefile
 #
@@ -190,7 +193,7 @@ Static_Ext_Std	= \
 	# Devel:DProf:DProf bad errors
 	# Errno no idea
 
-Static_Ext_AutoInit	= 	$(Static_Ext_Mac:f) $(Static_Ext_Std:f)
+Static_Ext_AutoInit	= 	$(Static_Ext_Mac) $(Static_Ext_Std)
 More_Static_Ext		= 	OSA XL
 Static_Ext_Prefix		= 	:ext:{$(Static_Ext_Mac)} ::ext:{$(Static_Ext_Std)}
 Static_Ext_AutoInit_PPC	=	{$(Static_Ext_Prefix)}.Lib.PPC
