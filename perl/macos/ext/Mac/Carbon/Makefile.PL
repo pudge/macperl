@@ -14,6 +14,6 @@ WriteMakefile(
 	},
 	'test'		=> {
 		'TESTS' 	=> 't/*.t */t/*.t'
-	}
+	},
 	'NO_META'		=> 1,
 );
