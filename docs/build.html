@@ -13,7 +13,7 @@
 			var notes = new Array();
 			notes[0] = 'Later versions of SC/MrC may not be fully compatible.';
 			notes[1] = 'Later versions of STLport may not be fully compatible.';
-			notes[2] = 'This is the most recent snapshot of the maint-5.6/mapcerl branch from the perl repository.';
+			notes[2] = 'The latest perl source is included.';
 			notes[3] = 'If you run out of memory in the middle of a build, save, quit, and try again.';
 			notes[4] = 'In MPW you must hit "enter" or "cmd"+"return" to execute a command on a line.';
 
@@ -45,7 +45,7 @@
 </a>
 
 These are the build procedures for
-<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1.  Please send feedback to the
+<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1a4.  Please send feedback to the
 <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a> list,
 and <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">submit bugs
 at SourceForge</a>.
@@ -131,11 +131,9 @@ will be properly unpacked.
 	</li>
 
 	<li>
-		<strong><a href="http://dev.macperl.org/files/macperl@11209.sit.bin">latest perl 5.6.1 source</a></strong>
+		<strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=44497">MacPerl 5.6.1 source kit</a></strong>
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 	</li>
-
-	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=42695">MacPerl 5.6.1 source kit</a></strong></li>
 </ul>
 
 
@@ -203,12 +201,8 @@ will be properly unpacked.
 		To install the perl MPW tool, see the documentation that
 		comes with it.</p></li>
 
-	<li><p>Unpack the perl 5.6.1 source, rename the directory "perl",
-		and drop it in "HD:macperl_src:" with everything else.</p></li>
-
-	<li><p>Unpack the MacPerl source kit.  Put the "macperl"
-		folder inside "HD:macperl_src:".  Put the "macos" folder inside
-		"HD:macperl_src:perl:".</p></li>
+	<li><p>Unpack the MacPerl source kit.  Put the "macperl" and "perl"
+		folders inside "HD:macperl_src:".</p></li>
 
 	<li><p>From the "HD:macperl_src:" directory, apply the xsubpp patch.</p><pre>
 		directory "HD:macperl_src:"
@@ -272,8 +266,7 @@ via the web.
 <p class="notes">
 	<sup>0</sup> Later versions of SC/MrC may not be fully compatible.<br />
 	<sup>1</sup> Later versions of STLport may not be fully compatible.<br />
-	<sup>2</sup> This is the most recent snapshot of the maint-5.6/macperl
-		 branch from the perl repository.<br />
+	<sup>2</sup> The latest perl source is included.<br />
 	<sup>3</sup> If you run out of memory in the middle of a build, save,
 		quit, and try again.<br />
 	<sup>4</sup> In MPW you must hit "enter" or "cmd"+"return" to

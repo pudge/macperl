@@ -15,7 +15,7 @@ use vars '$compile';
 		virtual_user	=> "macperl",
 		cookie_name	=> "report_user",
 		cookie_path	=> "/",
-		cookie_domain	=> "macperl.sourceforge.net",
+		cookie_domain	=> "dev.macperl.org",
 		ttc_path	=> catdir($dir, "ttc"),
 		tt_path		=> [
 			catdir($dir, qw(htdocs templates mp-report)),

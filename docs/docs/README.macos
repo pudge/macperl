@@ -86,7 +86,7 @@ MacPerl.  See the Perl mailing lists site for more information.
 MacPerl can always be obtained from the following locations, among
 others:
 
-	http://macperl.sourceforge.net/
+	http://dev.macperl.org/
 	http://www.cpan.org/ports/mac/
 	ftp://ftp.cpan.org/CPAN/ports/mac/
 
@@ -94,8 +94,7 @@ MacPerl is avaiable on all the CPAN sites.  Find the CPAN mirror near you:
 
 	http://mirror.cpan.org/
 
-MacPerl is distributed in several forms.  Anonymous CVS access is
-available from the SourceForge site.  The source is also available
+MacPerl is distributed in several forms.  The source is available
 in a single archive.  The compiled, prepared distribution of MacPerl
 is available in two forms, a web-based installer that allows you to
 choose which pieces to download as-needed, and a large installer with
@@ -104,10 +103,11 @@ everything in it.
    MacPerl-5.6.1r1_src.bin
    MacPerl-5.6.1r1_web.bin
    MacPerl-5.6.1r1_full.bin
-   ^       ^     ^ ^    ^
-   MacPerl |     | |    MacBinary Suffix ("bin")
-           |     | Distribution Component ("src", "web", "full")
-           |     MacPerl Release ("1")
+   ^       ^    ^^ ^    ^
+   MacPerl |    || |    MacBinary Suffix ("bin")
+           |    || Distribution Component ("src", "web", "full")
+           |    |MacPerl Release ("1")
+           |    Type ("d"evelopment, "a"lpha, "b"eta, "r"elease)
            Perl Version ("5.6.1")
 
 The web and full installers give the following options:
@@ -141,17 +141,22 @@ The perl 5.6.1 source itself builds on Mac OS, with some additional
 pieces.  Support for Mac OS is now in the perl core, and MacPerl is
 kept in close sync with regular perl releases.
 
-To build perl for Mac OS (as an MPW tool), you will need the addition
-of the "macos" subdirectory, distributed separately (L<"CONTACT">).
-It includes extra source files, config files, and make files.  It also
-includes a lot of extra Mac-specific modules.
+To build perl for Mac OS (as an MPW tool), you will need the either
+the perl source, plus the the addition of the "macos" subdirectory,
+distributed separately (L<"CONTACT">).  It includes extra source files,
+config files, and make files.  It also includes a lot of extra
+Mac-specific modules.
 
 To build the MacPerl application, you will also need the "macperl"
 directory, which includes the source files for creating the
 application itself.
 
+All of this is available as a single archive, or in pieces via
+anonymous CVS or the main perl repository, in the maint-5.6/macperl
+branch.
+
 You will also need compilers and libraries, all of them freely
-available.  These are linked to from the SourceForge site. Go to that
+available.  These are linked to from the development site. Go to that
 site for all things having to do with MacPerl development.
 
 
@@ -161,7 +166,7 @@ Please send your bug reports, patches, and feature requests for MacPerl
 to the MacPerl site at SourceForge.  Also head over there for the latest
 source and links to other sites.
 
-	http://macperl.sourceforge.net/
+	http://dev.macperl.org/
 
 
 =head1 CREDITS
@@ -183,3 +188,8 @@ Software. For more information on Installer VISE, contact:
 
 The MacPerl application uses Mercutio MDEF, Copyright 1992-1998
 by Ramon M. Felciano.
+
+
+=head1 DATE
+
+Last modified 2001.07.20.
