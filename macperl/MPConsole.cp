@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.10  2002/01/04 03:34:45  pudge
+Modifications for universal headers 3.4
+
 Revision 1.9  2001/12/19 21:58:12  pudge
 Make -sane, -raw, etc. work in console.
 
@@ -260,7 +263,7 @@ ssize_t MPConsoleSocket::read(const GUSIScatterer & scatterer)
 	
 	avail = int(GetHandleSize(input));
 	
-	if (!avail)	{
+	if (!avail)	{ 
 		if (eof) {
 			eof = false;
 			
@@ -282,7 +285,7 @@ ssize_t MPConsoleSocket::read(const GUSIScatterer & scatterer)
 			GUSIErrorSaver saveError;
 			
 			gWantConsoleInput	= true;
-			while(!(avail = int(GetHandleSize(input))) && !eof && window)
+			while(!(avail = int(GetHandleSize(input))) && !eof && window && window->u.cons.selected)
 				GUSIContext::Yield(kGUSIPoll);
 			gWantConsoleInput	= false;
 	
