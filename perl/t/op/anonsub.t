@@ -26,7 +26,7 @@ for (@prgs){
     open TEST, ">$tmpfile";
     print TEST "$prog\n";
     close TEST;
-    print my $results = $Is_VMS ?
+    my $results = $Is_VMS ?
 		`MCR $^X "-I[-.lib]" $switch $tmpfile 2>&1` :
 		  $Is_MSWin32 ?
 		    `.\\perl -I../lib $switch $tmpfile 2>&1` :
