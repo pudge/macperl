@@ -3,6 +3,9 @@ Project	:	Perl5				-
 File	:	icemalloc.c			-	Memory allocator
 
 $Log$
+Revision 1.3  2001/09/18 09:03:46  neeri
+Off by one error in bucket search routine (MacPerl Bug#404030)
+
 Revision 1.2  2001/09/14 08:10:36  neeri
 Make realloc smarter (MacPerl bug $404030)
 
@@ -540,7 +543,8 @@ char * _bucket_malloc(
 #endif
 				
 			bucket->prev		= (_mem_bucket_ptr) buckets;
-			bucket->next 		= *buckets;
+			if (bucket->next = *buckets)
+				bucket->next->prev = bucket;
 			*buckets 			= bucket;
 			bucket->pool 		= pool;
 			bucket->max_count	= max;
