@@ -329,6 +329,10 @@ pascal void MainEvent(void)
 		}
 }
 
+#if defined(__SC__)
+QDGlobals	qd;
+#endif
+
 void main()
 {
 	InitGraf(&qd.thePort);

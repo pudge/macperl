@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.7  2001/01/16 21:01:42  pudge
+#  Minor changes
+#
 #  Revision 1.6  2001/01/13 05:58:43  neeri
 #  Automatically create Obj folder, fix libraries for MPDroplet.code
 #
@@ -53,7 +56,7 @@ SFIO		= "{{SFIO}}"
 GUSI		= "{{GUSI}}"
 MoreFiles	= ::MoreFiles:
 
-COpt += -i $(MACPERL_SRC) -i $(PERL_SRC) -i $(DB)include: -i ::IC: -i $(AEGizmos)Headers:
+COpt += -i $(MACPERL_SRC) -i $(PERL_SRC) -i $(DB)include: -i ::IC: -i $(AEGizmos)include:
 ApplRez 		= 	Rez -a -t APPL -c McPL
 ApplMWLOpt		=	${LOpt} -xm application -d -warn
 ApplLink68K		=	MWLink68K ${ApplMWLOpt} -model far
@@ -62,6 +65,7 @@ ApplMPWLOpt		=	${LOpt} -t APPL -w -mf
 ApplLinkSC		=	Link ${ApplMPWLOpt}  -model far
 ApplLinkMrC		= 	PPCLink ${ApplMPWLOpt}
 RsrcLink68K		= 	MWLink68K -xm coderesource
+RsrcLinkSC		=	Link
 
 MacPerlSources	=		\
 	MPUtils.c		\
@@ -269,9 +273,16 @@ MacPerl : MacPerl.PPC MacPerl.68K MacPerl.MrC MacPerl.SC
 		| Rez -a -c McPL -t APPL -o MacPerl
 	$(MACPERL_SRC)UnPreload MacPerl
 
-":Obj:FontLDEF.rsrc" : MPFontLDEF.c.68K.o
-	$(RsrcLink68K) -t rsrc -c RSED -rt LDEF=128 -o :Obj:FontLDEF.rsrc 	¶
+":Obj:FontLDEF.rsrc.68K" : MPFontLDEF.c.68K.o
+	$(RsrcLink68K) -t rsrc -c RSED -rt LDEF=128 -o :Obj:FontLDEF.rsrc.68K 	¶
 		:Obj:MPFontLDEF.c.68K.o "{{MW68KLibraries}}"MacOS.lib
+
+":Obj:FontLDEF.rsrc.SC" : MPFontLDEF.c.SC.o
+	$(RsrcLinkSC) -t rsrc -c RSED -rt LDEF=128 -o :Obj:FontLDEF.rsrc.SC 	¶
+		:Obj:MPFontLDEF.c.SC.o
+
+":Obj:FontLDEF.rsrc" : :Obj:FontLDEF.rsrc.$(MACPERL_INST_APPL_68K)
+	Duplicate :Obj:FontLDEF.rsrc.$(MACPERL_INST_APPL_68K) ":Obj:FontLDEF.rsrc"
 
 MPTerminology.r	:	MPTerminology.aete
 	:macscripts:Aete2Rez MPTerminology.aete > MPTerminology.r
@@ -293,20 +304,28 @@ MacPerlTest.Script	:	MakeMacPerlTest
 	MakeMacPerlTest ¶
 		::perl:t:Å:Å.t> MacPerlTest.Script
 
-MPDroplet.code : MPDrop.c.68K.o
-	$(ApplLink68K) -t 'rsrc' -c 'RSED' -sym on			¶
+MPDroplet.code.68K : MPDrop.c.68K.o
+	$(ApplLink68K) -t McPp -c McPL -sym on			¶
 		:Obj:MPDrop.c.68K.o								¶
 		"{{MW68KLibraries}}MSL Runtime68K.Lib"			¶
 		"{{MW68KLibraries}}MacOS.Lib"					¶
 		"{{MW68KLibraries}}MSL C.68K MPW(NL_4i_8d).Lib"	¶
-		"{{MW68KLibraries}}MathLib68K (4i_8d).Lib" -o MPDroplet.code	
+		"{{MW68KLibraries}}MathLib68K (4i_8d).Lib" -o MPDroplet.code.68K	
+MPDroplet.68K : "MacPerl Extensions" MPDroplet.code.68K MPDroplet.r MPExtension.r MacPerl.rsrc
+	Rez -t McPp -c McPL -d MWC -o MPDroplet.68K MPDroplet.r
 
-MPDroplet : ":MacPerl Extensions:Droplet"	
+MPDroplet.code.SC : MPDrop.c.SC.o
+	$(ApplLinkSC) -t McPp -c McPL -sym on			¶
+		:Obj:MPDrop.c.SC.o	 						¶
+		"{{Libraries}}MacRuntime.o"					¶
+		"{{Libraries}}Interface.o"	-o MPDroplet.code.SC
+MPDroplet.SC : "MacPerl Extensions" MPDroplet.code.SC MPDroplet.r MPExtension.r MacPerl.rsrc
+	Rez -t McPp -c McPL -o MPDroplet.SC MPDroplet.r
 
-":MacPerl Extensions:Droplet" : MPExt MPDroplet.code MPDroplet.r MPExtension.r MacPerl.rsrc
-	Rez -t McPp -c McPL -o ":MacPerl Extensions:Droplet" MPDroplet.r
+MPDroplet : MPDroplet.$(MACPERL_INST_APPL_68K)
+	Duplicate -y MPDroplet.$(MACPERL_INST_APPL_68K) ":MacPerl Extensions:Droplet"
 
-MPExt :
+"MacPerl Extensions" :
 	NewFolder "MacPerl Extensions"
 
 Distr : all

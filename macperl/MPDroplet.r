@@ -17,8 +17,12 @@ Checked into CVS
 
 #include "MPExtension.r"
 
-include "MPDroplet.code" 'CODE' as 'MrPC';
-include "MPDroplet.code" 'DATA' as 'MrPD';
+#ifdef MWC
+include "MPDroplet.code.68K" 'CODE' as 'MrPC';
+include "MPDroplet.code.68K" 'DATA' as 'MrPD';
+#else
+include "MPDroplet.code.SC" 'CODE' as 'MrPC';
+#endif
 
 include "MPExtension.rsrc" 'BNDL'(128) as 'MrPB'(128);
 include "MPExtension.rsrc" 'MrPL'(0);
@@ -46,8 +50,12 @@ resource 'McPs' (SERsrcBase) {
 	{
 		'MrPC', 'CODE',    0,    0,
 		'MrPC', 'CODE',    1,    1,
-		'MrPC', 'CODE',    2,    2,
+#ifdef MWC
 		'MrPD', 'DATA',    0,    0,
+#else
+		'MrPC', 'CODE',    2,    2,
+		'MrPC', 'CODE',    3,    3,
+#endif
 		'MrPB', 'BNDL',  128,  128,
 		'MrPL', 'MrPL',    0,    0,
 		'SIZE', 'SIZE',  128,   -1,
