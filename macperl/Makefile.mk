@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.11  2001/01/30 05:17:05  pudge
+#  Minor change
+#
 #  Revision 1.10  2001/01/24 07:06:42  neeri
 #  Export symbols from PowerPC applications so dynamic extensions work
 #
@@ -110,10 +113,12 @@ ObjectsMrC 		= {$(MacPerlSources) $(PerlSources)}.MrC.o
 Static_Ext_Mac	= 	\
 	MacPerl:MacPerl 
 Static_Ext_Std	= \
-	re:re Fcntl:Fcntl File:Glob:Glob Sys:Hostname:Hostname \
-	DynaLoader:DynaLoader NDBM_File:NDBM_File DB_File:DB_File Socket:Socket \
-	Opcode:Opcode POSIX:POSIX IO:IO attrs:attrs Data:Dumper:Dumper \
-	Devel:Peek:Peek
+	B:B ByteLoader:ByteLoader Data:Dumper:Dumper DB_File:DB_File \
+	Devel:Peek:Peek DynaLoader:DynaLoader \
+	Fcntl:Fcntl File:Glob:Glob IO:IO \
+	NDBM_File:NDBM_File Opcode:Opcode POSIX:POSIX \
+	Socket:Socket Sys:Hostname:Hostname \
+ 	attrs:attrs re:re
 Static_Ext_Prefix		= 	$(MACPERL_SRC)ext:{$(Static_Ext_Mac)} $(PERL_SRC)ext:{$(Static_Ext_Std)}
 Static_Ext_AutoInit_PPC	=	{$(Static_Ext_Prefix)}.Lib.PPC
 Static_Ext_AutoInit_68K	=	{$(Static_Ext_Prefix)}.Lib.68K
