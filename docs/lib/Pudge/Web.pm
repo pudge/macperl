@@ -23,7 +23,9 @@ Foo.
 use strict;
 use CGI;
 use DBIx::Password;
+use HTML::Entities;
 use Template;
+use URI;
 use vars qw($VERSION);
 
 ($VERSION) = ' $Revision$ ' =~ /\$Revision:\s+([^\s]+)/;
@@ -343,43 +345,66 @@ sub fixurl {
 	}
 }
 
+sub approveTag {
+	my($tag) = @_;
+
+	$tag =~ s/^\s*?(.*)\s*?$/$1/; # trim leading and trailing spaces
+	$tag =~ s/\bstyle\s*=(.*)$//i; # go away please
+
+	# Take care of URL:foo and other HREFs
+	if ($tag =~ /^URL:(.+)$/i) {
+		my $url = fixurl($1);
+		return qq!<A HREF="$url">$url</A>!;
+	} elsif ($tag =~ /href\s*=(.+)$/i) {
+		my $url = fixurl($1);
+		return qq!<A HREF="$url">!;
+	}
+
+	# Validate all other tags
+	my $approvedtags = [qw(B I P A LI OL UL EM BR TT STRONG BLOCKQUOTE DIV)];
+	$tag =~ s|^(/?\w+)|\U$1|;
+	foreach my $goodtag (@$approvedtags) {
+		return "<$tag>" if $tag =~ /^$goodtag$/ || $tag =~ m|^/$goodtag$|;
+	}
+}
+
 sub stripBadHtml {
-    my($str) = @_;
+	my($str) = @_;
 
-    $str =~ s/<(?!.*?>)//gs;
-    $str =~ s/<(.*?)>/approveTag($1)/sge;
-    $str =~ s/></> </g;
+	$str =~ s/<(?!.*?>)//gs;
+	$str =~ s/<(.*?)>/approveTag($1)/sge;
+	$str =~ s/></> </g;
 
-    return $str;
+	return $str;
 }
 
 {
-    # this should be defined in vars table
-    my %is_break_tag = map { uc, 1 } qw(HR BR LI P OL UL BLOCKQUOTE DIV);
+	# this should be defined in vars table
+	my %is_break_tag = map { uc, 1 } qw(HR P LI OL UL BR BLOCKQUOTE DIV);
 
-sub breakHtml {
-    my($text, $mwl) = @_;
-    my($new, $l, $c, $in_tag, $this_tag, $cwl);
+	sub breakHtml {
+		my($text, $mwl) = @_;
+		my($new, $l, $c, $in_tag, $this_tag, $cwl);
 
-    $mwl = $mwl || 50;
-    $l = length $text;
+		$mwl = $mwl || 50;
+		$l = length $text;
 
-    for (my $i = 0; $i < $l; $new .= $c, ++$i) {
-	$c = substr($text, $i, 1);
-	if ($c eq '<'){ $in_tag = 1 }
-	elsif ($c eq '>'){
-	    $in_tag = 0;
-	    $this_tag =~ s{^/?(\S+).*}{\U$1};
-	    $cwl = 0 if $is_break_tag{$this_tag};
-	    $this_tag = '';
+		for (my $i = 0; $i < $l; $new .= $c, ++$i) {
+			$c = substr($text, $i, 1);
+			if ($c eq '<')		{ $in_tag = 1 }
+			elsif ($c eq '>')	{
+				$in_tag = 0;
+				$this_tag =~ s{^/?(\S+).*}{\U$1};
+				$cwl = 0 if $is_break_tag{$this_tag};
+				$this_tag = '';
+			}
+			elsif ($in_tag)		{ $this_tag .= $c }
+			elsif ($c =~ /\s/)	{ $cwl = 0 }
+			elsif (++$cwl > $mwl)	{ $new .= ' '; $cwl = 1 }
+		}
+
+		return $new;
 	}
-	elsif ($in_tag){ $this_tag .= $c }
-	elsif ($c =~ /\s/){ $cwl = 0 }
-	elsif (++$cwl > $mwl){ $new .= ' '; $cwl = 1 }
-    }
-
-    return $new;
-}
 }
 
 
