@@ -37,7 +37,7 @@ EOS
 	my($finder, $mtype, $mcrea);
 	# Mac OS X
 	if ($^O eq 'darwin') {
-		ok($version >= 10, "Finder v$version");
+		ok($version ge 10, "Finder v$version");
 		$finder = '/System/Library/CoreServices/Finder';
 		$mcrea = $mtype = "\0\0\0\0";
 	}
@@ -47,7 +47,7 @@ EOS
 		if ($version >= 10) {
 			ok(1, "Finder v$version (Classic)");
 		} else {
-			ok($version >=7, "Finder v$version");
+			ok($version ge 7, "Finder v$version");
 		}
 		$finder = MakePath($volumes[0]) . "System Folder:Finder";
 		$mcrea = 'R*ch';
@@ -77,8 +77,8 @@ EOS
 
 		SetFileInfo('McPL', 'TEXT', $testfile);
 		($crea, $type) = GetFileInfo($testfile);
-		is($crea, 'McPL', "creator of '$testfile'");
-		is($type, 'TEXT', "type of '$testfile'");
+		is('McPL', $crea, "creator of '$testfile'");
+		is('TEXT', $type, "type of '$testfile'");
 	} else {
 		ok(0, "No file '$testfile'") for 1..4;
 	}
@@ -88,7 +88,7 @@ EOS
 	is($pick, 3, 'Pick()');
 
 	my $ask  = MacPerl::Ask('Remove the brackets and hit OK', "[$ENV{USER}]");
-	is($ENV{USER}, $ask, 'Ask()');
+	is($ask, $ENV{USER}, 'Ask()');
 
 	my $answer = MacPerl::Answer("Please click Cancel", "OK", "Cancel", "Booya!");
 	is($answer, 1, 'Answer()');
