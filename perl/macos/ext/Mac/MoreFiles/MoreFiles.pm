@@ -17,12 +17,13 @@ use strict;
 package Mac::MoreFiles;
 
 BEGIN {
-	use MacPerl 'Volumes';
+	use MacPerl ();
+	use Mac::Processes ();
 	use Exporter   ();
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Application);
-	$VERSION = '1.02';
+	$VERSION = '1.03';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		FSpCreateMinimum
@@ -51,17 +52,21 @@ BEGIN {
 }
 
 sub FETCH {
-	my($self,$id) = @_;
-	my($vol,$app);
-	
+	my($self, $id) = @_;
+
 	if (!$self->{$id}) {
-		for $vol (MacPerl::Volumes()) {
-			$app = Mac::MoreFiles::FSpDTGetAPPL(hex(substr($vol, 1, 4)), $id);
-			last if ($app);
+		my($app);
+		if ($^O eq 'MacOS') {
+			for my $vol (MacPerl::Volumes()) {
+				$app = Mac::MoreFiles::FSpDTGetAPPL(hex(substr($vol, 1, 4)), $id);
+				last if $app;
+			}
+		} else {
+			$app = Mac::Processes::LSFindApplicationForInfo($id);
 		}
 		$self->{$id} = $app;
 	}
-	$self->{$id};
+	return $self->{$id};
 }
 
 package Mac::MoreFiles;
