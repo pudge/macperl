@@ -25,7 +25,7 @@ sub domakefile {
 
 $MOD  ||= (splitdir(cwd()))[-1];
 $XS   ||= "$MOD.xs";
-($C = $XS) =~ s/\.xs$/.c/;
+($C ||= $XS) =~ s/\.xs$/.c/;
 $PM   ||= "$MOD.pm";
 $POD  ||= "$MOD.pod";
 $NAME ||= "Mac::$MOD";
