@@ -91,14 +91,20 @@ The Test::More module is required for running tests.
 The separate Mac::Errors module is not required, but is highly recommended.
 
 Building these modules has been tested successfully on Mac OS X 10.1 and 10.2,
-with perl 5.6.0/5.6.1/5.8.0, with both gcc2 and gcc3.  Some tests fail on
-UFS ([GS]etFileInfo in MacPerl.t).  There are a lot of warnings on 10.1,
-though the tests should all pass.
+with perl 5.6.0/5.6.1/5.8.0, with both gcc2, gcc3.1, and gcc3.3.  There are a
+lot of warnings on 10.1, though the tests should all pass.
 
-Don't run the test suite on a remote computer (such as via ssh, instead
-of via the Terminal).  It requires user feedback in some cases, and in general
-it is best to be there when you run the tests.  Maybe in the future this
-can be addressed (patches welcome).
+A few things fail on the current release of Panther, developer preview releases
+of what will become Mac OS X 10.3.  These will be addressed as the release of Mac
+OS X 10.3 draws nearer, but until then, ignore test errors for CountVoices()
+in Mac::Speech (a voice file in the Panther Preview was broken), along with
+the Mac::Notification tests (which expose problems/changes with the Notification
+Manager and LaunchApplication()).
+
+If you run the test suite on a remote computer (such as via ssh, instead
+of via the Terminal), note that it requires user feedback in some cases,
+and in general it is best to be there when you run the tests.  Maybe in the future
+this can be addressed (patches welcome).
 
 
 =head1 BUILDING
@@ -133,7 +139,7 @@ modules are:
 	Mac::Types
 	MacPerl
 
-Distributed separately on the CPAN and SourceForge.net (either now or soon):
+Distributed separately on the CPAN and SourceForge.net:
 
 	Mac::AppleEvents::Simple
 	Mac::OSA::Simple

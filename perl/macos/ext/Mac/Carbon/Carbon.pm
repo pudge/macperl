@@ -139,7 +139,7 @@ See L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Mac-Carbon> for more information.
 
 =item *
 
-Make test suite work without being run from Terminal.app.
+Make test suite work without access to main console.
 
 =item *
 
@@ -215,7 +215,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.53';
+$VERSION = '0.54';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
