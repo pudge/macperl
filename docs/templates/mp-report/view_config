@@ -8,6 +8,11 @@ just for testing purposes.
 </p>
 
 <table border="0" cellpadding="6"><tr>
+        <td valign="top">User:</td>
+        <td>[% IF myuser.sf_match %]
+<a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
+        [% ELSE; myuser.name; END %]</td>
+</tr><tr>
 	<td>Configuration name:</td>
 	<td>[% FILTER strip_literal ; config.name ; END %]</td>
 </tr><tr>

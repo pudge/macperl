@@ -49,10 +49,12 @@ sub main {
 sub view_config {
 	my($pw) = @_;
 	my $config = get_config($pw, $pw->{form}{config_id});
+	my $user = get_user($pw, $config->{user_id});
 
 	$pw->header("View Configuration #$config->{id}");
 	$pw->process('view_config', {
 		config		=> $config,
+		myuser          => $user,
 		map { ($_ => get_param($pw, $_)) }
 			qw ( processor version )
 	});
@@ -62,11 +64,14 @@ sub view_test {
 	my($pw) = @_;
 	my $test = get_test($pw, $pw->{form}{test_id});
 	my $config = get_config($pw, $test->{config_id});
+	my $user = get_user($pw, $test->{user_id});
 
-	$pw->header("View Configuration #$test->{id}");
+	$pw->header("View Test Result #$test->{id}");
 	$pw->process('view_test', {
 		test		=> $test,
 		config		=> $config,
+		myuser          => $user,
+		tests           => get_testdesc($pw),
 		map { ($_ => get_param($pw, $_)) }
 			qw ( compiler status )
 	});
@@ -267,6 +272,12 @@ sub get_users {
 	return $pw->get_dbhash(['id,user,sf_match', 'users'], 'id');
 }
 
+sub get_user {
+	my($pw, $id) = @_;
+	my $data = $pw->get_dbhash(['id,user,sf_match', 'users', 'id=?'], 'id', $id);
+	return $data->{$id};
+}
+
 sub get_testdesc {
 	my($pw) = @_;
 	return $pw->get_dbhashdesc(['id,test', 'tests']);
@@ -274,7 +285,7 @@ sub get_testdesc {
 
 sub get_test {
 	my($pw, $id) = @_;
-	my $data = $pw->get_dbhash(['*', 'tests', 'id=?'], 'id', $id);
+	my $data = $pw->get_dbhash(['*', 'user_tests', 'id=?'], 'id', $id);
 	return $data->{$id};
 }
 

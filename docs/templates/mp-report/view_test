@@ -1,3 +1,4 @@
+
 Listed below is information about a test run under MacPerl.
 </p>
 
@@ -7,25 +8,32 @@ just for testing purposes.
 </p>
 
 <table border="0" cellpadding="6"><tr>
-	<td>Test:</td>
-	<td>[% tests.{$test.id} %]</td>
+	<td valign="top">User:</td>
+	<td>[% IF myuser.sf_match %]
+<a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
+	[% ELSE; myuser.name; END %]</td>
 </tr><tr>
-	<td>Configuration:</td>
-	<td>[% config.name %]</td>
+	<td valign="top">Test:</td>
+	<td>
+<a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/~checkout~/perl/t/[% tests.${test.id} %].t?cvsroot=macperl">[% tests.${test.test_id} %]</a>
+	</td>
 </tr><tr>
-	<td>Compiler:</td>
-	<td>[% compiler.{$test.compiler} %]</td>
+	<td valign="top">Configuration:</td>
+	<td><a href="[% env.script_name %]?op=view_config&config_id=[% config.id %]">[% config.name %]</a></td>
 </tr><tr>
-	<td>Status:</td>
-	<td>[% status.{$test.status} %]</td>
+	<td valign="top">Compiler:</td>
+	<td>[% compiler.${test.compiler} %]</td>
 </tr><tr>
-	<td>Is this test using the MPW tool (else assume the application is used)?</td>
+	<td valign="top">Status:</td>
+	<td>[% status.${test.status} %]</td>
+</tr><tr>
+	<td valign="top">Is this test using the MPW tool (else assume the application is used)?</td>
 	<td>[% test.is_tool ? "Yes" : "No" %]</td>
 </tr><tr>
-	<td>Notes:</td>
+	<td valign="top">Notes:</td>
 	<td>[% FILTER strip_literal ; test.notes ; END %]</td>
 </tr><tr>
-	<td>Test output (including the command it was invoked with,
+	<td valign="top">Test output (including the command it was invoked with,
 	if using the MPW tool):</td>
 	<td>[% FILTER strip_code ; test.results ; END %]</td>
 </tr></table>

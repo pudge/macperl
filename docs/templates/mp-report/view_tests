@@ -26,7 +26,7 @@ Please read the test guidelines (not yet available :-).
 [% FOR test = tests %]
 	<tr class="[% PROCESS get_status st => test.status %]">
 		<td>
-<a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/~checkout~/perl/t/[% test.test %].t?cvsroot=macperl" name="[% test.test %]">[% test.test %]</a>
+<a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/~checkout~/perl/t/[% test.test %].t?cvsroot=macperl">[% test.test %]</a>
 		</td>
 		<td colspan="4">&nbsp;</td>
 	</tr>
@@ -34,7 +34,7 @@ Please read the test guidelines (not yet available :-).
 		myuser = users.${user_test.user_id};
 	%]
 	<tr class="[% PROCESS get_status st => user_test.status %]">
-		<td>&nbsp;</td>
+		<td align="right"><a href="[% env.script_name %]?op=view_test&amp;test_id=[% user_test.id %]">*</a></td>
 		<td>[% IF myuser.sf_match %]
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
 		[% ELSE; myuser.name; END %]</td>
