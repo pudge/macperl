@@ -811,6 +811,17 @@ void MacPerl_DoAsyncTasks()
 	}
 }
 
+void MacPerl_ClearAsyncTasks()
+{
+	QElemPtr			elem;
+	MacPerl_AsyncTask * task;
+	
+	gMacPerl_HasAsyncTasks = false;
+	while (elem = sMacPerlAsyncQueue.qHead) {
+		Dequeue(elem, &sMacPerlAsyncQueue);
+	}
+}
+
 /*
  * Asynchronous tasks come in handy to exit gracefully from the middle of a script
  */
@@ -892,6 +903,8 @@ static void StartSpinControl(MacPerl_AsyncTask * task)
 void MacPerl_init()
 {
 	gMacPerl_StartClock = LMGetTicks();
+
+	MacPerl_ClearAsyncTasks();
 
 	sSpinControl.fTask.fPending		=  	false;
 	sSpinControl.fTask.fProc		= 	StartSpinControl;
@@ -1014,4 +1027,11 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len)
 	}
 	/* No file/line found */
 	WriteMsg(io, msg, len, true);
+}
+
+void MacPerl_Exit(int status) 
+{
+	dTHX;
+	
+	my_exit(status);
 }

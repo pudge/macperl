@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.5  2001/10/29 10:38:01  neeri
+Another go at our perennial favorite (MacPerl Bug #422129)
+
 Revision 1.4  2001/10/11 05:19:31  neeri
 Fix exit code (MacPerl bug #422129)
 
@@ -605,6 +608,8 @@ bool MPConsoleSpin(bool /* wait */)
 		ResetConsole();
 
 		raise(SIGINT);
+		// don't raise SIGINT again
+		gAborting = false;
 	} 
 		
 	// 
