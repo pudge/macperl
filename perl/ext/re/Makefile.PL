@@ -26,6 +26,17 @@ re_exec$(OBJ_EXT) : re_exec.c
 
 
 VMS_EOF
+  } elsif ($^O eq 'MacOS') {
+    return <<'EOF';
+re_comp.c: :::regcomp.c
+	-$(RM_F) $@
+	$(CP) :::regcomp.c $@
+
+re_exec.c: :::regexec.c
+	-$(RM_F) $@
+	$(CP) :::regexec.c $@
+
+EOF
   } else {
     return <<'EOF';
 re_comp.c: ../../regcomp.c
