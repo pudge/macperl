@@ -251,3 +251,10 @@ FSpDTGetAPPL
 FSpDTSetComment
 FSpDTGetComment
 FSpDTCopyComment
+# Symbols added from sfio Mon, Jul 2, 2001 20:46:58
+_sfflsbuf
+_stdsprintf
+_sffilbuf
+sys_errlist
+_stdopen
+_Sfstderr
