@@ -5,7 +5,8 @@ use vars qw(%ARGS);
 do(catfile(updir(), 'common.pl'));
 
 if ($^O eq 'darwin') {
-	$ARGS{'LDDLFLAGS'}	= '-lstdc++ ' . $ARGS{'LDDLFLAGS'};
+	$ARGS{'LD'}		= 'c++';
+#	$ARGS{'LDDLFLAGS'}	= '-lstdc++ ' . $ARGS{'LDDLFLAGS'};
 	$ARGS{'OBJECT'}		= 'AppleEvents.o PerlAEUtils.o';
 
 	# i'm sure there's a way to tell MakeMaker to use .cp,
