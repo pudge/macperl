@@ -1,6 +1,6 @@
 ErrorDocument 404 /404.shtml
 
-Options ExecCGI
+Options FollowSymLinks ExecCGI Includes Indexes
 AddHandler cgi-script .pl
 DirectoryIndex index.pl index.shtml index.html
 
