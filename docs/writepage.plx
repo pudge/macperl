@@ -41,7 +41,7 @@ if (exists $data{Tasks}{tasks}) {
 		$_->{href} =~ s/&/&amp;/g;
 		$tasks .= sprintf $task_format, @{$_}{qw(href task)};
 	}
-	$text =~ s/(\n\t+<!-- Tasks\|begin -->\n).*(\t+<!-- Tasks\|end -->)/$1$tasks$2/sg;
+	$text =~ s/(\n\t+<!-- Tasks\|begin -->\n).*?(\t+<!-- Tasks\|end -->)/$1$tasks$2/sg;
 }
 
 sub fixnum {
