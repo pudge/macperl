@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/12/12 14:57:08  pudge
+ * Update POD and docs
+ *
  * Revision 1.3  2002/12/10 01:47:17  pudge
  * Some cleanup, and add idle proc, which we don't actually use
  *
@@ -160,6 +163,8 @@ static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 
 	// convert from GUSI-style FSSpec encoding (see GUSIFSp2Encoding)
 	if (*fileName == '\021' && fileName[13] == ':') {
+		Str255	path;
+
 		spec->vRefNum 	= 0;
 		spec->parID	= 0;
 
@@ -172,7 +177,6 @@ static OSErr GUSIPath2FSp(const char * fileName, FSSpec * spec)
 			fileName += 13;
 		}
 
-		Str255	path;
 		MacPerl_CopyC2P(fileName, path);
 
  		switch (gMacPerl_OSErr = FSMakeFSSpec(spec->vRefNum, spec->parID, path, spec)) {

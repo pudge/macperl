@@ -199,7 +199,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.03';
+$VERSION = '0.02_01';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -254,7 +254,9 @@ Nandor E<lt>pudge@pobox.comE<gt>.
 Michael Blakeley E<lt>mike@blakeley.comE<gt>,
 brian d foy E<lt>comdog@panix.comE<gt>,
 Gero Herrmann E<lt>herr@ils.uec.ac.jpE<gt>,
+Paul McCann E<lt>pmccann@maths.adelaide.edu.auE<gt>,
 Dan Sugalksi E<lt>dan@sidhe.orgE<gt>,
+Ken Williams E<lt>ken@mathforum.orgE<gt>,
 Steve Zellers.
 
 =head1 SEE ALSO

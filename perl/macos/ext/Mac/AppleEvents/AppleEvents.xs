@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2002/12/12 14:57:16  pudge
+ * Update POD and docs
+ *
  * Revision 1.4  2002/12/10 19:13:22  pudge
  * Fix dumb bug in getting AEDesc data.  Remove debugging code.
  *
@@ -96,12 +99,13 @@ data(desc, newData=0)
 			desc.dataHandle	=	newData;
 		RETVAL = desc.dataHandle;
 #else
+		Ptr  descData;
+		Size descLen;
+
 		if (items>1) {
 			AEReplaceDescData(desc.descriptorType, *newData,
 				GetHandleSize(newData), &desc);
 		}
-		Ptr  descData;
-		Size descLen;
 
 		descLen = AEGetDescDataSize(&desc);
 		descData = NewPtr(descLen);
@@ -173,12 +177,13 @@ data(desc, newData=0)
 			desc.descContent.dataHandle	=	newData;
 		RETVAL = desc.descContent.dataHandle;
 #else
+		Ptr  descData;
+		Size descLen;
+
 		if (items>1) {
 			AEReplaceDescData(desc.descContent.descriptorType, *newData,
 				GetHandleSize(newData), &desc.descContent);
 		}
-		Ptr  descData;
-		Size descLen;
 
 		descLen = AEGetDescDataSize(&desc.descContent);
 		descData = NewPtr(descLen);
@@ -598,6 +603,7 @@ AESend(theAppleEvent, sendMode, sendPriority=kAENormalPriority, timeout=kAEDefau
 	short		sendPriority
 	long		timeout
 	CODE:
+	{
 #ifdef MACOS_TRADITIONAL
 	if (gPAESend) 
 		AEFail(
@@ -613,6 +619,7 @@ AESend(theAppleEvent, sendMode, sendPriority=kAENormalPriority, timeout=kAEDefau
 #else
 	// AESendMessage code for Mac OS X from Steve Zellers
 	mach_port_t port;
+
 	mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port);
 	AEPutAttributePtr(&theAppleEvent, keyReplyPortAttr, typeMachPort, &port, sizeof(port));
 	AEFail(
@@ -623,6 +630,7 @@ AESend(theAppleEvent, sendMode, sendPriority=kAENormalPriority, timeout=kAEDefau
 	);
 	mach_port_destroy(mach_task_self(), port);
 #endif
+	}
 	OUTPUT:
 	RETVAL
 
