@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.9  2002/12/12 14:57:47  pudge
+ * Update POD and docs
+ *
  * Revision 1.8  2002/11/13 02:04:52  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -302,7 +305,7 @@ MODULE = Mac::Memory	PACKAGE = Ptr
 
 =head2 Ptr
 
-Handle provides an object interface to do simple operations on MacOS pointers
+Ptr provides an object interface to do simple operations on MacOS pointers
 (nonrelocatable heap blocks). There are very few good reasons to create pointers
 like this.
 
