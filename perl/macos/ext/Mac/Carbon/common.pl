@@ -5,7 +5,7 @@ use File::Spec::Functions qw(:DEFAULT splitdir);
 use Pod::Select;
 
 use strict;
-use vars qw($MOD $XS $PM $POD $NAME %ARGS);
+use vars qw($MOD $XS $PM $POD $NAME $C %ARGS);
 
 sub domakefile {
 	# extra cleanup stuff
@@ -14,6 +14,7 @@ sub domakefile {
 	}
 	WriteMakefile(%ARGS);
 
+	undef $C;
 	undef $MOD;
 	undef $XS;
 	undef $PM;
@@ -24,6 +25,7 @@ sub domakefile {
 
 $MOD  ||= (splitdir(cwd()))[-1];
 $XS   ||= "$MOD.xs";
+($C = $XS) =~ s/\.xs$/.c/;
 $PM   ||= "$MOD.pm";
 $POD  ||= "$MOD.pod";
 $NAME ||= "Mac::$MOD";
@@ -38,6 +40,7 @@ $NAME ||= "Mac::$MOD";
 if ($^O eq 'darwin') {
 	$ARGS{'INC'}		= '-I/Developer/Headers/FlatCarbon/';
 	$ARGS{'LDDLFLAGS'}	= '-bundle -flat_namespace -undefined suppress -framework Carbon';
+	$ARGS{'depend'}{$C}     = catfile(updir(), 'Carbon.h');
 }
 
 # let's make a new .pod with the right POD from .pm and .xs
@@ -64,34 +67,36 @@ if ($^O ne 'MacOS') {
 	*MY::test = sub { "test ::\n\t\@\$(NOOP)" };
 
 	*MY::tool_xsubpp = sub {
-	my($self) = shift;
+		my($self) = shift;
 
-	return "" unless $self->needs_linking;
+		return '' unless $self->needs_linking;
 
-	my($xsdir)  = File::Spec->catdir( '..', 'xsubpps' );
+		my($xsdir)  = File::Spec->catdir('..', 'xsubpps');
 
-	my(@tmdeps) = File::Spec->catdir(
-		$self->{PERL_LIB}, "ExtUtils", 'typemap' );
+		my(@tmdeps) = File::Spec->catdir(
+			$self->{PERL_LIB}, 'ExtUtils', 'typemap'
+		);
 
-	if ($self->{TYPEMAPS}){
-		foreach my $typemap (@{$self->{TYPEMAPS}}){
-			if (! -f  $typemap){
-				warn "Typemap $typemap not found.\n";
-			} else {
-				push(@tmdeps, $typemap);
+		if ($self->{TYPEMAPS}){
+			foreach my $typemap (@{$self->{TYPEMAPS}}){
+				if (! -f  $typemap){
+					warn "Typemap $typemap not found.\n";
+				} else {
+					push(@tmdeps, $typemap);
+				}
 			}
 		}
-	}
-	push @tmdeps, "typemap" if -f "typemap";
-	my @tmargs = map "-typemap $_", @tmdeps;
 
-	unshift @tmargs, $self->{XSOPT} if exists $self->{XSOPT};
+		push @tmdeps, 'typemap' if -f 'typemap';
+		my @tmargs = map "-typemap $_", @tmdeps;
 
-	my $xsubpp = $] =~ /8/ ? 'xsubpp-5.8.0' : 'xsubpp-5.6.1';
+		unshift @tmargs, $self->{XSOPT} if exists $self->{XSOPT};
 
-	$self->{XSPROTOARG} ||= "";
+		my $xsubpp = $] >= 5.008 ? 'xsubpp-5.8.0' : 'xsubpp-5.6.1';
 
-	return <<"HERE";
+		$self->{XSPROTOARG} ||= '';
+
+		return <<"HERE";
 XSUBPPDIR = $xsdir
 XSUBPP = \$(XSUBPPDIR)/$xsubpp
 XSPROTOARG = $self->{XSPROTOARG}
