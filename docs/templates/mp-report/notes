@@ -1,0 +1,34 @@
+This is a place to report successful builds and uses of the development
+version of MacPerl, and to report test results of the various tests in
+the perl test suite.
+</p>
+
+<p>
+The first thing you should do is register as a user.  Please use the same
+user name as your SourceForge user name.
+</p>
+
+<p>
+After that, you can register various configurations that you have either
+built MacPerl on, or used MacPerl on.  Note the processor type, RAM,
+compilers used, etc.
+</p>
+
+<p>
+Then you can start testing, and reporting the results.
+</p>
+
+<p>
+Any bugs you run
+into, please check out the
+<a href="http://sourceforge.net/tracker/?group_id=7940&amp;atid=107940">bug
+reporting</a> page, and to submit patches, please use the
+<a href="http://sourceforge.net/tracker/?group_id=7940&amp;atid=307940">patches</a>
+page.  This here is for reporting results, but bugs and patches -- for
+MacPerl itself or this page -- should go over there.
+</p>
+
+<p>
+Thanks for your help!
+</p>
+

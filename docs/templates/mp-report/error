@@ -1,0 +1,6 @@
+There has been an error.
+</p>
+
+<p>
+[% err %]
+</p>
