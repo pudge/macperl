@@ -133,8 +133,7 @@ sub uri_escape
 	unless (exists  $subst{$patn}) {
 	    # Because we can't compile the regex we fake it with a cached sub
 	    (my $tmp = $patn) =~ s,/,\\/,g;
-	    $subst{$patn} =
-	      eval "sub {\$_[0] =~ s/([$tmp])/\$escapes{\$1}/g; }";
+	    eval "\$subst{\$patn} = sub {\$_[0] =~ s/([$tmp])/\$escapes{\$1}/g; }";
 	    Carp::croak("uri_escape: $@") if $@;
 	}
 	&{$subst{$patn}}($text);

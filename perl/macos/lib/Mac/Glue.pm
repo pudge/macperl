@@ -1932,6 +1932,19 @@ Add dynamic fetching of glues?
 
 =over 4
 
+=item v1.01, Tuesday, January 15, 2002
+
+Clean up a bit for 5.6.
+
+Add ADDRESS method.
+
+Add checking for enumerators and classes.
+
+Make error handler work as hashref parameter list.
+
+Change license to be that of Perl.
+
+
 =item v1.00, Tuesday, September 12, 2000
 
 Added error handling via ERRORS parameter / method.
@@ -2150,9 +2163,9 @@ Whole bunches of changes.  Note that glues made under 0.05 no longer work.
 
 Chris Nandor E<lt>pudge@pobox.comE<gt>, http://pudge.net/
 
-Copyright (c) 1998-2001 Chris Nandor.  All rights reserved.  This program
-is free software; you can redistribute it and/or modify it under the terms
-of the Artistic License, distributed with Perl.
+Copyright (c) 1998-2002 Chris Nandor.  All rights reserved.  This program
+is free software; you can redistribute it and/or modify it under the same
+terms as Perl itself.
 
 
 =head1 THANKS
@@ -2196,4 +2209,4 @@ Interapplication Communication.
 
 =head1 VERSION
 
-v1.00, Tuesday, September 12, 2000
+v1.01, Tuesday, January 15, 2002
