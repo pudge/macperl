@@ -13,7 +13,7 @@ use vars '$compile';
 	my($pw) = Pudge::Web->new(
 		Id		=> '$Id$',
 		virtual_user	=> "macperl",
-#		ttc_path	=> catdir($dir, "ttc"),
+		ttc_path	=> catdir($dir, "ttc"),
 		tt_path		=> [
 			catdir($dir, qw(htdocs templates index)),
 			catdir($dir, qw(htdocs templates)),
@@ -36,7 +36,7 @@ sub main {
 	    default	=> [ 1,			\&home	]
 	};
 
-	compile($pw) if $compile;
+	$pw->compile if $compile;
 
 	$pw->main();
 }
