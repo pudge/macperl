@@ -6,7 +6,8 @@ WriteMakefile(
 	'VERSION_FROM'		=> 'Carbon.pm',
 	'PM'			=> { 'Carbon.pm' => '$(INST_LIBDIR)/Carbon.pm' },
 	'PREREQ_PM'	=> {
-    		'Test::More'	=> 0,
+    		'Test::More'		=> 0,
+    		'Mac::Path::Util'	=> '0.09',
 	},
 	'clean'		=> {
 		'FILES'		=> 'Mac-Carbon-*'
