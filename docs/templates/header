@@ -1,25 +1,78 @@
-[% IF title; title = ": $title"; END %]<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+[% IF title && env.script_name.search('mp_report');
+	title = "MacPerl Reports: $title";
+   ELSIF title;
+	title = "MacPerl Development: $title";
+   ELSE;
+   	title = "MacPerl Development";
+   END;
+-%]
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-	<title>MacPerl Reports[% FILTER strip_nohtml ; title ; END %]</title>
-	<meta name="generator" content="BBEdit 6.1" />
-	<base href="http://dev.macperl.org" />
+	<title>[% FILTER strip_nohtml ; title ; END %]</title>
+	<base href="[% head.base || "http://dev.macperl.org" %]" />
 	<link rel="stylesheet" type="text/css" href="/style.css" />
-</head>
+[% head.other %]</head>
 <body>
 
-<h1 class="head">MacPerl Reports[% FILTER strip_nohtml ; title ; END %]</h1>
+<h1 class="head">[% FILTER strip_literal ; title ; END %]</h1>
 
+<table border="0" cellspacing="2" cellpadding="2">
+	<tr>
+		<td valign="top" class="links">
 [% IF user.id %]<p><strong>Hi, [% user.user %], you're logged in.</strong></p>
 
-[% END %]<p>
+[% END %]	* <a href="/">Home</a><br />
+	* <a href="http://sf.net/projects/macperl/">SourceForge</a><br />
+		<br />
 
-<a href="http://sourceforge.net/projects/macperl/">
-	<img src="http://sourceforge.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="[ SourceForge ]" />
-</a>
+	* <a href="http://sf.net/project/showfiles.php?group_id=7940">Downloads</a><br />
+	* <a href="http://dev.macperl.org/files/">Related Files</a><br />
+	* <a href="/build.html">Build Instructions</a><br />
+	* <a href="/build.html#cvs">CVS</a>
+			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/macperl/">Browse</a> ]
+			<br />&nbsp; &nbsp; &nbsp;( <!-- CVS|commit -->0 / <!-- CVS|add -->0 )
+			<br />
+			<br />
 
-<a href="http://dev.macperl.org/">
-	<img src="/MacPerl.gif" width="32" height="32" alt="[ MacPerl ]" />
-</a>
+	* <a href="/cgi-bin/mp-report">Testing</a>
+		<br />
+	* <a href="http://sf.net/tracker/?group_id=7940&amp;atid=107940">Bugs</a>
+			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">Submit</a> ]
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Bugs|open -->0 / <!-- Bugs|total -->0 )
+		<br />
+
+	* <a href="http://sf.net/tracker/?group_id=7940&amp;atid=307940">Patches</a>
+			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=307940">Submit</a> ]
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Patches|open -->0 / <!-- Patches|total -->0 )
+		<br />
+
+	* <a href="http://sf.net/tracker/?group_id=7940&amp;atid=357940">Feature Requests</a>
+			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=357940">Submit</a> ]
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Feature Requests|open -->0 / <!-- Feature Requests|total -->0 )
+		<br />
+
+	* <a href="http://sf.net/pm/?group_id=7940">Task Manager</a>
+		<ul>
+			<!-- Tasks|begin -->
+			<!-- Tasks|end -->
+		</ul>
+
+	* <a href="/state.txt">State of MacPerl</a><br />
+	* <a href="http://use.perl.org/~pudge/">Development Journal</a><br />
+	* <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a><br />
+	* <a href="http://lists.perl.org/showlist.cgi?name=perl5-changes-mac">perl5-changes-mac</a><br />
+	* #macperl (<a href="http://openprojects.nu/irc_servers.shtml">OPN</a>)<br />
+
+<p>
+	<img src="http://sf.net/sflogo.php?group_id=7940&amp;type=1" width="88" height="31" alt="[ SourceForge ]" />
+</p>
+
+		</td>
+
+		<td valign="top">
+
+<p>
+	<img src="http://dev.macperl.org/MacPerl.gif" width="32" height="32" alt="[ MacPerl ]" />

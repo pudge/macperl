@@ -2,7 +2,7 @@
 
 BODY		{
 	font-family: "Times New Roman";
-	font-size: 12pt;
+	font-size: 12px;
 	background-color: rgb(255, 255, 255);
 	color: rgb(0, 0, 0);
 }
@@ -79,20 +79,21 @@ P.menu		{
 	font-weight: bold;
 }
 
-P.rr		{
-	text-align: center;
-	font-family: "Hoefler Text", Garamond, "Times New Roman", serif;
-	font-size: 24pt;
-	font-style: italic;
-	font-weight: bold;
+.links		{
+	font-size: 9px;
+	font-family: verdana, "Times New Roman", serif;
+	background-color: rgb(210, 210, 210);
+	color: rgb(0, 0, 0);
+	width: 120px;
 }
 
-P.notes		{ font-size: small					}
+P.notes		{ font-size: 9px					}
 H1.head		{ text-align: center					}
-H1		{ font-family: verdana, "Times New Roman", serif	}
-H2		{ font-family: verdana, "Times New Roman", serif	}
+H1,H2		{ font-family: verdana, "Times New Roman", serif	}
+H1		{ font-size: 24px					}
+H2		{ font-size: 18px					}
 
 PRE,TT,CODE	{
-	font-family: ProFont, Monaco;
-	font-size: 9pt;
+	font-family: ProFont, Monaco, monospace;
+	font-size: 9px;
 }

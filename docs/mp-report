@@ -3,7 +3,6 @@
 use lib "../perl/lib";
 use strict;
 use Digest::MD5 'md5_hex';
-use File::Find;
 use File::Spec::Functions;
 use Pudge::Web;
 use vars '$compile';
@@ -16,7 +15,7 @@ use vars '$compile';
 		cookie_name	=> "report_user",
 		cookie_path	=> "/",
 		cookie_domain	=> "dev.macperl.org",
-		ttc_path	=> catdir($dir, "ttc"),
+#		ttc_path	=> catdir($dir, "ttc"),
 		tt_path		=> [
 			catdir($dir, qw(htdocs templates mp-report)),
 			catdir($dir, qw(htdocs templates)),
@@ -49,26 +48,9 @@ sub main {
 		default		=> [ 1,			\&default	]
 	};
 
-	compile($pw) if $compile;
+	$pw->compile($pw) if $compile;
 
 	$pw->main();
-}
-
-sub compile {
-	my($pw) = @_;
-	close STDOUT;
-	close STDERR;
-	
-	for my $dir (@{$pw->{tt_path}}) {
-		find(sub {
-			my $name = $File::Find::name;
-			return if $name =~ /\bCVS\b/ || ! -f $name;
-			$name =~ s/^\Q$dir\E[\/:]//;
-			$pw->process($name);
-		}, $dir);
-	}
-
-	exit;
 }
 
 # view data

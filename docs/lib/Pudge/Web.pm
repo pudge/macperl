@@ -23,6 +23,7 @@ Foo.
 use strict;
 use CGI;
 use DBIx::Password;
+use File::Find;
 use HTML::Entities;
 use Template;
 use URI;
@@ -92,6 +93,7 @@ sub error {
 
 sub prep_cookie {
 	my($self, $session) = @_;
+	return unless defined $self->{cookie_name};
 
 	my $val = $self->{user}{id} && $self->{user}{pass}
 		? "$self->{user}{id}:$self->{user}{pass}"
@@ -114,6 +116,8 @@ sub prep_cookie {
 
 sub get_cookie {
 	my($self) = @_;
+	return unless defined $self->{cookie_name};
+
 	my $cookie = $self->{cgi}->cookie($self->{cookie_name});
 	if ($cookie) {
 		my($id, $pass) = split /:/, $cookie, 2;
@@ -150,10 +154,27 @@ sub template {
 		TRIM		=> 1,
 		INCLUDE_PATH	=> $self->{tt_path},
 		LOAD_FILTERS	=> $filters
-		    );
+	);
 	$data{COMPILE_DIR}      =  $self->{ttc_path} if $self->{ttc_path};
 
 	my $template = Template->new(%data);
+}
+
+sub compile {
+	my($pw) = @_;
+	close STDOUT;
+	close STDERR;
+	
+	for my $dir (@{$pw->{tt_path}}) {
+		find(sub {
+			my $name = $File::Find::name;
+			return if $name =~ /\bCVS\b/ || ! -f $name;
+			$name =~ s/^\Q$dir\E[\/:]//;
+			$pw->process($name);
+		}, $dir);
+	}
+
+	exit;
 }
 
 sub process {
