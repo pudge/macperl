@@ -4,6 +4,9 @@ Options ExecCGI
 AddHandler cgi-script .pl
 DirectoryIndex index.pl index.shtml index.html
 
+Redirect permanent /index.html http://dev.macperl.org/
+Redirect permanent /build.html http://dev.macperl.org/?build
+
 IndexOptions +NameWidth=*
 IndexOptions +DescriptionWidth=*
 IndexOptions +IconsAreLinks
