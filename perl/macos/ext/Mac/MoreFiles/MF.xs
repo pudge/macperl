@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2002/12/12 14:57:52  pudge
+ * Update POD and docs
+ *
  * Revision 1.5  2002/11/13 02:04:52  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -58,7 +61,7 @@ static SV * newMortalFSSpec(short vRefNum, long dirID, ConstStr255Param name)
 	spec.parID		= dirID;
 	memcpy(spec.name, name, *name+1);
 	
-	return sv_2mortal(newSVpv(GUSIFSp2FullPath(&spec), 0));
+	return sv_2mortal(MP_GUSIFSp2FullPath(&spec, newSVpvn("", 0)));
 }
 
 static SV * gMFProc;

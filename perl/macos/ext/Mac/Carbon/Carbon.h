@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.11  2003/10/28 05:49:29  pudge
+ * Add #undef I_POLL for Panther
+ *
  * Revision 1.10  2003/08/13 21:41:30  pudge
  * undef DEBUG for the sake of gcc 3.3 (perl's DEBUG conflicts with Mac's)
  *
@@ -114,7 +117,7 @@ static bool ReadHex(const char * path, int bytes, char * result)
  *   Mac OS is seconds since midnight Jan 1 1904 local time,
  *   Unix is   seconds since midnight Jan 1 1970 UTC.
  *
- *   These routines convert between the two, using Carbons
+ *   These routines convert between the two, using Carbon
  *   calls to convert between local time and UTC (taking
  *   TZ and DST into account), and then adjusting with the
  *   known offset constant.
@@ -415,5 +418,39 @@ static void fgetfileinfo(char * path, OSType * creator, OSType * type)
 }
 
 #  endif /* MACOS_TRADITIONAL */
+
+static SV * MP_GUSIFSp2FullPath(const FSSpec * spec, SV * sv)
+{
+	char * tmp;
+	tmp = GUSIFSp2FullPath(spec);
+	sv_setpv(sv, tmp);
+#ifndef MACOS_TRADITIONAL
+	free(tmp);
+#endif
+	return sv;
+}
+
+
+static SV * MP_GUSIFS2FullPath(const FSRef * ref, SV * sv)
+{
+	char * tmp;
+	tmp = GUSIFS2FullPath(ref);
+	sv_setpv(sv, tmp);
+#ifndef MACOS_TRADITIONAL
+	free(tmp);
+#endif
+	return sv;
+}
+
+static SV * MP_GUSIFSp2Encoding(const FSSpec * spec, SV * sv)
+{
+	char * tmp;
+	tmp = GUSIFSp2Encoding(spec);
+	sv_setpv(sv, tmp);
+#ifndef MACOS_TRADITIONAL
+	free(tmp);
+#endif
+	return sv;
+}
 
 #endif /* _MAC_CARBON_H */

@@ -79,9 +79,9 @@ T_RECORDREF
 T_RECORDOBJ
 	sv_setref_pvn($arg, \"${ntype}\", (void*)&$var, sizeof($ntype));
 T_FSSPEC
-	sv_setpv($arg, GUSIFSp2FullPath(&$var));
+	MP_GUSIFSp2FullPath(&$var, $arg);
 T_FSREF
-	sv_setpv($arg, GUSIFS2FullPath(&$var));
+	MP_GUSIFS2FullPath(&$var, $arg);
 T_FIXED
 	sv_setnv($arg, Fix2X($var));
 T_CFSTRINGREF

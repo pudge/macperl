@@ -14,4 +14,4 @@ T_REALFSSPEC
 		0
 OUTPUT
 T_REALFSSPEC
-	sv_setpv($arg, GUSIFSp2Encoding(&$var));
+	MP_GUSIFSp2Encoding(&$var, $arg);

@@ -1,3 +1,12 @@
+* v0.71, 19 February 2005
+
+   Fix some more memory leaks, in the ported GUSI routines.  Well, technically,
+   the memory leaks are still there: the return values of GUSIFSp2FullPath,
+   GUSIFS2FullPath, and GUSIFSp2Encoding need to be freed, and some frontend
+   functions were added to return SVs instead, freeing the values as
+   necessary.
+
+
 * v0.70, 10 May 2004
 
    Fix some major memory leaks in Mac::AppleEvents.  Due to a necessary change
@@ -7,6 +16,7 @@
    Improve Mac::Notification tests.
 
    Clean up docs; add notes about gcc versions.
+
 
 * v0.66, 23 March 2004
 

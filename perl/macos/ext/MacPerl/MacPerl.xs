@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2002/12/13 18:26:42  pudge
+ * Fix header name for UFS
+ *
  * Revision 1.4  2002/11/13 02:04:53  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -734,7 +737,7 @@ MP_MakeFSSpec(path)
 		if (GUSIPath2FSp(path, &spec))
 	 		ST(0) = &PL_sv_undef;
 		else
-			ST(0) = sv_2mortal(newSVpv(GUSIFSp2Encoding(&spec), 0));
+			ST(0) = sv_2mortal(MP_GUSIFSp2Encoding(&spec, newSVpvn("", 0)));
 	}
 
 void
@@ -747,7 +750,7 @@ MP_MakePath(path)
 		if (GUSIPath2FSp(path, &spec))
 	 		ST(0) = &PL_sv_undef;
 		else
-			ST(0) = sv_2mortal(newSVpv(GUSIFSp2FullPath(&spec), 0));
+			ST(0) = sv_2mortal(MP_GUSIFSp2FullPath(&spec, newSVpvn("", 0)));
 	}
 
 void
@@ -760,12 +763,12 @@ MP_Volumes()
 			GUSISpecial2FSp('macs', kOnSystemDisk, &spec);
 			GetVolInfo(spec.vRefNum, false, &spec);
 			
-			XPUSHs(sv_2mortal(newSVpv(GUSIFSp2Encoding(&spec), 0)));
+			XPUSHs(sv_2mortal(MP_GUSIFSp2Encoding(&spec, newSVpvn("", 0))));
 		} else {
 			short	index;
 			
 			for (index = 0; !GetVolInfo(index+1, true, &spec); ++index)
-				XPUSHs(sv_2mortal(newSVpv(GUSIFSp2Encoding(&spec), 0)));
+				XPUSHs(sv_2mortal(MP_GUSIFSp2Encoding(&spec, newSVpvn("", 0))));
 		}
 	}
 

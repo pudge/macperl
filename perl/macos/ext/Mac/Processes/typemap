@@ -20,4 +20,4 @@ OUTPUT
 T_PSN
 	$arg = newSVnv($var.highLongOfPSN * 4294967296.0 + $var.lowLongOfPSN);	
 T_FSSPECPTR
-	sv_setpv($arg, GUSIFSp2FullPath($var));
+	MP_GUSIFSp2FullPath($var, $arg);
