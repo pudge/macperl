@@ -53,7 +53,7 @@ sub _Packer {
 sub _Unpacker {
 	my($template) = @_;
 	
-	return sub { return unpack($template, $_[0]); };
+	return sub { return unpack($template, $_[0] || ''); };
 }
 
 sub _PackPStr {
@@ -65,7 +65,7 @@ sub _PackPStr {
 sub _UnpackPStr {
 	my($string) = @_;
 	
-	return "" unless length($string);
+	return "" unless defined($string) && length($string);
 	
 	my ($length, $cstr) = unpack("Ca*", $string);
 	
