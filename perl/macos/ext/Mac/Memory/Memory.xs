@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2002/01/23 05:44:42  pudge
+ * Update whitespace etc., from Thomas
+ *
  * Revision 1.5  2002/01/05 02:21:54  pudge
  * Sync with perforce
  *
@@ -254,11 +257,6 @@ Open a stream to a handle and return it.
 
 NOT DEFINED AT THE MOMENT
 
-=cut
-
-#ifdef NOT_YET
-
-=cut
 SysRet
 _open(hand, mode)
 	Handle	hand
@@ -267,8 +265,6 @@ _open(hand, mode)
 	RETVAL = OpenHandle(hand, mode);
 	OUTPUT:
 	RETVAL
-
-#endif
 
 =item dispose
 
