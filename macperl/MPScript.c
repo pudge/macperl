@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C
 
 $Log$
+Revision 1.7  2001/11/13 04:06:35  pudge
+Remov unused AddErrorDescription
+
 Revision 1.6  2001/09/26 21:51:15  pudge
 Sync with perforce maint-5.6/macperl/macos/macperl
 
@@ -613,7 +616,7 @@ pascal Boolean RunScript(ArgExtractor extractor, void * data)
 	PerlArgs[ArgC] =  nil;
 	gRunningPerl 	=  true;
 	gMacPerl_Quit	=	0;
-	/* gFirstErrorLine= -1; */
+	gMacPerl_OSErr	=	0;
 	
 	ShowWindowStatus();
 	
