@@ -162,7 +162,8 @@ sub process {
 		ref $data ? %$data : ()
 	};
 
-	$self->{_template}->process($name, $data);
+	$self->{_template}->process($name, $data)
+	    or print STDERR $self->{_template}->error;
 }
 
 sub connect {
@@ -178,7 +179,7 @@ sub get_sth {
 }
 
 sub get_dbarray {
-	my($self, $id, $st, @args) = @_;
+	my($self, $st, @args) = @_;
 
 	my $sql = $self->compose_select($st);
 	my $sth = $self->get_sth($sql, @args);
@@ -187,7 +188,7 @@ sub get_dbarray {
 }
 
 sub get_dbhash {
-	my($self, $id, $st, @args) = @_;
+	my($self, $st, $id, @args) = @_;
 
 	my $sql = $self->compose_select($st);
 	my $sth = $self->get_sth($sql, @args);
@@ -200,7 +201,7 @@ sub get_dbhash {
 }
 
 sub get_dbhashdesc {
-	my($self, $id, $st, @args) = @_;
+	my($self, $st, @args) = @_;
 
 	my $sql = $self->compose_select($st);
 	my $sth = $self->get_sth($sql, @args);
@@ -214,11 +215,13 @@ sub get_dbhashdesc {
 
 sub compose_select {
 	my($self, $args) = @_;
+	use Carp;
+	confess("DAMMIT") unless $args->[0];
 	my $sql = "SELECT $args->[0]";
 	$sql   .= " FROM $args->[1]"  if $args->[1];
 	$sql   .= " WHERE $args->[2]" if $args->[2];
 	$sql   .= " $args->[3]"       if $args->[3];
-
+	return $sql;
 }
 
 sub DESTROY {
@@ -319,7 +322,6 @@ sub fixurl {
 		$url =~ s/^'(.+?)'$/$1/g;
 		# add '#' to allowed characters
 		$url =~ s/([^$URI::uric#])/$URI::Escape::escapes{$1}/oge;
-		$url = fixHref($url) || $url;
 
 		if ($stripauth) {
 			my $uri = new URI $url;
@@ -340,6 +342,47 @@ sub fixurl {
 		return $decoded_url =~ s|^\s*\w+script\b.*$||i ? undef : $url;
 	}
 }
+
+sub stripBadHtml {
+    my($str) = @_;
+
+    $str =~ s/<(?!.*?>)//gs;
+    $str =~ s/<(.*?)>/approveTag($1)/sge;
+    $str =~ s/></> </g;
+
+    return $str;
+}
+
+{
+    # this should be defined in vars table
+    my %is_break_tag = map { uc, 1 } qw(HR BR LI P OL UL BLOCKQUOTE DIV);
+
+sub breakHtml {
+    my($text, $mwl) = @_;
+    my($new, $l, $c, $in_tag, $this_tag, $cwl);
+
+    $mwl = $mwl || 50;
+    $l = length $text;
+
+    for (my $i = 0; $i < $l; $new .= $c, ++$i) {
+	$c = substr($text, $i, 1);
+	if ($c eq '<'){ $in_tag = 1 }
+	elsif ($c eq '>'){
+	    $in_tag = 0;
+	    $this_tag =~ s{^/?(\S+).*}{\U$1};
+	    $cwl = 0 if $is_break_tag{$this_tag};
+	    $this_tag = '';
+	}
+	elsif ($in_tag){ $this_tag .= $c }
+	elsif ($c =~ /\s/){ $cwl = 0 }
+	elsif (++$cwl > $mwl){ $new .= ' '; $cwl = 1 }
+    }
+
+    return $new;
+}
+}
+
+
 
 1;
 
