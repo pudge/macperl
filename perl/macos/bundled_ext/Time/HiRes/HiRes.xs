@@ -421,9 +421,6 @@ getitimer(which)
 # $Id$
 
 # $Log$
-# Revision 1.1  2001/07/17 01:29:52  pudge
-# Sync with perforce changes 11283 and 11386 to 11390.
-#
 # Revision 1.11  1999/03/16 02:27:38  wegscd
 # Add U2time, NVtime. Fix symbols for static link.
 #
