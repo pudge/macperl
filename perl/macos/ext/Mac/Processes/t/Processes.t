@@ -25,7 +25,7 @@ SKIP: {
 
 	SKIP: {
 		my $info = $Process{$psn};
-		skip "No parent", 2 unless $Process{$info->processLauncher};
+		skip "No parent available", 2 unless $Process{$info->processLauncher};
 		ok(SetFrontProcess($info->processLauncher), 'set front process');
 		ok(SameProcess($info->processLauncher, GetFrontProcess()), 'check front process');
 	}
