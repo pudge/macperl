@@ -842,11 +842,17 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len)
 		if (line[6] >= '0' && line[6] <= '9') {
 			/* Got line, now look for end of line number */
 			const char * endline = line+7;
+			const char * newline;
 			
-			while (*endline >= '0' && *endline <= '9')
+			while (*endline >= '0' && *endline <= '9' && endline < msg+len)
 				++endline;
-			if (*endline == ' ')
+			if (*endline == ' ' && endline < msg+len)
 				++endline;
+			for (newline = endline; *newline != '\n' && newline < msg+len; ++newline)
+				;
+			if (*newline == '\n' && newline < msg+len)
+				++newline;
+				
 			/* Got it, now look for preceding " at ." length reduced by 1 because file name
 			 * must be at least 1 character long.
 			 */
@@ -863,14 +869,16 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len)
 					
 				/* OK, we got them both, write the original message prefixed with # */
 				WriteMsg(io, msg, at-msg, true);
-				WriteMsg(io, endline, msg+len-endline, false);
+				PerlIO_write(io, endline, newline-endline);
 				PerlIO_write(io, "File \'", 6);
 				PerlIO_write(io, at+4, line-at-4);
 				PerlIO_write(io, "\'; Line ", 8);
 				PerlIO_write(io, line+6, endline-line-6);
 				PerlIO_write(io, "\n", 1);
 				
-				return;
+				len    -= newline-msg;
+				msg 	= newline;
+				line	= msg;
 			}
 		}
 	}
