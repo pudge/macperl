@@ -40,7 +40,7 @@
 	[% dot %]<a href="/?build">Build Instructions</a><br />
 	[% dot %]<a href="/?build#cvs">CVS</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/macperl/">Browse</a> ]
-			<br />&nbsp; &nbsp; &nbsp;( <!-- CVS|commit -->1502 / <!-- CVS|add -->966 )
+			<br />&nbsp; &nbsp; &nbsp;( <!-- CVS|commit -->2273 / <!-- CVS|add -->1103 )
 			<br />
 			<br />
 
@@ -48,7 +48,7 @@
 		<br />
 	[% dot %]<a href="http://sf.net/tracker/?group_id=7940&amp;atid=107940">Bugs</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">Submit</a> ]
-			<br />&nbsp; &nbsp; &nbsp;( <!-- Bugs|open -->27 / <!-- Bugs|total -->65 )
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Bugs|open -->15 / <!-- Bugs|total -->154 )
 		<br />
 
 	[% dot %]<a href="http://sf.net/tracker/?group_id=7940&amp;atid=307940">Patches</a>
@@ -58,7 +58,7 @@
 
 	[% dot %]<a href="http://sf.net/tracker/?group_id=7940&amp;atid=357940">Feature Requests</a>
 			<br />&nbsp; &nbsp; &nbsp;[ <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=357940">Submit</a> ]
-			<br />&nbsp; &nbsp; &nbsp;( <!-- Feature Requests|open -->0 / <!-- Feature Requests|total -->2 )
+			<br />&nbsp; &nbsp; &nbsp;( <!-- Feature Requests|open -->10 / <!-- Feature Requests|total -->14 )
 		<br />
 
 	[% dot %]<a href="http://sf.net/pm/?group_id=7940">Task Manager</a>
@@ -66,6 +66,7 @@
 			<!-- Tasks|begin -->
 			<li><a href="http://sourceforge.net/pm/task.php?group_project_id=6928&amp;group_id=7940&amp;func=browse">5.6.1 alpha</a></li>
 			<li><a href="http://sourceforge.net/pm/task.php?group_project_id=9632&amp;group_id=7940&amp;func=browse">5.6.1 beta</a></li>
+			<li><a href="http://sourceforge.net/pm/task.php?group_project_id=13593&amp;group_id=7940&amp;func=browse">5.6.1 release</a></li>
 			<!-- Tasks|end -->
 		</ul>
 		<br />
