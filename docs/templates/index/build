@@ -55,6 +55,10 @@ with an SC/MrC-only build, and there is no CFM68K support.
 If you have already built MacPerl 5.6.x before, you can probably
 just download the perl and MacPerl source kits and take it from there.
 You should upgrade GUSI if it has changed since your last build.
+<b>Note:</b> if you don't already have it, you will need to
+upgrade your db to 
+a href="http://dev.macperl.org/files/macperl_build_libs/">db_186a</a>,
+nre for MacPerl 5.6.1a5.
 </p>
 
 <h2><a name="ingredients">Ingredients</a></h2>
@@ -85,8 +89,8 @@ will be properly unpacked.
 		set up especially for the build, so if you get the
 		individual packages you might have some broken paths.</li>
 
-	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7941&amp;release_id=42078">GUSI 2</a></strong>
-		(GUSI_218 or later; get the Pro5 libs in addition if using CodeWarrior
+	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7941&amp;release_id=44793">GUSI 2</a></strong>
+		(GUSI_219 or later; get the Pro5 libs in addition if using CodeWarrior
 		Pro 5)</li>
 
 	<li><strong><a href="http://developer.apple.com/tools/mpw-tools/">MPW</a></strong>,
@@ -108,7 +112,7 @@ will be properly unpacked.
 	</li>
 
 	<li>
-		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=44497">MacPerl 5.6.1 source kit</a></strong>
+		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=50978">MacPerl 5.6.1 source kit</a></strong>
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 	</li>
 </ul>
@@ -180,10 +184,6 @@ will be properly unpacked.
 
 	<li><p>Unpack the MacPerl source kit.  Put the "macperl" and "perl"
 		folders inside "HD:macperl_src:".</p></li>
-
-	<li><p>From the "HD:macperl_src:" directory, apply the xsubpp patch.</p><pre>
-		directory "HD:macperl_src:"
-		patch -p0 &lt; :perl:macos:xsubpp.patch</pre></li>
 
 	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
 		change the preferences there for the compilers you will

@@ -17,8 +17,8 @@ The current release of MacPerl is
 <a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=20742">5.2.0r4</a>
 (1998.04.17), based on perl 5.004.
 The current development release is
-<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=44497">5.6.1a4</a>
-(2001.07.20), based on perl 5.6.1, which is the most recent release of perl.  MacPerl is also being
+<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=50978">5.6.1a5</a>
+(2001.09.01), based on perl 5.6.1, which is the most recent release of perl.  MacPerl is also being
 ported to perl 5.8.0, which is currently in development.  No releases of that are expected until
 MacPerl 5.6.1 is released.
 </p>
@@ -74,6 +74,16 @@ Carbonized so the same GUI-based MacPerl programs would run on both platforms.
 This may happen in the future.  There is a separate
 <a href="http://lists.perl.org/showlist.cgi?name=macosx">mailing list</a>
 for perl on Mac OS X.
+</p>
+
+
+<h2>perl 6</h2>
+
+<p>
+<a href="http://dev.perl.org/">perl 6</a> is a complete rewrite of perl,
+currently under development.  There are no specific plans to port it to
+Mac OS.  When perl 6 gets moving more, and there's an alpha etc.,
+maybe there will be.
 </p>
 
 
