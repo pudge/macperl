@@ -1,3 +1,8 @@
+* v0.62, 31 October 2003
+
+   Fix incorrect constant for typeApplicationURL.
+
+
 * v0.61, 28 October 2003
 
    Adjust Mac::Speech test to work with fresh install of Panther, where
