@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.3  2000/12/25 09:47:39  neeri
+#  Fix libraries for 68K build
+#
 #  Revision 1.2  2000/12/22 08:35:45  neeri
 #  PPC, MrC, and SC builds work
 #
@@ -26,6 +29,11 @@
 #  Revision 1.1  1997/06/23 17:11:14  neeri
 #  Checked into CVS
 #
+
+# Bourque:Prog:Metrowerks:Metrowerks CodeWarrior:MSL:MSL_C++:MSL_Common:Include
+
+OldMW68KLibraries	= "Bourque:Prog:Metrowerks:MPW:MPW:Libraries:OldMW68KLibraries:"
+CWANSIInc	=	{{CWANSIIncludes}},"Bourque:Prog:Metrowerks:Metrowerks CodeWarrior:MSL:MSL_C++:MSL_Common:Include:"
 
 PERL_SRC 	= ::perl:
 MACPERL_SRC	= $(PERL_SRC)macos:
@@ -250,7 +258,7 @@ MacPerl : MacPerl.PPC MacPerl.68K
 	Echo 'Include "MacPerl.68K" '¶''CODE'¶'';'	¶
 		  'Include "MacPerl.68K" '¶''DATA'¶'';'	¶
 		| Rez -a -c McPL -t APPL -o MacPerl
-	$(PERL_SRC)UnPreload MacPerl
+	$(MACPERL_SRC)UnPreload MacPerl
 
 ":Obj:FontLDEF.rsrc" : MPFontLDEF.c.68K.o
 	$(RsrcLink68K) -t rsrc -c RSED -rt LDEF=128 -o :Obj:FontLDEF.rsrc 	¶
@@ -266,11 +274,11 @@ MPGlobals.c.PPC.o	:	MPGlobals.h
 MPGlobals.c.68K.o	:	MPGlobals.h
 
 "HTML Help" 		:	MacPerl.help
-	BuildHelpIndex	"HTML Help" MacPerl.help
-	BuildLibraryIndex "MacPerl Help" :lib:
+#	BuildHelpIndex	"HTML Help" MacPerl.help
+#	BuildLibraryIndex "MacPerl Help" :lib:
 "MacPerl Help" 		:	MacPerl.podhelp
-	BuildHelpIndex	"MacPerl Help" MacPerl.podhelp
-	BuildLibraryIndex "MacPerl Help" :lib:
+#	BuildHelpIndex	"MacPerl Help" MacPerl.podhelp
+#	BuildLibraryIndex "MacPerl Help" :lib:
 
 MacPerlTest.Script	:	MakeMacPerlTest
 	MakeMacPerlTest ¶
