@@ -5,6 +5,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2001/07/08 05:07:14  pudge
+ * Version update 5.6.1a3
+ *
  * Revision 1.3  2001/05/05 20:32:41  pudge
  * Prepare for 5.6.1a2, mostly updates to tests, and File::Find, and latest changes from main repository
  *
@@ -17,9 +20,9 @@
  *
  */
 
-#define MPDate		"2001-07-07"
-#define MPVersionStr	"5.6.1a3"
+#define MPDate		"2001-07-20"
+#define MPVersionStr	"5.6.1a4"
 #define MPRevision	0x05
 #define MPVersion	0x61
-#define MPBuild		0x03
+#define MPBuild		0x04
 #define MPState		alpha
