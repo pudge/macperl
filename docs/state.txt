@@ -1,58 +1,151 @@
+Date: Tue, 30 Jan 2001 12:35:53 -0500
+To: pudge@pobox.com
+From: Chris Nandor <pudge@pobox.com>
+Subject: The State of MacPerl
+
 Hi, I'm the new maintainer for MacPerl.
 
-I've been programming in Perl since 1995, and in MacPerl since 1996.  I wrote MacPerl: Power and Ease with Vicki Brown and Rich Morin, and have written a bunch of tools and modules for MacPerl.  I work for OSDN, a division of VA Linux, writing Perl code for Slashdot by day and battling supervillains by night.  I write for The Perl Journal, and run the Perl News and use Perl web sites.
+I've been programming in Perl since 1995, and in MacPerl since 1996.  I
+wrote MacPerl: Power and Ease with Vicki Brown and Rich Morin, and have
+written a bunch of tools and modules for MacPerl.  I work for OSDN, a
+division of VA Linux, writing Perl code for Slashdot by day and battling
+supervillains by night.  I write for The Perl Journal, and run the Perl
+News and use Perl web sites.
 
 	http://pudge.net/macperl/
 
 
-Matthias Neeracher wrote MacPerl, and was its developer and maintainer since 1991.  After eight long years (according to my fuzzy math) under his administration, it is time to restore dignity and character to Perl on Mac OS.  :-)
+Matthias Neeracher wrote MacPerl, and was its developer and maintainer
+since 1991.  After eight long years (according to my fuzzy math) under his
+administration, it is time to restore dignity and character to Perl on Mac
+OS.  :-)
 
-When Matthias asked me to take over the maintenance of MacPerl, my primary concerns were ability and availability.  As to ability, I know I have nothing close to his acumen in this area.  But, I have confidence in the Perl community to help me with the project, and to contribute its time and expertise.  And Matthias assured me that he would work with my transition team, so I can get up to speed as quickly as possible, and be able to rely on him as little as necessary.
+When Matthias asked me to take over the maintenance of MacPerl, my primary
+concerns were ability and availability.  As to ability, I know I have
+nothing close to his acumen in this area.  But, I have confidence in the
+Perl community to help me with the project, and to contribute its time and
+expertise.  And Matthias assured me that he would work with my transition
+team, so I can get up to speed as quickly as possible, and be able to rely
+on him as little as necessary.
 
-As to availability, I've decided that this is too great an opportunity for me to pass up.  I will learn more about many different things, and a new MacPerl is something that the community wants and needs, and I believe I can help make it happen.  With the community's help, I think it will be done, and it will be good.
+As to availability, I've decided that this is too great an opportunity for
+me to pass up.  I will learn more about many different things, and a new
+MacPerl is something that the community wants and needs, and I believe I
+can help make it happen.  With the community's help, I think it will be
+done, and it will be good.
 
-Matthias left MacPerl in really good shape, but there's a lot left to do, and I hope I can get help from the rest of the community as we work toward MacPerl 5.6 and beyond.  Don't ask what MacPerl can do for you, ask what you can do for MacPerl.
+Matthias left MacPerl in really good shape, but there's a lot left to do,
+and I hope I can get help from the rest of the community as we work toward
+MacPerl 5.6 and beyond.  Don't ask what MacPerl can do for you, ask what
+you can do for MacPerl.
 
 
-So, what is the future of MacPerl?  The immediate future is to get the buildable source of MacPerl 5.6.0 into the hands of those who are inclined to help.  This source has been released (see below for details).  Following that will be cycles of testing, porting, fixing, etc.
+So, what is the future of MacPerl?  The immediate future is to get the
+buildable source of MacPerl 5.6.0 into the hands of those who are inclined
+to help.  This source has been released (see below for details).  Following
+that will be cycles of testing, porting, fixing, etc.
 
-Soon we will be doing an analysis of the perl 5.6.1 code (still in development) to evaluate what would be necessary to move to 5.6.1.  I think most people would prefer releasing 5.6.1 instead of 5.6.0.  Hopefully, this will happen, and won't slow down our efforts much.  And as soon as this is done, we will release a public beta.  When we are confident that it works well, we will do the actual release.  There is no timeline for this, as one may imagine.  I will likely set short-term "deadlines" for various phases of the process as we get more into it.  How fast we get through the phases will largely depend on the community.
+Soon we will be doing an analysis of the perl 5.6.1 code (still in
+development) to evaluate what would be necessary to move to 5.6.1.  I think
+most people would prefer releasing 5.6.1 instead of 5.6.0.  Hopefully, this
+will happen, and won't slow down our efforts much.  And as soon as this is
+done, we will release a public beta.  When we are confident that it works
+well, we will do the actual release.  There is no timeline for this, as one
+may imagine.  I will likely set short-term "deadlines" for various phases
+of the process as we get more into it.  How fast we get through the phases
+will largely depend on the community.
 
-One really great thing about what Matthias has done with MacPerl over the last year is that he has separated the Mac-specific code into a separate subdirectory (macos), so you can just add in the subdirectory to the perl directory and build it.  Future ports of MacPerl will be much simpler because of this.  There are a handful of patches to the perl source required, changes to things like paths in perl.c, and whitespace handling in toke.c.  These changes, largely, have already been added to "maintperl" (what will be 5.6.1) and "bleadperl" (what is 5.7.0), but we aren't sure if they still work, what further changes might be needed, etc.  I figure sometime soon we'll move to 5.6.1 and just start testing.
+One really great thing about what Matthias has done with MacPerl over the
+last year is that he has separated the Mac-specific code into a separate
+subdirectory (macos), so you can just add in the subdirectory to the perl
+directory and build it.  Future ports of MacPerl will be much simpler
+because of this.  There are a handful of patches to the perl source
+required, changes to things like paths in perl.c, and whitespace handling
+in toke.c.  These changes, largely, have already been added to "maintperl"
+(what will be 5.6.1) and "bleadperl" (what is 5.7.0), but we aren't sure if
+they still work, what further changes might be needed, etc.  I figure
+sometime soon we'll move to 5.6.1 and just start testing.
 
-And, speaking of testing: testing and module porting are two of the areas where the most work from volunteers will be needed.  Perl comes with an extensive test suite.  The goal will be to run the tests, note where the tests don't work, and make appropriate changes in the tests (or in the code, in the case of a bug) to make the tests work.  This may also involve reading the tests to make sure that there are not false positives, in some cases.  There are plenty of modules that need to be ported, too.  File::Find is entirely broken on Mac OS, for instance.
+And, speaking of testing: testing and module porting are two of the areas
+where the most work from volunteers will be needed.  Perl comes with an
+extensive test suite.  The goal will be to run the tests, note where the
+tests don't work, and make appropriate changes in the tests (or in the
+code, in the case of a bug) to make the tests work.  This may also involve
+reading the tests to make sure that there are not false positives, in some
+cases.  There are plenty of modules that need to be ported, too.
+File::Find is entirely broken on Mac OS, for instance.
 
-In order to facilitate all this, I will be setting up some thingys on SourceForge to track modules and tests, and will be looking for volunteers to take modules and tests, work on them, make changes, and report back.  They are not ready yet.  When they are, I will, of course, announce it.
+In order to facilitate all this, I will be setting up some thingys on
+SourceForge to track modules and tests, and will be looking for volunteers
+to take modules and tests, work on them, make changes, and report back.
+They are not ready yet.  When they are, I will, of course, announce it.
 
-SourceForge is a nice killer app for open source developers, a free service to the open source community from VA Linux.  It offers, to developers for their open source projects, access to FTP, CVS, patch and bug and task management, web space, and more.  So you can, at any time, go to SourceForge and check the latest bugs reports, see what tasks are being worked on, get the latest source from CVS, etc.
+SourceForge is a nice killer app for open source developers, a free service
+to the open source community from VA Linux.  It offers, to developers for
+their open source projects, access to FTP, CVS, patch and bug and task
+management, web space, and more.  So you can, at any time, go to
+SourceForge and check the latest bugs reports, see what tasks are being
+worked on, get the latest source from CVS, etc.
 
-To be involved with development, please register yourself at SourceForge and join the macperl-porters mailing list, if you have not done both already.  On an individual basis I will be adding willing volunteers to the MacPerl project on SourceForge to help with bugs, patches, documentation, etc.  I will be doing this slowly at first, I imagine.
+To be involved with development, please register yourself at SourceForge
+and join the macperl-porters mailing list, if you have not done both
+already.  On an individual basis I will be adding willing volunteers to the
+MacPerl project on SourceForge to help with bugs, patches, documentation,
+etc.  I will be doing this slowly at first, I imagine.
 
 	http://sourceforge.net/
 	http://macperl.sourceforge.net/
 	http://sourceforge.net/projects/macperl/
 	http://lists.perl.org/
 
-Please use the bug reporting there for any bugs related to current MacPerl or the development MacPerl; just mark it appropriately, and always give complete version information for what software you are using.  You can also make suggestions and feature requests on the bug page.
+Please use the bug reporting there for any bugs related to current MacPerl
+or the development MacPerl; just mark it appropriately, and always give
+complete version information for what software you are using.  You can also
+make suggestions and feature requests on the bug page.
 
 [* NOTE: The bug submission page on SourceForge is currently broken.  Hopefully
 it will be fixed by the time you read this.  Please just hold on to any
 bugs until it is fixed.]
 
-I've also been keeping a "diary" on SourceForge, available from my SourceForge page, which might help those who are interested follow what I am up to on the development.
+I've also been keeping a "diary" on SourceForge, available from my
+SourceForge page, which might help those who are interested follow what I
+am up to on the development.
 
 	http://sourceforge.net/users/pudge/
 
 
-We are changing the versioning system of MacPerl.  Whereas before the version of MacPerl was e.g. 5.2.0r4, which represented perl 5, MacPerl 2.0 (of 5), and maintenance release ("r") 4 of perl (thus corresponding with perl 5.004), it will now be e.g. 5.6.0r1, where 5.6.0 is the perl version, "r" is release ("d" is development), and 1 is the build number.  This will make following the version of MacPerl much simpler.
+We are changing the versioning system of MacPerl.  Whereas before the
+version of MacPerl was e.g. 5.2.0r4, which represented perl 5, MacPerl 2.0
+(of 5), and maintenance release ("r") 4 of perl (thus corresponding with
+perl 5.004), it will now be e.g. 5.6.0r1, where 5.6.0 is the perl version,
+"r" is release ("d" is development), and 1 is the build number.  This will
+make following the version of MacPerl much simpler.
 
-There will be no CFM68K build of MacPerl 5.6, at least a first.  If there is enough interest, and there are people to help work on it, then we can support it later.  So this means there will be no dynamic loading for 68K Macs, unless this is done.  Those who really want CFM68K support need to speak up on the macperl-porters list, and hopefully can lend a hand.  The worst case scenario is that people who want extra modules under 68K Macs can set up the source on their own system and link in the modules statically, but it would be nice to have dynamic loading support.
+There will be no CFM68K build of MacPerl 5.6, at least a first.  If there
+is enough interest, and there are people to help work on it, then we can
+support it later.  So this means there will be no dynamic loading for 68K
+Macs, unless this is done.  Those who really want CFM68K support need to
+speak up on the macperl-porters list, and hopefully can lend a hand.  The
+worst case scenario is that people who want extra modules under 68K Macs
+can set up the source on their own system and link in the modules
+statically, but it would be nice to have dynamic loading support.
 
 
-So that's about it, for now.  Please direct general discussion to the macperl list and porting discussion to the macperl-porters list.  And if you are so inclined, head on over to the MacPerl page at SourceForge, get familiar with what's going on, and see the "Build Instructions" page for information on how to build it.  Note that almost anyone with a relatively recent Mac can build MacPerl, using only freely available tools.  This is a very good thing.
+So that's about it, for now.  Please direct general discussion to the
+macperl list and porting discussion to the macperl-porters list.  And if
+you are so inclined, head on over to the MacPerl page at SourceForge, get
+familiar with what's going on, and see the "Build Instructions" page for
+information on how to build it.  Note that almost anyone with a relatively
+recent Mac can build MacPerl, using only freely available tools.  This is a
+very good thing.
 
-Thanks a ton to Matthias for the wonderful gift he has given us in MacPerl, Larry Wall for his gift of perl, and all those who came before and after who have helped and continue to help this project be possible, and fun.  I look forward to a great time and a great release.
+	http://macperl.sourceforge.net/build.html
 
+
+Thanks a ton to Matthias for the wonderful gift he has given us in MacPerl,
+Larry Wall for his gift of perl, and all those who came before and after
+who have helped and continue to help this project be possible, and fun.  I
+look forward to a great time and a great release.
 
 	"The technical specialist marine will accompany us," Ashnak
 	continued.  "Captain Barashkukor--Captain!"
