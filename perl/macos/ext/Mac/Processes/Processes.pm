@@ -57,6 +57,9 @@ BEGIN {
 		SameProcess
 		ExitToShell
 		
+		GetProcessPID
+		GetProcessForPID
+		
 		%Process
 		
 		kNoProcess

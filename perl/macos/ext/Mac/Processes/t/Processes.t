@@ -2,12 +2,12 @@
 use Test::More;
 use strict;
 
-BEGIN { plan tests => 1 }
+BEGIN { plan tests => 6 }
 
 use Mac::Processes;
 
 SKIP: {
-#	skip "Mac::Processes", 1;
+#	skip "Mac::Processes", 6;
 
 # other process tests are in Notification.t
 # we should check struct fields, too
@@ -18,6 +18,17 @@ SKIP: {
 	}
 	ok($exists, 'check process paths');
 
+	my $psn = GetCurrentProcess();
+	is(GetProcessPID($psn),  $$,   'psn == pid');
+	is(GetProcessForPID($$), $psn, 'pid == psn');
+	ok(SameProcess($psn, GetProcessForPID($$)), 'SameProcess(psn, pid)');
+
+	SKIP: {
+		my $info = $Process{$psn};
+		skip "No parent", 2 unless $Process{$info->processLauncher};
+		ok(SetFrontProcess($info->processLauncher), 'set front process');
+		ok(SameProcess($info->processLauncher, GetFrontProcess()), 'check front process');
+	}
 }
 
 __END__

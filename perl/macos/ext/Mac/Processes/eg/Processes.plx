@@ -6,15 +6,24 @@ Perl -Sx "{0}" {"Parameters"}; Exit {Status}
 #
 
 use Mac::Processes;
-use Mac::MoreFiles(%Application);
+use Mac::MoreFiles '%Application';
 
-printf "%-20s %-8s  %-8s\n", "Process Name", "PSN", "App Spec";
+printf "%-30s %-8s %4s %-8s\n", "Process Name", "PSN", "PID", "App Spec";
 
 while (($psn, $pi) = each %Process) {
-	printf "%-20s %08X %s\n", 
-		$pi->processName, $pi->processNumber, $pi->processAppSpec;
+	# check with PSN
+	print "** vv **  this is us\n" if SameProcess(GetCurrentProcess(), $pi->processNumber);
+
+	printf "%-30s %08X % 4d %s\n", 
+		$pi->processName, $pi->processNumber,
+		GetProcessPID($pi->processNumber),
+		$pi->processAppSpec;
+
+	# check with PID
+	print "** ^^ **  this is us\n" if $$ == GetProcessPID($pi->processNumber);
 }
 
+exit;
 my $app = $Application{McPL};
 if (-e $app) {
 	$Launch = new LaunchParam(

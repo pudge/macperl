@@ -3,6 +3,7 @@ LaunchParam		T_PTROBJ
 ProcessInfo		T_PTROBJ
 ProcessSerialNumber	T_PSN
 FSSpecPtr		T_FSSPECPTR
+pid_t			T_IV
 
 INPUT
 T_PSN
