@@ -216,7 +216,7 @@ foreach $typemap (@tm) {
     die "Can't find $typemap in $pwd\n" unless -r $typemap;
 }
 if ($Is_MacOS) {
-    foreach (qw(:::: ::: :: :)) {
+    foreach (qw(::::: :::: ::: :: :)) {
     	unshift @tm, "$_:lib:ExtUtils:typemap";
     	unshift @tm, "$_:macos:lib:ExtUtils:typemap";
     	unshift @tm, "$_:Mac:typemap";
@@ -772,7 +772,7 @@ sub XS_PUSH_handler
     	print "\tEXTEND(sp, 1);\n";
     } 
     print "\t++sp;\n";
-    &generate_output($type, 0, "($value)", "*sp", 1);
+    &generate_output($type, 0, "($value)", 0, 1, "*sp", 1);
     "";
 }
 
