@@ -1,4 +1,4 @@
 The new user [% user.user %] has been created for you.
 </p><p>
-You are now logged in.
+You should now be logged in as [% user.user %].
 </p>

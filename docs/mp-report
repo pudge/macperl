@@ -84,7 +84,7 @@ sub create_config {
 	my(%config, $id, $sth);
 
 	if (!$pw->{form}{name}) {
-		error("Configuration must have a name.  Please go back and try again.");
+		$pw->error("Configuration must have a name.  Please go back and try again.");
 		return;
 	}
 
@@ -111,22 +111,21 @@ sub create_user {
 	my($id, $name, $email, $pass, $sf_match, $sth);
 
 	if (!$pw->{form}{pass1} || !$pw->{form}{pass2}) {
-		error('No password given.  Please try again.');
+		$pw->error('No password given.  Please try again.');
 		return;
 	} elsif ($pw->{form}{pass1} ne $pw->{form}{pass2}) {
-		error("Passwords do not match.  Please try again.");
+		$pw->error("Passwords do not match.  Please try again.");
 		return;
 	} else {
 		$pass = md5_hex($pw->{form}{pass1});
 	}
 
-
 	($name = lc $pw->{form}{user}) =~ s/[^a-zA-Z0-9_.-]+//g;
 	if (!$name) {
-		error('No user name given.  Please try again.');
+		$pw->error('No user name given.  Please try again.');
 		return;
 	} elsif (user_exists($pw, $name)) {
-		error("Sorry, that user name is already in use.  Please select another.");
+		$pw->error("Sorry, that user name is already in use.  Please select another.");
 		return;
 	}
 
@@ -155,7 +154,7 @@ sub add_test {
 	my $config_id = get_configdesc($pw);
 	my $test_id   = get_tests($pw);
 	if (! keys %$config_id) {
-		error("Please add a configuration before entering test results.");
+		$pw->error("Please add a configuration before entering test results.");
 		return;
 	}
 
