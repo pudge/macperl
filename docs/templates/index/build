@@ -1,5 +1,5 @@
 These are the build procedures for
-<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1r1.  Please send feedback to the
+<a href="http://dev.macperl.org/">MacPerl</a> version 5.6.1r2.  Please send feedback to the
 <a href="http://lists.perl.org/showlist.cgi?name=macperl-porters">macperl-porters</a> list,
 and <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">submit bugs
 at SourceForge.net</a>.
@@ -65,7 +65,7 @@ upgrade your db library to
 <a href="http://dev.macperl.org/files/macperl_build_libs/db_185g.sit.bin">db_185g</a>
 and your XL to
 <a href="http://dev.macperl.org/files/macperl_build_libs/XL_16.bin">XL_16</a>
-for MacPerl 5.6.1r1 (or re-fetch all of the
+for MacPerl 5.6.1r2 (or re-fetch all of the
 <a href="http://dev.macperl.org/files/macperl_build_libs.sit.bin">macperl_build_libs</a>
 archive).
 </p>
@@ -98,7 +98,7 @@ will be properly unpacked.
 		set up especially for the build, so if you get the
 		individual packages you might have some broken paths.</li>
 
-	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7941&amp;release_id=78422">GUSI 2</a></strong>
+	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7941&amp;release_id=123076">GUSI 2</a></strong>
 		(GUSI_222 or later; get the Pro5 libs in addition if using CodeWarrior
 		Pro 5)</li>
 
@@ -113,7 +113,7 @@ will be properly unpacked.
 		<sup><a href="#" onmouseover="return set_status(0);" onclick="return no_click(0);">0</a></sup>
 	</li>
 
-	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=78610">MacPerl and the perl MPW tool</a></strong>
+	<li><strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=126040">MacPerl and the perl MPW tool</a></strong>
 		(the current releases; perl itself is used for part of the build)</li>
 
 	<li><strong><a href="http://www.stlport.org/">STLport</a></strong> (3.12.3), if building with SC / MrC
@@ -121,7 +121,7 @@ will be properly unpacked.
 	</li>
 
 	<li>
-		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=78610">MacPerl 5.6.1r1 source kit</a></strong>
+		<strong><a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=126040">MacPerl 5.6.1r2 source kit</a></strong>
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 	</li>
 </ul>

@@ -14,8 +14,8 @@ href="http://pudge.net/">Chris Nandor</a>.
 <p>
 MacPerl 5.6 has been released.
 The current release of MacPerl is
-<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=78610">5.6.1r1</a>
-(2002.03.10), based on perl 5.6.1, which is the most recent release of perl.
+<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=126040">5.6.1r2</a>
+(2002.12.04), based on perl 5.6.1, which is the most recent release of perl.
 The current development release is
 <a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=96205">5.8.0a2</a>
 (2002.06.22), based on perl 5.8.0 RC 2, which is the release candidate for the next release
@@ -23,10 +23,8 @@ of perl.
 </p>
 
 <p>
-MacPerl 5.6.1r2 will be released once certain bugs are fixed in the application code and
-POSIX library.  MacPerl 5.8.0 will go to beta once those bugs are fixed, plus a few new bugs,
-plus a handful of other things we want to add (possibly including UI enhancements).
-There's no specific timeline.
+There is no specific timeline for MacPerl 5.8.0.  It will likely go to beta sometime in
+the first quarter of 2003.
 </p>
 
 
