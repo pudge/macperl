@@ -255,7 +255,8 @@ CVS tarball</A> (updated nightly).
 
 <p>
 The source for MacPerl is also available on the main perl repository in
-the <tt>maint-5.6/macperl</tt> branch.
+the <tt>maint-5.6/macperl</tt> branch for 5.6, <tt>maint-5.8/macperl</tt>
+for 5.8, and <tt>macperl</tt> for 5.9/5.10.
 </p>
 
 <noscript>
