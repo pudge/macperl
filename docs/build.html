@@ -101,8 +101,8 @@ will be properly unpacked.
 		set up especially for the build, so if you get the
 		individual packages you might have some broken paths.</li>
 
-	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7941&amp;release_id=21478">GUSI 2</a></strong>
-		(GUSI_215 or later; get the Pro5 libs in addition if using CodeWarrior
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7941&amp;release_id=27900">GUSI 2</a></strong>
+		(GUSI_216b2 or later; get the Pro5 libs in addition if using CodeWarrior
 		Pro 5)</li>
 
 	<li><strong><a href="http://developer.apple.com/tools/mpw-tools/">MPW</a></strong>,
@@ -128,7 +128,7 @@ will be properly unpacked.
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
 	</li>
 
-	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=25125">MacPerl 5.6.1 source kit</a></strong></li>
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=28139">MacPerl 5.6.1 source kit</a></strong></li>
 </ul>
 
 
@@ -178,7 +178,7 @@ will be properly unpacked.
 	<li><p>Change directory (using the "directory" command) in MPW to the
 		GUSI directory, and run the <em>GUSI_Install.MPW</em> script.
 		<sup><a href="#" onmouseover="return set_status(4);" onclick="return no_click(4);">4</a></sup></p><pre>
-			directory "HD:macperl_src:GUSI_215:"
+			directory "HD:macperl_src:GUSI_216b2:"
 			GUSI_Install.MPW</pre>
 		
 		<p>If using STLport (SC/MrC builds), also run the
@@ -203,15 +203,20 @@ will be properly unpacked.
 		folder inside "HD:macperl_src:".  Put the "macos" folder inside
 		"HD:macperl_src:perl:".</p></li>
 
-	<li><p>Change directory to the macos directory and apply the patch.</p><pre>
+	<li><p>Change directory to the :perl:macos: directory and apply the patch.</p><pre>
 		directory "HD:macperl_src:perl:macos:"
 		patch &lt; xsubpp.patch</pre></li>
 
+	<li><p>Copy File::Find from the old 5.2.0r4 distribution to the
+		:perl:lib:File: directory.</p><pre>
+		duplicate "{MACPERL}lib:File:Find.pm" ::lib:File:Find.pm</pre></li>
+
 	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
 		change the preferences there for the compilers you will
-		be using.  (CodeWarrior is 68K/PPC, Apple is SC/MrC; you
-		should stick with either one pair, or both pairs; don't
-		try to use just one compiler for everything.)</p></li>
+		be using.  (CodeWarrior is 68K/PPC, Apple is SC/MrC.)
+		You MUST use BOTH 68K and PPC, or SC and MrC.  Do not
+		try to build with only one compiler; pick one pair,
+		or both pairs.</p></li>
 
 	<li><p>Quit and restart MPW Shell, so the startup files will
 		be executed, or execute the MPW startup files
