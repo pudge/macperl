@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.8  2001/12/17 06:23:13  neeri
+Fix crashes on 68K exit (MacPerl Bug #490013)
+
 Revision 1.7  2001/11/09 06:48:57  neeri
 Fix Ctrl-D handling (MacPerl Bug #471436)
 
@@ -664,7 +667,7 @@ bool MPConsoleSpin(bool /* wait */)
 
 /********************* Raw I/O **********************/
 
-static int EmulateStty(FILE * tempFile, char * command)
+static int EmulateStty(void * tempFile, char * command)
 {
 	Boolean	setRaw	=	false;
 	Boolean	setEcho	=	false;
@@ -712,9 +715,7 @@ void InitConsole()
 	
 	GUSISetHook(GUSI_SpinHook, (GUSIHook)MPConsoleSpin);
 	
-#if NOT_YET
-	AddWriteEmulationProc("stty", EmulateStty);
-#endif
+	MacPerl_AddWriteEmulationProc("stty", (MacPerl_EmulationProc)EmulateStty);
 }
 
 void ResetConsole()
