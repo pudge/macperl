@@ -4,10 +4,7 @@
 
 BEGIN {
     chdir 't' if -d 't';
-    @INC = '../lib';
 }
-
-use Config;
 
 print "1..7\n";
 
@@ -15,9 +12,9 @@ print "1..7\n";
 
 $x = "\n";
 # 10 is ASCII/Iso Latin, 13 in Mac OS, 21 is EBCDIC.
-if ($x eq chr(10) ||
-    ($^O eq 'MacOS' && $x eq chr(13)) ||
-    ($Config{ebcdic} eq 'define' && $x eq chr(21))) {print "ok 1\n";}
+if ($x eq chr(10)) { print "ok 1\n";}
+elsif ($x eq chr(13)) { print "ok 1 # Mac OS\n"; }
+elsif ($x eq chr(21)) { print "ok 1 # EBCDIC\n"; }
 else {print "not ok 1\n";}
 
 # check `` processing
