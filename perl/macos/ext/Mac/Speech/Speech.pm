@@ -24,7 +24,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Voice);
-	$VERSION = '1.02';
+	$VERSION = '1.03';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		SpeechManagerVersion
@@ -75,23 +75,25 @@ BEGIN {
 }
 
 sub FETCH {
-    my($self,$voice) = @_;
-    if (!%VoiceDesc) {
-      foreach my $i (@{[1..Mac::Speech::CountVoices()]}) {
-          my $voicet = Mac::Speech::GetIndVoice($i);
-          my $voiced = ${Mac::Speech::GetVoiceDescription($voicet)};
-          $VoiceDesc{$voiced} = $voicet;
-      }
-    }
-  if (!$self->{$voice}) {
-      foreach my $i (keys %VoiceDesc) {
-          if ($i =~ /\Q$voice\E/) {
-              $self->{$voice} = $VoiceDesc{$i};
-              last;
-          }
-      }
-  }
-  $self->{$voice};
+	my($self, $voice) = @_;
+	if (! %VoiceDesc) {
+		foreach my $i (1 .. Mac::Speech::CountVoices()) {
+			my $voicet = Mac::Speech::GetIndVoice($i);
+			my $voiced = Mac::Speech::GetVoiceDescription($voicet);
+			$VoiceDesc{$voiced->name} = $voicet;
+		}
+		$VoiceDesc{undef} = $VoiceDesc{Mac::Speech::GetVoiceDescription()->name};
+	}
+	return $VoiceDesc{undef} unless $voice;
+	if (!$self->{$voice}) {
+		foreach my $i (keys %VoiceDesc) {
+			if ($i =~ /\Q$voice\E/i) {
+				$self->{$voice} = $VoiceDesc{$i};
+				last;
+			}
+		}
+	}
+	$self->{$voice};
 }
 
 package Mac::Speech;
@@ -102,8 +104,8 @@ package Mac::Speech;
 
 =item %Voice
 
-The C<%Voice> hash will return the index to the first voice matching
-the given text.
+The C<%Voice> hash will return the index to the first voice whose name
+matches the given text.
 
 =back
 
