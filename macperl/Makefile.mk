@@ -5,6 +5,9 @@
 # Language	: MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.10  2001/01/24 07:06:42  neeri
+#  Export symbols from PowerPC applications so dynamic extensions work
+#
 #  Revision 1.9  2001/01/23 07:35:16  neeri
 #  Support fat builds involving SC (Task 24871)
 #
@@ -95,7 +98,7 @@ MacPerlSources	=		\
 .SOURCE.c : $(MACPERL_SRC)
 .SOURCE.h : $(MACPERL_SRC)
 
-.INIT : Obj MPExt
+.INIT : Obj "MacPerl Extensions"
 
 PerlSources = runperl.c
 
