@@ -14,7 +14,7 @@
 			var notes = new Array();
 			notes[0] = 'Later versions of SC/MrC may not be fully compatible.';
 			notes[1] = 'Later versions of STLport may not be fully compatible.';
-			notes[2] = 'This is the unreleased in-development version of perl 5.6.1 from the main Perl source repository.';
+			notes[2] = 'This is the released version of perl 5.6.1; you may use the archive on CPAN, or this Mac-ready archive.';
 			notes[3] = 'If you run out of memory in the middle of a build, save, quit, and try again.';
 			notes[4] = 'In MPW you must hit "enter" or "cmd"+"return" to execute a command on a line.';
 
@@ -109,8 +109,8 @@ will be properly unpacked.
 		set up especially for the build, so if you get the
 		individual packages you might have some broken paths.</li>
 
-	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7941&amp;release_id=27900">GUSI 2</a></strong>
-		(GUSI_216b2 or later; get the Pro5 libs in addition if using CodeWarrior
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7941&amp;release_id=31416">GUSI 2</a></strong>
+		(GUSI_217 or later; get the Pro5 libs in addition if using CodeWarrior
 		Pro 5)</li>
 
 	<li><strong><a href="http://developer.apple.com/tools/mpw-tools/">MPW</a></strong>,
@@ -134,10 +134,9 @@ will be properly unpacked.
 	<li>
 		<strong><a href="ftp://macperl.sourceforge.net//pub/macperl/perl-5.6.1.sit.bin">perl 5.6.1 source</a></strong>
 		<sup><a href="#" onmouseover="return set_status(2);" onclick="return no_click(2);">2</a></sup>
-		(<em>not</em> the TRIAL3 release, but the 5.6.1 release)
 	</li>
 
-	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=28139">MacPerl 5.6.1 source kit</a></strong></li>
+	<li><strong><a href="http://sourceforge.net/project/showfiles.php?group_id=7940&amp;release_id=32572">MacPerl 5.6.1 source kit</a></strong></li>
 </ul>
 
 
@@ -212,13 +211,12 @@ will be properly unpacked.
 		folder inside "HD:macperl_src:".  Put the "macos" folder inside
 		"HD:macperl_src:perl:".</p></li>
 
-	<li><p>Change directory to the :perl:macos: directory and apply the patch.</p><pre>
-		directory "HD:macperl_src:perl:macos:"
-		patch &lt; xsubpp.patch</pre></li>
+	<li><p>From the "HD:macperl_src:" directory, apply the xsubpp patch.</p><pre>
+		directory "HD:macperl_src:"
+		patch -p0 &lt; :perl:macos:xsubpp.patch</pre></li>
 
-	<li><p>Copy File::Find from the old 5.2.0r4 distribution to the
-		:perl:lib:File: directory.</p><pre>
-		duplicate "{MACPERL}lib:File:Find.pm" ::lib:File:Find.pm</pre></li>
+	<li><p>Apply the perl 5.6.1 patch (changes since the release of 5.6.1).</p><pre>
+		patch -p0 &lt; :perl:macos:maint.patch</pre></li>
 
 	<li><p>Open "HD:macperl_src:perl:macos:MacPerlConfig.mk" and
 		change the preferences there for the compilers you will
