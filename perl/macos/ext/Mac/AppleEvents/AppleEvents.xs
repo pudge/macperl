@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.8  2003/04/06 21:16:51  pudge
+ * Fix segfault for NULL descriptor in new AEDesc
+ *
  * Revision 1.7  2002/12/17 16:16:07  pudge
  * Use new constant
  *
@@ -631,18 +634,11 @@ AESend(theAppleEvent, sendMode, sendPriority=kAENormalPriority, timeout=kAEDefau
 				&theAppleEvent, &RETVAL, 
 				sendMode, sendPriority, timeout, (AEIdleUPP) &uSubLaunchIdle, nil));
 #else
-	// AESendMessage code for Mac OS X from Steve Zellers
-	mach_port_t port;
-
-	mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &port);
-	AEPutAttributePtr(&theAppleEvent, keyPerlReplyPortAttr, typeMachPort, &port, sizeof(port));
+	// Mac OS X version doesn't use an idle proc
 	AEFail(
-		AESendMessage(
+		AESend(
 			&theAppleEvent, &RETVAL, 
-			sendMode, timeout
-		)
-	);
-	mach_port_destroy(mach_task_self(), port);
+			sendMode, sendPriority, timeout, nil, nil));
 #endif
 	}
 	OUTPUT:
@@ -1012,6 +1008,8 @@ tables is quick and efficient.
 
 =item AEDescToSubDesc DESC
 
+B<Mac OS only.>
+
 Translate DESC to a subdescriptor (dictionary entry). 
 Return the subdescriptor.
 
@@ -1029,6 +1027,8 @@ AEDescToSubDesc(desc)
 	RETVAL
 
 =item AEGetSubDescType SUBDESC
+
+B<Mac OS only.>
 
 Return the type of the subdescriptor.
 
@@ -1051,6 +1051,8 @@ AEGetSubDescType(subdesc)
 #endif
 
 =item AEGetSubDescBasicType SUBDESC
+
+B<Mac OS only.>
 
 Return the basic type of the subdescriptor. Differs from AEGetSubDescType
 in handling of coerced records.
@@ -1075,6 +1077,8 @@ AEGetSubDescBasicType(subdesc)
 
 =item AESubDescIsListOrRecord SUBDESC
 
+B<Mac OS only.>
+
 Return nonzero if the subdescriptor is a list or record.
 
 =cut
@@ -1096,6 +1100,8 @@ AESubDescIsListOrRecord(subdesc)
 #endif
 
 =item AEGetSubDescData SUBDESC
+
+B<Mac OS only.>
 
 Returns the data of the subdescriptor. 
 
@@ -1120,6 +1126,8 @@ AEGetSubDescData(subdesc)
 
 =item AESubDescToDesc SUBDESC, DESIREDTYPE
 
+B<Mac OS only.>
+
 Translate the subdescriptor back to a descriptor of the desired type.
 
 =cut
@@ -1137,6 +1145,8 @@ AESubDescToDesc(subdesc, desiredType=typeWildCard)
 	RETVAL
 
 =item AECountSubDescItems SUBDESC
+
+B<Mac OS only.>
 
 Counts the number of subdescriptor items.
 
@@ -1158,6 +1168,8 @@ AECountSubDescItems(subdesc)
 	RETVAL	
 
 =item AEGetNthSubDesc SUBDESC,INDEX
+
+B<Mac OS only.>
 
 Returns the item INDEX of the subdescriptor and its type if the subdescriptor
 represented a record and not a list.
@@ -1185,6 +1197,8 @@ AEGetNthSubDesc(subdesc,index)
 
 =item AEGetKeySubDesc SUBDESC,KW
 
+B<Mac OS only.>
+
 Returns the keyword indexed item from the subdescriptor.
 
 =back
@@ -1196,7 +1210,7 @@ AEGetKeySubDesc(subdesc,kw)
 	OSType		kw
 	CODE:
 #ifndef MACOS_TRADITIONAL
-	croak("Usage: Mac::AppleEvents::AEGetNthSubDesc unsupported in Carbon");
+	croak("Usage: Mac::AppleEvents::AEGetKeySubDesc unsupported in Carbon");
 #else
 	AEFail(AEGetKeySubDesc(&subdesc, kw, &RETVAL));
 #endif
