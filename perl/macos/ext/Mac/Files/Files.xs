@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.7  2002/12/12 14:57:29  pudge
+ * Update POD and docs
+ *
  * Revision 1.6  2002/11/13 02:04:51  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -290,7 +293,7 @@ FSpGetCatInfo(file, index=0)
 	FSSpec	file
 	short		index
 	CODE:
-	if ((index && GUSIFSpUp(&file)) || !(RETVAL = NewCatInfo())) {
+	if ((index && GUSIFSpDown(&file, "\p")) || !(RETVAL = NewCatInfo())) {
 		XSRETURN_UNDEF;
 	}
 	RETVAL->hFileInfo.ioVRefNum 	= file.vRefNum;
@@ -693,7 +696,7 @@ FindFolder(vRefNum, folderType, createFolder=0)
 	GUSIFSpUp(&RETVAL);
 	OUTPUT:
 	RETVAL
- 
+
 =back
- 
+
 =cut
