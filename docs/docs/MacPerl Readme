@@ -78,6 +78,9 @@ Both the web and full installers are self-updating as new versions
 of MacPerl are released; they will fetch and install only changed
 files, so you don't need to download everything anew.
 
+B<Note>: Some beta versions of the full installer were not
+self-updating; please download a new installer.
+
 
 =head2 Installing
 
@@ -107,6 +110,7 @@ selected as well, by default.
 =item Developer Kit
 
 This installs all the source, and the SYM files for debugging.
+Most users will not want or need these files.
 
 =back
 
@@ -178,7 +182,7 @@ kept in close sync with regular perl releases.
 
 You will need compilers and libraries, all of them freely
 available.  These are linked to from the development site at
-http://dev.macperl.org/. Go to that site for all things having to
+L<http://dev.macperl.org/>. Go to that site for all things having to
 do with MacPerl development.
 
 
@@ -221,4 +225,4 @@ by Ramon M. Felciano.
 
 =head1 DATE
 
-Last modified 2002.03.07.
+Last modified 2002.03.10.

@@ -66,7 +66,7 @@ MacPerl will fail.  Either clean it out, or remove it from the
 Libraries preferences.
 
 
-=head2 cpan-mac Not Supported
+=head2 Old cpan-mac Not Supported
 
 All of cpan-mac is now included in MacPerl, with some incompatible changes
 from the version available for MacPerl 5.2.0r4.  Continue to use cpan-mac
@@ -75,6 +75,7 @@ modules and utilities.
 
 The L<CPAN> module has also been changed; some of the Mac-specific functions
 have changed, and have moved from L<ExtUtils::MM_MacOS> to L<Mac::BuildTools>.
+
 
 =head2 Path Changes
 
@@ -86,11 +87,13 @@ Also, in L<File::Spec>, C<catdir> and C<catfile> will now return a relative,
 NOT absolute, path by default, as this is the expected behavior on other
 platforms.  See L<File::Spec> for more information.
 
+
 =head2 Glob Syntax Changed
 
-The built-in C<glob> and glob operator C<E<lt>E<gt>> now use the standard
+The built-in C<glob> and glob operator E<lt>E<gt> now use the standard
 BSD syntax instead of the modified MPW syntax.  See the L<File::Glob>
 module for more information.
+
 
 =head2 AppleTalk, Choose, PPC Sockets Not Supported
 
@@ -100,11 +103,13 @@ supported in MacPerl, but may be in the future.  (B<Note>:
 Apple events code, such as via L<Mac::Glue>, can still send events
 via PPC sockets, since that is handled by the OS, not MacPerl).
 
+
 =head2 GD Not Included
 
 The GD module is no longer included.  It has undergone a significant
 change since it was last included, dropping GIF support, and we
 didn't get around to porting the whole thing.
+
 
 =head2 Various .pl and .ph Libraries Not Included
 
@@ -112,16 +117,19 @@ StandardFile.pl, CommConnect.pl, and GUSI.ph were deprecated, and
 are not included.  For StandardFile.pl functions, use
 L<Mac::StandardFile> instead.
 
+
 =head2 CFM68K Not Supported
 
 Support for CFM68K, which provided dynamic loading of shared libraries
 under 68K, is no longer supported.
+
 
 =head2 68K Modules
 
 The 68K build of MacPerl does not include the various Mac:: toolbox
 modules.  This may change in the future; please request the feature
 if you need it.
+
 
 =head2 Minimum Requirements
 
@@ -436,7 +444,6 @@ malloc() is smarter.
 Config.pm (and the -V command-line switch) will now give better
 information for a given system.
 
-
 =item *
 
 C<kill> now accepts a signal of 0, so the common idiom of using
@@ -507,6 +514,13 @@ to a tiny but sufficient test case.  If running the MPW tool,
 include the output of C<perl -V>.  If running the application,
 run the "One Liner" MacPerl script, and execute the text
 C<perl -V>.
+
+Also please include the model of your computer and version of your
+operating system in the bug report (e.g., "PowerBook G3/400 running
+Mac OS 9.2.2"), as well as any additional information that might
+be useful.  If there is a system crash or odd system behavior,
+consider attaching a report from Apple System Profiler, included
+with most recent versions of Mac OS.
 
 
 =head1 SEE ALSO

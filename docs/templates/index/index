@@ -12,29 +12,26 @@ href="http://pudge.net/">Chris Nandor</a>.
 <h2>Current Release</h2>
 
 <p>
-MacPerl 5.6 is in development (beta).
+MacPerl 5.6 has been released.
 The current release of MacPerl is
-<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=20742">5.2.0r4</a>
-(1998.04.17), based on perl 5.004.
+<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=78610">5.6.1r1</a>
+(2002.03.10), based on perl 5.6.1, which is the most recent release of perl.
+<!--
 The current development release is
-<a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=74061">5.6.1b4</a>
-(2002.02.07), based on perl 5.6.1, which is the most recent release of perl.  MacPerl is also being
-ported to perl 5.8.0, which is currently in development.  No releases of that are expected until
-MacPerl 5.6.1 is released.
+[[a href="http://sf.net/project/showfiles.php?group_id=7940&amp;release_id=74061"]]5.6.1b4[[/a]]
+(2002.02.07), based on perl 5.6.1, which is the most recent release of perl.
+-->
+MacPerl is also being
+ported to perl 5.8.0, which is currently in development.
 </p>
 
 
 <h2>MacPerl Development</h2>
 
 <p>
-Please read the <a href="/state.txt">State of MacPerl Message</a> for
-an overview of what is going on, and see
-<a href="http://use.perl.org/~pudge/">Chris Nandor's
-use Perl page</a> for his journal of development.  If you would like
+If you would like
 to build MacPerl yourself, please read the
-<a href="/?build">Build Instructions</a>.  If you feel like it,
-please report what happened (for building and using)
-on our <a href="/cgi-bin/mp-report">Testing</a> page.  See much of what
+<a href="/?build">Build Instructions</a>.  See much of what
 is going on over at the
 <a href="http://sf.net/projects/macperl/">MacPerl SourceForge.net</a>
 site.
@@ -53,8 +50,7 @@ mailing lists</a> (also available on nntp.perl.org or another NNTP
 server near you). For bug reports,
 use the <a href="http://sf.net/tracker/?group_id=7940&amp;atid=107940">MacPerl bugs</a>
 page.  When you <a href="http://sf.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">submit
-bug reports</a>, please be very clear about what version/revision of MacPerl
-(or other files/programs/modules) you are using.
+bug reports</a>.
 </p>
 
 <p>
@@ -68,10 +64,10 @@ places, but to the appropriate places for Perl itself.
 
 <p>
 MacPerl runs under the Classic environment on Mac OS X.  There are currently no
-plans to port it to Carbon.  Unix perl runs just fine under Mac OS X.  It would
-be nice to, at some point, have the Toolbox modules (Mac::Windows, Mac::Events)
-Carbonized so the same GUI-based MacPerl programs would run on both platforms.
-This may happen in the future.  There is a separate
+plans to port it to Carbon.  Unix perl runs just fine under Mac OS X.  There are
+plans underway to have the Toolbox modules (Mac::Windows, Mac::Events)
+Carbonized so the same GUI-based MacPerl programs can run on both platforms.
+There is a separate
 <a href="http://lists.perl.org/showlist.cgi?name=macosx">mailing list</a>
 for perl on Mac OS X.
 </p>
