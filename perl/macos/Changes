@@ -25,6 +25,97 @@ Version v5.6.1b1
 ----------------
 
 ____________________________________________________________________________
+[ 12331] By: pudge                                 on 2001/10/03  19:30:48
+        Log: Update various resources for credits,
+             minor icons fixes, and versions.
+     Branch: maint-5.6/macperl
+           ! macos/MPVersion.r macos/Perl.r macos/macperl/MPDroplet.r
+           ! macos/macperl/MPExtension.rsrc macos/macperl/MPSave.c
+           ! macos/macperl/MacPerl.r macos/macperl/MacPerl.rsrc
+____________________________________________________________________________
+[ 12330] By: pudge                                 on 2001/10/03  19:17:25
+        Log: Quiet the warnings about using undef value
+     Branch: maint-5.6/macperl
+           ! lib/File/Temp.pm
+____________________________________________________________________________
+[ 12329] By: pudge                                 on 2001/10/03  19:14:59
+        Log: Fix up Ballon Help and Help menu docs (first pass);
+             remove balloon rez file, and autogenerate with
+             Balloon2Rez instead.
+     Branch: maint-5.6/macperl
+           + macos/macperl/macscripts/Balloon2Rez
+           - macos/macperl/MPBalloons.r
+           ! macos/macperl/MPBalloons.ball macos/macperl/MacPerl.podhelp
+____________________________________________________________________________
+[ 12328] By: pudge                                 on 2001/10/03  19:11:15
+        Log: Allow overriding of defaults, for change #12327.
+     Branch: maint-5.6/macperl
+           ! perl.h
+____________________________________________________________________________
+[ 12327] By: pudge                                 on 2001/10/03  19:10:26
+        Log: Override PerlProc_exit.
+     Branch: maint-5.6/macperl
+           ! macos/macish.h
+____________________________________________________________________________
+[ 12326] By: pudge                                 on 2001/10/03  19:08:28
+        Log: Add in new macos/ modules, fix up BuildTools and Makefile.
+     Branch: maint-5.6/macperl
+           + macos/bundled_lib/blib/lib/MD5.pm
+           + macos/bundled_lib/t/MD5/md5.t macos/lib/Mac/AETE/App.pm
+           + macos/lib/Mac/AETE/Dialect.pm
+           + macos/lib/Mac/AETE/Format/Converter.pm
+           + macos/lib/Mac/AETE/Format/Dictionary.pm
+           + macos/lib/Mac/AETE/Format/Glue.pm macos/lib/Mac/AETE/Parser.pm
+           + macos/lib/Mac/Glue.pm macos/lib/Mac/OSA/Simple.pm
+           + macos/lib/Mac/Toolbox.pod
+           ! macos/Makefile.mk macos/lib/Mac/BuildTools.pm
+____________________________________________________________________________
+[ 12325] By: pudge                                 on 2001/10/03  18:51:28
+        Log: Sync up silly CVS headers ... I should commit CVS
+             first to avoid this ...
+     Branch: maint-5.6/macperl
+           ! macos/config.h macos/ext/Mac/ExtUtils/MakeToolboxModule
+           ! macos/ext/Mac/Fonts/Fonts.xs macos/ext/MacPerl/MacPerl.xs
+           ! macos/macperl/MPEditor.c macos/macperl/MPGlobals.h
+           ! macos/macperl/MPScript.c macos/macperl/MPUtils.c
+____________________________________________________________________________
+[ 12324] By: pudge                                 on 2001/10/03  18:44:09
+        Log: Fix Matthias' address, and attributions.
+     Branch: maint-5.6/macperl
+           ! AUTHORS README.macos ext/DynaLoader/dl_mac.xs perl.c
+           ! pod/perlport.pod
+____________________________________________________________________________
+[ 12323] By: pudge                                 on 2001/10/03  18:42:37
+        Log: Fix Matthias' address, and attributions.
+     Branch: maint-5.6/macperl
+           ! macos/config.h macos/ext/Mac/AppleEvents/AppleEvents.pm
+           ! macos/ext/Mac/Components/Components.pm
+           ! macos/ext/Mac/Controls/Controls.pm macos/ext/Mac/DCon/DCon.pm
+           ! macos/ext/Mac/Dialogs/Dialogs.pm
+           ! macos/ext/Mac/Events/Events.pm
+           ! macos/ext/Mac/ExtUtils/MakeToolboxModule
+           ! macos/ext/Mac/Files/Files.pm macos/ext/Mac/Fonts/Fonts.pm
+           ! macos/ext/Mac/Gestalt/Gestalt.pm
+           ! macos/ext/Mac/ImageCompression/ImageCompression.pm
+           ! macos/ext/Mac/Lists/Lists.pm macos/ext/Mac/Memory/Memory.pm
+           ! macos/ext/Mac/Menus/Menus.pm
+           ! macos/ext/Mac/MoreFiles/MoreFiles.pm
+           ! macos/ext/Mac/Movies/Movies.pm
+           ! macos/ext/Mac/Navigation/Navigation.pm
+           ! macos/ext/Mac/Notification/Notification.pm
+           ! macos/ext/Mac/OSA/OSA.pm macos/ext/Mac/Processes/Processes.pm
+           ! macos/ext/Mac/QDOffscreen/QDOffscreen.pm
+           ! macos/ext/Mac/QuickDraw/QuickDraw.pm
+           ! macos/ext/Mac/QuickTimeVR/QuickTimeVR.pm
+           ! macos/ext/Mac/Resources/Resources.pm macos/ext/Mac/SAT/SAT.pm
+           ! macos/ext/Mac/Sound/Sound.pm macos/ext/Mac/Speech/Speech.pm
+           ! macos/ext/Mac/SpeechRecognition/SpeechRecognition.pm
+           ! macos/ext/Mac/StandardFile/StandardFile.pm
+           ! macos/ext/Mac/TextEdit/TextEdit.pm
+           ! macos/ext/Mac/Types/Types.pm macos/ext/Mac/Windows/Windows.pm
+           ! macos/fcntl.h macos/lib/ExtUtils/MM_MacOS.pm
+           ! macos/lib/Mac/LowMem.pm
+____________________________________________________________________________
 [ 12242] By: pudge                                 on 2001/09/26  20:41:35
         Log: Note (get|set)sockopt are available.
      Branch: maint-5.6/macperl
