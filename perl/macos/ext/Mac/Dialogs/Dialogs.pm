@@ -27,8 +27,8 @@ BEGIN {
     use Mac::Windows;
     use Mac::Controls qw(HiliteControl GetControlValue SetControlValue);
     
-    use vars qw(@ISA @EXPORT @EXPORT_OK %Dialog %DialogUserItem);
-    
+    use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %Dialog %DialogUserItem);
+    $VERSION = '1.00';
     @ISA = qw(Exporter DynaLoader);
     @EXPORT = qw(
         NewDialog

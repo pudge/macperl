@@ -1,6 +1,6 @@
-diff -ru Bourque:test:perl.orig:lib:ExtUtils: ::lib:ExtUtils:xsubpp
---- Bourque:test:perl.orig:lib:ExtUtils:xsubpp	Mon Feb 19 17:07:32 2001
-+++ ::lib:ExtUtils:xsubpp	Mon Feb 19 15:31:31 2001
+diff -ru :perl:lib:ExtUtils: :perl.new:lib:ExtUtils:xsubpp
+--- :perl:lib:ExtUtils:xsubpp	Mon Feb 19 17:07:32 2001
++++ :perl.new:lib:ExtUtils:xsubpp	Mon Feb 19 15:31:31 2001
 @@ -173,7 +173,13 @@
  ($dir, $filename) = $ARGV[0] =~ m#(.*)/(.*)#
  	or ($dir, $filename) = $ARGV[0] =~ m#(.*)\\(.*)#

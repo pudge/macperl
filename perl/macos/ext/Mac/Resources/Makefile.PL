@@ -1,7 +1,8 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-	NAME		=> q(Mac::Resources),
-    'LINKTYPE'	=> 'static dynamic',
-    XSPROTOARG => '-noprototypes', 		# XXX remove later?
+	NAME			=> q(Mac::Resources),
+	'VERSION_FROM'		=> 'Resources.pm',
+	'LINKTYPE'		=> 'static dynamic',
+	XSPROTOARG		=> '-noprototypes', 		# XXX remove later?
 );

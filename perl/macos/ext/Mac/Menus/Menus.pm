@@ -24,8 +24,8 @@ BEGIN {
 	use DynaLoader  ();
 	use Mac::Events ();
 	
-	use vars qw(@ISA @EXPORT @EXPORT_OK %Menu);
-	
+	use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %Menu);
+	$VERSION = '1.00';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		GetMBarHeight

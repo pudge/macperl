@@ -23,8 +23,8 @@ BEGIN {
 	use Exporter   ();
 	use DynaLoader ();
 	
-	use vars qw(@ISA @EXPORT @EXPORT_OK $CurrentEvent @SavedEvents @Event);
-	
+	use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $CurrentEvent @SavedEvents @Event);
+	$VERSION = '1.00';
 	@ISA = qw(Exporter DynaLoader);
 	
 	@EXPORT = qw(

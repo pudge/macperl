@@ -23,8 +23,8 @@ BEGIN {
 	use Exporter   ();
 	use DynaLoader ();
 	
-	use vars qw(@ISA @EXPORT %Cursors);
-	
+	use vars qw($VERSION @ISA @EXPORT %Cursors);
+	$VERSION = '1.00';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		SetPort

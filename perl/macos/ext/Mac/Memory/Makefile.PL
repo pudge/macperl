@@ -1,7 +1,8 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-	NAME		=> q(Mac::Memory),
-    'LINKTYPE'	=> 'static dynamic',
-    XSPROTOARG => '-noprototypes', 		# XXX remove later?
+	NAME			=> q(Mac::Memory),
+	'VERSION_FROM'		=> 'Memory.pm',
+	'LINKTYPE'		=> 'static dynamic',
+	XSPROTOARG		=> '-noprototypes', 		# XXX remove later?
 );

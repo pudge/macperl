@@ -22,8 +22,8 @@ BEGIN {
 	use DynaLoader ();
 	use Carp;
 
-	use vars qw(@ISA @EXPORT %MacPack %MacUnpack);
-	
+	use vars qw($VERSION @ISA @EXPORT %MacPack %MacUnpack);
+	$VERSION = '1.00';
 	@ISA = qw(Exporter DynaLoader);
 	
 	@EXPORT = qw(
