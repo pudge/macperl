@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	Metrowerks C++
 
 $Log$
+Revision 1.2  2002/12/10 03:06:24  pudge
+Big update for Carbon support
+
 Revision 1.1  2000/08/14 01:48:18  neeri
 Checked into Sourceforge
 
@@ -14,7 +17,7 @@ Synchronized with MacPerl 5.1.4a1
 *********************************************************************/
 
 #ifndef MACOS_TRADITIONAL
-#include "../Carbon.h"
+#undef Move
 #endif
 #include <AppleEvents.h>
 #ifdef MACOS_TRADITIONAL
