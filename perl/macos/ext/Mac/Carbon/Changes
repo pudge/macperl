@@ -1,3 +1,11 @@
+* v0.61, 28 October 2003
+
+   Adjust Mac::Speech test to work with fresh install of Panther, where
+   (on my machine) the Good News voice won't load, so CountVoices()
+   returns less than the test thinks it should.  Only this one test has
+   been changed, no need to upgrade from 0.60.
+
+
 * v0.60, 27 October 2003
 
    Updated a bunch of docs for Carbon compatibility

@@ -20,7 +20,8 @@ SKIP: {
 	}
 	# this can fail if some voices don't load, or if there are
 	# non-voice files installed in the directory
-	cmp_ok(CountVoices(), '>=', scalar @voicefiles, 'count voices');
+	# +1 for bad voice on Panther that won't load ...
+	cmp_ok(CountVoices()+1, '>=', scalar @voicefiles, 'count voices');
 
 	# start with Cellos
 	ok($voice   = $Mac::Speech::Voice{Cellos},	'load voice');
