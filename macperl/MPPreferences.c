@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.6  2001/01/24 09:51:30  neeri
+Fix library paths (Bug 129817)
+
 Revision 1.4  2001/01/16 21:01:42  pudge
 Minor changes
 
@@ -185,7 +188,8 @@ pascal void OpenPreferences()
 	
 	prefPath.vRefNum 	= gAppVol;
 	prefPath.parID		= gAppDir;
-	PLstrcpy(prefPath.name, (StringPtr) "\pMacPerl 5 Preferences");
+	/* Temporarily make path with "¶", for development */
+	PLstrcpy(prefPath.name, (StringPtr) "\pMacPerl 5 Preferences ¶");
 	
 	if (GUSIFSpGetCatInfo(&prefPath, &info))
 		if (FindFolder(
