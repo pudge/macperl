@@ -1,18 +1,9 @@
-use ExtUtils::MakeMaker;
-
-my $mod = 'MoreFiles';
-my %args = (
-	'NAME'			=> "Mac::$mod",
-	'VERSION_FROM'		=> "$mod.pm",
-	'LINKTYPE'		=> 'static dynamic',
-	'XSPROTOARG'		=> '-noprototypes', 		# XXX remove later?
-);
-
-# disable tests if set up outside current dir
-use Cwd;
-if ($ENV{PWD} && $ENV{PWD} ne cwd()) {
-	*MY::test = sub { "test ::\n\t\@\$(NOOP)" };
-}
+# most of this is automatic
+use File::Spec::Functions;
+use strict;
+use vars qw($XS %ARGS);
+$XS = 'MF.xs';
+do(catfile(updir(), 'common.pl'));
 
 if ($^O eq 'darwin') {
 	my $src = 'MoreFilesSrc';
@@ -21,16 +12,16 @@ if ($^O eq 'darwin') {
 	require File::Copy;
 	opendir my $dh, $src or die $!;
 	File::Copy::copy($_, '.') for map { "$src/$_" } grep { /\.c$/ } readdir($dh);
+
 	# all our C_FILES are generated or copied into place
-	$args{'clean'}          = { FILES => '$(C_FILES)' };
-
-	$args{'INC'}		= "-I/Developer/Headers/FlatCarbon/ -I./$src";
-	$args{'LDDLFLAGS'}	= '-bundle -flat_namespace -undefined suppress -framework Carbon';
-	$args{'OBJECT'}		= '$(O_FILES)';
+	$ARGS{'clean'}{FILES}   = $ARGS{'clean'}{FILES} . ' $(C_FILES)';
+	$ARGS{'INC'}		= $ARGS{'INC'} . " -I./$src";
+	$ARGS{'OBJECT'}		= '$(O_FILES)';
 }
+
 if ($^O eq 'MacOS') {
-	$args{'INC'}		= '-i "$(PERL_SRC):MoreFiles:CHeaders:"';
-	$args{'OBJECT'}		= 'MF.c';
+	$ARGS{'INC'}		= '-i "$(PERL_SRC):MoreFiles:CHeaders:"';
+	$ARGS{'OBJECT'}		= 'MF.c';
 }
 
-WriteMakefile(%args);
+domakefile();

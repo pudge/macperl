@@ -1,28 +1,22 @@
-use ExtUtils::MakeMaker;
+# most of this is automatic
+use File::Spec::Functions;
+use strict;
+use vars qw($NAME %ARGS);
+$NAME = 'MacPerl';
+do(catfile(updir(), 'common.pl'));
 
-my %args = (
-	'NAME'			=> 'MacPerl',
-	'VERSION_FROM'		=> 'MacPerl.pm',
-	'XSPROTOARG'		=> '-noprototypes', 		# XXX remove later?
-);
-
-# disable tests if set up outside current dir
-use Cwd;
-if ($ENV{PWD} && $ENV{PWD} ne cwd()) {
-	*MY::test = sub { "test ::\n\t\@\$(NOOP)" };
-}
+$ARGS{'PM'}   = { 'MacPerl.pm' => '$(INST_LIBDIR)/MacPerl.pm' };
 
 if ($^O eq 'darwin') {
-	$args{'LINKTYPE'}	= 'dynamic';
-	$args{'OBJECT'}		= 'MacPerl.o OSA.o';
-	$args{'INC'}		= '-I/Developer/Headers/FlatCarbon/';
-	$args{'LDDLFLAGS'}	= '-bundle -flat_namespace -undefined suppress -framework Carbon';
-}
-if ($^O eq 'MacOS') {
-	$args{'LINKTYPE'}	= 'static';
-	$args{'SKIP'}		= [qw(dynamic dynamic_lib dynamic_bs)];
-	$args{'OBJECT'}		= 'MacPerl.c XL.c OSA.c';
-	$args{'INC'}	 	= "-i :::::XL:";
+	$ARGS{'LINKTYPE'}	= 'dynamic';
+	$ARGS{'OBJECT'}		= 'MacPerl.o OSA.o';
 }
 
-WriteMakefile(%args);
+if ($^O eq 'MacOS') {
+	$ARGS{'LINKTYPE'}	= 'static';
+	$ARGS{'SKIP'}		= [qw(dynamic dynamic_lib dynamic_bs)];
+	$ARGS{'OBJECT'}		= 'MacPerl.c XL.c OSA.c';
+	$ARGS{'INC'}	 	= "-i :::::XL:";
+}
+
+domakefile();
