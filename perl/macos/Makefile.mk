@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.8  2001/01/16 21:12:21  pudge
+#  Misc. makefile changes
+#
 #  Revision 1.7  2001/01/09 21:57:18  pudge
 #  Change AutoInit to full paths
 #
@@ -80,15 +83,6 @@ CInc		+= -i "$(MoreFiles)CHeaders:"
 
 YACC = yacc
 
-UnPreloadLibs	=				\
-			"{{MW68KLibraries}}MSL MPWRuntime.68K.Lib"		\
-			"{{MW68KLibraries}}MSL Runtime68K.Lib"			\
-			"{{MW68KLibraries}}MacOS.Lib"					\
-			"{{MW68KLibraries}}MSL C.68K MPW(NL_4i_8d).Lib"	\
-			"{{MW68KLibraries}}MSL C++.68K (4i_8d).Lib"		\
-			"{{MW68KLibraries}}MathLib68K (4i_8d).Lib"		\
-			"{{Libraries}}ToolLibs.o"				\
-			"{{Libraries}}IntEnv.o"	
 LibFiles68K	=	:PLib:PerlLib.68K.Lib					\
 			"$(GUSI)lib:GUSI_Forward.68K.Lib"					\
 			"{{MW68KLibraries}}MSL MPWRuntime.68K.Lib"		\
@@ -263,12 +257,6 @@ translators:	miniperl :lib:Config.pm
 # This is now done by installman only if you actually want the man pages.
 #	@echo " "; echo "	Making docs"; cd pod; $(MAKE) all;
 
-# MWLink68K preloads the generated segments, which is not good for huge fat
-# tools. UnPreload undoes this.
-
-UnPreload:	UnPreload.c.68K.o
-	$(Link68K) -o UnPreload :Obj:UnPreload.c.68K.o $(UnPreloadLibs) 
-
 # The $& notation tells Sequent machines that it can do a parallel make,
 # and is harmless otherwise.
 # The miniperl -w -MExporter line is a basic cheap test to catch errors
@@ -279,13 +267,8 @@ UnPreload:	UnPreload.c.68K.o
 
 .INIT : Obj PLib 
 
-miniperl:  UnPreload miniperl.{$(MACPERL_BUILD_TOOL)}
-	Duplicate -y miniperl.$(MACPERL_INST_TOOL_PPC) miniperl
-	Begin
-		Echo 'Include "miniperl.$(MACPERL_INST_TOOL_68K)" '¶''CODE'¶'';'
-		Echo 'Include "miniperl.$(MACPERL_INST_TOOL_68K)" '¶''DATA'¶'';'
-	End | Rez -a -c 'MPS ' -t MPST -o miniperl
-	UnPreload miniperl
+miniperl:  miniperl.{$(MACPERL_BUILD_TOOL)}
+	FatBuild miniperl $(MACPERL_INST_TOOL_PPC) $(MACPERL_INST_TOOL_68K)
 	:miniperl -w -I::lib -MExporter -e 0 || BuildProgram minitest
 miniperl.68K:	:PLib:Perl.68K.Lib :PLib:PerlLib.68K.Lib miniperlmain.c.68K.o
 	$(Link68K) -o miniperl.68K :Obj:miniperlmain.c.68K.o $(LibFiles68K)  :PLib:Perl.68K.Lib
@@ -353,13 +336,8 @@ dynlibrary: perl PerlStub
 	Echo > dynlibrary
 	setfile -m 02/01/2031 dynlibrary
 
-perl: UnPreload perl.{$(MACPERL_BUILD_TOOL)}
-	Duplicate -y perl.$(MACPERL_INST_TOOL_PPC) perl
-	Begin
-		Echo 'Include "perl.$(MACPERL_INST_TOOL_68K)" '¶''CODE'¶'';'
-		Echo 'Include "perl.$(MACPERL_INST_TOOL_68K)" '¶''DATA'¶'';'
-	End | Rez -a -c 'MPS ' -t MPST -o perl
-	UnPreload perl
+perl: perl.{$(MACPERL_BUILD_TOOL)}
+	FatBuild perl $(MACPERL_INST_TOOL_PPC) $(MACPERL_INST_TOOL_68K)
 perl.68K:	:PLib:Perl.68K.Lib :PLib:PerlLib.68K.Lib perlmain.c.68K.o preplibrary
 	$(Link68K) -o perl.68K ¶
 		:Obj:perlmain.c.68K.o $(LibFiles68K) :Obj:{$(LibObjects68K)} ¶
