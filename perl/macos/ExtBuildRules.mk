@@ -44,8 +44,8 @@ Objects68K		=  {$(SOURCE)}.68K.o
 ObjectsPPC		=  {$(SOURCE)}.PPC.o
 ObjectsSC		=  {$(SOURCE)}.SC.o
 ObjectsMrC		=  {$(SOURCE)}.MrC.o
-Libraries68K	:=	$(MACLIBS_68K) $(MACLIBS_ALL_68K) 
 LibrariesPPC	:=  $(MACLIBS_PPC) $(MACLIBS_ALL_PPC) $(MACLIBS_SHARED)  
+LibrariesMrC	:=  $(MACLIBS_MRC) $(MACLIBS_ALL_PPC) $(MACLIBS_SHARED)  
 
 %.c .PRECIOUS : %.xs
 	Set Echo 1
@@ -62,8 +62,6 @@ do_install_static: $(MODULES) $(XS_FILES)
 do_install_dynamic: do_install_static $(BASEEXT).shlb.$(MACPERL_INST_EXT_PPC)
 	$(MKPATH) $(INST_AUTODIR_PPC)
 	Duplicate -y $(BASEEXT).shlb.$(MACPERL_INST_EXT_PPC) $(INST_DYNAMIC_PPC)
-install_dynamic_debug: install_dynamic
-	Duplicate -y $(BASEEXT).shlb.$(MACPERL_INST_EXT_PPC).xSYM $(INST_DYNAMIC).xSYM
 
 DYNAMIC_STDLIBS_PPC		*= 							\
 	"$(MACPERL_SRC)PerlStub" 						\
@@ -73,6 +71,14 @@ DYNAMIC_STDLIBS_PPC		*= 							\
 	"{{MWPPCLibraries}}MSL RuntimePPC.Lib"			\
 	"{{MWPPCLibraries}}MSL C.PPC (NL).Lib"			\
 	"{{MWPPCLibraries}}MSL C++.PPC (NL).Lib"
+
+DYNAMIC_STDLIBS_MRC		*= 							\
+	"$(MACPERL_SRC)PerlStub" 						\
+	"{{SharedLibraries}}InterfaceLib"				\
+	"{{SharedLibraries}}StdCLib"				\
+	"{{SharedLibraries}}MathLib"					\
+	"{{PPCLibraries}}MrCPlusLib.o"					\
+	"{{PPCLibraries}}PPCCRuntime.o"
 
 $(BASEEXT).Lib.68K : Objects68K
 	$(Lib68K) -o $(BASEEXT).Lib.68K :Obj:{$(Objects68K)}
@@ -84,8 +90,8 @@ $(BASEEXT).Lib.MrC : ObjectsMrC
 	$(LibMrC) -o $(BASEEXT).Lib.MrC :Obj:{$(ObjectsMrC)}
 $(BASEEXT).shlb.PPC : ObjectsPPC $(EXPORT_FILE)
 	$(SharedLibPPC) $(EXPORTS) -name $(BASEEXT) -o $(BASEEXT).shlb.PPC :Obj:{$(ObjectsPPC)} $(DYNAMIC_STDLIBS_PPC) $(LibrariesPPC)
-#$(BASEEXT).shlb.MrC : ObjectsMrC $(EXPORT_FILE)
-#	$(SharedLibPPC) $(EXPORTS) -name $(BASEEXT) -o $(BASEEXT).shlb.MrC :Obj:{$(ObjectsMrC)} $(DYNAMIC_STDLIBS_PPC) $(LibrariesPPC)
+$(BASEEXT).shlb.MrC : ObjectsMrC $(EXPORT_FILE)
+	$(SharedLibMrC) $(EXPORTS) -fragname $(BASEEXT) -o $(BASEEXT).shlb.MrC :Obj:{$(ObjectsMrC)} $(DYNAMIC_STDLIBS_MRC) $(LibrariesMrC)
 
 clean: 
 	$(RM_RF) ':Obj:Å'
