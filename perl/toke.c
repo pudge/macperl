@@ -46,13 +46,6 @@ static void restore_rsfp(pTHXo_ void *f);
 #define SPACE_OR_TAB(c) ((c)==' '||(c)=='\t')
 #endif
 
-/* On MacOS, respect nonbreaking spaces */
-#ifdef MACOS_TRADITIONAL
-#define SPACE_OR_TAB(c) ((c)==' '||(c)=='\312'||(c)=='\t')
-#else
-#define SPACE_OR_TAB(c) ((c)==' '||(c)=='\t')
-#endif
-
 /* LEX_* are values for PL_lex_state, the state of the lexer.
  * They are arranged oddly so that the guard on the switch statement
  * can get by with a single comparison (if the compiler is smart enough).
