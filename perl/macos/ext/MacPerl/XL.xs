@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:34  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.1  2000/05/14 21:45:05  neeri
  * First build released to public
  *
@@ -103,7 +106,7 @@ static XternalHdl		Xternals;
 static int				XternalIndex = 0;
 static Boolean			CloseInstalled = false;
 
-static void XLCloseResFiles(void)
+static void XLCloseResFiles(pTHX_ void * p)
 {
 	if (ResFiles) {
 		while ((*ResFiles)->count--)
@@ -144,7 +147,7 @@ static void XLLoadResFile(short refNum)
 	char				name[256];
 	
 	if (!CloseInstalled) {
-		atexit(XLCloseResFiles);
+		Perl_call_atexit(aTHX_ XLCloseResFiles, NULL);
 		CloseInstalled = true;
 	}
 		

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.1  2000/08/14 03:39:34  neeri
+ * Checked into Sourceforge
+ *
  * Revision 1.1  2000/05/14 21:45:04  neeri
  * First build released to public
  *
@@ -28,7 +31,7 @@
 
 ComponentInstance gScriptingComponent;
 
-void ShutDownAppleScript(void)
+void ShutDownAppleScript(pTHX_ void * p)
 {
 	CloseComponent(gScriptingComponent);
 	
@@ -71,7 +74,7 @@ OSErr InitAppleScript(void)
 		if (!gScriptingComponent)
 			return(-1);
 		else
-			atexit(ShutDownAppleScript);
+			Perl_call_atexit(aTHX_ ShutDownAppleScript, NULL);
 	}
 		
 	return myErr;

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:26  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:29  neeri
  * Checked into Sourceforge
  *
@@ -28,7 +31,7 @@
 
 typedef EventRecord	* ToolboxEvent;
 
-static void WipeFilter(void)
+static void WipeFilter(pTHX_ void * p)
 {
 	gMacPerl_FilterEvent= nil;
 	gMacPerl_FilterMenu	= nil;
@@ -69,7 +72,7 @@ MODULE = Mac::Events	PACKAGE = ToolboxEvent
 
 BOOT:
 gMacPerl_FilterEvent= FilterEvent;
-atexit(WipeFilter);
+Perl_call_atexit(aTHX_ WipeFilter, NULL);
 
 =head2 Structures
 

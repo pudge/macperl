@@ -4,6 +4,9 @@ File	:	macish.c			-	Mac specific things
 Author	:	Matthias Neeracher
 
 $Log$
+Revision 1.8  2001/04/03 12:56:57  pudge
+Make kill die if sig != 0
+
 Revision 1.7  2001/03/30 21:59:38  pudge
 Add basic support for kill, which does nothing
 
@@ -496,16 +499,14 @@ typedef struct PD {
 	FILE *		tempFile;
 	FSSpec		pipeFile;
 	char *		execute;
-	long			status;
+	long		status;
 } PipeDescr, *PipeDescrPtr;
 
 static PipeDescrPtr	pipes		=	nil;
-static Boolean			sweeper	=	false;
+static Boolean		sweeper	=	false;
 
-void sweep()
-{
-	dTHX;
-		
+void sweep(pTHX_ void * p)
+{		
 	while (pipes)
 		my_pclose(pipes->tempFile);
 	sweeper = false;
@@ -632,7 +633,7 @@ PerlIO * Perl_my_popen(pTHX_ char * command, char * mode)
 	pipes			=	pipe;
 	
 	if (!sweeper)	{
-		atexit(sweep);
+		Perl_call_atexit(aTHX_ sweep, NULL);
 		sweeper	=	true;
 	}
 

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:27  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:31  neeri
  * Checked into Sourceforge
  *
@@ -27,7 +30,7 @@
 #include <Menus.h>
 
 
-static void WipeFilter(void)
+static void WipeFilter(pTHX_ void * p)
 {
 	gMacPerl_FilterMenu	= nil;
 }
@@ -151,7 +154,7 @@ MODULE = Mac::Menus	PACKAGE = Mac::Menus
 
 BOOT:
 gMacPerl_FilterMenu	= FilterMenu;
-atexit(WipeFilter);
+Perl_call_atexit(aTHX_ WipeFilter, NULL);
 
 STRUCT ** MenuHandle
 	short		menuID;
