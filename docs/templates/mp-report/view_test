@@ -1,0 +1,31 @@
+Listed below is information about a test run under MacPerl.
+</p>
+
+<p>
+It is not intended as a guide of what will and won't work.  It is
+just for testing purposes.
+</p>
+
+<table border="0" cellpadding="6"><tr>
+	<td>Test:</td>
+	<td>[% tests.{$test.id} %]</td>
+</tr><tr>
+	<td>Configuration:</td>
+	<td>[% config.name %]</td>
+</tr><tr>
+	<td>Compiler:</td>
+	<td>[% compiler.{$test.compiler} %]</td>
+</tr><tr>
+	<td>Status:</td>
+	<td>[% status.{$test.status} %]</td>
+</tr><tr>
+	<td>Is this test using the MPW tool (else assume the application is used)?</td>
+	<td>[% test.is_tool ? "Yes" : "No" %]</td>
+</tr><tr>
+	<td>Notes:</td>
+	<td>[% FILTER strip_literal ; test.notes ; END %]</td>
+</tr><tr>
+	<td>Test output (including the command it was invoked with,
+	if using the MPW tool):</td>
+	<td>[% FILTER strip_code ; test.results ; END %]</td>
+</tr></table>

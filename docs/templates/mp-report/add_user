@@ -11,27 +11,28 @@ if you have a SourceForge user name.  If you do not, please
 first.
 </p>
 
-<p>
-<form action="[% env.script_name %]" method="POST">
-<input type="hidden" name="op" value="create_user">
+<form action="[% env.script_name %]" method="post">
 
 <table border="0" cellpadding="6"><tr>
 	<td>User name:</td>
-	<td><input type="text"     name="user"     size="32" maxlength="32"></td>
+	<td><input type="text"     name="user"     size="32" maxlength="32" /></td>
 </tr><tr>
 	<td colspan="2">Is your username the same here as on SourceForge?
-	<input type="checkbox" name="sf_match" checked></td>
+	<input type="checkbox" name="sf_match" checked="checked"></td>
 </tr><tr>
 	<td>E-mail Address:</td>
-	<td><input type="text"     name="email"    size="32" maxlength="64"></td>
+	<td><input type="text"     name="email"    size="32" maxlength="64" /></td>
 </tr><tr>
 	<td>Password:</td>
-	<td><input type="password" name="pass1"    size="32" maxlength="32"></td>
+	<td><input type="password" name="pass1"    size="32" maxlength="32" /></td>
 </tr><tr>
 	<td>Verify Password:</td>
-	<td><input type="password" name="pass2"    size="32" maxlength="32"></td>
+	<td><input type="password" name="pass2"    size="32" maxlength="32" /></td>
 </tr></table>
 
-<input type="submit" value="Create User"> <input type="reset" value="Clear Form">
-</form>
+<p>
+	<input type="hidden" name="op" value="create_user" />
+	<input type="submit" value="Create User" />
+	<input type="reset" value="Clear Form" />
 </p>
+</form>
