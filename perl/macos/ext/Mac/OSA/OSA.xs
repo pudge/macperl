@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2002/12/10 02:12:06  pudge
+ * Add Carbon support
+ *
  * Revision 1.2  2000/09/09 22:18:28  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -577,6 +580,7 @@ OSADoEvent(scriptingComponent, theAppleEvent, contextID, modeFlags)
 	OSAID 				contextID
 	long 					modeFlags
 	CODE:
+	memcpy(&RETVAL, SvPV_nolen((SV*)SvRV(ST(1))), sizeof(AEDesc));
 	if (gMacPerl_OSErr = (short) OSADoEvent(scriptingComponent, &theAppleEvent, contextID, modeFlags, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
