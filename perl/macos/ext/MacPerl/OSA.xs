@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2001/04/16 04:45:15  neeri
+ * Switch from atexit() to Perl_call_atexit (MacPerl bug #232158)
+ *
  * Revision 1.1  2000/08/14 03:39:34  neeri
  * Checked into Sourceforge
  *
@@ -98,24 +101,32 @@ MP_DoAppleScript(script)
 	SV *	script
 	CODE:
 	{
-		AEDesc	source;
-		AEDesc	result;
-		char *	scriptText;
-		STRLEN	len;
+		AEDesc		source;
+		AEDesc		result;
+		char *		scriptText;
+		STRLEN		len;
+		OSAError	myOSAErr;
+		AEDesc		source_errs;
+		AEDesc		result_errs;
+		char *		errorText;
+		STRLEN		errorLen;
 	/**/		
 		if (!gScriptingComponent && InitAppleScript())
 			croak("MacPerl::DoAppleScript couldn't initialize AppleScript");
 	/**/		
+		sv_setpvn(ERRSV, "", 0);
 		scriptText = (char*) SvPV(ST(0), len);
 		AECreateDesc(typeChar, scriptText, len, &source);
 	/**/		
-		if (!OSADoScript(
-				gScriptingComponent, 
-				&source, 
-				kOSANullScript, 
-				typeChar, 
-				kOSAModeCanInteract,
-				&result))
+		myOSAErr = OSADoScript(
+			gScriptingComponent, 
+			&source, 
+			kOSANullScript, 
+			typeChar, 
+			kOSAModeCanInteract,
+			&result
+		);
+		if (!myOSAErr)
 		{
 			AEDisposeDesc(&source);
 	/**/		
@@ -129,6 +140,30 @@ MP_DoAppleScript(script)
 			AEDisposeDesc(&result);
 		} else {
 			AEDisposeDesc(&source);
+
+			if (myOSAErr == errOSAScriptError) {
+				OSAScriptError(
+					gScriptingComponent,
+					kOSAErrorMessage,
+					typeChar,
+					&result_errs
+				);
+
+				AEDisposeDesc(&source_errs);
+				if (!AECoerceDesc(&result_errs, typeChar, &source_errs)) {
+					errorText = "";
+					HLock(source_errs.dataHandle);
+					/* set $@ */
+					errorLen = GetHandleSize(source_errs.dataHandle);
+					strcpy(errorText, *source_errs.dataHandle);
+					if (strchr(errorText+errorLen-1, '.')) {
+						errorLen--;
+					}
+					sv_setpvn(ERRSV, errorText, errorLen);
+					AEDisposeDesc(&source_errs);
+				}
+				AEDisposeDesc(&result_errs);
+			}
 	/**/		
 			ST(0) = &PL_sv_undef;
 		}
