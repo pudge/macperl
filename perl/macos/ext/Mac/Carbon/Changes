@@ -1,36 +1,53 @@
-v0.03, 17 December 2002
+* v0.04, 6 March 2003
 
-* Fix AEDesc->data bug, remove debugging code (oops)
+   Make AppleEvents with LD=c++ (required for Dec 2002 Dev Tools)
 
-* Refactor Makefile.PLs
-  - use common.pl for Makefile.PLs to share
-  - now use distributed xsubpp (brian d foy) instead of system xsubpp
-  - $module.c files no longer included
-  - auto-generate $module.pod (and manpages) from POD in $module.pm
-    and $module.xs
+   Added a bunch of Carbon-specific constants for Mac::Files
 
-* Fix POD in many places
+   Modified Mac::Speech (Peter N Lewis)
+     - GetVoiceDesciption and NewSpeechChannel use default voice
+       if no parameter given
+     - %Voice hash returns default voice if key is false (undef, '', 0)
+     - Added accessor methods for VoiceDescription and VoiceSpec structures
 
-* Require 5.006 in the base Makefile.PL (just in case)
+   Added Str63 type to typemap
 
-* Make build work with gcc2 on Mac OS X 10.1 and 10.2
-
-* Make build work with UFS
+   Cleaned up distribution a little
 
 
-v0.02, 9 December 2002
+* v0.03, 17 December 2002
 
-* Addition of Mac::AppleEvents and Mac::OSA
-  (Mac::AppleEvents::Simple and Mac::OSA::Simple not yet fully
-  supported; needs some porting)
+   Fix AEDesc->data bug, remove debugging code (oops)
 
-* Added back Pick/Answer/Ask to MacPerl (code from Gero Herrmann)
+   Refactor Makefile.PLs
+     - use common.pl for Makefile.PLs to share
+     - now use distributed xsubpp (brian d foy) instead of system xsubpp
+     - $module.c files no longer included
+     - auto-generate $module.pod (and manpages) from POD in $module.pm
+       and $module.xs
 
-* Added GetProcessPID and GetProcessForPID to Mac::Processes
+   Fix POD in many places
 
-* Cleaned up some of the tests
+   Require 5.006 in the base Makefile.PL (just in case)
+
+   Make build work with gcc2 on Mac OS X 10.1 and 10.2
+
+   Make build work with UFS
 
 
-v0.01, 13 November 2002
+* v0.02, 9 December 2002
 
-* Initial release
+   Addition of Mac::AppleEvents and Mac::OSA
+   (Mac::AppleEvents::Simple and Mac::OSA::Simple not yet fully
+   supported; needs some porting)
+
+   Added back Pick/Answer/Ask to MacPerl (code from Gero Herrmann)
+
+   Added GetProcessPID and GetProcessForPID to Mac::Processes
+
+   Cleaned up some of the tests
+
+
+* v0.01, 13 November 2002
+
+   Initial release
