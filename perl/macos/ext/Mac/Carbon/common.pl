@@ -36,6 +36,7 @@ $NAME ||= "Mac::$MOD";
 	'VERSION_FROM'		=> $PM,
 	'LINKTYPE'		=> 'static dynamic',
 	'XSPROTOARG'		=> '-noprototypes', 		# XXX remove later?
+	'NO_META'		=> 1,
 );
 
 if ($^O eq 'darwin') {
