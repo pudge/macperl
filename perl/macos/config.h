@@ -13,6 +13,9 @@ Project	:	Perl5				-
 File	:	config.h			-	Mac configuration
 
 $Log$
+Revision 1.6  2001/03/07 04:13:20  pudge
+More Config stuff, wheeeeee
+
 Revision 1.5  2001/02/23 18:23:45  pudge
 Last big update for awhile, I hope.  Covers maint-5.6.  More changes to bleadperl
 have been done, and we'll sync up later.
@@ -966,7 +969,7 @@ First build released to public
  *	/bin/pdksh, /bin/ash, /bin/bash, or even something such as
  *	D:/bin/sh.exe.
  */
-/* #define SH_PATH "$sh"  /**/
+#define SH_PATH "Shell ? We don't need no stinking shell!"  /**/
 
 /* CROSSCOMPILE:
  *	This symbol, if defined, signifies that we our
@@ -2097,7 +2100,7 @@ First build released to public
  *	This symbol is defined if using the FILE_ptr macro as an lvalue
  *	to increase the pointer by n leaves File_cnt(fp) unchanged.
  */
-#define USE_STDIO_PTR 	/**/
+#undef USE_STDIO_PTR 	/**/
 #ifdef USE_STDIO_PTR
 #define FILE_ptr(fp)	((fp)->_Next)
 #define STDIO_PTR_LVALUE		/**/
@@ -2127,7 +2130,7 @@ First build released to public
  *	structure pointed to its argument. This macro will always be defined
  *	if USE_STDIO_BASE is defined.
  */
-#define USE_STDIO_BASE 	/**/
+#undef USE_STDIO_BASE 	/**/
 #ifdef USE_STDIO_BASE
 #define FILE_base(fp)	((fp)->_Buf)
 #define FILE_bufsiz(fp)	((fp)->_Rend - (fp)->_Buf)
@@ -2208,7 +2211,7 @@ First build released to public
  *	Note that this became obsolete on some systems (SUNOS), which now
  * use getrusage(). It may be necessary to include <sys/times.h>.
  */
-#undef HAS_TIMES		/**/
+#define HAS_TIMES		/**/
 
 /* HAS_UNION_SEMUN:
  *	This symbol, if defined, indicates that the union semun is
