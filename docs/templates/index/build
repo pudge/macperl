@@ -56,9 +56,10 @@ If you have already built MacPerl 5.6.x before, you can probably
 just download the perl and MacPerl source kits and take it from there.
 You should upgrade GUSI if it has changed since your last build.
 <b>Note:</b> if you don't already have it, you will need to
-upgrade your db to 
-<a href="http://dev.macperl.org/files/macperl_build_libs/">db_186b</a>,
-nre for MacPerl 5.6.1a5 (or re-fetch all of the macperl_build_libs
+upgrade your db library to
+<a href="http://dev.macperl.org/files/macperl_build_libs/db_186b.sit.bin">db_186b</a>
+for MacPerl 5.6.1a5 (or re-fetch all of the
+<a href="http://dev.macperl.org/files/macperl_build_libs.sit.bin">macperl_build_libs</a>
 archive).
 </p>
 
