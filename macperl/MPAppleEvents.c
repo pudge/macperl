@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.5  2002/02/04 07:46:28  neeri
+Empty path is ENOENT (MacPerl Bug #512351)
+
 Revision 1.4  2002/01/04 03:34:45  pudge
 Modifications for universal headers 3.4
 
@@ -1787,7 +1790,7 @@ pascal OSErr GetApplicationProperty(const AEDesc *theObjToken, AEDesc *dataDesc)
 		scrap = TEScrapHandle();
 		HLock(scrap);
 		theErr = AEStream_WriteDesc(&aes, typeChar, *scrap, GetHandleSize(scrap));
-		HLock(scrap);
+		HUnlock(scrap);
 		if (theErr || (theErr = AEStream_CloseList(&aes)))
 			goto abortClipboard;
 		theErr = AEStream_Close(&aes, dataDesc);

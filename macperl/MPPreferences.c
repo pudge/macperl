@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.10  2002/01/23 05:47:48  pudge
+Fix prefs file name
+
 Revision 1.9  2002/01/04 03:34:45  pudge
 Modifications for universal headers 3.4
 
@@ -418,6 +421,9 @@ pascal Boolean PrefLibFilter(DialogPtr dlg, EventRecord * ev, short * item)
 		cell = ev->where;
 		GlobalToLocal(&cell);
 		GetDialogItem(dlg, pld_List, &kind, &h, &r);
+		// add scroll bar width to list rectangle
+		r.right = r.right + 15;
+		
 		if (PtInRect(cell, &r)) {
 			if (LClick(cell, ev->modifiers, PathList))
 				for (SetPt(&cell, 0, 0); LGetSelect(true, &cell, PathList); ++cell.v) {
@@ -528,13 +534,15 @@ static short PrefsLibDialog(DialogPtr prefs, short resFile)
 		case pld_Remove:
 			SetPt(&cell, 0, 0);
 			
-			if (LGetSelect(true, &cell, PathList) && AppAlert(PrefLibDelID) == 1)
+			if (LGetSelect(true, &cell, PathList) && AppAlert(PrefLibDelID) == 1) {
+				// make sure the list gets redrawn correctly
+				InvalRect(&((**PathList).rView));
 				do {
 					LDelRow(1, cell.v, PathList);
 						
 					--PathCount;
 				} while (LGetSelect(true, &cell, PathList));
-				
+			}
 			break;
 		case pld_Add:
 			GetIndString(msg, PrefDialog, pd_AddPath);
@@ -613,8 +621,12 @@ static int PrefsEnvEdit(StringPtr env)
 	Str255		contents;
 	Str63			msg;
 	char 			data[256];
+	GrafPtr		savePort;
+	
+	GetPort(&savePort);
 	
 	envEdit = GetNewAppDialog(PrefEnvAddID);
+	SetPort(envEdit);
 	
 	equals = PLstrchr(env, '=');
 	*equals= *env - (equals - (Ptr) env);
@@ -691,6 +703,8 @@ failed:
 		
 	DisposeDialog(envEdit);
 	
+	SetPort(savePort);
+	
 	return result;
 }
 
@@ -733,6 +747,9 @@ pascal Boolean PrefEnvFilter(DialogPtr dlg, EventRecord * ev, short * item)
 		cell = ev->where;
 		GlobalToLocal(&cell);
 		GetDialogItem(dlg, pld_List, &kind, &h, &r);
+		// add scroll bar width to list rectangle
+		r.right = r.right + 15;
+		
 		if (PtInRect(cell, &r)) {
 			if (LClick(cell, ev->modifiers, PathList))
 				for (SetPt(&cell, 0, 0); LGetSelect(true, &cell, PathList); ++cell.v) {
@@ -824,13 +841,15 @@ static short PrefsEnvDialog(DialogPtr prefs, short resFile)
 		case ped_Remove:
 			SetPt(&cell, 0, 0);
 			
-			if (LGetSelect(true, &cell, PathList) && AppAlert(PrefEnvDelID) == 1)
+			if (LGetSelect(true, &cell, PathList) && AppAlert(PrefEnvDelID) == 1) {
+				// make sure the list gets redrawn correctly
+				InvalRect(&((**PathList).rView));
 				do {
 					LDelRow(1, cell.v, PathList);
 						
 					--PathCount;
 				} while (LGetSelect(true, &cell, PathList));
-				
+			}
 			break;
 		case ped_Add:
 			PLstrcpy(contents, "\p=");
@@ -1041,13 +1060,17 @@ pascal void DoPrefDialog()
 	Handle		h;
 	DialogPtr	prefs;
 	Rect			bounds;
+	GrafPtr		savePort;
 	
-	resFile		= CurResFile();
+	GetPort(&savePort);
+	
+	resFile = CurResFile();
 	
 	OpenPreferences();
-
+	
 	prefs = GetNewAppDialog(PrefDialog);
-
+	SetPort(prefs);
+	
 	GetDialogItem(prefs, pd_LibIcon, &kind, &h, &bounds);
 	SetDialogItem(prefs, pd_LibIcon, kind, (Handle) &uDrawPrefIcon, &bounds);
 
@@ -1108,6 +1131,8 @@ pascal void DoPrefDialog()
 		DisposeHandle(gCachedLibraries);
 		gCachedLibraries = nil;
 	}
+
+	SetPort(savePort);
 }
 
 static ListHandle FontList;
@@ -1303,8 +1328,12 @@ pascal Boolean DoFormatDialog(DocFormat * form, Boolean * defaultFormat)
 	Rect			dbounds;
 	Str255		contents;
 	MenuHandle	fonts;
-	
+	GrafPtr		savePort;
+
+	GetPort(&savePort);
+
 	format = GetNewAppDialog(FormatDialog);
+	SetPort(format);
 
 	GetDialogItem(format, fd_Separator, &kind, &h, &bounds);
 	SetDialogItem(format, fd_Separator, kind, (Handle) &uSeparator, &bounds);
@@ -1429,6 +1458,8 @@ pascal Boolean DoFormatDialog(DocFormat * form, Boolean * defaultFormat)
 	LDispose(SizeList);
 	DisposeDialog(format);
 	DisposeMenu(fonts);
+	
+	SetPort(savePort);
 	
 	return (item == fd_OK);
 }
