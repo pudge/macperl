@@ -1,28 +1,21 @@
 print "1..5\n";
 
 use strict;
-use File::Spec::Functions;
 use Digest::MD5 qw(md5 md5_hex md5_base64);
 
 #
 # This is the output of: 'md5sum Changes README MD5.pm MD5.xs rfc1321.txt'
 #
-my $EXPECT = "\n" eq chr(10) ? <<EOT1 : <<EOT2;  # Mac OS \n is chr(13)
-832bac36f489f93a3d6dadd20d55b105  Changes
+my $EXPECT = <<EOT;
+df6bb160e273cbf342bd1a947ebb155f  Changes
 e2447354c8b24340bc49e38f8d00bf3b  README
-dcc1f89cf6144d81e5f9d291d9849ef1  MD5.pm
-61debd0ec12e131e1ba220e2f3ad2d26  MD5.xs
+bf8c3c72d071d1c0303fc9e311820708  MD5.pm
+abcee0576dd82eca765f54bace61c434  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
-EOT1
-3f33c2d0e531cc5902ae9832014a11e3  Changes
-5b79ce6f90834381208fb7d67c4a262e  README
-b69835aa8b73fc5ed8055f23462aaa47  MD5.pm
-81fbd61766e2c876349c358cced6052f  MD5.xs
-f9a35714ee1d1d0c5a3a80f4dbea956a  rfc1321.txt
-EOT2
+EOT
 
-if (!(-f "README") && -f catfile(updir(), "README")) {
-   chdir(updir()) or die "Can't chdir: $!";
+if (!(-f "README") && -f "../README") {
+   chdir("..") or die "Can't chdir: $!";
 }
 
 my $testno = 0;
