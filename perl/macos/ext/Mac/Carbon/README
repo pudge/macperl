@@ -56,13 +56,16 @@ The Test::More module is required for running tests.
 
 The separate Mac::Errors module is not required, but is highly recommended.
 
-These modules have only been tested with perl 5.6.0 on Mac OS X.  See
-the note in L<BUILDING>.
+These modules have only been tested with perl 5.6.0 and gcc3 on Mac OS X 10.2.
+See the note in L<BUILDING>.  Problems have been noted with Mac OS X 10.1.x;
+please see the SourceForge,net web site for a binary installer.
 
 The modules will compile and test remotely (such as via ssh, instead of
 via the Terminal), but some of the tests might not run properly, and
-one of the tests (for Mac::Notification) wants user feedback (though will
-work without it).
+one of the tests (e.g., for Mac::Notification) wants user feedback (though
+will work without it).
+
+Hm, the MacPerl.t test might not fully work remotely now.  Not tested yet.
 
 
 =head1 BUILDING
@@ -90,12 +93,14 @@ It's cool.
 Currently, only a subset of the modules are supported.  The ported
 modules are:
 
+	Mac::AppleEvents
 	Mac::Components
 	Mac::Files
 	Mac::Gestalt
 	Mac::Memory
 	Mac::MoreFiles
 	Mac::Notification
+	Mac::OSA
 	Mac::Processes
 	Mac::Resources
 	Mac::Sound
@@ -103,15 +108,6 @@ modules are:
 	Mac::Types
 
 Coming next, hopefully:
-
-	Mac::AppleEvents
-	Mac::OSA
-
-Mac::AppleEvents is going to take more work than the others, as it
-involves some significant API changes.
-
-Following those, the pure-perl modules, which should not take much
-work, as long as the core XS modules they rely on are working:
 
 	Mac::AppleEvents::Simple
 	Mac::OSA::Simple
@@ -146,9 +142,10 @@ MacPerl is mostly implemented in F<macish.c> / F<macish.h>.
 
 =head1 AUTHOR
 
-The Mac Toolbox modules were written by Matthias Neeracher
-E<lt>neeracher@mac.comE<gt>.  They are currently maintained by Chris
-Nandor E<lt>pudge@pobox.comE<gt>.
+The original Mac Toolbox modules were written by Matthias Neeracher
+E<lt>neeracher@mac.comE<gt>.  Mac::Glue and the Simple modules were
+written by Chris Nandor E<lt>pudge@pobox.comE<gt>.  Mac::Carbon
+is currently maintained by Chris Nandor.
 
 
 =head1 VERSION
