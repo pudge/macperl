@@ -29,7 +29,7 @@ use strict;
 
 package Mac::Memory;
 use vars qw($VERSION);
-$VERSION = 1.20;
+$VERSION = '0.10';
 
 BEGIN {
 	use Exporter   ();
