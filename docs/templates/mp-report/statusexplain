@@ -4,28 +4,42 @@ If you have any questions, ask the MacPerl Porters list.  Thanks!
 </p>
 
 <ul>
+
 <li>Create a new Configuration if you are testing a new version of MacPerl!</li>
-<li>Run the MacPerlTests.cmd script from MPW to run all the tests.  You can run
-them from the application, but many of them simply will not work properly,
+
+<li>Testing from MPW is highly recommended.  You can run the tests from the
+application instead, but many of them simply will not work properly,
 because they depend on certain paths and depend on being able to call perl
 (or other tools) and capture the results.  You don't need to have the total
 setup to do this, you just need to install MPW, set to the right directory,
 and run the script.</li>
+
+<li>From MPW, change directory to the <em>t</em> directory.  If
+the MACPERL and PERL5LIB environment variables are set bu ToolServer, then
+comment those out of your ToolServer startup file and restart ToolServer.
+Then, run the MacPerlTests.cmd MPW script.</li>
+
 <li>"OK" means nothing needs to be done to the test to make it work.</li>
+
 <li>"Some porting needed" means the test just needs a few changes to make it work
 with MacPerl, but that MacPerl itself is fine, and a
 <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=7940&amp;atid=307940">patch
 should be submitted</a> (but don't do it if you can't, don't want to, don't have time
 etc., as long as you describe the problem well).</li>
+
 <li>"Major porting needed" means that either MacPerl needs to be fixed, or
 the test needs major rewriting.  If MacPerl needs to be fixed, a
 <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=7940&amp;atid=107940">bug
 report should be submitted</a>.</li>
+
 <li>"Not applicable to platform" means the function being tested is not applicable, such
 as fork or exec.  If the test does not work properly for the platform, then that just
 means it needs to be fixed.</li>
+
 <li>If you are using a compiled binary from us, then the compiler is MWCPPC (for
 PPC) and MWC68K (for 68K).</li>
+
 <li>Don't be afraid to run tests many people have already run.  The more results,
 the better!</li>
+
 </ul>
