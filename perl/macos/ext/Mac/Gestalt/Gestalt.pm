@@ -7,7 +7,7 @@ Mac::Gestalt - Macintosh Toolbox Interface to the Gestalt Manager
 
 	# Only bring in the names we want
 	use Mac::Gestalt qw(%Gestalt gestaltAppleTalkVersion);
-	
+
 	if ( $Gestalt{gestaltAppleTalkVersion} lt "58" ) {
 		warn "Unable to use AppleTalk\n";
 	}

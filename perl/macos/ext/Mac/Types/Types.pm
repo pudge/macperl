@@ -212,7 +212,7 @@ An unsigned long.
 =item qdrt
 
 A QuickDraw C<Rect>.
-	
+
 =item 'STR ' 
 
 A pascal style string.
