@@ -14,52 +14,12 @@ Mac::Carbon is a collection of perl modules for accessing the Carbon API
 under Mac OS X.  It is a port of the Toolbox modules written by Matthias
 Neeracher for MacPerl.
 
-This is B<not release-quality> software.  It is still in development.
-
-Part of the current strategy is to make Mac::Carbon the intersection of
-the old and new Mac OS APIs.  We will not be adding new functionality
-from Carbon, except as needed, for now.  This may change over time as
-Mac::Carbon stabilizes.
-
 See the documentation in L<Mac::Carbon> for more implementation details,
 bugs, etc.
 
-=head1 DESCRIPTION
-
-This version represents a major step forward for Mac::Carbon, with many of
-the TODO items checked off, including:
-
-=over 4
-
-=item *
-
-Mac::InternetConfig added
-
-=item *
-
-GUSI-emulation API able to handle FSSpecs for files that don't exist
-
-=item *
-
-Find apps with LaunchServices by creator, bundle ID, or name, instead
-of FSpDTGetAPPL
-
-=item *
-
-Open resource files in data fork, not just resource fork
-
-=item *
-
-Support for Mac::AppleEvents::Simple and Mac::Glue
-
-=back
-
-There are also many bugfixes and other enhancements included.  See F<Changes>
-for details.
-
 There are still some bugs, one unimplemented extension (SpeechRecognition),
 and a bunch of tests that need to be written before the distribution
-becomes "release-quality."  Help wanted.
+becomes "release-quality."
 
 
 =head1 HELP ME
@@ -90,16 +50,14 @@ The Test::More module is required for running tests.
 
 The separate Mac::Errors module is not required, but is highly recommended.
 
-Building these modules has been tested successfully on Mac OS X 10.1 and 10.2,
-with perl 5.6.0/5.6.1/5.8.0, with both gcc2, gcc3.1, and gcc3.3.  There are a
+Building these modules has been tested successfully on Mac OS X 10.1 through 10.3,
+with perl 5.6.0/5.6.1/5.8.0/5.8.1, with gcc2, gcc3.1, and gcc3.3.  There are a
 lot of warnings on 10.1, though the tests should all pass.
 
-A few things fail on the current release of Panther, developer preview releases
-of what will become Mac OS X 10.3.  These will be addressed as the release of Mac
-OS X 10.3 draws nearer, but until then, ignore test errors for CountVoices()
-in Mac::Speech (a voice file in the Panther Preview was broken), along with
-the Mac::Notification tests (which expose problems/changes with the Notification
-Manager and LaunchApplication()).
+Last I checked, a few things failed on the development release of Panther.
+These will be addressed once I install Panther and get to it (any day now?).
+Specifically, there were some problems with the Mac::Notification tests
+(which expose problems/changes with the Notification Manager and LaunchApplication()).
 
 If you run the test suite on a remote computer (such as via ssh, instead
 of via the Terminal), note that it requires user feedback in some cases,

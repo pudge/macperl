@@ -101,10 +101,16 @@ the non-Carbon API is not supported (for example, C<NewHandle> is
 supported, but C<NewHandleSys> is not).  Calling a function not
 supported by Carbon will generate an exception.
 
+In each module's documentation, functions that work only under Mac OS
+(non-Carbon) are marked with B<Mac OS only.>  Those that work only
+under Mac OS X (Carbon) are marked with B<Mac OS X only.>  A complete
+list is at the end of this document.
+
 The MacPerl package is automatically bootstrapped in MacPerl; it is
-included here, though functions specific to the application and GUI
-(Answer, Pick, Reply, Quit, etc.) are not supported, and the MacPerl
-package must be loaded explicitly (e.g., C<use MacPerl;>).
+included here, though the app-specific functions (Reply, Quit) are not
+supported, and the MacPerl package must be loaded explicitly (e.g.,
+C<use MacPerl;>).  Also, Ask/Answer/Pick are provided via AppleScript,
+talking to the SystemUIServer process.
 
 The Mac-specific error codes are put in C<$^E> as in MacPerl, but C<$^E>
 does not automatically convert the numeric error into a string in string
@@ -147,11 +153,6 @@ Make test suite work without access to main console.
 
 =item *
 
-Docs not updated for Carbon incompatibilities (including changes to
-Processes fields).  Generate list of all unsupported functions.
-
-=item *
-
 Need more tests for Mac::Components, Mac::MoreFiles, Mac::Resources,
 Mac::InternetConfig, Mac::Processes, Mac::Sound.
 
@@ -159,16 +160,12 @@ Mac::InternetConfig, Mac::Processes, Mac::Sound.
 
 In a few places, we need to know a text encoding, and assume it
 (such as in LSFindApplicationForInfo(), where Latin-1 is assumed).
-Is this correct?
+This is likely incorrect.
 
 =item *
 
-FSSpecs are limited to 31 characters.  I think.  Ugh.
-
-=item *
-
-In Mac::Processes, there are some issues with unsupported fields in the
-ProcessInfo struct.
+FSSpecs are limited to 31 characters.  Ugh.  Provide access to newer
+FSRef-based APIs.
 
 =item *
 
@@ -215,7 +212,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.54';
+$VERSION = '0.60';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -262,11 +259,142 @@ BEGIN {
 
 __END__
 
+=head1 UNSUPPORTED FUNCTIONS
+
+=head2 Functions supported only in Mac OS
+
+The functions below are supported only in Mac OS, and not in Mac OS X,
+either because they are not supported by Carbon, or make no sense
+on Mac OS X.
+
+=over 4
+
+=item Mac::AppleEvents::AECountSubDescItems
+
+=item Mac::AppleEvents::AEDescToSubDesc
+
+=item Mac::AppleEvents::AEGetKeySubDesc
+
+=item Mac::AppleEvents::AEGetNthSubDesc
+
+=item Mac::AppleEvents::AEGetSubDescBasicType
+
+=item Mac::AppleEvents::AEGetSubDescData
+
+=item Mac::AppleEvents::AEGetSubDescType
+
+=item Mac::AppleEvents::AESubDescIsListOrRecord
+
+=item Mac::AppleEvents::AESubDescToDesc
+
+=item Mac::Files::Eject
+
+=item Mac::InternetConfig::ICChooseConfig
+
+=item Mac::InternetConfig::ICChooseNewConfig
+
+=item Mac::InternetConfig::ICGeneralFindConfigFile
+
+=item Mac::InternetConfig::ICGeneralFindConfigFile
+
+=item Mac::InternetConfig::ICGetComponentInstance
+
+=item Mac::InternetConfig::ICSetConfigReference
+
+=item Mac::Memory::CompactMemSys
+
+=item Mac::Memory::FreeMemSys
+
+=item Mac::Memory::GetApplLimit
+
+=item Mac::Memory::MaxBlockSys
+
+=item Mac::Memory::MaxBlockSysClear
+
+=item Mac::Memory::MaxMemSys
+
+=item Mac::Memory::NewEmptyHandleSys
+
+=item Mac::Memory::NewHandleSys
+
+=item Mac::Memory::NewHandleSysClear
+
+=item Mac::Memory::NewPtrSys
+
+=item Mac::Memory::NewPtrSysClear
+
+=item Mac::Memory::PurgeMemSys
+
+=item Mac::Memory::ReserveMemSys
+
+=item Mac::Processes::LaunchDeskAccessory
+
+=item Mac::Resources::CreateResFile
+
+=item Mac::Resources::OpenResFile
+
+=item Mac::Resources::RGetResource
+
+=item Mac::Sound::Comp3to1
+
+=item Mac::Sound::Comp6to1
+
+=item Mac::Sound::Exp1to3
+
+=item Mac::Sound::Exp1to6
+
+=item Mac::Sound::MACEVersion
+
+=item Mac::Sound::SndControl
+
+=item Mac::Sound::SndPauseFilePlay
+
+=item Mac::Sound::SndRecordToFile
+
+=item Mac::Sound::SndStartFilePlay
+
+=item Mac::Sound::SndStopFilePlay
+
+=item Mac::Sound::SPBRecordToFile
+
+=item MacPerl::ErrorFormat
+
+=item MacPerl::FAccess
+
+=item MacPerl::LoadExternals
+
+=item MacPerl::Quit
+
+=item MacPerl::Reply
+
+=back
+
+
+=head2 Functions supported only in Mac OS X
+
+The functions below are supported only in Mac OS X, and not in Mac OS,
+either because they are newer APIs, or make no sense on Mac OS.
+
+=over 4
+
+=item Mac::Processes::GetProcessForPID
+
+=item Mac::Processes::GetProcessPID
+
+=item Mac::Processes::LSFundApplicationForInfo
+
+=item Mac::Resources::FSCreateResourceFile
+
+=item Mac::Resources::FSOpenResourceFile
+
+=back
+
+
 =head1 AUTHOR
 
 The Mac Toolbox modules were written by Matthias Neeracher
-E<lt>neeracher@mac.comE<gt>.  They are currently maintained by Chris
-Nandor E<lt>pudge@pobox.comE<gt>.
+E<lt>neeracher@mac.comE<gt>.  They were ported to Mac OS X and
+are currently maintained by Chris Nandor E<lt>pudge@pobox.comE<gt>.
 
 =head1 THANKS
 

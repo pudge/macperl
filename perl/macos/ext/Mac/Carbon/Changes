@@ -1,3 +1,15 @@
+* v0.60, 27 October 2003
+
+   Updated a bunch of docs for Carbon compatibility
+
+   Cleaned up docs a bit
+
+   Reverted AESend to use AESend without an idle proc,
+   instead of AESendMessage with a mach port
+
+   Undef I_POLL for Panther compatibility (Matthew Drayton)
+
+
 * v0.54, 13 August 2003
 
    Skip some tests that fail on UFS (Randal Schwartz)
