@@ -1,3 +1,9 @@
+* v0.64, 18 February 2004
+
+   *Export* typeApplicationBundleID target type constant.
+
+   Remove Mac::Path::Util dependence and add _Unix2Mac to Mac::Files instead.
+
 * v0.63, 19 November 2003
 
    Add typeApplicationBundleID target type constant.
