@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2001/04/17 03:53:44  pudge
+ * Minor version/config changes, plus sync with maint-5.6/perl
+ *
  * Revision 1.1  2000/08/14 03:39:34  neeri
  * Checked into Sourceforge
  *
@@ -527,11 +530,23 @@ MP_Pick(prompt, ...)
 		DisposeDialog(dlg);
 	}
 
-void
-MP_Quit(condition)
-	int	condition
+int
+MP_Quit(...)
 	CODE:
-	gMacPerl_Quit = condition;
+		if (items > 0)
+			gMacPerl_Quit = SvIV(ST(0));
+		RETVAL = gMacPerl_Quit;
+	OUTPUT:
+	RETVAL
+
+int
+MP_ErrorFormat(...)
+	CODE:
+		if (items > 0)
+			gMacPerl_ErrorFormat = SvIV(ST(0));
+		RETVAL = gMacPerl_ErrorFormat;
+	OUTPUT:
+	RETVAL
 
 void
 MP_FAccess(file, cmd, ...)

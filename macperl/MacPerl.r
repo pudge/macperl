@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.6  2001/04/17 03:59:58  pudge
+Minor version/config changes
+
 Revision 1.5  2001/03/30 21:58:05  pudge
 Update for new About box
 
@@ -270,8 +273,10 @@ resource 'SIZE' (-1) {
 	reserved,
 	reserved,
 	reserved,
-	3840 * 1024,
-	1536 * 1024
+/*	3840 * 1024,
+	1536 * 1024 */
+	10 * 1024 * 1024,
+	2  * 1024 * 1024
 };
 
 type 'MrPS' as 'SIZE';

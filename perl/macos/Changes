@@ -21,6 +21,116 @@ http://dev.macperl.org/.
 This file contains only changes that affect the maint-5.6/macperl branch.
 
 ----------------
+Version v5.6.1a5
+----------------
+
+____________________________________________________________________________
+[ 11817] By: pudge                                 on 2001/09/01  22:36:29
+        Log: Fix test
+     Branch: maint-5.6/macperl
+	   ! t/lib/b.t
+____________________________________________________________________________
+[ 11816] By: pudge                                 on 2001/09/01  22:15:09
+        Log: Misc. patches: fix tests script; add Mac::LowMem; quiet
+             warnings in Config.pm with -W; increase default and
+             minimum RAM; bump version number.
+     Branch: maint-5.6/macperl
+	   + macos/lib/Mac/LowMem.pm
+	   ! macos/MPVersion.r macos/MacPerlTests.cmd macos/Makefile.mk
+	   ! macos/configpm macos/macperl/MacPerl.r
+____________________________________________________________________________
+[ 11815] By: pudge                                 on 2001/09/01  22:10:49
+        Log: Make syntax check report in MPW style, fix tests
+             to use Mac::err=unix to get normal-style error
+             messages.
+     Branch: maint-5.6/macperl
+	   ! perl.c t/lib/b.t t/op/misc.t t/op/runlevel.t t/pod/testp2pt.pl
+	   ! t/pragma/strict.t t/pragma/subs.t t/pragma/warnings.t
+____________________________________________________________________________
+[ 11814] By: pudge                                 on 2001/09/01  22:09:08
+        Log: Make MPW-style errors optional (but the default); add
+             MacPerl::ErrorFormat() function and Mac::err pragma
+     Branch: maint-5.6/macperl
+	   + macos/ext/Mac/err/Makefile.PL macos/ext/Mac/err/err.pm
+	   + macos/ext/Mac/err/err.xs
+	   ! macos/ext/Mac/Makefile.mk macos/ext/MacPerl/MacPerl.xs
+	   ! macos/macish.c macos/macish.h macos/macperl.sym
+____________________________________________________________________________
+[ 11813] By: pudge                                 on 2001/09/01  22:01:40
+        Log: More module and test ports from Thomas Wegner et al
+     Branch: maint-5.6/macperl
+	   ! ext/File/Glob/Glob.pm ext/File/Glob/bsd_glob.c
+	   ! lib/File/DosGlob.pm lib/File/Spec/Mac.pm lib/File/Temp.pm
+	   ! t/lib/dosglob.t t/lib/filespec.t t/lib/ftmp-security.t
+	   ! t/op/magic.t
+____________________________________________________________________________
+[ 11806] By: pudge                                 on 2001/09/01  00:04:52
+        Log: Integrate change 11801 from maintperl
+     Branch: maint-5.6/macperl
+	   ! perl.c
+____________________________________________________________________________
+[ 11781] By: pudge                                 on 2001/08/29  02:28:33
+        Log: Delete xsubpp.patch, as full copy exists now
+     Branch: maint-5.6/macperl
+	   - macos/xsubpp.patch
+____________________________________________________________________________
+[ 11780] By: pudge                                 on 2001/08/29  02:26:03
+        Log: Add Changes file
+     Branch: maint-5.6/macperl
+	   + macos/Changes
+____________________________________________________________________________
+[ 11779] By: pudge                                 on 2001/08/29  02:23:11
+        Log: Add Mac version of xsubpp as separate file
+     Branch: maint-5.6/macperl
+	   + macos/xsubpp
+	   ! macos/Makefile.mk
+____________________________________________________________________________
+[ 11778] By: pudge                                 on 2001/08/29  02:14:57
+        Log: Fix open of /dev/null for Mac OS
+     Branch: maint-5.6/macperl
+	   ! t/base/term.t
+____________________________________________________________________________
+[ 11777] By: pudge                                 on 2001/08/29  02:12:52
+        Log: Various patches: enable more tests; skip CVS in PerlInstall;
+             fix typemap for Mac::Processes; remove comments in MM_MacOS.pm
+     Branch: maint-5.6/macperl
+	   ! macos/MacPerlTests.cmd macos/PerlInstall
+	   ! macos/ext/Mac/Processes/typemap macos/lib/ExtUtils/MM_MacOS.pm
+____________________________________________________________________________
+[ 11776] By: pudge                                 on 2001/08/29  02:11:42
+        Log: Allow for platforms to override formatting of errors
+             on output from Matthias Neeracher (Mac files)
+     Branch: maint-5.6/macperl
+	   ! macos/macish.c macos/macish.h
+____________________________________________________________________________
+[ 11775] By: pudge                                 on 2001/08/29  01:59:32
+        Log: Allow for platforms to override formatting of errors
+             on output from Matthias Neeracher (core files)
+     Branch: maint-5.6/macperl
+	   ! perl.h pp_ctl.c util.c
+____________________________________________________________________________
+[ 11774] By: pudge                                 on 2001/08/29  01:29:43
+        Log: Add some param checking, from reports by Kevin Reid.
+     Branch: maint-5.6/macperl
+	   ! macos/ext/Mac/Controls/Controls.pm
+	   ! macos/ext/Mac/Menus/Menus.pm macos/ext/Mac/Windows/Windows.pm
+____________________________________________________________________________
+[ 11720] By: pudge                                 on 2001/08/19  19:00:16
+        Log: Integrate Change #11599 from maint-5.6/perl
+     Branch: maint-5.6/macperl
+	  !> README.win32
+____________________________________________________________________________
+[ 11501] By: pudge                                 on 2001/07/30  12:57:56
+        Log: Fix O_RDONLY check to check for O_RDONLY.
+     Branch: maint-5.6/macperl
+	   ! doio.c
+____________________________________________________________________________
+[ 11500] By: pudge                                 on 2001/07/30  12:41:11
+        Log: Integrate miscellaneous changes from maint-5.6/perl.
+     Branch: maint-5.6/macperl
+	  !> MANIFEST t/TEST t/harness t/pod/testp2pt.pl t/run/runenv.t
+
+----------------
 Version v5.6.1a4
 ----------------
 
@@ -219,3 +329,19 @@ ____________________________________________________________________________
         Log: Create the macperl branch.
      Branch: maint-5.6/macperl
 	  +> (branch 1728 files)
+
+----------------
+Version v5.6.1a2
+----------------
+
+[ Pre-perforce changes summary ]
+
+* Integrate changes from maint-5.6/perl
+* Added MacPerl Help (still not quite working)
+* Fixed a ton of test files for portability
+* Fixed a ton of modules for portability
+* Added a lot of extra bundled modules (same modules in cpan-mac)
+* Fixed rand()
+* Lots of IO fixes via GUSI 2.1.8
+* Remove extra ":" in TMPDIR
+* Recognize "." as a path, like ".." etc.
