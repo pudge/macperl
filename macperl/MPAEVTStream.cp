@@ -5,6 +5,9 @@ Author	:	Matthias Neeracher
 Language	:	MPW C/C++
 
 $Log$
+Revision 1.2  2000/12/22 08:35:45  neeri
+PPC, MrC, and SC builds work
+
 Revision 1.1  1997/06/23 17:10:30  neeri
 Checked into CVS
 
@@ -648,22 +651,26 @@ MPAEVTSocket * MPAEVTDevice::Lookup(OSType key, Boolean input, Boolean output)
 	int				runs = 0;
 	MPAEVTSocket * sock = first;
 	
-	if (sock)
-		while ((runs += sock == first) < 2)
-			if (sock->key == key) {
-				if (input && !sock->inData)
-					sock->inData = NewHandle(0);
-				if (output && !sock->outData)
-					sock->outData = NewHandle(0);
-				
-				return sock;
-			} else
-				sock = sock->next;
+	while (sock)
+		if (sock->key == key) {
+			if (input && !sock->inData)
+				sock->inData = NewHandle(0);
+			if (output && !sock->outData)
+				sock->outData = NewHandle(0);
+			
+			return sock;
+		} else
+			sock = sock->next;
 	
 	return new MPAEVTSocket(key, input, output);
 }
 
 /********************* Interface routines **********************/
+
+void InitAevtStream()
+{
+	GUSIDeviceRegistry::Instance()->AddDevice(MPAEVTDevice::Instance());
+}
 
 pascal OSErr Relay(const AppleEvent * inData, AppleEvent * outData, long refCon)
 {

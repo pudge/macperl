@@ -9,6 +9,9 @@ Apple Developer Support UK
 Language	:	MPW C
 
 $Log$
+Revision 1.2  2000/12/22 08:35:45  neeri
+PPC, MrC, and SC builds work
+
 Revision 1.5  1998/04/14 19:46:41  neeri
 MacPerl 5.2.0r4b2
 
@@ -1422,6 +1425,7 @@ void main()
 	}
 	
 	InitConsole();
+	InitAevtStream();
 	InitPseudo();
 	InitHelp();
 	InitHelpIndex();
