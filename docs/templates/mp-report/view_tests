@@ -10,6 +10,21 @@ write something up?).
 
 [% INCLUDE statusexplainlink %]
 
+
+<form action="[% env.script_name %]" method="post">
+
+<p>Select a MacPerl version to view:
+[% versions = version.nsort.keys.reverse;
+   version.0 = "All";
+   form.version ||= versions.0;
+   PROCESS get_select label => "", name => "version",
+	data => version, seldef => form.version || versions.0;
+%]
+
+	<input type="hidden" name="op" value="view_tests" />
+	<input type="submit" />
+</p></form>
+
 <table border="0" cellpadding="4">
 	<tr class="na"><td colspan="5"><table><tr>[% FOR st = status.keys.nsort %]
 	<td class="[% PROCESS get_status st => st %]">[% status.$st %]</td>[% END %]
@@ -31,6 +46,9 @@ write something up?).
 		<td colspan="4">&nbsp;</td>
 	</tr>
 	[% FOR user_test = user_tests.${test.id};
+		IF form.version && configs.${user_test.config_id}.version != form.version;
+			NEXT;
+		END;
 		myuser = users.${user_test.user_id};
 	%]
 	<tr class="[% PROCESS get_status st => user_test.status %]">
@@ -39,7 +57,7 @@ write something up?).
 <a href="http://sourceforge.net/users/[% myuser.user %]">[% myuser.user %]</a>
 		[% ELSE; myuser.user; END %]</td>
 		<td>
-<a href="[% env.script_name %]?op=view_config&amp;config_id=[% user_test.config_id %]">[% FILTER strip_literal ; configs.${user_test.config_id} ; END %]</a>
+<a href="[% env.script_name %]?op=view_config&amp;config_id=[% user_test.config_id %]">[% FILTER strip_literal ; configs.${user_test.config_id}.name ; END %]</a>
 		</td>
 		<td>[% compiler.${user_test.compiler} %]</td>
 		<td>[% FILTER fixdate ; user_test.date ; END %]</td>

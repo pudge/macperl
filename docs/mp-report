@@ -90,7 +90,7 @@ sub view_tests {
 		configs		=> get_configsdesc($pw),
 		users		=> get_users($pw),
 		map { ($_ => get_param($pw, $_)) }
-			qw( compiler status )
+			qw( compiler status version )
 	});
 }
 
@@ -303,7 +303,7 @@ sub get_configdesc {
 
 sub get_configsdesc {
 	my($pw) = @_;
-	return $pw->get_dbhashdesc(['id,name', 'configs']);
+	return $pw->get_dbhash(['id,name,version', 'configs']);
 }
 
 sub get_config {

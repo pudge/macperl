@@ -1,10 +1,10 @@
-<p>
 This is just a short list of things to know about when running tests for MacPerl.
 I know it isn't perfect, but it is a start.
 If you have any questions, ask the MacPerl Porters list.  Thanks!
 </p>
 
 <ul>
+<li>Create a new Configuration if you are testing a new version of MacPerl!</li>
 <li>Run the MacPerlTests.cmd script from MPW to run all the tests.  You can run
 them from the application, but many of them simply will not work properly,
 because they depend on certain paths and depend on being able to call perl
