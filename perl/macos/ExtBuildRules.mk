@@ -84,6 +84,8 @@ $(BASEEXT).Lib.MrC : ObjectsMrC
 	$(LibMrC) -o $(BASEEXT).Lib.MrC :Obj:{$(ObjectsMrC)}
 $(BASEEXT).shlb.PPC : ObjectsPPC $(EXPORT_FILE)
 	$(SharedLibPPC) $(EXPORTS) -name $(BASEEXT) -o $(BASEEXT).shlb.PPC :Obj:{$(ObjectsPPC)} $(DYNAMIC_STDLIBS_PPC) $(LibrariesPPC)
+#$(BASEEXT).shlb.MrC : ObjectsMrC $(EXPORT_FILE)
+#	$(SharedLibPPC) $(EXPORTS) -name $(BASEEXT) -o $(BASEEXT).shlb.MrC :Obj:{$(ObjectsMrC)} $(DYNAMIC_STDLIBS_PPC) $(LibrariesPPC)
 
 clean: 
 	$(RM_RF) ':Obj:Å'

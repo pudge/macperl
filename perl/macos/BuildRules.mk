@@ -23,8 +23,9 @@ MPWInc		= 	-i : -i :: -i {{SFIO}}include: -i {{GUSI}}include: -i "{{CIncludes}}"
 COpt		=	-d MACOS_TRADITIONAL $(DOpt) -sym on
 Opt68K		=	-model far -mc68020 -mbg on
 OptPPC		=	-tb on
-MWCOpt		=	${COpt} ${MWCInc} ${CInc} -i "Bourque:Prog:Metrowerks:Metrowerks CodeWarrior:MSL:MSL_C++:MSL_Common:Include"
-MPWOpt		=	${COpt} ${MPWInc} ${CInc} -includes unix -w 2,3,6,7,35,29
+MWCOpt		=	${COpt} ${MWCInc} ${CInc} -w off
+# -w 2,3,6,7,35,29
+MPWOpt		=	${COpt} ${MPWInc} ${CInc} -includes unix -w off
 MPWCpOpt	=	-i "{{STLport}}stl:" -ER -bool on 
 C68K		=	MWC68K ${MWCOpt} ${Opt68K}
 CPPC		=	MWCPPC ${MWCOpt} ${OptPPC}
@@ -38,13 +39,15 @@ LibPPC		=	MWLinkPPC -xm library -sym on
 LibSC		=	Lib -sym on -d
 LibMrC		=	PPCLink -xm l -sym on -d
 LOpt		= 	-sym on 
-MWLOpt		= 	${LOpt} -xm mpwtool -d
+MWLOpt		= 	${LOpt} -xm mpwtool -d -warn
 Link68K		=	MWLink68K ${MWLOpt} -model far
-LinkPPC		=	MWLinkPPC ${MWLOpt} 
-MPWLOpt		=	${LOpt} -c 'MPS ' -t MPST -w -mf 
+LinkPPC		=	MWLinkPPC ${MWLOpt}
+MPWLOpt		=	${LOpt} -c 'MPS ' -t MPST -w -mf
 LinkSC		=	Link ${MPWLOpt}  -model far
 LinkMrC		= 	PPCLink ${MPWLOpt}
-SharedLibPPC=	MWLinkPPC -xm sharedlibrary -sym on -msg nodup
+# nodup
+SharedLibPPC=	MWLinkPPC -xm sharedlibrary -sym on -msg nowarn
+#SharedLibMrC=	PPCLink -xm sharedlibrary -sym on -msg nowarn
 
 #
 # Directories

@@ -5,5 +5,5 @@ WriteMakefile(
     'LINKTYPE'		=> 'static dynamic',
 	 'MACLIBS_PPC'  => '"::::::AEGizmos:AEGizmos4Perl.Lib.PPC" ',
 	 'OBJECT'   	=> 'AppleEvents.c.o PerlAEUtils.cp.o',
-	 'INC'			=> '-i $(PERL_SRC):AEGizmos:include:'
+	 'INC'			=> '-i $(PERL_SRC):AEGizmos:Headers:'
 );

@@ -5,6 +5,9 @@
 #	Language	:	MPW Shell/Make
 #
 #  $Log$
+#  Revision 1.7  2001/01/09 21:57:18  pudge
+#  Change AutoInit to full paths
+#
 #  Revision 1.6  2000/12/29 00:28:23  pudge
 #  Add additional standard extensions
 #
@@ -72,8 +75,8 @@ MoreFiles	= :::MoreFiles:
 # Add -d LEAKTEST -d DUMPADDR -d MALLOC_LOG as you see fit
 LeakOpt		=	-d LEAKTEST -d DEBUGGING
 
-COpt		+= -d PERL_CORE 
-CInc		+= -i "$(MoreFiles)C Headers:"
+COpt		+= -d PERL_CORE
+CInc		+= -i "$(MoreFiles)CHeaders:"
 
 YACC = yacc
 
@@ -244,7 +247,7 @@ LibObjectsMRC = {$(libc)}.MrC.o
 
 all: PLib Obj miniperl $(private) $(plextract) $(public) dynlibrary runperl 
 	@echo " "; echo "	Everything is up to date."
-	
+
 PLib: 
 	NewFolder PLib
 	

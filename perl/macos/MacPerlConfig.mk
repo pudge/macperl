@@ -54,7 +54,7 @@ MACPERL_INST_EXT_PPC		=	PPC
 #
 # a) "New" layout, CodeWarrior headers in CWANSIIncludes
 #
-#CWANSIInc  = 	{{CWANSIIncludes}}
+CWANSIInc  = 	{{CWANSIIncludes}}
 #
 
-CWANSIInc	=	{{CWANSIIncludes}}
+#CWANSIInc	=	{{CWANSIIncludes}} "Bourque:Prog:Metrowerks:Metrowerks¶ CodeWarrior:MSL:MSL_C++:MSL_Common:Include:"
