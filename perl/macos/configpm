@@ -276,6 +276,23 @@ if ($OS2::is_aout) {
 }
 sub TIEHASH { bless {%preconfig} }
 ENDOFSET
+} elsif ($^O eq 'MacOS') {
+print <<'ENDOFSET';
+my %preconfig;
+{
+	my $inst = $ENV{MACPERL} . "site_perl:";
+	my $arch = $MacPerl::Architecture;
+
+	%extra = (
+		installsitelib		=> $inst,
+		installsitearch		=> $inst . $arch . ":",
+		archname		=> $arch,
+		myarchname		=> $arch,
+	);	
+}
+
+sub TIEHASH { bless { %preconfig } }
+ENDOFSET
 } else {
   print CONFIG <<'ENDOFSET';
 sub TIEHASH { bless {} }
