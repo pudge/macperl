@@ -1,9 +1,22 @@
 use ExtUtils::MakeMaker;
 
-WriteMakefile(
-	NAME			=> q(Mac::Notification),
-	'VERSION_FROM'		=> 'Notification.pm',
+my $mod = 'Notification';
+my %args = (
+	'NAME'			=> "Mac::$mod",
+	'VERSION_FROM'		=> "$mod.pm",
 	'LINKTYPE'		=> 'static dynamic',
-	TYPEMAPS		=> 'typemap',
-	XSPROTOARG		=> '-noprototypes', 		# XXX remove later?
+	'XSPROTOARG'		=> '-noprototypes', 		# XXX remove later?
 );
+
+# disable tests if set up outside current dir
+use Cwd;
+if ($ENV{PWD} && $ENV{PWD} ne cwd()) {
+	*MY::test = sub { "test ::\n\t\@\$(NOOP)" };
+}
+
+if ($^O eq 'darwin') {
+	$args{'INC'}		= '-I/Developer/Headers/FlatCarbon/';
+	$args{'LDDLFLAGS'}	= '-bundle -flat_namespace -undefined suppress -framework Carbon';
+}
+
+WriteMakefile(%args);

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2002/01/30 07:43:54  neeri
+ * Check ownership of CatInfos
+ *
  * Revision 1.4  2002/01/23 05:44:42  pudge
  * Update whitespace etc., from Thomas
  *
@@ -41,9 +44,14 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Folders.h>
 #include <Files.h>
+#ifdef MACOS_TRADITIONAL
 #include <GUSIFileSpec.h>
+#endif
 #include <Script.h>
 #include <Errors.h>
 #include <Aliases.h>
@@ -249,13 +257,19 @@ FSpGetCatInfo(file, index=0)
 	}
 	RETVAL->hFileInfo.ioVRefNum 	= file.vRefNum;
 	RETVAL->hFileInfo.ioDirID 	= file.parID;
-	RETVAL->hFileInfo.ioFDirIndex = index;
+	RETVAL->hFileInfo.ioFDirIndex	= index;
 	if (!index)
 		memcpy(RETVAL->hFileInfo.ioNamePtr, file.name, *file.name+1);
 	if (gMacPerl_OSErr = PBGetCatInfoSync(RETVAL)) {
 		free(RETVAL);
 		XSRETURN_UNDEF;
 	}
+#ifndef MACOS_TRADITIONAL
+	// takes care of Dr time fields too
+	RETVAL->hFileInfo.ioFlCrDat	= SecondsMac2Unix(RETVAL->hFileInfo.ioFlCrDat);
+	RETVAL->hFileInfo.ioFlMdDat	= SecondsMac2Unix(RETVAL->hFileInfo.ioFlMdDat);
+	RETVAL->hFileInfo.ioFlBkDat	= SecondsMac2Unix(RETVAL->hFileInfo.ioFlBkDat);
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -271,6 +285,12 @@ FSpSetCatInfo(file, info)
 	CODE:
 	info->hFileInfo.ioVRefNum 	= file.vRefNum;
 	info->hFileInfo.ioDirID 	= file.parID;
+#ifndef MACOS_TRADITIONAL
+	// takes care of Dr time fields too
+	info->hFileInfo.ioFlCrDat	= SecondsUnix2Mac(info->hFileInfo.ioFlCrDat);
+	info->hFileInfo.ioFlMdDat	= SecondsUnix2Mac(info->hFileInfo.ioFlMdDat);
+	info->hFileInfo.ioFlBkDat	= SecondsUnix2Mac(info->hFileInfo.ioFlBkDat);
+#endif
 	memcpy(info->hFileInfo.ioNamePtr, file.name, *file.name+1);
 	RETVAL = PBSetCatInfoSync(info);
 	OUTPUT:
@@ -594,7 +614,11 @@ _Eject(volName, vRefNum)
 	Str255	volName
 	short	vRefNum
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Files::Eject unsupported in Carbon");
+#else
 	RETVAL = Eject(volName, vRefNum);
+#endif
 	OUTPUT:
 	RETVAL
 

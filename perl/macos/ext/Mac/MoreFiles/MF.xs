@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/01/23 05:44:42  pudge
+ * Update whitespace etc., from Thomas
+ *
  * Revision 1.3  2001/01/16 21:18:53  pudge
  * Update for FSpDirectoryCopy in MoreFiles 1.5.  Probably should actually
  * add that parameter as an option in the perl glue.
@@ -29,10 +32,15 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <Memory.h>
 #include <Files.h>
+#ifdef MACOS_TRADITIONAL
 #include <GUSIFileSpec.h>
+#endif
 #include "MoreFiles.h"
 #include "FileCopy.h"
 #include "IterateDirectory.h"

@@ -24,7 +24,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Voice);
-	$VERSION = '1.00';
+	$VERSION = '1.01';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		SpeechManagerVersion

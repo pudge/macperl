@@ -1,16 +1,26 @@
-Perl -Sx "{0}" {"Parameters"}; Exit {Status}
+#!/usr/bin/perl -w
+use Test::More;
+use strict;
 
-#!perl
-#
-# Types.t - Demostrate MacPack and MacUnpack.
-#
+BEGIN { plan tests => 4 }
 
+use Mac::Files;
 use Mac::Types;
+use MacPerl 'MakeFSSpec';
 
-$p = MacPack("STR ", "Hello");
+SKIP: {
+#	skip "Mac::Types", 4;
 
-print $p, " ", length($p), "\n";
+	my $s = "Hello";
+	my $p = MacPack("STR ", $s);
+	is($p, (chr(length $s) . $s), 'pascal string');
+	my $u = MacUnpack("STR ", "$p dskjkjkdsjk");
+	is($u, $s, 'regular string');
 
-$u = MacUnpack("STR ", "$p dskjkjkdsjk");
+	my $path = MakeFSSpec(FindFolder(kOnSystemDisk, kDesktopFolderType));
+	my $fss = MacPack('fss ', $path);
+	isnt($path, $fss, 'to real FSSpec');
+	is($path, MacUnpack('fss ', $fss), 'back to string FSSpec');
+}
 
-print $u, " ", length($u), "\n";
+__END__

@@ -17,6 +17,9 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <Sound.h>
 
@@ -156,10 +159,14 @@ SndControl(id, cmd)
 	short	id
 	SndCommand &cmd
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Sound::SndControl unsupported in Carbon");
+#else
 	RETVAL = cmd;
 	if (gMacPerl_OSErr = SndControl(id, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -176,11 +183,32 @@ SndStartFilePlay(chan, fRefNum, resNum, bufferSize, theSelection, theCompletion=
 	SV *	theCompletion
 	Boolean	async
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Sound::SndStartFilePlay unsupported in Carbon");
+#else
 	RETVAL =
 		SndStartFilePlay(
 			chan, fRefNum, resNum, bufferSize, nil, &theSelection, nil, async);
+#endif
 	OUTPUT:
 	RETVAL
+
+#ifndef MACOS_TRADITIONAL
+
+MacOSRet
+SndPauseFilePlay(chan)
+	SndChannel	chan
+	CODE:
+	croak("Usage: Mac::Sound::SndPauseFilePlay unsupported in Carbon");
+
+MacOSRet
+SndStopFilePlay(chan, quietNow)
+	SndChannel	chan
+	Boolean	quietNow
+	CODE:
+	croak("Usage: Mac::Sound::SndStopFilePlay unsupported in Carbon");
+
+#else
 
 MacOSRet
 SndPauseFilePlay(chan)
@@ -190,6 +218,8 @@ MacOSRet
 SndStopFilePlay(chan, quietNow)
 	SndChannel	chan
 	Boolean	quietNow
+
+#endif
 
 SCStatus
 SndChannelStatus(chan)
@@ -232,8 +262,19 @@ SndPlayDoubleBuffer(chan, theParams)
 
 =cut
 
+#ifndef MACOS_TRADITIONAL
+
 NumVersion
 MACEVersion()
+	CODE:
+	croak("Usage: Mac::Sound::MACEVersion unsupported in Carbon");
+
+#else
+
+NumVersion
+MACEVersion()
+
+#endif
 
 void
 Comp3to1(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
@@ -243,6 +284,9 @@ Comp3to1(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	unsigned long	whichChannel
 	PPCODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Sound::Comp3to1 unsupported in Carbon");
+#else
 		unsigned long 	cnt = SvCUR(inBuffer);
 		SV *			outBuffer = newSVpv("", cnt / 3);
 		StateBlock		outState;
@@ -253,6 +297,7 @@ Comp3to1(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 		if (GIMME == G_ARRAY) {
 			XS_PUSH(StateBlock, outState);
 		}
+#endif
 	}
 
 void
@@ -263,6 +308,9 @@ Exp1to3(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	unsigned long	whichChannel
 	PPCODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Sound::Exp1to3 unsupported in Carbon");
+#else
 		unsigned long 	cnt = SvCUR(inBuffer) / 2;
 		SV *			outBuffer = newSVpv("", cnt*6);
 		StateBlock		outState;
@@ -273,6 +321,7 @@ Exp1to3(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 		if (GIMME == G_ARRAY) {
 			XS_PUSH(StateBlock, outState);
 		}
+#endif
 	}
 
 void
@@ -283,6 +332,9 @@ Comp6to1(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	unsigned long	whichChannel
 	PPCODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Sound::Comp6to1 unsupported in Carbon");
+#else
 		unsigned long 	cnt = SvCUR(inBuffer);
 		SV *			outBuffer = newSVpv("", cnt / 6);
 		StateBlock		outState;
@@ -293,6 +345,7 @@ Comp6to1(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 		if (GIMME == G_ARRAY) {
 			XS_PUSH(StateBlock, outState);
 		}
+#endif
 	}
 
 void
@@ -303,6 +356,9 @@ Exp1to6(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 	unsigned long	whichChannel
 	PPCODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Sound::Exp1to6 unsupported in Carbon");
+#else
 		unsigned long 	cnt = SvCUR(inBuffer);
 		SV *			outBuffer = newSVpv("", cnt * 6);
 		StateBlock		outState;
@@ -313,6 +369,7 @@ Exp1to6(inBuffer, inState=NO_INIT, numChannels=1, whichChannel=1)
 		if (GIMME == G_ARRAY) {
 			XS_PUSH(StateBlock, outState);
 		}
+#endif
 	}
 
 long
@@ -511,7 +568,11 @@ SndRecordToFile(filterProc, corner, quality, fRefNum)
 	OSType	quality
 	short	fRefNum
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Sound::SndRecordToFile unsupported in Carbon");
+#else
 	RETVAL = SndRecordToFile(nil, corner, quality, fRefNum);
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -563,11 +624,25 @@ SPBRecord(inParamPtr, asynchFlag=false)
 	SPB	   &inParamPtr
 	Boolean	asynchFlag
 
+#ifndef MACOS_TRADITIONAL
+
 MacOSRet
 SPBRecordToFile(fRefNum, inParamPtr, asynchFlag=false)
 	short	fRefNum
 	SPB	   &inParamPtr
 	Boolean	asynchFlag
+	CODE:
+	croak("Usage: Mac::Sound::SPBRecordToFile unsupported in Carbon");
+
+#else
+
+MacOSRet
+SPBRecordToFile(fRefNum, inParamPtr, asynchFlag=false)
+	short	fRefNum
+	SPB	   &inParamPtr
+	Boolean	asynchFlag
+
+#endif
 
 MacOSRet
 SPBPauseRecording(inRefNum)

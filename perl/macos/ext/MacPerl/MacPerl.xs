@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2001/09/02 00:38:40  pudge
+ * Sync with perforce
+ *
  * Revision 1.2  2001/04/17 03:53:44  pudge
  * Minor version/config changes, plus sync with maint-5.6/perl
  *
@@ -31,11 +34,16 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <QuickDraw.h>
 #include <Dialogs.h>
 #include <Lists.h>
+#ifdef MACOS_TRADITIONAL
 #include <GUSIFileSpec.h>
+#endif
 #include <PLStringFuncs.h>
 #include <Files.h>
 #include <Fonts.h>
@@ -113,6 +121,8 @@ typedef struct SelectionRecord SelectionRecord;
 
 static char gMacPerlScratch[256];
 #define gMacPerlScratchString ((StringPtr) gMacPerlScratch)
+
+#ifdef MACOS_TRADITIONAL
 
 static ControlHandle GetDlgCtrl(DialogPtr dlg, short item)
 {
@@ -297,6 +307,8 @@ RoutineDescriptor	uMacListFilter =
 #define uMacListFilter MacListFilter
 #endif
 
+#endif /* MACOS_TRADITIONAL */
+
 static OSErr GetVolInfo(short volume, Boolean indexed, FSSpec * spec)
 {
 	OSErr				err;
@@ -364,6 +376,9 @@ void
 MP_Ask(prompt, ...)
 	char *	prompt
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: MacPerl::Ask unsupported in Carbon");
+#else
 	{
 		short			item;
 		DialogPtr	dlg;
@@ -391,11 +406,15 @@ MP_Ask(prompt, ...)
 		}
 		DisposeDialog(dlg);
 	}
+#endif
 
 int
 MP_Answer(prompt, ...)
 	char *	prompt
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: MacPerl::Answer unsupported in Carbon");
+#else
 	{
 		short			item;
 		DialogPtr	dlg;
@@ -424,6 +443,7 @@ MP_Answer(prompt, ...)
 		
 		RETVAL = (items > 1) ? items - item - 1 : 0;
 	}
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -463,6 +483,9 @@ void
 MP_Pick(prompt, ...)
 	char *	prompt
 	PPCODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: MacPerl::Pick unsupported in Carbon");
+#else
 	{	
 		short			itemHit;
 		STRLEN		len;
@@ -529,22 +552,31 @@ MP_Pick(prompt, ...)
 		gPickList = nil;
 		DisposeDialog(dlg);
 	}
+#endif
 
 int
 MP_Quit(...)
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: MacPerl::Quit unsupported in Carbon");
+#else
 		if (items > 0)
 			gMacPerl_Quit = SvIV(ST(0));
 		RETVAL = gMacPerl_Quit;
+#endif
 	OUTPUT:
 	RETVAL
 
 int
 MP_ErrorFormat(...)
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: MacPerl::ErrorFormat unsupported in Carbon");
+#else
 		if (items > 0)
 			gMacPerl_ErrorFormat = SvIV(ST(0));
 		RETVAL = gMacPerl_ErrorFormat;
+#endif
 	OUTPUT:
 	RETVAL
 
@@ -554,6 +586,9 @@ MP_FAccess(file, cmd, ...)
 	unsigned	cmd
 	PPCODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: MacPerl::FAccess unsupported in Carbon");
+#else
 		unsigned				uarg;
 		Rect					rarg;
 		SelectionRecord	sarg;
@@ -683,6 +718,7 @@ MP_FAccess(file, cmd, ...)
 		default:
 			croak("MacPerl::FAccess() can't handle this command");
 		}
+#endif
 	}
 
 void
@@ -732,6 +768,8 @@ MP_Volumes()
 
 BOOT:
 	{
+/* This is all MacPerl-specific stuff */
+#ifdef MACOS_TRADITIONAL
 		extern int	StandAlone;
 		VersRecHndl	vers 	= (VersRecHndl) GetResource('vers', 1);
 		int 		versLen	= *(*vers)->shortVersion;
@@ -754,4 +792,5 @@ BOOT:
 
 		sv_setpv(cc, CC);
 		SvREADONLY_on(cc);
+#endif
 	}

@@ -1,10 +1,35 @@
 use ExtUtils::MakeMaker;
 
-WriteMakefile(
-	NAME			=> q(Mac::MoreFiles),
-	'VERSION_FROM'		=> 'MoreFiles.pm',
-	'LINKTYPE'		=> ['static', 'dynamic'],
-	XSPROTOARG 		=> '-noprototypes', 		# XXX remove later?
-	'INC'			=> '-i "$(PERL_SRC):MoreFiles:CHeaders:"',
-	OBJECT			=> 'MF.c'
+my $mod = 'MoreFiles';
+my %args = (
+	'NAME'			=> "Mac::$mod",
+	'VERSION_FROM'		=> "$mod.pm",
+	'LINKTYPE'		=> 'static dynamic',
+	'XSPROTOARG'		=> '-noprototypes', 		# XXX remove later?
 );
+
+# disable tests if set up outside current dir
+use Cwd;
+if ($ENV{PWD} && $ENV{PWD} ne cwd()) {
+	*MY::test = sub { "test ::\n\t\@\$(NOOP)" };
+}
+
+if ($^O eq 'darwin') {
+	my $src = 'MoreFilesSrc';
+	# we only compile these separately for Mac OS X right now, so
+	# we keep them in a separate directory and copy them in when needed
+	require File::Copy;
+	File::Copy::copy($_, '.') for <$src/*.c>;
+	# all our C_FILES are generated or copied into place
+	$args{'clean'}          = { FILES => '$(C_FILES)' };
+
+	$args{'INC'}		= "-I/Developer/Headers/FlatCarbon/ -I./$src";
+	$args{'LDDLFLAGS'}	= '-bundle -flat_namespace -undefined suppress -framework Carbon';
+	$args{'OBJECT'}		= '$(O_FILES)';
+}
+if ($^O eq 'MacOS') {
+	$args{'INC'}		= '-i "$(PERL_SRC):MoreFiles:CHeaders:"';
+	$args{'OBJECT'}		= 'MF.c';
+}
+
+WriteMakefile(%args);

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.7  2002/01/23 20:24:58  pudge
+ * Fix silly error
+ *
  * Revision 1.6  2002/01/23 05:44:42  pudge
  * Update whitespace etc., from Thomas
  *
@@ -43,6 +46,9 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <Memory.h>
 #include <TextUtils.h>
@@ -411,8 +417,20 @@ The GetApplLimit function returns the current application heap limit.
 
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
 RawPtr
 GetApplLimit()
+	CODE:
+	croak("Usage: Mac::Memory::GetApplLimit unsupported in Carbon");
+
+#else
+
+RawPtr
+GetApplLimit()
+
+#endif
 
 =item TopMem
 
@@ -448,17 +466,41 @@ HandleRet
 NewHandle(byteCount)
 	long	byteCount
 
+#ifndef MACOS_TRADITIONAL
+
 HandleRet
 NewHandleSys(byteCount)
 	long	byteCount
+	CODE:
+	croak("Usage: Mac::Memory::NewHandleSys unsupported in Carbon");
+
+#else
+
+HandleRet
+NewHandleSys(byteCount)
+	long	byteCount
+
+#endif
 
 HandleRet
 NewHandleClear(byteCount)
 	long	byteCount
 
+#ifndef MACOS_TRADITIONAL
+
 HandleRet
 NewHandleSysClear(byteCount)
 	long	byteCount
+	CODE:
+	croak("Usage: Mac::Memory::NewHandleSysClear unsupported in Carbon");
+
+#else
+
+HandleRet
+NewHandleSysClear(byteCount)
+	long	byteCount
+
+#endif
 
 =item NewPtr BYTECOUNT
 
@@ -482,11 +524,23 @@ NewPtr(byteCount)
 	CLEANUP:
 	gMacPerl_OSErr = MemError();
 
+#ifndef MACOS_TRADITIONAL
+
+PtrRet
+NewPtrSys(byteCount)
+	long	byteCount
+	CODE:
+	croak("Usage: Mac::Memory::NewPtrSys unsupported in Carbon");
+
+#else
+
 PtrRet
 NewPtrSys(byteCount)
 	long	byteCount
 	CLEANUP:
 	gMacPerl_OSErr = MemError();
+
+#endif
 
 PtrRet
 NewPtrClear(byteCount)
@@ -494,11 +548,23 @@ NewPtrClear(byteCount)
 	CLEANUP:
 	gMacPerl_OSErr = MemError();
 
+#ifndef MACOS_TRADITIONAL
+
+PtrRet
+NewPtrSysClear(byteCount)
+	long	byteCount
+	CODE:
+	croak("Usage: Mac::Memory::NewPtrSysClear unsupported in Carbon");
+
+#else
+
 PtrRet
 NewPtrSysClear(byteCount)
 	long	byteCount
 	CLEANUP:
 	gMacPerl_OSErr = MemError();
+
+#endif
 
 =item MaxBlock
 
@@ -515,8 +581,19 @@ MaxBlockSys does the same for the system heap.
 long
 MaxBlock()
 
+#ifndef MACOS_TRADITIONAL
+
 long
 MaxBlockSys()
+	CODE:
+	croak("Usage: Mac::Memory::MaxBlockSys unsupported in Carbon");
+
+#else
+
+long
+MaxBlockSys()
+
+#endif
 
 =item StackSpace
 
@@ -545,8 +622,19 @@ NewEmptyHandleSys does the same for the system heap.
 HandleRet
 NewEmptyHandle()
 
+#ifndef MACOS_TRADITIONAL
+
 HandleRet
 NewEmptyHandleSys()
+	CODE:
+	croak("Usage: Mac::Memory::NewEmptyHandleSys unsupported in Carbon");
+
+#else
+
+HandleRet
+NewEmptyHandleSys()
+
+#endif
 
 =item HLock HANDLE
 
@@ -627,7 +715,10 @@ TempNewHandle(logicalSize)
 	long	logicalSize
 	CODE:
 	{
-		RETVAL = TempNewHandle(logicalSize, &gMacPerl_OSErr);
+		OSErr myErr;
+
+		RETVAL = TempNewHandle(logicalSize, &myErr);
+		gMacPerl_OSErr = myErr;
 		if (gMacPerl_OSErr) {
 			XSRETURN_UNDEF;
 		}
@@ -691,9 +782,21 @@ long
 CompactMem(cbNeeded)
 	long	cbNeeded
 
+#ifndef MACOS_TRADITIONAL
+
 long
 CompactMemSys(cbNeeded)
 	long	cbNeeded
+	CODE:
+	croak("Usage: Mac::Memory::CompactMemSys unsupported in Carbon");
+
+#else
+
+long
+CompactMemSys(cbNeeded)
+	long	cbNeeded
+
+#endif
 
 =item PurgeMem BYTECOUNT
 
@@ -718,9 +821,21 @@ void
 PurgeMem(cbNeeded)
 	long	cbNeeded
 
+#ifndef MACOS_TRADITIONAL
+
 void
 PurgeMemSys(cbNeeded)
 	long	cbNeeded
+	CODE:
+	croak("Usage: Mac::Memory::PurgeMemSys unsupported in Carbon");
+
+#else
+
+void
+PurgeMemSys(cbNeeded)
+	long	cbNeeded
+
+#endif
 
 =item FreeMem
 
@@ -737,8 +852,19 @@ FreeMemSys does the same for the system heap.
 long
 FreeMem()
 
+#ifndef MACOS_TRADITIONAL
+
 long
 FreeMemSys()
+	CODE:
+	croak("Usage: Mac::Memory::FreeMemSys unsupported in Carbon");
+
+#else
+
+long
+FreeMemSys()
+
+#endif
 
 =item ReserveMem BYTECOUNT
 
@@ -758,9 +884,21 @@ void
 ReserveMem(cbNeeded)
 	long	cbNeeded
 
+#ifndef MACOS_TRADITIONAL
+
 void
 ReserveMemSys(cbNeeded)
 	long	cbNeeded
+	CODE:
+	croak("Usage: Mac::Memory::ReserveMemSys unsupported in Carbon");
+
+#else
+
+void
+ReserveMemSys(cbNeeded)
+	long	cbNeeded
+
+#endif
 
 =item MaxMem
 
@@ -793,12 +931,16 @@ void
 MaxMemSys()
 	PPCODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Memory::MaxMemSys unsupported in Carbon");
+#else
 		long	grow;
 		
 		XS_PUSH(long, MaxMemSys(&grow));
 		if (GIMME == G_ARRAY) {
 			XS_PUSH(long, grow);
 		}
+#endif
 	}
 
 =item MoveHHi HANDLE

@@ -1,17 +1,37 @@
-Perl -Sx "{0}" {"Parameters"}; Exit {Status}
+#!/usr/bin/perl -w
+use Test::More;
+use strict;
 
-#!perl
-#
-# Memory.t - List some statistics about the heap.
-#
+BEGIN { plan tests => 12 }
 
 use Mac::Memory;
 
-print <<END;
-Stack Space: @{[StackSpace]}
-Free Memory: @{[FreeMem]}
-Max  Memory: @{[MaxMem]}
-END
+SKIP: {
+#	skip "Mac::Memory", 12;
+
+# test any of the many other memory functions, seldom-used though they are?
+
+	ok(StackSpace(), 'StackSpace');
+	ok(FreeMem(), 'FreeMem');
+	ok(MaxMem(), 'MaxMem');
+
+	ok(my $h = Handle->new('xyzzy'),	'new handle');
+	is($h->get, 'xyzzy',			'get handle');
+	is($h->size, 5,				'handle size');
+	is($h->get(2, 2), 'zz',			'get handle portion');
+
+	ok($h->append(' wokka wokka'),		'append to handle');
+	is($h->get, 'xyzzy wokka wokka',	'get handle');
+	is($h->size, 17,			'handle size');
+	is($h->get(2, 2), 'zz',			'get handle portion');
+
+	ok(!$h->dispose,			'dispose handle');
+}
+
+
+__END__
+
+Handle->open() doesn't work.  Probably never will again.
 
 $h  = new Handle("xyzzy");
 $r = $h->open("r");
@@ -37,4 +57,3 @@ printf "%s (%d)\n", $h->get, $h->size;
 truncate $r, 0;
 # should be " (0)"
 printf "%s (%d)\n", $h->get, $h->size;
-__END__

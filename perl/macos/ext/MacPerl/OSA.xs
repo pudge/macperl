@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2001/12/19 22:54:15  pudge
+ * Make DoAppleScript return errors in $@
+ *
  * Revision 1.2  2001/04/16 04:45:15  neeri
  * Switch from atexit() to Perl_call_atexit (MacPerl bug #232158)
  *
@@ -25,6 +28,9 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <Components.h>
 #include <AppleEvents.h>
@@ -90,10 +96,14 @@ MP_Reply(reply)
 	char *	reply
 	CODE:
 	{
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: MacPerl::Reply unsupported in Carbon");
+#else
 		if (gMacPerl_Reply)
 			DisposeHandle(gMacPerl_Reply);
-	/**/		
+
 		PtrToHand(reply, &gMacPerl_Reply, strlen(reply));
+#endif
 	}
 
 void
@@ -101,70 +111,98 @@ MP_DoAppleScript(script)
 	SV *	script
 	CODE:
 	{
-		AEDesc		source;
-		AEDesc		result;
-		char *		scriptText;
-		STRLEN		len;
 		OSAError	myOSAErr;
-		AEDesc		source_errs;
-		AEDesc		result_errs;
-		char *		errorText;
-		STRLEN		errorLen;
-	/**/		
+		char *		scriptText;
+		STRLEN		scriptTextLen;
+		AEDesc		scriptTextDesc;
+		AEDesc		scriptResultDesc;
+
 		if (!gScriptingComponent && InitAppleScript())
 			croak("MacPerl::DoAppleScript couldn't initialize AppleScript");
-	/**/		
+
 		sv_setpvn(ERRSV, "", 0);
-		scriptText = (char*) SvPV(ST(0), len);
-		AECreateDesc(typeChar, scriptText, len, &source);
-	/**/		
+		scriptText = (char*) SvPV(ST(0), scriptTextLen);
+		AECreateDesc(typeChar, scriptText, scriptTextLen, &scriptTextDesc);
+
 		myOSAErr = OSADoScript(
 			gScriptingComponent, 
-			&source, 
+			&scriptTextDesc, 
 			kOSANullScript, 
 			typeChar, 
 			kOSAModeCanInteract,
-			&result
+			&scriptResultDesc
 		);
-		if (!myOSAErr)
-		{
-			AEDisposeDesc(&source);
-	/**/		
-			if (!AECoerceDesc(&result, typeChar, &source)) {
-				HLock(source.dataHandle);
-				ST(0) = sv_2mortal(newSVpv(*source.dataHandle,GetHandleSize(source.dataHandle)));
-				AEDisposeDesc(&source);
+		AEDisposeDesc(&scriptTextDesc);
+
+		if (!myOSAErr) {
+			char *		scriptResultData;
+			STRLEN		scriptResultLen;
+			AEDesc		scriptResultDataDesc;
+
+			if (!AECoerceDesc(&scriptResultDesc, typeChar, &scriptResultDataDesc)) {
+#ifdef MACOS_TRADITIONAL
+				HLock(scriptResultDataDesc.dataHandle);
+				scriptResultLen  = GetHandleSize(scriptResultDataDesc.dataHandle);
+				scriptResultData = *scriptResultDataDesc.dataHandle;
+#else
+				scriptResultLen  = AEGetDescDataSize(&scriptResultDataDesc);
+				scriptResultData = NewPtr(scriptResultLen);
+				AEGetDescData(&scriptResultDataDesc, scriptResultData, scriptResultLen);
+#endif
+
+				ST(0) = sv_2mortal(newSVpv(scriptResultData, scriptResultLen));
+
+				AEDisposeDesc(&scriptResultDataDesc);
+#ifndef MACOS_TRADITIONAL
+				DisposePtr(scriptResultData);
+#endif
 			} else
 				ST(0) = &PL_sv_undef;
-	/**/		
-			AEDisposeDesc(&result);
-		} else {
-			AEDisposeDesc(&source);
+
+			AEDisposeDesc(&scriptResultDesc);
+		}
+
+		else {
 
 			if (myOSAErr == errOSAScriptError) {
+				AEDesc		errorDesc;
+				AEDesc		errorDataDesc;
+
 				OSAScriptError(
 					gScriptingComponent,
 					kOSAErrorMessage,
 					typeChar,
-					&result_errs
+					&errorDesc
 				);
 
-				AEDisposeDesc(&source_errs);
-				if (!AECoerceDesc(&result_errs, typeChar, &source_errs)) {
-					errorText = "";
-					HLock(source_errs.dataHandle);
-					/* set $@ */
-					errorLen = GetHandleSize(source_errs.dataHandle);
-					strcpy(errorText, *source_errs.dataHandle);
-					if (strchr(errorText+errorLen-1, '.')) {
+				if (!AECoerceDesc(&errorDesc, typeChar, &errorDataDesc)) {
+					char *		errorData;
+					STRLEN		errorLen;
+#ifdef MACOS_TRADITIONAL
+					HLock(errorDataDesc.dataHandle);
+					errorLen  = GetHandleSize(errorDataDesc.dataHandle);
+					errorData = *errorDataDesc.dataHandle;
+#else
+					errorLen  = AEGetDescDataSize(&errorDataDesc);
+					errorData = NewPtr(errorLen);
+					AEGetDescData(&errorDataDesc, errorData, errorLen);
+#endif
+
+					/* AppleScript errors end in '.', we don't want it */
+					if (strchr(errorData+errorLen-1, '.')) {
 						errorLen--;
 					}
-					sv_setpvn(ERRSV, errorText, errorLen);
-					AEDisposeDesc(&source_errs);
+					/* set $@ */
+					sv_setpvn(ERRSV, errorData, errorLen);
+
+					AEDisposeDesc(&errorDataDesc);
+#ifndef MACOS_TRADITIONAL
+					DisposePtr(errorData);
+#endif
 				}
-				AEDisposeDesc(&result_errs);
+				AEDisposeDesc(&errorDesc);
 			}
-	/**/		
+
 			ST(0) = &PL_sv_undef;
 		}
 	}

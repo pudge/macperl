@@ -1,0 +1,156 @@
+#!perl -w
+# run this document through perl to check its syntax
+use Pod::Checker;
+podchecker(\*DATA);
+__END__
+
+=head1 NAME
+
+README - Carbon API for perl on Mac OS X
+
+=head1 SYNOPSIS
+
+This is B<not release-quality> software.  It is still in development, and
+not recommend for use in a production environment.
+
+Mac::Carbon is a collection of perl modules for accessing the Carbon API
+under Mac OS X.  It is a port of the Toolbox modules written by Matthias
+Neeracher for MacPerl.
+
+Part of the current strategy is to make Mac::Carbon the intersection of
+the old and new Mac OS APIs.  We will not be adding new functionality
+from Carbon, except as needed, for now.  This may change over time as
+Mac::Carbon stabilizes.
+
+See the documentation in L<Mac::Carbon> for more implementation details,
+bugs, etc.
+
+
+=head1 HELP ME
+
+There are probably a lot of bugs, especially in F<Carbon.h>.  Bugs are listed
+in L<Mac::Carbon/"Known Bugs">; please feel free to report them on the MacPerl bug
+reporting page, in the "Mac Toolbox" category.  Patches are welcome,
+too, of course.  For large patches, such as stuff for test suites and
+building, please do coordinate with me before spending much time on it.
+
+	http://sf.net/projects/macperl/
+
+
+=head1 REQUIREMENTS
+
+=head2 Mac OS
+
+These modules all build under Mac OS, but it is recommended you build them
+as a part of MacPerl itself, or at least under the MacPerl source.  See
+http://dev.macperl.org/ for more information.
+
+Under Mac OS, the full Mac OS API is available, not just the Carbon-compatible
+routines.
+
+=head2 Mac OS X
+
+To build these modules on Mac OS X, the Developer Tools are required.
+
+The Test::More module is required for running tests.
+
+The separate Mac::Errors module is not required, but is highly recommended.
+
+These modules have only been tested with perl 5.6.0 on Mac OS X.  See
+the note in L<BUILDING>.
+
+The modules will compile and test remotely (such as via ssh, instead of
+via the Terminal), but some of the tests might not run properly, and
+one of the tests (for Mac::Notification) wants user feedback (though will
+work without it).
+
+
+=head1 BUILDING
+
+Matthias added some extensions to XS for his Toolbox modules; they were
+never fully embraced by p5p, and as a result, we have a separate xsubpp
+for these additional XS macros. There is currently no resolution to this
+problem.  Either we write a pre-preprocessor that converts the .xs files
+to be able to be handled by perl's xsubpp, or we modify the .xs so that
+it can be handled by perl's xsubpp, or we distribute a separate xsubpp
+(which is dangerous, as xsubpp changes with versions of perl).
+
+Currently, Mac::Carbon is distributed with the already-processed .c files.
+If you really want to compile with the .xs files, you can use the xsubpp
+programs (either the 5.6 or 5.8 versions) included in the distribution.
+This is only temporary, until we have a permanent resolution to these
+issues.
+
+You might want to run the test suite with C<make test TEST_VERBOSE=1>.
+It's cool.
+
+
+=head1 SUPPORTED MODULES
+
+Currently, only a subset of the modules are supported.  The ported
+modules are:
+
+	Mac::Components
+	Mac::Files
+	Mac::Gestalt
+	Mac::Memory
+	Mac::MoreFiles
+	Mac::Notification
+	Mac::Processes
+	Mac::Resources
+	Mac::Sound
+	Mac::Speech
+	Mac::Types
+
+Coming next, hopefully:
+
+	Mac::AppleEvents
+	Mac::OSA
+
+Mac::AppleEvents is going to take more work than the others, as it
+involves some significant API changes.
+
+Following those, the pure-perl modules, which should not take much
+work, as long as the core XS modules they rely on are working:
+
+	Mac::AppleEvents::Simple
+	Mac::OSA::Simple
+	Mac::Glue
+
+And, possibly:
+
+	Mac::InternetConfig
+	Mac::SpeechRecognition
+
+There are currently no plans for the other (GUI) modules, including:
+
+	Mac::Controls
+	Mac::Dialogs
+	Mac::Events
+	Mac::Fonts
+	Mac::Lists
+	Mac::Menus
+	Mac::Movies
+	Mac::Navigation
+	Mac::QDOffScreen
+	Mac::QuickDraw
+	Mac::QuickTimeVR
+	Mac::TextEdit
+	Mac::Windows
+
+We could do these eventually, if there is enough interest.  They don't
+port as easily as some of the others, for many reasons, not the least of
+which is that we need a framework to handle events etc., which for
+MacPerl is mostly implemented in F<macish.c> / F<macish.h>.
+
+
+=head1 AUTHOR
+
+The Mac Toolbox modules were written by Matthias Neeracher
+E<lt>neeracher@mac.comE<gt>.  They are currently maintained by Chris
+Nandor E<lt>pudge@pobox.comE<gt>.
+
+
+=head1 VERSION
+
+$Id$

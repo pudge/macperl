@@ -1,3 +1,18 @@
+#!/usr/bin/perl -w
+use Test::More;
+use strict;
+
+BEGIN { plan tests => 1 }
+
+use Mac::Resources;
+
+SKIP: {
+#	skip "Mac::Resources", 1;
+	ok(1);
+}
+
+__END__
+
 Perl -Sx "{0}" {"Parameters"}; Exit {Status}
 
 #!perl

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.3  2002/01/23 05:44:42  pudge
+ * Update whitespace etc., from Thomas
+ *
  * Revision 1.2  2000/09/09 22:18:28  neeri
  * Dynamic libraries compile under 5.6
  *
@@ -28,6 +31,9 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <Memory.h>
 #include <Resources.h>
@@ -118,11 +124,24 @@ The CreateResFile procedure creates an empty resource file.
     }
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
+void
+CreateResFile(fileName)
+	Str255	fileName
+	CODE:
+	croak("Usage: Mac::Resourcecs::CreateResFile unsupported in Carbon");
+
+#else
+
 void
 CreateResFile(fileName)
 	Str255	fileName
 	CLEANUP:
 	ResErrorReturn;
+
+#endif
 
 =item OpenResFile NAME
 
@@ -136,11 +155,24 @@ the current resource file.
     }
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
+short
+OpenResFile(fileName)
+	Str255	fileName
+	CODE:
+	croak("Usage: Mac::Resourcecs::OpenResFile unsupported in Carbon");
+
+#else
+
 short
 OpenResFile(fileName)
 	Str255	fileName
 	CLEANUP:
 	ResErrorCheckRetval;
+
+#endif
 
 =item UseResFile RFD
 
@@ -557,11 +589,24 @@ RsrcMapEntry returns arbitrary data.
     }
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
+long
+RsrcMapEntry(theResource)
+	Handle	theResource
+	CODE:
+	croak("Usage: Mac::Resourcecs::CreateResFile unsupported in Carbon");
+
+#else
+
 long
 RsrcMapEntry(theResource)
 	Handle	theResource
 	CLEANUP:
 	ResErrorCheckRetvalNULL;
+
+#endif
 
 =item SetResAttrs HANDLE, ATTRS
 
@@ -764,12 +809,26 @@ the resource map of the System file.
     }
 
 =cut
+
+#ifndef MACOS_TRADITIONAL
+
+Handle
+RGetResource(theType, theID)
+	OSType	theType
+	short	theID
+	CODE:
+	croak("Usage: Mac::Resourcecs::RGetResource unsupported in Carbon");
+
+#else
+
 Handle
 RGetResource(theType, theID)
 	OSType	theType
 	short	theID
 	CLEANUP:
 	ResErrorCheckRetvalNULL;
+
+#endif
 
 =item FSpOpenResFile SPEC, PERMISSION
 

@@ -1,11 +1,17 @@
-Perl -Sx "{0}" {"Parameters"}; Exit {Status}
+#!/usr/bin/perl -w
+use Test::More;
+use strict;
 
-#!perl
-#
-# Files.t - Demonstrate a few file calls.
-#
+BEGIN { plan tests => 1 }
 
 use Mac::Files;
+
+SKIP: {
+#	skip "Mac::Files", 1;
+	ok(1);
+}
+
+__END__
 
 print FindFolder(kOnSystemDisk, kSystemFolderType), "\n";
 $info = FSpGetCatInfo("::Makefile.mk");

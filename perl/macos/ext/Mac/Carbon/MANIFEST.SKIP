@@ -1,0 +1,4 @@
+CVS/*$
+\.DS_Store$
+^MacPerl/XL.xs$
+^MacPerl/AutoInit.pl$

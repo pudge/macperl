@@ -17,11 +17,12 @@ use strict;
 package Mac::MoreFiles;
 
 BEGIN {
+	use MacPerl 'Volumes';
 	use Exporter   ();
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Application);
-	$VERSION = '1.00';
+	$VERSION = '1.01';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		FSpCreateMinimum

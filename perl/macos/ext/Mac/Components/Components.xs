@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:26  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:30:19  neeri
  * Checked into Sourceforge
  *
@@ -22,6 +25,9 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <Memory.h>
 #include <Components.h>
@@ -165,15 +171,27 @@ GetComponentInfo(aComponent)
 	HLock(info);
 	if (!gMacPerl_OSErr) 
 		if (GIMME != G_ARRAY) {
-			XS_XPUSH(Str255, (StringPtr)*name);
+			if (*name == NULL) {
+				XS_XPUSH(Str255, "");
+			} else {
+				XS_XPUSH(Str255, (StringPtr)*name);
+			}
 		} else {
 			XPUSHs(sv_2mortal(MakeOSSV(desc.componentType)));
 			XPUSHs(sv_2mortal(MakeOSSV(desc.componentSubType)));
 			XPUSHs(sv_2mortal(MakeOSSV(desc.componentManufacturer)));
 			XPUSHs(sv_2mortal(newSViv(desc.componentFlags)));
 			XPUSHs(sv_2mortal(newSViv(desc.componentFlagsMask)));
-			XS_XPUSH(Str255, (StringPtr)*name);
-			XS_XPUSH(Str255, (StringPtr)*info);
+			if (*name == NULL) {
+				XS_XPUSH(Str255, "");
+			} else {
+				XS_XPUSH(Str255, (StringPtr)*name);
+			}
+			if (*info == NULL) {
+				XS_XPUSH(Str255, "");
+			} else {
+				XS_XPUSH(Str255, (StringPtr)*info);
+			}
 		}
 	DisposeHandle(name);
 	DisposeHandle(info);

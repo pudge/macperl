@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/01/23 05:44:42  pudge
+ * Update whitespace etc., from Thomas
+ *
  * Revision 1.3  2000/09/12 19:42:21  pudge
  * Make LaunchApplication return PSN on success, undef on failure
  *
@@ -28,10 +31,15 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 #include <Memory.h>
 #include <Processes.h>
+#ifdef MACOS_TRADITIONAL
 #include <GUSIFileSpec.h>
+#endif
 
 typedef LaunchPBPtr			LaunchParam;
 typedef ProcessInfoRecPtr	ProcessInfo;
@@ -189,9 +197,13 @@ LaunchDeskAccessory(pFileSpec, pDAName)
 	FSSpec	spec;
 	FSSpec *	fssp = nil;
 	CODE:
+#ifndef MACOS_TRADITIONAL
+	croak("Usage: Mac::Processes::LaunchDeskAccessory unsupported in Carbon");
+#else
 	if (SvTRUE(pFileSpec) && GUSIPath2FSp(SvPV_nolen(pFileSpec), &spec))
 		fssp = &spec;
 	RETVAL = LaunchDeskAccessory(fssp, pDAName);
+#endif
 	OUTPUT:
 	RETVAL
 

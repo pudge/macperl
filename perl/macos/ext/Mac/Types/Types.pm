@@ -17,13 +17,15 @@ use strict;
 
 package Mac::Types;
 
+use MacPerl 'MakeFSSpec';
+
 BEGIN {
 	use Exporter   ();
 	use DynaLoader ();
 	use Carp;
 
 	use vars qw($VERSION @ISA @EXPORT %MacPack %MacUnpack);
-	$VERSION = '1.00';
+	$VERSION = '1.01';
 	@ISA = qw(Exporter DynaLoader);
 	
 	@EXPORT = qw(

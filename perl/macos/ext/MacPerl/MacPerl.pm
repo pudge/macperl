@@ -2,6 +2,8 @@ package MacPerl;
 
 require Exporter;
 
+$VERSION = '1.01';
+
 @ISA = qw(Exporter);
 
 @EXPORT = qw(
@@ -36,12 +38,40 @@ require Exporter;
 
 %EXPORT_TAGS = (all => [@EXPORT, @EXPORT_OK]);
 
-# bootstrap MacPerl is already implicitly done by your MacPerl binary
-
 sub kMacPerlNeverQuit ()		{ 0; }
 sub kMacPerlQuitIfRuntime ()		{ 1; }
 sub kMacPerlAlwaysQuit ()		{ 2; }
 sub kMacPerlQuitIfFirstScript ()	{ 3; }
+
+# bootstrap MacPerl is already implicitly done by your MacPerl binary
+unless ($^O eq 'MacOS') {
+	# use Config;
+	# my $dl_dlext = $Config::Config{'dlext'};
+	my $dl_dlext = 'bundle';
+
+	require DynaLoader;
+	push @ISA, 'DynaLoader';
+	bootstrap MacPerl;
+
+	# because OSA is in MacPerl.bundle, not OSA.bundle
+	my $file = "auto/MacPerl/MacPerl.$dl_dlext";
+	foreach (@INC) {
+		$dir = "$_/auto/MacPerl";
+		next unless -d $dir;
+		my $try = "$dir/MacPerl.$dl_dlext";
+		last if $file = -f $try && $try;
+	}
+
+	for my $mod (qw(OSA)) {
+		my($xs, $symref);
+		for (@DynaLoader::dl_librefs) {
+			last if $symref = DynaLoader::dl_find_symbol($_, "boot_$mod");
+		}
+		next unless $symref;
+		$xs = DynaLoader::dl_install_xsub("${mod}::bootstrap", $symref, $file);
+		&$xs($mod);
+	}
+}
 
 1;
 

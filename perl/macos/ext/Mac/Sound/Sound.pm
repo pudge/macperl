@@ -24,7 +24,7 @@ BEGIN {
 	use Mac::Memory();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.00';
+	$VERSION = '1.01';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		twelfthRootTwo

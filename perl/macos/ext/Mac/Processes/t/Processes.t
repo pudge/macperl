@@ -1,25 +1,23 @@
-Perl -Sx "{0}" {"Parameters"}; Exit {Status}
+#!/usr/bin/perl -w
+use Test::More;
+use strict;
 
-#!perl
-#
-# Processes.t - List all processes, then try to launch MacPerl
-#
+BEGIN { plan tests => 1 }
 
 use Mac::Processes;
-use Mac::MoreFiles(%Application);
 
-printf "%-20s %-8s  %-8s\n", "Process Name", "PSN", "Location";
+SKIP: {
+#	skip "Mac::Processes", 1;
 
-while (($psn, $pi) = each %Process) {
-	printf "%-20s %08X @%08X\n", 
-		$pi->processName, $pi->processNumber, $pi->processLocation;
+# other process tests are in Notification.t
+# we should check struct fields, too
+
+	my $exists = 1;
+	while (my($psn, $pi) = each %Mac::Processes::Process) {
+		$exists = 0, last unless -e $pi->processAppSpec;
+	}
+	ok($exists, 'check process paths');
+
 }
 
-$Launch = new LaunchParam(
-	launchControlFlags => launchContinue+launchNoFileFlags+launchDontSwitch,
-	launchAppSpec      => $Application{McPL}
-);
-
-LaunchApplication($Launch) ||Êdie "$^E";
-
-printf "Launched %X flags %X\n", $Launch->launchProcessSN, $Launch->launchControlFlags;
+__END__

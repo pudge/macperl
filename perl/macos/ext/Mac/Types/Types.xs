@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.2  2000/09/09 22:18:29  neeri
+ * Dynamic libraries compile under 5.6
+ *
  * Revision 1.1  2000/08/14 03:39:34  neeri
  * Checked into Sourceforge
  *
@@ -22,6 +25,9 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#ifndef MACOS_TRADITIONAL
+#include "../Carbon.h"
+#endif
 #include <Types.h>
 
 MODULE = Mac::Types	PACKAGE = Mac::Types
