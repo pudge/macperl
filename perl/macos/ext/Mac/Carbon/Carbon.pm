@@ -208,7 +208,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.72';
+$VERSION = '0.73';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -402,7 +402,9 @@ David Hand,
 Gero Herrmann,
 Peter N Lewis,
 Paul McCann,
+Sherm Pendley,
 Randal Schwartz,
+Michael Schwern,
 John Siracusa,
 Dan Sugalksi,
 Ken Williams,

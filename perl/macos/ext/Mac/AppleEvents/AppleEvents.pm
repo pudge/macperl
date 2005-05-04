@@ -20,7 +20,7 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = '1.30';
+$VERSION = '1.31';
 
 =head2 Constants: AppleEvent Descriptor Types
 
@@ -1160,11 +1160,14 @@ sub new {
 	my($package, $type, $data) = @_;
 	
 	$data = "" unless defined($data);
+	my $return;
 	if (ref($data) ne "Handle") {
-		_new($package, $type, new Handle($data));
+		$return = _new($package, $type, new Handle($data));
 	} else {
-		_new(@_);
+		$return = _new(@_);
 	}
+
+	return $return;
 }
 
 sub get () {
@@ -1265,12 +1268,14 @@ Return the contents in a smartly unpacked way.
 
 sub new {
 	my($package, $key, $type, $data) = @_;
-	
+
+	my $return;
 	if (defined($data) && ref($data) ne "Handle") {
-		_new($package, $key, $type, new Handle($data));
+		$return = _new($package, $key, $type, new Handle($data));
 	} else {
-		_new(@_);
+		$return = _new(@_);
 	}
+	return $return;
 }
 
 package AEStream;

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.12  2005/02/20 05:57:12  pudge
+ * GUSI* memory leaks
+ *
  * Revision 1.11  2003/10/28 05:49:29  pudge
  * Add #undef I_POLL for Panther
  *
@@ -83,7 +86,7 @@ typedef Ptr	PtrRet;
 #include <errno.h>
 
 /* $! and $^E will both be set together, which is fine (for now?) */
-#define gMacPerl_OSErr (short)errno
+#define gMacPerl_OSErr errno
 
 // keyReplyPortAttr is not found on some Mac OS X versions ...
 // so define our own.  nyah nyah.
