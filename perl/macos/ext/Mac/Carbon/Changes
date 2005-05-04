@@ -2,6 +2,7 @@
 
    Change cast of errno in Carbon.h to make it build under gcc 4.  (Sherm Pendley)
 
+   Re-fix Makefile for older ExtUtils::MakeMaker versions.
 
 * v0.72, 9 March 2005
 

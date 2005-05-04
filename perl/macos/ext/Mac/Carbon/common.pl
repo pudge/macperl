@@ -86,6 +86,12 @@ if ($^O ne 'MacOS') {
 		# DFSEP not defined in older MakeMakers, and we know this is right anyway
 		$return =~ s/^(XSUBPP\s*=\s*).+$/$1\$(XSUBPPDIR)\/$xsubpp/m;
 
+		# just in case, for some older ExtUtils::MakeMakers ...
+		my(@tmdeps) = File::Spec->catdir(
+			$self->{PERL_LIB}, 'ExtUtils', 'typemap'
+		);
+		$return =~ s|\$\(XSUBPPDIR\)/typemap|@tmdeps|g;
+
 		return $return;
 	};
 }
