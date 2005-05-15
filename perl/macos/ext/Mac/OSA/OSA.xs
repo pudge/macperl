@@ -6,6 +6,13 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.6  2005/03/09 23:25:03  pudge
+ * Fix Makefile to work with latest ExtUtils::MakeMaker beta. (Michael Schwern)
+ *
+ * Add OSAGetProperty/OSASetProperty to Mac::OSA.
+ *
+ * Add some additional example files.
+ *
  * Revision 1.5  2003/06/25 04:37:50  pudge
  * OK, a better solution
  *
@@ -41,6 +48,7 @@
 #include <Memory.h>
 #include <OSA.h>
 #include <OSAGeneric.h>
+#include <ASDebugging.h>
 
 MODULE = Mac::OSA	PACKAGE = Mac::OSA
 
@@ -254,6 +262,26 @@ OSAGetProperty(scriptingComponent, modeFlags, contextID, variableName)
 		XSRETURN_UNDEF;
 	}
 	if (gMacPerl_OSErr = (short) OSACoerceToDesc(scriptingComponent, scriptValueID, typeObjectSpecifier, kOSAModeNull, &RETVAL)) {
+		XSRETURN_UNDEF;
+	}
+	OUTPUT:
+	RETVAL
+
+=item OSAGetAppTerminology SCRIPTINGCOMPONENT, MODEFLAGS, FILE, TERMINOLOGYID
+
+OSAGetAppTerminology gets one or more scripting terminology resources from
+the specified file.  Returns an AEDesc.
+
+=cut
+AEDesc
+OSAGetAppTerminology(scriptingComponent, modeFlags, file, terminologyID=0)
+	ComponentInstance scriptingComponent
+	long 					modeFlags
+	FSSpec				file
+	short					terminologyID
+	CODE:
+	Boolean				didLaunch;
+	if (gMacPerl_OSErr = (short) OSAGetAppTerminology(scriptingComponent, modeFlags, &file, terminologyID, &didLaunch, &RETVAL)) {
 		XSRETURN_UNDEF;
 	}
 	OUTPUT:

@@ -1,3 +1,9 @@
+* v0.74, 14 May 2005
+
+   Add OSAGetAppTerminology to Mac::OSA, which is what we should have been
+   doing all along for getting terminology instead of trying to handle it
+   ourselves in Mac::Glue.
+
 * v0.73, 3 May 2005
 
    Change cast of errno in Carbon.h to make it build under gcc 4.  (Sherm Pendley)
