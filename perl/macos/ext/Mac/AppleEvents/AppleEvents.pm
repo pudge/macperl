@@ -20,9 +20,9 @@ use strict;
 
 package Mac::AppleEvents;
 use vars '$VERSION';
-$VERSION = '1.31';
+$VERSION = '1.32';
 
-=head2 Constants: AppleEvent Descriptor Types
+=head2 Constants: Apple event Descriptor Types
 
 =over 4
 
@@ -76,15 +76,15 @@ A 64 bit number.
 
 =item  typeAEList 
 
-An AppleEvent list.
+An Apple event list.
 
 =item  typeAERecord 
 
-An AppleEvent record.
+An Apple event record.
 
 =item  typeAppleEvent 
 
-An AppleEvent.
+An Apple event.
 
 =item  typeFSS 
 
@@ -100,7 +100,7 @@ An enumeration literal (4 byte character).
 
 =item  typeType 
 
-An AppleEvent type (4 byte character).
+An Apple event type (4 byte character).
 
 =item  typeAppParameters 
 
@@ -386,7 +386,7 @@ Number of processes recording AppleEvents.
 
 =item  keyAEVersion 
 
-AppleEvent Manager version.
+Apple Event Manager version.
 
 =back
 
@@ -411,7 +411,7 @@ sub keySelectProc				() { 'selh' }
 sub keyAERecorderCount				() { 'recr' }
 sub keyAEVersion				() { 'vers' }
 
-=head2 Constants: Core AppleEvent Suite
+=head2 Constants: Core Apple event Suite
 
 =over 4
 
@@ -437,7 +437,7 @@ Quit application.
 
 =item  kAEAnswer 
 
-AppleEvent answer event.
+Apple event answer event.
 
 =item  kAEApplicationDied 
 
@@ -486,7 +486,7 @@ sub kAEApplicationDied				() { 'obit' }
 
 =item  kAEInteractWithAll 
 
-AppleEvent sendMode flags.
+Apple event sendMode flags.
 
 =cut
 sub kAENoReply					() { 0x00000001 }
@@ -508,7 +508,7 @@ sub kAEInteractWithAll				() { 2 }
 
 =item  kAEHighPriority 
 
-AppleEvent priority values.
+Apple event priority values.
 
 =cut
 sub kAENormalPriority				() { 0x00000000 }
@@ -661,6 +661,7 @@ sub kAEContains                 		() { 'cont' }
 BEGIN {
 	use Exporter   ();
 	use DynaLoader ();
+	use Mac::Memory;
 	
 	use vars qw(@ISA @EXPORT %AppleEvent %SysAppleEvent);
 	
@@ -1009,7 +1010,7 @@ BEGIN {
 sub TIEHASH
 {
 	my ($package,$sys) = @_;
-    my ($me) = bless {SYS => $sys};
+	my($me) = bless {SYS => $sys};
 	
 	return $me;
 }
@@ -1022,9 +1023,9 @@ sub ParseKey
 }
 
 sub FETCH 
-{  
+{
 	my($sys,$key)  = @_;
-    my(@keys) = ParseKey $key;
+	my(@keys) = ParseKey $key;
 
 	my ($handler, $refcon) = AEGetEventHandler(@keys, $sys->{SYS});
 	
@@ -1034,8 +1035,8 @@ sub FETCH
 
 sub STORE 
 {
-    my($sys,$key,$handler,$refcon) = @_;
-    my(@keys) = ParseKey $key;
+	my($sys,$key,$handler,$refcon) = @_;
+	my(@keys) = ParseKey $key;
 	
 	$refcon = $key unless defined $refcon;
 	
@@ -1043,9 +1044,9 @@ sub STORE
 }
 
 sub DELETE 
-{	
+{
 	my($sys,$key)  = @_;
-    my(@keys) = ParseKey $key;
+	my(@keys) = ParseKey $key;
 	
 	AERemoveEventHandler(@keys, $sys->{SYS});
 }
@@ -1094,7 +1095,7 @@ package AEDesc;
 
 =head2 AEDesc
 
-AEDesc is a Perl package that encapsulates an AppleEvent Descriptor.
+AEDesc is a Perl package that encapsulates an Apple Event Descriptor.
 It uses the OO methods of Perl5 to make building and parsing data structures
 easier.
 
@@ -1108,7 +1109,7 @@ easier.
 
 =item new
 
-Create a new AppleEvent descriptor.
+Create a new Apple event descriptor.
 Sets the type and data to TYPE (default is 'null'), and HANDLE or DATA 
 (default is empty).
 
@@ -1147,12 +1148,15 @@ use C<get> instead.
 
 Return the data of the AEDesc structure in a smartly unpacked way.
 
+=item dispose
+
+Dispose the AEDesc.
+
 =back
 
 =cut
 
 BEGIN {
-	use Mac::Memory ();
 	use Mac::Types;
 }
 
@@ -1176,23 +1180,24 @@ sub get () {
 	
 	if (exists($constant{$type})) {
 		return $constant{$type};
-	} elsif (exists($MacUnpack{$type})) {
-		my $handle = $desc->data;
-		my $return = $handle->get;
-		$handle->dispose unless $^O eq 'MacOS';
-		return MacUnpack($type, $return);
 	} else {
 		my $handle = $desc->data;
 		my $return = $handle->get;
 		$handle->dispose unless $^O eq 'MacOS';
+		if (defined($return) && exists($MacUnpack{$type})) {
+			return MacUnpack($type, $return);
+		}
 		return $return;
 	}
+}
+
+sub dispose {
+	Mac::AppleEvents::AEDisposeDesc($_[0]);
 }
 
 package AESubDesc;
 
 BEGIN {
-	use Mac::Memory ();
 	use Mac::Types;
 	import Mac::AppleEvents;
 }
@@ -1206,7 +1211,7 @@ sub get () {
 	} elsif (exists($MacUnpack{$type})) {
 		return MacUnpack($type, AEGetSubDescData($desc));
 	} else {
-		my($aedesc,$res) = AESubDescToDesc($desc);
+		my($aedesc, $res) = AESubDescToDesc($desc);
 		$res = AEPrint($aedesc);
 		AEDisposeDesc($aedesc);
 		
@@ -1218,7 +1223,7 @@ package AEKeyDesc;
 
 =head2 AEKeyDesc
 
-AEKeyDesc is a Perl package that encapsulates an AppleEvent keyword.
+AEKeyDesc is a Perl package that encapsulates an Apple event keyword.
 It uses the OO methods of Perl5 to make building and parsing data structures
 easier.
 
@@ -1234,7 +1239,7 @@ easier.
 
 =item new
 
-Creates a new AppleEvent keyword descriptor.
+Creates a new Apple event keyword descriptor.
 Sets the keyword, type and data to KEY (default is zero),
 TYPE (default is 'null'), and HANDLE or DATA (default is empty).
 
@@ -1262,6 +1267,10 @@ it the new data.
 
 Return the contents in a smartly unpacked way.
 
+=item dispose
+
+Dispose the underlying AEDesc.
+
 =back
 
 =cut
@@ -1269,14 +1278,21 @@ Return the contents in a smartly unpacked way.
 sub new {
 	my($package, $key, $type, $data) = @_;
 
+	$data = "" unless defined($data);
 	my $return;
-	if (defined($data) && ref($data) ne "Handle") {
+	if (ref($data) ne "Handle") {
 		$return = _new($package, $key, $type, new Handle($data));
 	} else {
 		$return = _new(@_);
 	}
 	return $return;
 }
+
+sub dispose {
+	Mac::AppleEvents::AEDisposeDesc($_[0]->desc);
+}
+
+*AEKeyDesc::get = *AEDesc::get{CODE};
 
 package AEStream;
 

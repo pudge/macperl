@@ -23,7 +23,7 @@ BEGIN {
 	use Carp;
 
 	use vars qw($VERSION @ISA @EXPORT %MacPack %MacUnpack);
-	$VERSION = '1.02';
+	$VERSION = '1.03';
 	@ISA = qw(Exporter DynaLoader);
 	
 	@EXPORT = qw(
@@ -115,6 +115,7 @@ sub _UnpackFSSpec {
 	type => _Packer("A4"),
 	keyw => _Packer("A4"),
 	sign => _Packer("A4"),
+	prop => _Packer("A4"),
 	bool => _Packer("c"),
 	shor => _Packer("s"),
 	long => _Packer("l"),
@@ -135,6 +136,7 @@ sub _UnpackFSSpec {
 	type => _Unpacker("a4"),
 	keyw => _Unpacker("a4"),
 	sign => _Unpacker("a4"),
+	prop => _Unpacker("a4"),
 	bool => _Unpacker("c"),
 	shor => _Unpacker("s"),
 	long => _Unpacker("l"),

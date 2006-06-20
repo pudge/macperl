@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.11  2004/05/11 05:36:18  pudge
+ * oops
+ *
  * Revision 1.10  2004/05/11 05:28:26  pudge
  * Eliminate a number of memory leaks due to lack of disposal of Handles,
  * due to changes for Mac OS X.
@@ -87,6 +90,7 @@ _new(package, type='null', data=0)
 		if (data == NULL) {
 			AEFail(AECreateDesc(type, NULL, 0, &RETVAL));
 		} else {
+			ConvertFourCharCode(type, *data);
 			AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL));
 			DisposeHandle(data);
 		}
@@ -125,6 +129,7 @@ data(desc, newData=0)
 		Size descLen;
 
 		if (items>1) {
+			ConvertFourCharCode(desc.descriptorType, *newData);
 			AEReplaceDescData(desc.descriptorType, *newData,
 				GetHandleSize(newData), &desc);
 			DisposeHandle(newData);
@@ -133,6 +138,7 @@ data(desc, newData=0)
 		descLen = AEGetDescDataSize(&desc);
 		RETVAL = NewHandle(descLen);
 		AEFail(AEGetDescData(&desc, *RETVAL, descLen));
+		ConvertFourCharCode(desc.descriptorType, *RETVAL);
 #endif
 	}
 	OUTPUT:
@@ -157,6 +163,7 @@ _new(package, key=0, type='null', data=0)
 		if (data == NULL) {
 			AEFail(AECreateDesc(type, NULL, 0, &RETVAL.descContent));
 		} else {
+			ConvertFourCharCode(type, *data);
 			AEFail(AECreateDesc(type, *data, GetHandleSize(data), &RETVAL.descContent));
 			DisposeHandle(data);
 		}
@@ -207,6 +214,7 @@ data(desc, newData=0)
 		Size descLen;
 
 		if (items>1) {
+			ConvertFourCharCode(desc.descContent.descriptorType, *newData);
 			AEReplaceDescData(desc.descContent.descriptorType, *newData,
 				GetHandleSize(newData), &desc.descContent);
 		}
@@ -214,7 +222,19 @@ data(desc, newData=0)
 		descLen = AEGetDescDataSize(&desc.descContent);
 		RETVAL = NewHandle(descLen);
 		AEFail(AEGetDescData(&desc.descContent, *RETVAL, descLen));
+		ConvertFourCharCode(desc.descContent.descriptorType, *RETVAL);
 #endif
+	}
+	OUTPUT:
+	desc
+	RETVAL
+
+AEDesc
+desc(desc)
+	AEKeyDesc	desc
+	CODE:
+	{
+		RETVAL = desc.descContent;
 	}
 	OUTPUT:
 	desc
@@ -240,10 +260,14 @@ AECreateDesc(typeCode, data)
 	{
 		void *	dataPtr;
 		STRLEN	dataSize;
+		OSErr		error;
 
 		dataPtr = SvPV(data, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
 
-		AEFail(AECreateDesc(typeCode, dataPtr, dataSize, &RETVAL));
+		error = AECreateDesc(typeCode, dataPtr, dataSize, &RETVAL);
+		ConvertFourCharCode(typeCode, dataPtr);
+		AEFail(error);
 	}
 	OUTPUT:
 	RETVAL
@@ -265,9 +289,14 @@ AECoerce(typeCode, data, toType)
 	{
 		void *	dataPtr;
 		STRLEN	dataSize;
-		
+		OSErr		error;
+
 		dataPtr = SvPV(data, dataSize);
-		AEFail(AECoercePtr(typeCode, dataPtr, dataSize, toType, &RETVAL));
+		ConvertFourCharCode(typeCode, dataPtr);
+
+		error = AECoercePtr(typeCode, dataPtr, dataSize, toType, &RETVAL);
+		ConvertFourCharCode(typeCode, dataPtr);
+		AEFail(error);
 	}
 	OUTPUT:
 	RETVAL
@@ -371,11 +400,14 @@ AEPut(theAEDescList, index, typeCode, data)
 	SV *		data
 	CODE:
 	{
-		void *	dataPtr;
+		char *	dataPtr;
 		STRLEN	dataSize;
 		
 		dataPtr 	= 	SvPV(data, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
+
 		RETVAL	=	AEPutPtr(&theAEDescList, index, typeCode, dataPtr, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
 	}
 	OUTPUT:
 	RETVAL
@@ -404,11 +436,14 @@ AEPutKey(theAERecord, theAEKeyword, typeCode, data)
 	SV *		data
 	CODE:
 	{
-		void *	dataPtr;
+		char *	dataPtr;
 		STRLEN	dataSize;
 		
 		dataPtr		=	SvPV(data, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
+
 		RETVAL	=	AEPutKeyPtr(&theAERecord, theAEKeyword, typeCode, dataPtr, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
 	}
 	OUTPUT:
 	RETVAL
@@ -492,11 +527,14 @@ AEPutParam(theAppleEvent, theAEKeyword, typeCode, data)
 	SV *		data
 	CODE:
 	{
-		void *	dataPtr;
+		char *	dataPtr;
 		STRLEN	dataSize;
 		
 		dataPtr 	= 	SvPV(data, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
+
 		RETVAL	=	AEPutParamPtr(&theAppleEvent, theAEKeyword, typeCode, dataPtr, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
 	}
 	OUTPUT:
 	RETVAL
@@ -569,11 +607,14 @@ AEPutAttribute(theAppleEvent, theAEKeyword, typeCode, data)
 	SV *		data
 	CODE:
 	{
-		void *	dataPtr;
+		char *	dataPtr;
 		STRLEN	dataSize;
 		
 		dataPtr 	= 	SvPV(data, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
+
 		RETVAL	=	AEPutAttributePtr(&theAppleEvent, theAEKeyword, typeCode, dataPtr, dataSize);
+		ConvertFourCharCode(typeCode, dataPtr);
 	}
 	OUTPUT:
 	RETVAL
@@ -943,16 +984,24 @@ AEBuildAppleEvent(theClass, theID, addressType, address, returnID, transactionID
 		char *	addressPtr;
 		STRLEN	addressLen;
 		AEDesc	targetDesc;
-		
+		OSErr		error;
+
 		PAEClearArgs();
-		addressPtr = SvPV(address, addressLen);
+
 		for (;item<items;++item) 
 			if (!PAEDoNextParam(&formscan, ST(item)))
 				croak("Too many arguments to AEBuildAppleEvent()");
 			
 		if (PAENextParam(&formscan))
 			croak("Not enough arguments to AEBuildAppleEvent()");
-		AEFail(AECreateDesc(addressType, addressPtr, addressLen, &targetDesc));
+
+		addressPtr = SvPV(address, addressLen);
+		ConvertFourCharCode(addressType, addressPtr);
+
+		error = AECreateDesc(addressType, addressPtr, addressLen, &targetDesc);
+		ConvertFourCharCode(addressType, addressPtr);
+		AEFail(error);
+
 		if (gPAECreate)
 			AEFail(
 				CallOSACreateAppleEventProc(gPAECreate,
@@ -989,7 +1038,7 @@ AEPrint(desc)
 		Handle	hand;
 
 		AEFail(AEPrintDescToHandle(&desc, &hand));
-		RETVAL = newSVpv(*hand, GetHandleSize(hand));
+		RETVAL = newSVpv(*hand, GetHandleSize(hand)-1); // remove null
 		DisposeHandle(hand);
 #else
 		long		length;
@@ -1273,9 +1322,15 @@ CreateEvent(theClass, theID, addressType, address, returnID=kAutoGenerateReturnI
 		STRLEN		addressLen;
 		AEDesc		targetDesc;
 		AppleEvent	event;
-		
+		OSErr			error;
+
 		addressPtr = SvPV(address, addressLen);
-		AEFail(AECreateDesc(addressType, addressPtr, addressLen, &targetDesc));
+		ConvertFourCharCode(addressType, addressPtr);
+
+		error = AECreateDesc(addressType, addressPtr, addressLen, &targetDesc);
+		ConvertFourCharCode(addressType, addressPtr);
+		AEFail(error);
+
 		if (gPAECreate)
 			AEFail(
 				CallOSACreateAppleEventProc(gPAECreate,
@@ -1419,11 +1474,14 @@ WriteDesc(stream, type, data)
 	SV *		data
 	CODE:
 	{
-		void *	ptr;
+		char *	ptr;
 		STRLEN	length;
 		
 		ptr = SvPV(data, length);
+		ConvertFourCharCode(type, ptr);
+
 		RETVAL = AEStream_WriteDesc(&stream, type, ptr, length);
+		ConvertFourCharCode(type, ptr);
 	}
 	OUTPUT:
 	stream
@@ -1479,6 +1537,7 @@ CloseList(stream)
 =item OpenRecord [TYPE]
 
 Start the process of building a record, to be coerced to the given type.
+
 =cut
 MacOSRet
 OpenRecord(stream, type=typeAERecord)
@@ -1537,11 +1596,14 @@ WriteKeyDesc(stream, key, type, data)
 	SV *		data
 	CODE:
 	{
-		void *	ptr;
+		char *	ptr;
 		STRLEN	length;
 		
 		ptr = SvPV(data, length);
+		ConvertFourCharCode(type, ptr);
+
 		RETVAL = AEStream_WriteKeyDesc(&stream, key, type, ptr, length);
+		ConvertFourCharCode(type, ptr);
 	}
 	OUTPUT:
 	stream

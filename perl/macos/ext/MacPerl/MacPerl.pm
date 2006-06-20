@@ -4,7 +4,7 @@ require Exporter;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $Target);
 
-$VERSION = '1.04';
+$VERSION = '1.05';
 
 @ISA = qw(Exporter);
 

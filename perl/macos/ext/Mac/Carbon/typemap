@@ -32,7 +32,8 @@ T_PTRRET
 T_STR255
 	MacPerl_CopyC2P(SvPV_nolen($arg), $var)
 T_OSTYPE
-	memcpy(&$var, SvPV_nolen($arg), sizeof($ntype))
+	memcpy(&$var, SvPV_nolen($arg), sizeof($ntype));
+	$var = ntohl($var);
 T_RECORDREF
 	if (SvROK($arg))
 	    memcpy(&$var, SvPV_nolen((SV*)SvRV($arg)), sizeof($ntype));
@@ -73,7 +74,9 @@ T_PTRRET
 T_STR255
 	sv_setpvn($arg, ((char *) $var) + 1, $var\[0\]);
 T_OSTYPE
-	sv_setpvn($arg, (char *) &$var, 4);
+	{ OSType hos = htonl($var);
+	  sv_setpvn($arg, (char *) &hos, 4);
+	}
 T_RECORDREF
 	sv_setref_pvn($arg, \"${ntype}\", (void*)&$var, sizeof($ntype));
 T_RECORDOBJ

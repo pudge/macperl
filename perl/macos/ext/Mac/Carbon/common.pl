@@ -6,7 +6,7 @@ use File::Spec::Functions qw(:DEFAULT splitdir);
 use Pod::Select;
 
 use strict;
-use vars qw($MOD $XS $PM $POD $NAME $C %ARGS);
+use vars qw($BASEDIR $MOD $XS $PM $POD $NAME $C %ARGS);
 
 sub domakefile {
 	# extra cleanup stuff
@@ -23,6 +23,8 @@ sub domakefile {
 	undef $NAME;
 	undef %ARGS;
 }
+
+$BASEDIR ||= updir();
 
 $MOD  ||= (splitdir(cwd()))[-1];
 $XS   ||= "$MOD.xs";
@@ -45,7 +47,7 @@ if ($^O eq 'darwin') {
 	$ARGS{'CCFLAGS'}	= $Config{ccflags} . ' -fpascal-strings';
 #	$ARGS{'LDDLFLAGS'}	= '-dynamiclib -prebind -flat_namespace -undefined suppress -framework Carbon';
 #	$ARGS{'DLEXT'}          = 'dylib';
-	$ARGS{'depend'}{$C}     = catfile(updir(), 'Carbon.h');
+	$ARGS{'depend'}{$C}     = catfile($BASEDIR, 'Carbon.h');
 }
 
 # let's make a new .pod with the right POD from .pm and .xs
@@ -78,7 +80,7 @@ if ($^O ne 'MacOS') {
 		my($self) = shift;
 		my $return = $self->SUPER::tool_xsubpp;
 
-		my $xsdir  = File::Spec->catdir(File::Spec->updir, 'xsubpps');
+		my $xsdir  = File::Spec->catdir($::BASEDIR, 'xsubpps');
 		my $xsubpp = $] >= 5.008 ? 'xsubpp-5.8.0' : 'xsubpp-5.6.1';
 
 		$return =~ s/^(XSUBPPDIR\s*=\s*).+$/$1$xsdir/m;

@@ -21,7 +21,7 @@ BEGIN {
 	use vars qw(
 		$VERSION @ISA @EXPORT @EXPORT_OK 
 		%RawInternetConfig %InternetConfig %InternetConfigMap $ICInstance);
-	$VERSION = '1.01';
+	$VERSION = '1.02';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		ICStart
@@ -767,7 +767,7 @@ sub GetURL {
 sub GetICHelper {
 	my $proto    = shift or return;
 	my $helper   = $InternetConfig{kICHelper() . $proto} or return;
-	my $app_id   = substr($helper, 0, 4);
+	my $app_id   = pack 'N', unpack 'L', substr($helper, 0, 4);
 	my $app_name = substr($helper, 5, ord(substr($helper, 4, 1)));
 	return wantarray ? ($app_id, $app_name) : $app_id;
 }

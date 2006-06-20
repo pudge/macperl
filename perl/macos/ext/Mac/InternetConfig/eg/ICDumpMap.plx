@@ -20,7 +20,7 @@ print "Word files are handled by:\n";
 ShowMap $InternetConfigMap{[qw(WDBN MSWD)]};
 
 print "The first 20 entries of the map are:\n";
-for my $entry (keys %InternetConfigMap) {
+while (my($entry, $value) = each %InternetConfigMap) {
    ShowMap $entry;
    last if ++$count==20;
 }

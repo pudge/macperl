@@ -8,6 +8,9 @@ AppleEvents/eg/AEReceiver.eg
 AppleEvents/eg/AEReceiver2.eg
 AppleEvents/eg/AESender.eg
 AppleEvents/eg/AESender2.eg
+AppleEvents/t/desc.t
+AppleEvents/t/event.t
+AppleEvents/t/helper.pl
 Carbon.h
 Carbon.pm
 Changes

@@ -17,10 +17,6 @@ Neeracher for MacPerl.
 See the documentation in L<Mac::Carbon> for more implementation details,
 bugs, etc.
 
-There are still some bugs, one unimplemented extension (SpeechRecognition),
-and a bunch of tests that need to be written before the distribution
-becomes "release-quality."
-
 
 =head1 HELP ME
 
@@ -49,7 +45,7 @@ To build these modules on Mac OS X, the Developer Tools are required.
 Building these modules has been tested successfully on Mac OS X 10.3 and 10.4,
 with perl 5.8.x, with gcc 3.1, gcc 3.3, and gcc 4.  Earlier versions have built
 under earlier versions of Mac OS X, perl, and gcc, but they have not been recently
-tested.  gcc 3.3 is the most well-tested.
+tested.  gcc 3.3 and 4 are the most well-tested.
 
 This tells you what version of gcc is in use, from the command line:
 
@@ -77,7 +73,8 @@ for these additional XS macros.  The Makefile.PLs will choose and use
 the appropriate xsubpp version for your version of perl.
 
 You might want to run the test suite with C<make test TEST_VERBOSE=1>.
-It's cool.
+It's cool.  For extra tests requiring the GUI, set C<MAC_CARBON_GUI = 1>
+in your environment.
 
 
 =head1 SUPPORTED MODULES
@@ -103,6 +100,7 @@ modules are:
 
 Distributed separately on the CPAN and SourceForge.net:
 
+	Mac::Apps::Launch
 	Mac::AppleEvents::Simple
 	Mac::OSA::Simple
 	Mac::Glue

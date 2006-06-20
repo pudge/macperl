@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.9  2003/10/28 05:53:30  pudge
+ * Add Carbon compat. notes
+ *
  * Revision 1.8  2003/04/06 21:34:08  pudge
  * Add LSFindApplicationForInfo to Mac::Processes for finding
  * applications on Mac OS X (by creator, bundle ID, or name)
@@ -436,7 +439,9 @@ LSFindApplicationForInfo(creator, bundleID=NULL, name=NULL)
 #ifdef MACOS_TRADITIONAL
 	croak("Usage: Mac::Processes::LSFindApplicationForInfo unsupported in Mac OS");
 #else
-	gMacPerl_OSErr = LSFindApplicationForInfo(creator, bundleID, name, &RETVAL, NULL);
+	if (gMacPerl_OSErr = LSFindApplicationForInfo(creator, bundleID, name, &RETVAL, NULL)) {
+		XSRETURN_UNDEF;
+	}
 #endif
 	OUTPUT:
 	RETVAL

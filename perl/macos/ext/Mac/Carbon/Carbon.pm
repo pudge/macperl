@@ -145,12 +145,55 @@ See L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Mac-Carbon> for more information.
 
 =item *
 
-[GS]etFileInfo fails on UFS.
+[GS]etFileInfo() fails on UFS.
 
 =item *
 
-Need more tests for Mac::Components, Mac::MoreFiles, Mac::Resources,
-Mac::InternetConfig, Mac::Processes, Mac::Sound.
+GetAliasInfo() fails on UFS and Intel.
+
+=item *
+
+Need more tests for:
+
+=over 4
+
+=item Mac::Memory
+
+Should be more comprehensive for very little-used functions; main functionality is tested OK.
+
+=item Mac::Sound
+
+Same.
+
+=item Mac::Resources
+
+Tested really only in other test suites, like Mac::Sound.  Should be more comprehensive.
+
+=item Mac::Components
+
+Same.
+
+=item Mac::Files
+
+Very good, but could do more exhausative FindFolder() tests.
+
+=item Mac::Processes
+
+Tests not very good, but tested pretty extensively by Mac::Glue and friends.
+
+=item Mac::MoreFiles
+
+Same.
+
+=item Mac::OSA
+
+Same.
+
+=item Mac::InternetConfig
+
+No real testing done.
+
+=back
 
 =item *
 
@@ -208,7 +251,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.74';
+$VERSION = '0.75';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -352,6 +395,8 @@ on Mac OS X.
 =item Mac::Sound::SndStopFilePlay
 
 =item Mac::Sound::SPBRecordToFile
+
+=item MacPerl::Choose
 
 =item MacPerl::ErrorFormat
 

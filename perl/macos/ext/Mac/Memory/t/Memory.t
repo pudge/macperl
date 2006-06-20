@@ -2,12 +2,12 @@
 use Test::More;
 use strict;
 
-BEGIN { plan tests => 12 }
+BEGIN { plan tests => 16 }
 
 use Mac::Memory;
 
 SKIP: {
-#	skip "Mac::Memory", 12;
+#	skip "Mac::Memory", 16;
 
 # test any of the many other memory functions, seldom-used though they are?
 
@@ -24,6 +24,14 @@ SKIP: {
 	is($h->get, 'xyzzy wokka wokka',	'get handle');
 	is($h->size, 17,			'handle size');
 	is($h->get(2, 2), 'zz',			'get handle portion');
+
+	is(ord $h->state, 0,			'Check unlocked state');
+	HLock($h);
+	is(ord $h->state, 128,			'Check locked state');
+	HUnlock($h);
+	is(ord $h->state, 0,			'Check unlocked state');
+
+	ok($h->address,				'Get address');
 
 	ok(!$h->dispose,			'dispose handle');
 }

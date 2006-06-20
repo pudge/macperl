@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/12/12 14:57:22  pudge
+ * Update POD and docs
+ *
  * Revision 1.3  2002/11/13 02:04:50  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -44,17 +47,20 @@ static ComponentDescription * MakeComponentDesc(
 {
 	static ComponentDescription	desc;
 	
-	if (SvTRUE(componentType))
+	if (SvTRUE(componentType)) {
 		desc.componentType = *(OSType *)SvPV_nolen(componentType);
-	else 
+		ConvertFourCharCode(typeType, (char *)&desc.componentType);
+	} else
 		desc.componentType = 0;
-	if (SvTRUE(componentSubType))
+	if (SvTRUE(componentSubType)) {
 		desc.componentSubType = *(OSType *)SvPV_nolen(componentSubType);
-	else 
+		ConvertFourCharCode(typeType, (char *)&desc.componentSubType);
+	} else 
 		desc.componentSubType = 0;
-	if (SvTRUE(componentManufacturer))
+	if (SvTRUE(componentManufacturer)) {
 		desc.componentManufacturer = *(OSType *)SvPV_nolen(componentManufacturer);
-	else 
+		ConvertFourCharCode(typeType, (char *)&desc.componentManufacturer);
+	} else 
 		desc.componentManufacturer = 0;
 	desc.componentFlags		= componentFlags;
 	desc.componentFlagsMask	= componentFlagsMask;
@@ -64,7 +70,12 @@ static ComponentDescription * MakeComponentDesc(
 
 static SV * MakeOSSV(OSType type)
 {
-	return type ? newSVpv((char *) &type, 4) : newSVpv("", 0);
+	if (type) {
+		OSType ntype = ntohl(type);
+		return newSVpv((char *) &ntype, 4);
+	} else {
+		return newSVpv("", 0);
+	}
 }
 
 MODULE = Mac::Components	PACKAGE = Mac::Components

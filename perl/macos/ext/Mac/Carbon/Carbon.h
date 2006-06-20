@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.13  2005/05/04 05:43:29  pudge
+ * Change cast for errno
+ *
  * Revision 1.12  2005/02/20 05:57:12  pudge
  * GUSI* memory leaks
  *
@@ -104,17 +107,35 @@ static bool ReadHex(const char * path, int bytes, char * result)
 {
 	char hexbyte[3];
 	hexbyte[2] = 0;
-	while (bytes--) {
+	int i, j;
+
+	for (i = 0; i < bytes; i++) {
 		hexbyte[0] = *path++; hexbyte[1] = *path++;
 		if (isxdigit(hexbyte[0]) && isxdigit(hexbyte[1])) {
-			*result++ = (char) strtol(hexbyte, nil, 16);
+#if __BIG_ENDIAN__
+			j = i;
+#elif __LITTLE_ENDIAN__
+			j = (bytes-1)-i;
+#endif
+			*(result+j) = (char) strtol(hexbyte, nil, 16);
 		} else {
 			return false;
 		}
 	}
+
+	result += 4;
+
 	return true;
 }
 
+
+/* Intel expects OSTypes in "reverse order" */
+static void ConvertFourCharCode(OSType dataType, char * dataPtr)
+{
+	if (dataType == typeEnumerated || dataType == typeType || dataType == typeProperty || dataType == typeKeyword || dataType == typeApplSignature) {
+		*(long *)dataPtr = ntohl(*(long*)dataPtr);
+	}
+}
 
 /*   Mac OS and Unix have different epochs (see perlport).
  *   Mac OS is seconds since midnight Jan 1 1904 local time,
@@ -148,7 +169,6 @@ static UInt32 SecondsUnix2Mac(UInt32 unixseconds)
 
 	return macseconds;
 }
-
 
 /*   GUSI replacement routines.  Currently, we use FS* functions
  *   to convert FSRefs to and from paths and FSSpecs, which works

@@ -1,3 +1,34 @@
+* v0.75, 19 June 2006
+
+   Endian fixes for Intel Macs:
+       * ReadHex() for parsing GUSI FSSpec
+       * Lots of OSType fixes: global (in typemap), MacPerl, AppleEvents,
+         Components, InternetConfig
+       * Some test files that made bad assumptions
+
+   Clean up a bunch of tests, better document what is incomplete
+
+   Other AppleEvent fixes:
+       * Clean up some docs
+       * Clean up AEDesc->get, make AEKeyDesc->get an alias to same
+       * Add AEKeyDesc->desc (get underlying AEDesc)
+       * Add AEDesc->dispose and AEKeyDesc->dispose
+       * Add thousands of new tests
+
+   Remove a GetAliasInfo() test that no longer works, on UFS or on Intel
+
+   Document MacPerl::Choose as unimplemented in Carbon
+
+   Add some more Mac::Memory tests   
+
+   Make Mac::Processes::LSFindApplicationForInfo() properly return
+   undef on failure
+
+   Add typeProperty to Mac::Types
+
+   Add $BASEDIR for building modules outside the base directory, but using the
+   same headers etc.
+
 * v0.74, 14 May 2005
 
    Add OSAGetAppTerminology to Mac::OSA, which is what we should have been
