@@ -131,7 +131,7 @@ SKIP: {
 
 	# 3
 	my $filedesc_print = AEPrint($filedesc);
-	like($filedesc_print, qr/^'obj '/,				'AEPrint');
+	like($filedesc_print, qr/^'?obj /,				'AEPrint');
 	#diag($filedesc_print);
 
 	# Apple bugs ... really, since the format of AEPrint can change,
@@ -139,8 +139,8 @@ SKIP: {
 	# when it breaks ... for now, I just need to get it done, and besides,
 	# this helped me identify some bugs in AEPrint
 	$filedesc_print =~ s/''null''/'null'/g;
-	$filedesc_print =~ s/'want':'(\w+)'/'want':type($1)/g;
-	$filedesc_print =~ s/'seld':'sdsk'/'seld':type(sdsk)/g;
+	$filedesc_print =~ s/'?want'?:'(\w+)'/'want':type($1)/g;
+	$filedesc_print =~ s/'?seld'?:'sdsk'/'seld':type(sdsk)/g;
 
 	#diag($filehex);
 	while ($filedesc_print =~ /\(\$(.+?)\$\)/g) {
@@ -150,7 +150,7 @@ SKIP: {
 		next unless $filehex =~ /^\Q$x\E/;
 		#diag('!!');
 		if ($x ne $y) {
-			$filedesc_print =~ s/'utxt'\(\$$y\$\)/'TEXT'(\@)/;
+			$filedesc_print =~ s/'?utxt'?\(\$$y\$\)/'TEXT'(\@)/;
 		}
 	}
 	#diag($filedesc_print);
