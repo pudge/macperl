@@ -2,7 +2,7 @@
 use Test::More;
 use strict;
 
-BEGIN { plan tests => 34 }
+BEGIN { plan tests => 35 }
 
 use vars '$PAUSE';
 use Mac::Files;
@@ -66,7 +66,7 @@ SKIP: {
 }
 
 SKIP: {
-	skip "Set MAC_CARBON_SOUND in env to run tests", 10
+	skip "Set MAC_CARBON_SOUND in env to run tests", 11
 		unless $ENV{MAC_CARBON_SOUND};
 
 	speak($channel, $desc->comment,			'speak default comment');
@@ -86,38 +86,40 @@ Antidisestablishmentarianism is a long word you won't get to the end of.
 No really, trust me, we'll never get here!
 EOS
 
-		while (SpeechBusy()) {
-			sleep 1;
+		ok(SpeechBusy(),			'busy');
 
-			ok(PauseSpeechAt($channel, kEndOfWord),
-							'pause');
-			sleep 4;
+		sleep 1;
 
-			ok(ContinueSpeech($channel),	'continue');
-			sleep 1;
+		ok(PauseSpeechAt($channel, kEndOfWord),	'pause');
+		sleep 4;
 
-			ok(PauseSpeechAt($channel, kEndOfSentence),
+		ok(ContinueSpeech($channel),		'continue');
+		sleep 1;
+
+		ok(PauseSpeechAt($channel, kEndOfSentence),
 							'pause!');
-			sleep 6;
+		sleep 6;
 
-			ok(ContinueSpeech($channel),	'continue');
-			sleep 2;
+		ok(ContinueSpeech($channel),		'continue');
+		sleep 2;
 
-			ok(StopSpeechAt($channel, kImmediate),
-							'stop it!');
-
-			last;
-		}
+		ok(StopSpeechAt($channel, kImmediate),	'stop it!');
 	}
 }
 
 SKIP: {
-#	skip "Mac::Speech", 2;
+#	skip "Mac::Speech", 1;
 
-	ok(TextToPhonemes($channel, 'Stop all the clocks disconnect the phone')
-		=~ /^_st1AAp/, # _1AOl ~DAX _kl1AAks _d2IHskAXn1EHkt ~DAX _f1OWn',
+	skip 'TextToPhonemes() does not work with Cepstral voices', 1
+		if $desc->name =~ /^Cepstral /;
+
+	like(TextToPhonemes($channel, 'Stop all the clocks disconnect the phone'),
+		qr/^_st1AAp/, # _st1AAp _1AOl ~DAX _kl1AAks% _d2IHskAXn1EHkt ~DAX _f1OWn.',
 							'phonemes');
+}
 
+SKIP: {
+#	skip "Mac::Speech", 1;
 	ok(DisposeSpeechChannel($channel),		'dispose channel');
 }
 

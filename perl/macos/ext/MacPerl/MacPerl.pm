@@ -131,7 +131,7 @@ end tell
 EOS
 
 	return undef if $result =~ /Cancel "}$/;
-	$result =~ s/.*?"(.+)".*"OK"}/$1/;
+	$result =~ s/.*?"(.*)".*"OK"}/$1/;
 	$result =~ s/\\(["\\])/$1/g;
 	return $result;
 }

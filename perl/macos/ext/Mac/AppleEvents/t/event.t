@@ -3,12 +3,11 @@ use warnings;
 use strict;
 use FindBin '$Bin';
 
-#use Test::More 'no_plan';
-use Test::More tests => 2+(42+15)+(37+5)+(4+41+19)+(47*3);
+use Test::More tests => 1+(42+15)+(37+5)+(4+41+19)+(47*3);
 
 BEGIN {
 	use_ok('Mac::AppleEvents');
-	require_ok('"$Bin/helper.pl"');
+	require "$Bin/helper.pl";
 }
 
 use File::Spec::Functions qw(catdir tmpdir);
@@ -54,8 +53,7 @@ SKIP: {
 	ok(AEPutParamDesc($event, keyDirectObject, $aliasdesc),		'AEPutParamDesc');
 	CheckDispose($aliasdesc);
 
-	my $reply = AESend($event, kAEWaitReply);
-	CheckSuccess($event, $reply);
+	my $reply = CheckSuccess($event);
 	my $filedesc = AEGetParamDesc($reply, keyDirectObject);
 	CheckRefType($filedesc, typeObjectSpecifier);
 
@@ -115,8 +113,7 @@ SKIP: {
 
 	ok(AEBuildParameters($event, q"'----':alis(@@)", $alias), 	'AEBuildParameters');
 
-	my $reply = AESend($event, kAEWaitReply);
-	CheckSuccess($event, $reply);
+	my $reply = CheckSuccess($event);
 	my $filedesc = AEGetParamDesc($reply, keyDirectObject);
 	CheckRefType($filedesc, typeObjectSpecifier);
 
@@ -206,8 +203,7 @@ SKIP: {
 	my $event = $stream->Close;
 	CheckRefType($event, typeAppleEvent);
 
-	my $reply = AESend($event, kAEWaitReply);
-	CheckSuccess($event, $reply);
+	my $reply = CheckSuccess($event);
 	my $filedesc = AEGetParamDesc($reply, keyDirectObject);
 	CheckRefType($filedesc, typeObjectSpecifier);
 
@@ -258,12 +254,16 @@ sub Finish {
 	CheckDesc($miss, typeChar, $vers);
 
 	# 11
-	my $reply = AESend($event, kAEWaitReply);
-	CheckSuccess($event, $reply);
+	my $reply = CheckSuccess($event);
 
-	is(AECountItems($reply), 1,					'Count reply');
-	ok(AEDeleteParam($reply, keyDirectObject),			'Delete reply');
-	cmp_ok(AECountItems($reply), '==', 0,				'Count reply');
+	SKIP: {
+		skip "Set MAC_CARBON_GUI in env to run tests", 3
+			unless $ENV{MAC_CARBON_GUI};
+
+		is(AECountItems($reply), 1,					'Count reply');
+		ok(AEDeleteParam($reply, keyDirectObject),			'Delete reply');
+		cmp_ok(AECountItems($reply), '==', 0,				'Count reply');
+	}
 
 	# 28
 	CheckAttributes($event, $reply, qw(core setd MACS));
@@ -280,27 +280,36 @@ sub Finish {
 
 # 8
 sub CheckSuccess {
-	my($event, $reply) = @_;
+	my($event) = @_;
+
+	my $reply = AESend($event, kAEWaitReply);
 
 	CheckRefType($event, typeAppleEvent);
 	CheckRefType($reply, typeAppleEvent);
 
-	my $errn = AEGetParamDesc($reply, keyErrorNumber);
-	cmp_ok($!, '==', -1701,						'No error');
+	SKIP: {
+		skip "Set MAC_CARBON_GUI in env to run tests", 4
+			unless $ENV{MAC_CARBON_GUI};
 
-	my $errs = AEGetParamDesc($reply, keyErrorString);
-	cmp_ok($!, '==', -1701,						'No error');
+		my $errn = AEGetParamDesc($reply, keyErrorNumber);
+		cmp_ok($!, '==', -1701,						'No error');
 
-	for my $err ($errn, $errs) {
-		if ($err) {
-			is($err->get, 0, 'Error?');
-		} else {
-			pass('Still no error');
+		my $errs = AEGetParamDesc($reply, keyErrorString);
+		cmp_ok($!, '==', -1701,						'No error');
+
+		for my $err ($errn, $errs) {
+			if ($err) {
+				is($err->get, 0, 'Error?');
+			} else {
+				pass('Still no error');
+			}
 		}
 	}
 
 	#diag(AEPrint($event));
 	#diag(AEPrint($reply));
+
+	return $reply;
 }
 
 # 4

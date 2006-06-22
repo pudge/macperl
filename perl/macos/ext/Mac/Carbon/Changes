@@ -1,3 +1,23 @@
+* v0.76, 21 June 2006
+
+   Add Intel-specific docs to Mac::Carbon manpage (no Intel-specific code
+   changes in this release)
+
+   Fix some AppleEvents tests due to incompatible Test::More versions
+
+   Fix AppleEvents event sending test for cases where current user does not
+   have permissions (by default, they will not run: set MAC_CARBON_GUI=1 in
+   environment to run all tests)
+
+   Fix Speech test for Cepstral voices
+
+   Fix docs for Mac::Components::GetComponentInfo()
+
+   Fix MacPerl::Ask() for case where returned string is empty, fix test too
+
+   Other Mac::Carbon manpage cleanup
+
+
 * v0.75, 19 June 2006
 
    Endian fixes for Intel Macs:

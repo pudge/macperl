@@ -100,8 +100,9 @@ SKIP: {
 	my $pick = MacPerl::Pick('Select the number between two and four', 0..5);
 	is($pick, 3, 'Pick()');
 
-	my $ask  = MacPerl::Ask('Remove the brackets and hit OK', "[$ENV{USER}]");
-	is($ask, $ENV{USER}, 'Ask()');
+	my $string = $ENV{USER} || 'your name here';
+	my $ask  = MacPerl::Ask('Remove the brackets and hit OK', "[$string]");
+	is($ask, $string, 'Ask()');
 
 	my $answer = MacPerl::Answer("Please click Cancel", "OK", "Cancel", "Booya!");
 	is($answer, 1, 'Answer()');

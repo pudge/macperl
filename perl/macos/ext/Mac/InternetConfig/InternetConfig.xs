@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2003/10/28 05:53:30  pudge
+ * Add Carbon compat. notes
+ *
  * Revision 1.4  2003/04/06 22:19:02  pudge
  * Port to Mac OS X/Mac::Carbon
  *
@@ -327,7 +330,7 @@ ICGetConfigReference(inst)
 	ICInstance	inst;
 	CODE:
 #ifndef MACOS_TRADITIONAL
-	croak("Usage: Mac::InternetConfig::ICGeneralFindConfigFile unsupported in Carbon");
+	croak("Usage: Mac::InternetConfig::ICGetConfigReference unsupported in Carbon");
 #else
 	if (!(RETVAL = NewHandle(0))) {
 		XSRETURN_UNDEF;

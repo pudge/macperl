@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2006/06/20 01:39:18  pudge
+ * Loads of fixes, mostly for Intel port
+ *
  * Revision 1.4  2002/12/12 14:57:22  pudge
  * Update POD and docs
  *
@@ -164,7 +167,7 @@ CountComponents(componentType = &PL_sv_undef, componentSubType = &PL_sv_undef, c
 
 The GetComponentInfo function returns information about the specified component.
 
-	($info, $name, $mask, $flags, $manufacturer, $subtype, $type) =
+	($type, $subtype, $manufacturer, $flags, $mask, $name, $info) =
 		GetComponentInfo($Component);
 
 =cut

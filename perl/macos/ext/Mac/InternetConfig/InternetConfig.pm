@@ -21,7 +21,7 @@ BEGIN {
 	use vars qw(
 		$VERSION @ISA @EXPORT @EXPORT_OK 
 		%RawInternetConfig %InternetConfig %InternetConfigMap $ICInstance);
-	$VERSION = '1.02';
+	$VERSION = '1.03';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		ICStart

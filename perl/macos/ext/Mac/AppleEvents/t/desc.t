@@ -3,12 +3,11 @@ use warnings;
 use strict;
 use FindBin '$Bin';
 
-#use Test::More 'no_plan';
-use Test::More tests => 2 + 22 + (8+1146+14+715+495+8) + (13+13+13);
+use Test::More tests => 1 + 22 + (8+1146+14+715+495+8) + (13+13+13);
 
 BEGIN {
 	use_ok('Mac::AppleEvents');
-	require_ok('"$Bin/helper.pl"');
+	require "$Bin/helper.pl";
 }
 
 use Mac::Types;

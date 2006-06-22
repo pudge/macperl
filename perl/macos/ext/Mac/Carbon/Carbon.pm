@@ -137,6 +137,328 @@ The support functions are in F<Carbon.h>.  See that file for descriptions
 of the issues, including bugs and possibilities for bugs, involved.
 
 
+=head1 INTEL ISSUES
+
+There are very few issues on Intel.  They mostly center around the fact that
+a Mac four-char-code is often treated as a string in Perl-space, but in C-space
+is an integer.  The conversion process results in various errors.
+
+Four-char-code types include typeType, typeEnumerated, typeProperty,
+typeKeyword, and typeApplSignature.
+
+There are a few Don't Do Thats to keep in mind.
+
+=over 4
+
+=item *
+
+Don't change the type of an existing AEDesc; coerce it to a new desc instead,
+with AECoerceDesc().  This is generally good advice anyway.
+
+=item *
+
+Don't pass four-char-codes as arguments to AEBuild*; there's no easy way for
+the called function to know what type the argument is going to be passed as,
+and to fix the data before it is passed.  Four-char-codes can be literals
+in AEBuild formats; this is a better method to use, when possible.  For example:
+
+	AEBuild(q{'----':type(@)}, typeProperty);  # don't
+	AEBuild(q{'----':type(prop)});             # do
+
+=item *
+
+Similarly, when using AEStream, don't pass a four-char-code to WriteData(),
+if you can avoid it.  Use one of the methods that allow type specification
+(such as WriteDesc and WriteKeyDesc).
+
+=item *
+
+Don't try to parse binary data when you don't have to; use the API.  For
+example, one of the example files for Mac::Speech parsed the creator ID
+out of the binary data structure instead of calling the API, and got the
+string reversed.
+
+=back
+
+
+=head1 PACKAGES AND EXPORT TAGS
+
+See each individual module for more information on use.  See F<README>
+for more information about modules not included here.
+
+	Mac::AppleEvents	appleevents
+	Mac::Components		components
+	Mac::Files		files
+	Mac::Gestalt		gestalt
+	Mac::InternetConfig	internetconfig
+	Mac::Memory		memory
+	Mac::MoreFiles		morefiles
+	Mac::Notification	notification
+	Mac::OSA		osa	
+	Mac::Processes		processes
+	Mac::Resources		resources
+	Mac::Sound		sound
+	Mac::Speech		speech
+	Mac::Types		types
+	MacPerl			macperl
+
+=cut
+
+package Mac::Carbon;
+
+use strict;
+use base 'Exporter';
+use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
+
+$VERSION = '0.76';
+
+# we are just a frontend, so loop over the modules, and
+# suck up everything in @EXPORT
+BEGIN {
+	my @modules = qw(
+		AppleEvents
+		Components
+		Files
+		Gestalt
+		InternetConfig
+		Memory
+		MoreFiles
+		Notification
+		OSA
+		Processes
+		Resources
+		Sound
+		Speech
+		Types
+	);
+
+	# oh oh, it's magic ...
+	for (@modules) {
+		no strict 'refs';
+		my $mod = 'Mac::' . $_;
+		eval "use $mod";
+		die if $@;
+
+		my @export = @{$mod . '::EXPORT'};
+		push @EXPORT, @export;
+		$EXPORT_TAGS{ lc $_ } = \@export;
+	}
+
+	# MacPerl is special, as almost everything is in EXPORT_OK
+	use MacPerl ':all';
+	push @EXPORT, @MacPerl::EXPORT, @MacPerl::EXPORT_OK;
+	$EXPORT_TAGS{ 'macperl' } = [@MacPerl::EXPORT, @MacPerl::EXPORT_OK];
+
+	@EXPORT_OK = @EXPORT;
+	$EXPORT_TAGS{ 'all' } = \@EXPORT;
+}
+
+1;
+
+__END__
+
+=head1 UNSUPPORTED FUNCTIONS
+
+=head2 Functions supported only in Mac OS
+
+The functions below are supported only in Mac OS, and not in Mac OS X,
+either because they are not supported by Carbon, or make no sense
+on Mac OS X.
+
+=over 4
+
+
+=item Mac::AppleEvents
+
+=over 4
+
+=item AECountSubDescItems
+
+=item AEDescToSubDesc
+
+=item AEGetKeySubDesc
+
+=item AEGetNthSubDesc
+
+=item AEGetSubDescBasicType
+
+=item AEGetSubDescData
+
+=item AEGetSubDescType
+
+=item AESubDescIsListOrRecord
+
+=item AESubDescToDesc
+
+=back
+
+
+=item Mac::Files
+
+=over 4
+
+=item Eject
+
+=back
+
+
+=item Mac::InternetConfig
+
+=over 4
+
+=item ICChooseConfig
+
+=item ICChooseNewConfig
+
+=item ICGeneralFindConfigFile
+
+=item ICGetConfigReference
+
+=item ICGetComponentInstance
+
+=item ICSetConfigReference
+
+=back
+
+
+=item Mac::Memory
+
+=over
+
+=item CompactMemSys
+
+=item FreeMemSys
+
+=item GetApplLimit
+
+=item MaxBlockSys
+
+=item MaxBlockSysClear
+
+=item MaxMemSys
+
+=item NewEmptyHandleSys
+
+=item NewHandleSys
+
+=item NewHandleSysClear
+
+=item NewPtrSys
+
+=item NewPtrSysClear
+
+=item PurgeMemSys
+
+=item ReserveMemSys
+
+=back
+
+
+=item Mac::Processes
+
+=over 4
+
+=item LaunchDeskAccessory
+
+=back
+
+
+=item Mac::Resources
+
+=over 4
+
+=item CreateResFile
+
+=item OpenResFile
+
+=item RGetResource
+
+=back
+
+
+=item Mac::Sound
+
+=over 4
+
+=item Comp3to1
+
+=item Comp6to1
+
+=item Exp1to3
+
+=item Exp1to6
+
+=item MACEVersion
+
+=item SndControl
+
+=item SndPauseFilePlay
+
+=item SndRecordToFile
+
+=item SndStartFilePlay
+
+=item SndStopFilePlay
+
+=item SPBRecordToFile
+
+=back
+
+
+=item MacPerl
+
+=over 4
+
+=item Choose
+
+=item ErrorFormat
+
+=item FAccess
+
+=item LoadExternals
+
+=item Quit
+
+=item Reply
+
+=back
+
+=back
+
+
+=head2 Functions supported only in Mac OS X
+
+The functions below are supported only in Mac OS X, and not in Mac OS,
+either because they are newer APIs, or make no sense on Mac OS.
+
+=over 4
+
+=item Mac::Processes
+
+=over 4
+
+=item GetProcessForPID
+
+=item GetProcessPID
+
+=item LSFindApplicationForInfo
+
+=back
+
+
+=item Mac::Resources
+
+=over 4
+
+=item FSCreateResourceFile
+
+=item FSOpenResourceFile
+
+=back
+
+=back
+
+
 =head1 KNOWN BUGS
 
 See L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Mac-Carbon> for more information.
@@ -217,216 +539,6 @@ complained before except on principle, but still ...
 =item *
 
 Can we support XCMDs etc. via XL?  Do we want to?
-
-=back
-
-
-
-=head1 PACKAGES AND EXPORT TAGS
-
-See each individual module for more information on use.  See F<README>
-for more information about modules not included here.
-
-	Mac::AppleEvents	appleevents
-	Mac::Components		components
-	Mac::Files		files
-	Mac::Gestalt		gestalt
-	Mac::InternetConfig	internetconfig
-	Mac::Memory		memory
-	Mac::MoreFiles		morefiles
-	Mac::Notification	notification
-	Mac::OSA		osa	
-	Mac::Processes		processes
-	Mac::Resources		resources
-	Mac::Sound		sound
-	Mac::Speech		speech
-	Mac::Types		types
-	MacPerl			macperl
-
-=cut
-
-package Mac::Carbon;
-
-use strict;
-use base 'Exporter';
-use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
-
-$VERSION = '0.75';
-
-# we are just a frontend, so loop over the modules, and
-# suck up everything in @EXPORT
-BEGIN {
-	my @modules = qw(
-		AppleEvents
-		Components
-		Files
-		Gestalt
-		InternetConfig
-		Memory
-		MoreFiles
-		Notification
-		OSA
-		Processes
-		Resources
-		Sound
-		Speech
-		Types
-	);
-
-	# oh oh, it's magic ...
-	for (@modules) {
-		no strict 'refs';
-		my $mod = 'Mac::' . $_;
-		eval "use $mod";
-		die if $@;
-
-		my @export = @{$mod . '::EXPORT'};
-		push @EXPORT, @export;
-		$EXPORT_TAGS{ lc $_ } = \@export;
-	}
-
-	# MacPerl is special, as almost everything is in EXPORT_OK
-	use MacPerl ':all';
-	push @EXPORT, @MacPerl::EXPORT, @MacPerl::EXPORT_OK;
-	$EXPORT_TAGS{ 'macperl' } = [@MacPerl::EXPORT, @MacPerl::EXPORT_OK];
-
-	@EXPORT_OK = @EXPORT;
-	$EXPORT_TAGS{ 'all' } = \@EXPORT;
-}
-
-1;
-
-__END__
-
-=head1 UNSUPPORTED FUNCTIONS
-
-=head2 Functions supported only in Mac OS
-
-The functions below are supported only in Mac OS, and not in Mac OS X,
-either because they are not supported by Carbon, or make no sense
-on Mac OS X.
-
-=over 4
-
-=item Mac::AppleEvents::AECountSubDescItems
-
-=item Mac::AppleEvents::AEDescToSubDesc
-
-=item Mac::AppleEvents::AEGetKeySubDesc
-
-=item Mac::AppleEvents::AEGetNthSubDesc
-
-=item Mac::AppleEvents::AEGetSubDescBasicType
-
-=item Mac::AppleEvents::AEGetSubDescData
-
-=item Mac::AppleEvents::AEGetSubDescType
-
-=item Mac::AppleEvents::AESubDescIsListOrRecord
-
-=item Mac::AppleEvents::AESubDescToDesc
-
-=item Mac::Files::Eject
-
-=item Mac::InternetConfig::ICChooseConfig
-
-=item Mac::InternetConfig::ICChooseNewConfig
-
-=item Mac::InternetConfig::ICGeneralFindConfigFile
-
-=item Mac::InternetConfig::ICGeneralFindConfigFile
-
-=item Mac::InternetConfig::ICGetComponentInstance
-
-=item Mac::InternetConfig::ICSetConfigReference
-
-=item Mac::Memory::CompactMemSys
-
-=item Mac::Memory::FreeMemSys
-
-=item Mac::Memory::GetApplLimit
-
-=item Mac::Memory::MaxBlockSys
-
-=item Mac::Memory::MaxBlockSysClear
-
-=item Mac::Memory::MaxMemSys
-
-=item Mac::Memory::NewEmptyHandleSys
-
-=item Mac::Memory::NewHandleSys
-
-=item Mac::Memory::NewHandleSysClear
-
-=item Mac::Memory::NewPtrSys
-
-=item Mac::Memory::NewPtrSysClear
-
-=item Mac::Memory::PurgeMemSys
-
-=item Mac::Memory::ReserveMemSys
-
-=item Mac::Processes::LaunchDeskAccessory
-
-=item Mac::Resources::CreateResFile
-
-=item Mac::Resources::OpenResFile
-
-=item Mac::Resources::RGetResource
-
-=item Mac::Sound::Comp3to1
-
-=item Mac::Sound::Comp6to1
-
-=item Mac::Sound::Exp1to3
-
-=item Mac::Sound::Exp1to6
-
-=item Mac::Sound::MACEVersion
-
-=item Mac::Sound::SndControl
-
-=item Mac::Sound::SndPauseFilePlay
-
-=item Mac::Sound::SndRecordToFile
-
-=item Mac::Sound::SndStartFilePlay
-
-=item Mac::Sound::SndStopFilePlay
-
-=item Mac::Sound::SPBRecordToFile
-
-=item MacPerl::Choose
-
-=item MacPerl::ErrorFormat
-
-=item MacPerl::FAccess
-
-=item MacPerl::LoadExternals
-
-=item MacPerl::Quit
-
-=item MacPerl::Reply
-
-=back
-
-
-=head2 Functions supported only in Mac OS X
-
-The functions below are supported only in Mac OS X, and not in Mac OS,
-either because they are newer APIs, or make no sense on Mac OS.
-
-=over 4
-
-=item Mac::Processes::GetProcessForPID
-
-=item Mac::Processes::GetProcessPID
-
-=item Mac::Processes::LSFundApplicationForInfo
-
-=item Mac::Resources::FSCreateResourceFile
-
-=item Mac::Resources::FSOpenResourceFile
 
 =back
 
