@@ -39,7 +39,8 @@ SKIP: {
 	}
 #diag("Other pieces of the path: @path");
 	SKIP: {
-		skip "This fails on both UFS and Intel ... so just stop caring.  It's deprecated.", 1;
+		# This fails on both UFS and Intel ... so just stop caring.  It's deprecated
+		skip 'GetAliasInfo() is deprecated', 1;
 		local $TODO = _is_ufs(dirname($alias_path));
 		is(catfile(@path), $alias_path,                      "GetAliasInfo");
 	}
