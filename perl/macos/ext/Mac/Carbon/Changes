@@ -3,7 +3,8 @@
    Add Intel-specific docs to Mac::Carbon manpage (no Intel-specific code
    changes in this release)
 
-   Fix some AppleEvents tests due to incompatible Test::More versions
+   Fix some AppleEvents tests due to incompatible Test::More versions, and
+   Mac OS X 10.3 differences in AEBuild/AEPrint
 
    Fix AppleEvents event sending test for cases where current user does not
    have permissions (by default, they will not run: set MAC_CARBON_GUI=1 in
