@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.7  2006/06/20 01:39:18  pudge
+ * Loads of fixes, mostly for Intel port
+ *
  * Revision 1.6  2005/02/20 05:57:13  pudge
  * GUSI* memory leaks
  *
@@ -374,12 +377,12 @@ MP_GetFileInfo(path)
 				XPUSHs(&PL_sv_undef);
 			/* Else return empty list */
 		} else if (GIMME != G_ARRAY) {
-			OSType ntype = ntohl(type);
+			OSType ntype = htonl(type);
 
 			XPUSHs(sv_2mortal(newSVpv((char *) &ntype, 4)));
 		} else {
-			OSType ntype = ntohl(type);
-			OSType ncreator = ntohl(creator);
+			OSType ntype = htonl(type);
+			OSType ncreator = htonl(creator);
 
 			XPUSHs(sv_2mortal(newSVpv((char *) &ncreator, 4)));
 			XPUSHs(sv_2mortal(newSVpv((char *) &ntype, 4)));

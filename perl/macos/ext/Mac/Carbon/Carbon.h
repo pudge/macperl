@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.14  2006/06/20 01:39:17  pudge
+ * Loads of fixes, mostly for Intel port
+ *
  * Revision 1.13  2005/05/04 05:43:29  pudge
  * Change cast for errno
  *
@@ -132,7 +135,12 @@ static bool ReadHex(const char * path, int bytes, char * result)
 /* Intel expects OSTypes in "reverse order" */
 static void ConvertFourCharCode(OSType dataType, char * dataPtr)
 {
-	if (dataType == typeEnumerated || dataType == typeType || dataType == typeProperty || dataType == typeKeyword || dataType == typeApplSignature) {
+	if (dataType == typeEnumerated
+	 || dataType == typeType
+	 || dataType == typeProperty
+	 || dataType == typeKeyword
+	 || dataType == typeApplSignature
+	 || dataType == typeAbsoluteOrdinal) {
 		*(long *)dataPtr = ntohl(*(long*)dataPtr);
 	}
 }
