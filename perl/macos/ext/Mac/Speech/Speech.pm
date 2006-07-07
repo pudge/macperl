@@ -24,7 +24,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Voice);
-	$VERSION = '1.03';
+	$VERSION = '1.04';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		SpeechManagerVersion
@@ -47,6 +47,7 @@ BEGIN {
 		GetSpeechPitch
 		SetSpeechPitch
 		TextToPhonemes
+		SpeechToFile
 		
 		kTextToSpeechSynthType
 		kTextToSpeechVoiceType

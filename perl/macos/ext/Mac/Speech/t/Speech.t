@@ -2,7 +2,7 @@
 use Test::More;
 use strict;
 
-BEGIN { plan tests => 35 }
+BEGIN { plan tests => 38 }
 
 use vars '$PAUSE';
 use Mac::Files;
@@ -117,6 +117,16 @@ SKIP: {
 		qr/^_st1AAp/, # _st1AAp _1AOl ~DAX _kl1AAks% _d2IHskAXn1EHkt ~DAX _f1OWn.',
 							'phonemes');
 }
+
+SKIP: {
+	skip "Set MAC_CARBON_SOUND in env to run tests", 3
+		unless $ENV{MAC_CARBON_SOUND};
+	my $file = './testfile.aiff';
+	ok(SpeechToFile($channel, $file),		'SpeechToFile');
+	speak($channel, 'This is a test file',		'speak to file');
+	ok(-s $file,					'file exists');
+}
+
 
 SKIP: {
 #	skip "Mac::Speech", 1;

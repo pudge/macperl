@@ -6,6 +6,11 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.4  2002/12/19 17:45:53  pudge
+ * GetVoiceDesciption and NewSpeechChannel use default voice if no parameter given
+ * %Voice hash returns default voice if key is false (undef, '', 0)
+ * Added accessor methods for VoiceDescription and VoiceSpec structures
+ *
  * Revision 1.3  2002/11/13 02:04:53  pudge
  * Aieeeeee!  Big ol' Carbon update.
  *
@@ -420,6 +425,35 @@ TextToPhonemes(chan, text)
 	OUTPUT:
 	RETVAL
 
+=item SpeechToFile CHAN, PATH
+
+Set speech channel CHAN to output to file PATH.
+
+=cut
+MacOSRet
+SpeechToFile(chan, path)
+	SpeechChannel	chan
+	CFStringRef	path
+	CODE:
+	{
+		CFURLRef cfurlr = CFURLCreateWithFileSystemPath(
+			kCFAllocatorDefault, path,
+#ifdef MACOS_TRADITIONAL
+			kCFURLHFSPathStyle,
+#else
+			kCFURLPOSIXPathStyle,
+#endif
+			false
+		);
+
+		RETVAL = SetSpeechInfo(chan, soOutputToFileWithCFURL, cfurlr);
+
+	}
+	OUTPUT:
+	RETVAL
+
+
 =back
 
 =cut
+
