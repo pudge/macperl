@@ -9,7 +9,7 @@ use File::Basename;
 use File::Spec::Functions qw(catfile splitdir);
 use MacPerl 'MakeFSSpec';
 use Mac::Files;
-use Mac::Errors '$MacError';
+#use Mac::Errors '$MacError';
 
 SKIP: {
 #	skip "Mac::Files Aliases", 12;
