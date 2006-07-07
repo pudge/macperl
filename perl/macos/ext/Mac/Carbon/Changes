@@ -1,3 +1,11 @@
+* v0.77, 6 July 2006
+
+   Add typeAbsoluteOrdinal to ConvertFourCharCode() types for Intel Macs
+
+   Add SpeechToFile() to Mac::Speech, to allow outputting speech to an AIFF file
+
+   Remove unnecessary dependency in Alias.t
+
 * v0.76, 21 June 2006
 
    Add Intel-specific docs to Mac::Carbon manpage (no Intel-specific code
