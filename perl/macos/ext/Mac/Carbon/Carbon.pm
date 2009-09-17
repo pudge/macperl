@@ -137,6 +137,28 @@ The support functions are in F<Carbon.h>.  See that file for descriptions
 of the issues, including bugs and possibilities for bugs, involved.
 
 
+=head1 64-BIT PERL
+
+Significant portions of the Carbon API are unavailable to 64-bit programs on Mac
+OS X.  Perhaps a subset of the API could be made available to a 64-bit perl
+(for more information see Apple's "64-Bit Guide for Carbon Developers"),
+and might in the future, but it's simpler at this point to just run perl in
+32-bit mode.
+
+There's a few ways to do this.  Most obviously, you could simply build a 32-bit
+perl.  I always build my own perl, and I just compile it for 32 bits.
+
+There's also two methods mentioned in L<man perl> under Mac OS X 10.6:
+you can set an environment variable, or set a system preference.  For the
+environment use:
+
+	VERSIONER_PERL_PREFER_32_BIT=yes
+
+And for the system preference, execute this line in your terminal:
+	
+	defaults write com.apple.versioner.perl Prefer-32-Bit -bool yes
+
+
 =head1 INTEL ISSUES
 
 There are very few issues on Intel.  They mostly center around the fact that
@@ -210,7 +232,7 @@ use strict;
 use base 'Exporter';
 use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
-$VERSION = '0.77';
+$VERSION = '0.80';
 
 # we are just a frontend, so loop over the modules, and
 # suck up everything in @EXPORT
@@ -464,14 +486,6 @@ either because they are newer APIs, or make no sense on Mac OS.
 See L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Mac-Carbon> for more information.
 
 =over 4
-
-=item *
-
-[GS]etFileInfo() fails on UFS.
-
-=item *
-
-GetAliasInfo() fails on UFS and Intel.
 
 =item *
 

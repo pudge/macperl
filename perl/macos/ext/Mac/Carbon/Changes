@@ -1,3 +1,25 @@
+* v0.80, 16 September 2009
+
+  Add notes for 64-bit perl
+
+  Bump all the version numbers
+
+  Fix a bunch of tests (nothing major, just make them work better)
+
+  Fix sound-env-var checking code for tests (no more sound tests
+  unless you ask for them with MAC_CARBON_SOUND, which was in the
+  last version, but the logic was broken)
+
+  Make CFStringRef typemap better
+
+  Remove high-bit characters from source files
+
+  Add new system version gestalt constants
+
+  Fix leak in Mac::Processes and Mac::Speech
+
+  
+
 * v0.77, 6 July 2006
 
    Add typeAbsoluteOrdinal to ConvertFourCharCode() types for Intel Macs

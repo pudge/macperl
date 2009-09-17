@@ -57,7 +57,7 @@ T_FSREF
 T_FIXED
 	$var = X2Fix(SvNV($arg))
 T_CFSTRINGREF
-	$var = CFStringCreateWithCString(NULL, (char *) SvPV_nolen($arg), kCFStringEncodingISOLatin1);
+	$var = CFStringCreateWithCString(kCFAllocatorDefault, (char *) SvPV_nolen($arg), kCFStringEncodingISOLatin1);
 OUTPUT
 T_MACOSRET
 	sv_setiv($arg, (IV)!(gMacPerl_OSErr = (short)($var)));

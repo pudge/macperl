@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.15  2006/07/07 06:40:50  pudge
+ * More endian fixes
+ *
  * Revision 1.14  2006/06/20 01:39:17  pudge
  * Loads of fixes, mostly for Intel port
  *
@@ -109,8 +112,8 @@ static StringPtr MacPerl_CopyC2P(const char * c, StringPtr p)
 static bool ReadHex(const char * path, int bytes, char * result) 
 {
 	char hexbyte[3];
-	hexbyte[2] = 0;
 	int i, j;
+	hexbyte[2] = 0;
 
 	for (i = 0; i < bytes; i++) {
 		hexbyte[0] = *path++; hexbyte[1] = *path++;
