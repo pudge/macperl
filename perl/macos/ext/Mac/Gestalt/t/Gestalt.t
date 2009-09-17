@@ -2,12 +2,12 @@
 use Test::More;
 use strict;
 
-BEGIN { plan tests => 10 }
+BEGIN { plan tests => 14 }
 
 use Mac::Gestalt;
 
 SKIP: {
-#	skip "Mac::Gestalt", 10;
+#	skip "Mac::Gestalt", 14;
 
 	my $sel;
 
@@ -27,7 +27,16 @@ SKIP: {
 	my @vers = split //, sprintf "%x", $sel;
 	my $vers = sprintf "%s.%s.", pop(@vers), pop(@vers);
 	$vers = join('', @vers) . reverse $vers;
+	ok($sel, "OS v$vers (old method)");
+
+	ok(gestaltSystemVersionMajor()  eq 'sys1');
+	ok(gestaltSystemVersionMinor()  eq 'sys2');
+	ok(gestaltSystemVersionBugFix() eq 'sys3');
+	$sel = $Gestalt{gestaltSystemVersionMajor()}
+		. '.' . $Gestalt{gestaltSystemVersionMinor()}
+		. '.' . $Gestalt{gestaltSystemVersionBugFix()};
 	ok($sel, "OS v$vers");
+
 
 	ok(gestaltAUXVersion() eq 'a/ux');
 	$sel = $Gestalt{gestaltAUXVersion()};

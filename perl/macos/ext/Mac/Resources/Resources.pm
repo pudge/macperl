@@ -25,7 +25,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.04';
+	$VERSION = '1.05';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		CloseResFile

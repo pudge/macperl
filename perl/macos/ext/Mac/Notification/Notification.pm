@@ -20,7 +20,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.02';
+	$VERSION = '1.03';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		NMInstall

@@ -64,6 +64,7 @@ EOS
 	TODO: {
 		local $TODO = _is_ufs(dirname($finder));
 		my($crea, $type) = GetFileInfo($finder);
+		#diag "$finder: $crea / $type";
 		is($crea, 'MACS', "creator of '$finder'");
 		is($type, 'FNDR', "type of '$finder'");
 	}

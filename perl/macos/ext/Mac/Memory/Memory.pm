@@ -34,7 +34,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT);
-	$VERSION = '1.22';
+	$VERSION = '1.23';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		GetApplLimit

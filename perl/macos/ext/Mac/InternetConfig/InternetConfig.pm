@@ -21,7 +21,7 @@ BEGIN {
 	use vars qw(
 		$VERSION @ISA @EXPORT @EXPORT_OK 
 		%RawInternetConfig %InternetConfig %InternetConfigMap $ICInstance);
-	$VERSION = '1.03';
+	$VERSION = '1.04';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		ICStart
@@ -290,7 +290,7 @@ sub kICMailHeaders ()              { "MailHeaders"; }
 sub kICNewsHeaders ()              { "NewsHeaders"; }
 sub kICMapping ()                  { "Mapping"; }
 sub kICCharacterSet ()             { "CharacterSet"; }
-sub kICHelper ()                   { "Helper¥"; }
+sub kICHelper ()                   { "Helper\245"; }
 sub kICServices ()                 { "Services"; }
 sub kICNewMailFlashIcon ()         { "NewMailFlashIcon"; }
 sub kICNewMailDialog ()            { "NewMailDialog"; }

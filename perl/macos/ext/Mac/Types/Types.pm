@@ -23,7 +23,7 @@ BEGIN {
 	use Carp;
 
 	use vars qw($VERSION @ISA @EXPORT %MacPack %MacUnpack);
-	$VERSION = '1.03';
+	$VERSION = '1.04';
 	@ISA = qw(Exporter DynaLoader);
 	
 	@EXPORT = qw(
@@ -166,7 +166,7 @@ sub _MacConvert {
 			return &{$code}(@_);
 		}
 	}
-	croak "Don't know about type “$type”";
+	croak "Don't know about type '$type'";
 }
 
 =item MacPack [ CONVERTERS ...] CODE, DATA ...

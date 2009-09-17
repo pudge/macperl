@@ -43,7 +43,7 @@ BEGIN {
 	
 	use vars qw(@ISA @EXPORT %Process $VERSION);
 	
-	$VERSION = '1.05';
+	$VERSION = '1.06';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		LaunchApplication

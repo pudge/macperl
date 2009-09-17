@@ -23,7 +23,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Application);
-	$VERSION = '1.03';
+	$VERSION = '1.04';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		FSpCreateMinimum

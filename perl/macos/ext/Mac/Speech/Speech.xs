@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.5  2006/07/07 06:40:26  pudge
+ * Add SpeechToFile
+ *
  * Revision 1.4  2002/12/19 17:45:53  pudge
  * GetVoiceDesciption and NewSpeechChannel use default voice if no parameter given
  * %Voice hash returns default voice if key is false (undef, '', 0)
@@ -445,9 +448,9 @@ SpeechToFile(chan, path)
 #endif
 			false
 		);
-
 		RETVAL = SetSpeechInfo(chan, soOutputToFileWithCFURL, cfurlr);
-
+		CFRelease(path);
+		CFRelease(cfurlr);
 	}
 	OUTPUT:
 	RETVAL

@@ -29,7 +29,7 @@ BEGIN {
 	use DynaLoader ();
 	
 	use vars qw($VERSION @ISA @EXPORT %Gestalt);
-	$VERSION = '1.02';
+	$VERSION = '1.03';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		Gestalt
@@ -391,6 +391,9 @@ BEGIN {
 		gestalt68k
 		gestaltPowerPC
 		gestaltSystemVersion
+		gestaltSystemVersionMajor
+		gestaltSystemVersionMinor
+		gestaltSystemVersionBugFix
 		gestaltTSMgrVersion
 		gestaltTSMgr2
 		gestaltTSMgrAttr
@@ -1982,10 +1985,20 @@ sub gestaltPowerPC ()              {          2; }
 
 =item gestaltSystemVersion
 
-System version.
+=item gestaltSystemVersionMajor
+
+=item gestaltSystemVersionMinor
+
+=item gestaltSystemVersion
+
+System version numbers.
+
 
 =cut
 sub gestaltSystemVersion ()        {     'sysv'; }
+sub gestaltSystemVersionMajor ()   {     'sys1'; }
+sub gestaltSystemVersionMinor ()   {     'sys2'; }
+sub gestaltSystemVersionBugFix ()  {     'sys3'; }
 
 
 =item gestaltTSMgrVersion

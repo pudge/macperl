@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.10  2006/06/20 01:39:18  pudge
+ * Loads of fixes, mostly for Intel port
+ *
  * Revision 1.9  2003/10/28 05:53:30  pudge
  * Add Carbon compat. notes
  *
@@ -439,9 +442,13 @@ LSFindApplicationForInfo(creator, bundleID=NULL, name=NULL)
 #ifdef MACOS_TRADITIONAL
 	croak("Usage: Mac::Processes::LSFindApplicationForInfo unsupported in Mac OS");
 #else
-	if (gMacPerl_OSErr = LSFindApplicationForInfo(creator, bundleID, name, &RETVAL, NULL)) {
+	gMacPerl_OSErr = LSFindApplicationForInfo(creator, bundleID, name, &RETVAL, NULL);
+	if (bundleID)
+		CFRelease(bundleID);
+	if (name)
+		CFRelease(name);
+	if (gMacPerl_OSErr)
 		XSRETURN_UNDEF;
-	}
 #endif
 	OUTPUT:
 	RETVAL

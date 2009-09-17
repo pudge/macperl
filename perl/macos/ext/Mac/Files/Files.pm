@@ -15,7 +15,7 @@ use base 'DynaLoader';
 use base 'Exporter';
 use vars qw(@EXPORT %EXPORT_TAGS $VERSION);
 
-$VERSION = '1.09';
+$VERSION = '1.10';
 @EXPORT = qw(
 	FSpGetCatInfo
 	FSpSetCatInfo
@@ -672,7 +672,7 @@ encoding tables
 
 =cut
 
-sub kTextEncodingsFolderType () { 'Ätex' }
+sub kTextEncodingsFolderType () { "\304tex" }
 
 =item kStationeryFolderType
 
@@ -712,7 +712,7 @@ OpenDoc subfolder of Editors folder
 
 =cut
 
-sub kOpenDocEditorsFolderType () { 'Äodf' }
+sub kOpenDocEditorsFolderType () { "\304odf" }
 
 =item kOpenDocLibrariesFolderType
 
@@ -728,7 +728,7 @@ CKH general editors folder at root level of Sys folder
 
 =cut
 
-sub kGenEditorsFolderType () { 'Äedi' }
+sub kGenEditorsFolderType () { "\304edi" }
 
 =item kHelpFolderType
 
@@ -736,7 +736,7 @@ CKH help folder currently at root of system folder
 
 =cut
 
-sub kHelpFolderType () { 'Ählp' }
+sub kHelpFolderType () { "\304hlp" }
 
 =item kInternetPlugInFolderType
 
@@ -744,7 +744,7 @@ CKH internet plug ins for browsers and stuff
 
 =cut
 
-sub kInternetPlugInFolderType () { 'Änet' }
+sub kInternetPlugInFolderType () { "\304net" }
 
 =item kModemScriptsFolderType
 
@@ -752,7 +752,7 @@ CKH modem scripts, get 'em OUT of the Extensions folder
 
 =cut
 
-sub kModemScriptsFolderType () { 'Ämod' }
+sub kModemScriptsFolderType () { "\304mod" }
 
 =item kPrinterDescriptionFolderType
 
@@ -768,7 +768,7 @@ CKH new folder at root of System folder for printer drivers
 
 =cut
 
-sub kPrinterDriverFolderType () { 'Äprd' }
+sub kPrinterDriverFolderType () { "\304prd" }
 
 =item kScriptingAdditionsFolderType
 
@@ -776,7 +776,7 @@ CKH at root of system folder
 
 =cut
 
-sub kScriptingAdditionsFolderType () { 'Äscr' }
+sub kScriptingAdditionsFolderType () { "\304scr" }
 
 =item kSharedLibrariesFolderType
 
@@ -784,7 +784,7 @@ CKH for general shared libs.
 
 =cut
 
-sub kSharedLibrariesFolderType () { 'Älib' }
+sub kSharedLibrariesFolderType () { "\304lib" }
 
 =item kVoicesFolderType
 
@@ -808,7 +808,7 @@ SJF for Assistants (Mac OS Setup Assistant, etc)
 
 =cut
 
-sub kAssistantsFolderType () { 'astÄ' }
+sub kAssistantsFolderType () { "ast\304" }
 
 =item kUtilitiesFolderType
 
@@ -816,7 +816,7 @@ SJF for Utilities folder
 
 =cut
 
-sub kUtilitiesFolderType () { 'utiÄ' }
+sub kUtilitiesFolderType () { "uti\304" }
 
 =item kAppleExtrasFolderType
 
@@ -824,7 +824,7 @@ SJF for Apple Extras folder
 
 =cut
 
-sub kAppleExtrasFolderType () { 'aexÄ' }
+sub kAppleExtrasFolderType () { "aex\304" }
 
 =item kContextualMenuItemsFolderType
 
@@ -840,7 +840,7 @@ SJF for Mac OS ReadMes folder
 
 =cut
 
-sub kMacOSReadMesFolderType () { 'morÄ' }
+sub kMacOSReadMesFolderType () { "mor\304" }
 
 =item kALMModulesFolderType
 
@@ -868,7 +868,7 @@ sub kALMLocationsFolderType () { 'fall' }
 
 =item kColorSyncProfilesFolderType
 
-for ColorSyncª Profiles
+for ColorSync Profiles
 
 =cut
 
@@ -896,7 +896,7 @@ Internet folder (root level of startup volume)
 
 =cut
 
-sub kInternetFolderType () { 'intÄ' }
+sub kInternetFolderType () { "int\304" }
 
 =item kAppearanceFolderType
 
@@ -920,7 +920,7 @@ Desktop Pictures folder (in Appearance folder)
 
 =cut
 
-sub kDesktopPicturesFolderType () { 'dtpÄ' }
+sub kDesktopPicturesFolderType () { "dtp\304" }
 
 =item kInternetSearchSitesFolderType
 
@@ -960,7 +960,7 @@ Scripts folder
 
 =cut
 
-sub kScriptsFolderType () { 'scrÄ' }
+sub kScriptsFolderType () { "scr\304" }
 
 =item kFolderActionsFolderType
 
@@ -1255,7 +1255,7 @@ Refers to the "Music" folder in a users home directory
 
 =cut
 
-sub kMusicDocumentsFolderType () { 'µdoc' }
+sub kMusicDocumentsFolderType () { "\265doc" }
 
 =item kInternetSitesFolderType
 
@@ -1437,7 +1437,7 @@ PKE for Locales folder
 
 =cut
 
-sub kLocalesFolderType () { 'Äloc' }
+sub kLocalesFolderType () { "\304loc" }
 
 =item kFindByContentPluginsFolderType
 
@@ -1501,7 +1501,7 @@ Appleshare puts volumes to automount inside this folder.
 
 =cut
 
-sub kAppleshareAutomountServerAliasesFolderType () { 'srvÄ' }
+sub kAppleshareAutomountServerAliasesFolderType () { "srv\304" }
 
 =item kPreMacOS91ApplicationsFolderType
 
@@ -1509,7 +1509,7 @@ The "Applications" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91ApplicationsFolderType () { 'Œpps' }
+sub kPreMacOS91ApplicationsFolderType () { "\345pps" }
 
 =item kPreMacOS91InstallerLogsFolderType
 
@@ -1517,7 +1517,7 @@ The "Installer Logs" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91InstallerLogsFolderType () { '”lgf' }
+sub kPreMacOS91InstallerLogsFolderType () { "\356lgf" }
 
 =item kPreMacOS91AssistantsFolderType
 
@@ -1525,7 +1525,7 @@ The "Assistants" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91AssistantsFolderType () { 'ŒstÄ' }
+sub kPreMacOS91AssistantsFolderType () { "\345st\304" }
 
 =item kPreMacOS91UtilitiesFolderType
 
@@ -1533,7 +1533,7 @@ The "Utilities" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91UtilitiesFolderType () { 'ŸtiÄ' }
+sub kPreMacOS91UtilitiesFolderType () { "\374ti\304" }
 
 =item kPreMacOS91AppleExtrasFolderType
 
@@ -1541,7 +1541,7 @@ The "Apple Extras" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91AppleExtrasFolderType () { 'ŒexÄ' }
+sub kPreMacOS91AppleExtrasFolderType () { "\345ex\304" }
 
 =item kPreMacOS91MacOSReadMesFolderType
 
@@ -1549,7 +1549,7 @@ The "Mac OS ReadMes" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91MacOSReadMesFolderType () { 'µorÄ' }
+sub kPreMacOS91MacOSReadMesFolderType () { "\265or\304" }
 
 =item kPreMacOS91InternetFolderType
 
@@ -1557,7 +1557,7 @@ The "Internet" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91InternetFolderType () { '”ntÄ' }
+sub kPreMacOS91InternetFolderType () { "\356nt\304" }
 
 =item kPreMacOS91AutomountedServersFolderType
 
@@ -1565,7 +1565,7 @@ The "Servers" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91AutomountedServersFolderType () { '§rvÄ' }
+sub kPreMacOS91AutomountedServersFolderType () { "\337rv\304" }
 
 =item kPreMacOS91StationeryFolderType
 
@@ -1573,7 +1573,7 @@ The "Stationery" folder, pre Mac OS 9.1
 
 =cut
 
-sub kPreMacOS91StationeryFolderType () { '¿dst' }
+sub kPreMacOS91StationeryFolderType () { "\370dst" }
 
 =back
 

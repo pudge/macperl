@@ -22,7 +22,7 @@ BEGIN {
 	use DynaLoader;
 	
 	use vars qw(@ISA @EXPORT $VERSION);
-	$VERSION = '1.04';
+	$VERSION = '1.05';
 	@ISA = qw(Exporter DynaLoader);
 	@EXPORT = qw(
 		RegisterComponentResource

@@ -10,5 +10,5 @@ Perl -Sx "{0}" {"Parameters"}; Exit {Status}
 use Mac::Components;
 
 for ($comp = 0; $comp = FindNextComponent($comp, $ARGV[0]); ) {
-	printf "%08X: %4s %4s %4s %08X %08X %-25s %s\n", $comp, GetComponentInfo($comp);
+	printf "%08X: %4s %4s %4s %08X %08X %-25s %s %d\n", $comp, GetComponentInfo($comp), (GetComponentInfo($comp))[3] & 8;
 }

@@ -5,10 +5,9 @@ use strict;
 BEGIN { plan tests => 38 }
 
 use vars '$PAUSE';
+use Time::HiRes 'time';
 use Mac::Files;
 use Mac::Speech;
-
-$ENV{MAC_CARBON_SOUND} = 1 unless defined $ENV{MAC_CARBON_SOUND};
 
 my(@voicefiles, $voicedir, $voice, $desc, $channel, $desd);
 SKIP: {
@@ -83,27 +82,26 @@ SKIP: {
 		speak($channel, <<EOS,			'speak some long text');
 $ENV{USER}, welcome, it is very good to see you using Mac Carbon.
 Antidisestablishmentarianism is a long word you won't get to the end of.
-No really, trust me, we'll never get here!
+Trust me, we'll never get here!
 EOS
 
 		ok(SpeechBusy(),			'busy');
-
 		sleep 1;
 
-		ok(PauseSpeechAt($channel, kEndOfWord),	'pause');
-		sleep 4;
+		ok(PauseSpeechAt($channel, kEndOfSentence),
+							'pause end of sentence');
+		sleep 6;
 
 		ok(ContinueSpeech($channel),		'continue');
 		sleep 1;
 
-		ok(PauseSpeechAt($channel, kEndOfSentence),
-							'pause!');
-		sleep 6;
+		ok(PauseSpeechAt($channel, kEndOfWord),	'pause end of word');
+		sleep 4;
 
 		ok(ContinueSpeech($channel),		'continue');
 		sleep 2;
 
-		ok(StopSpeechAt($channel, kImmediate),	'stop it!');
+		ok(StopSpeechAt($channel, kImmediate),	'stop now');
 	}
 }
 

@@ -6,6 +6,9 @@
  *    as specified in the README file.
  *
  * $Log$
+ * Revision 1.7  2005/05/15 04:53:25  pudge
+ * Add OSAGetAppTerminology to Mac::OSA
+ *
  * Revision 1.6  2005/03/09 23:25:03  pudge
  * Fix Makefile to work with latest ExtUtils::MakeMaker beta. (Michael Schwern)
  *
@@ -312,7 +315,7 @@ You can pass a descriptor record containing source data suitable for a specific
 scripting component (usually text) to the OSACompile function to obtain a script
 ID for the equivalent compiled script or script context. To compile the source
 data as a script context for use with OSAExecuteEvent() or OSADoEvent(), you must set
-the kOSACompileIntoContext flag, and the source data should include appropriate
+the kOSAModeCompileIntoContext flag, and the source data should include appropriate
 handlers.
 Return zero if no error was detected.
 

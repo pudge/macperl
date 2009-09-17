@@ -28,7 +28,8 @@ END {
 
 
 SKIP: {
-#	skip "AECreateAppleEvent", 42+15+47;
+	skip "AECreateAppleEvent", 42+15+47
+		unless $ENV{MAC_CARBON_GUI};
 
 	## reveal file 4+1+15+20+2=42
 	# 4
@@ -93,7 +94,8 @@ SKIP: {
 }
 
 SKIP: {
-#	skip "AEBuildAppleEvent", 37+5+47;
+	skip "AEBuildAppleEvent", 37+5+47
+		unless $ENV{MAC_CARBON_GUI} && $ENV{MAC_CARBON_AEFMT};
 
 	## reveal file 2+1+12+20+2=37
 	# 2
@@ -155,21 +157,26 @@ SKIP: {
 	}
 	#diag($filedesc_print);
 
+	#$filedesc_print =~ s/'utxt':("mac-carbon-aeevent-test")/'TEXT'(\@)/;
 	my $fmt = "'----':'obj '{ 'form':'prop', 'want':type(prop), 'from':$filedesc_print, 'seld':type(pnam) }";
 	# $fmt = q"'----':'obj '{ 'form':prop, 'want':type(prop), 'from':'obj '{ 'want':type(docf), 'from':'obj '{ 'want':type(cfol), 'from':'obj '{ 'want':type(cobj), 'from':'obj '{ 'want':type(prop), 'from':'null'(), 'form':prop, 'seld':type(sdsk) }, 'form':name, 'seld':'utxt'($0070007200690076006100740065$) }, 'form':name, 'seld':'utxt'($0074006D0070$) }, 'form':name, 'seld':'TEXT'(@) }, 'seld':type(pnam) }";
 	#diag($fmt);
 
-	ok(AEBuildParameters($event, $fmt, 'mac-carbon-aeevent-test'),				'AEBuildParameters');
+	my @params = ($event, $fmt);
+	push @params, 'mac-carbon-aeevent-test' if $fmt =~ /\@/;
+	#diag($fmt);
+	ok(AEBuildParameters(@params),  'AEBuildParameters');
 	#diag($@);
 
-	ok(AEBuildParameters($event, 'data:TEXT(@)', $newname),		'AEBuildParameters');
+	ok(AEBuildParameters($event, 'data:TEXT(@)', $newname),         'AEBuildParameters');
 	#diag(AEPrint($event));
 
 	Finish($event);
 }
 
 SKIP: {
-#	skip "AEStream", 4+41+19+47;
+	skip "AEStream", 4+41+19+47
+		unless $ENV{MAC_CARBON_GUI};
 
 	## Quick Abort check 4
 	ok(my $stream_abort = AEStream->new,				'AEStream->new/Open');

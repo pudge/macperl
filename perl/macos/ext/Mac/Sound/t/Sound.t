@@ -8,8 +8,6 @@ BEGIN { plan tests => 14 }
 use Mac::Resources;
 use Mac::Sound;
 
-$ENV{MAC_CARBON_SOUND} = 1 unless defined $ENV{MAC_CARBON_SOUND};
-
 SKIP: {
 	skip "Set MAC_CARBON_SOUND in env to run tests", 4
 		unless $ENV{MAC_CARBON_SOUND};
