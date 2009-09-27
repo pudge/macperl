@@ -123,6 +123,7 @@ Types/Types.pm
 Types/Types.xs
 Types/t/Types.t
 common.pl
+fixargs.pl
 t/Carbon.t
 typemap
 xsubpps/xsubpp-5.6.1

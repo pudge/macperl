@@ -1,3 +1,12 @@
+* v0.81, 26 September 2009
+
+  Fixes for building on 64-bit perls and Mac OS X 10.6.  Build should now work
+  on any perl, whether self-built or system perl (unless your perl is 64-bit
+  only), and tests should run under 32-bit mode.
+
+  Other miscellaneous test fixes.
+
+
 * v0.80, 16 September 2009
 
   Add notes for 64-bit perl

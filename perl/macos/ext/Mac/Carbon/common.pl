@@ -4,6 +4,7 @@ use ExtUtils::MakeMaker;
 use File::Basename;
 use File::Spec::Functions qw(:DEFAULT splitdir);
 use Pod::Select;
+require '../fixargs.pl' if -e '../fixargs.pl';
 
 use strict;
 use vars qw($BASEDIR $MOD $XS $PM $POD $NAME $C %ARGS);
@@ -34,20 +35,23 @@ $POD  ||= "$MOD.pod";
 $NAME ||= "Mac::$MOD";
 
 %ARGS = (
-	'NAME'			=> $NAME,
-	'VERSION_FROM'		=> $PM,
-	'LINKTYPE'		=> 'static dynamic',
-	'XSPROTOARG'		=> '-noprototypes', 		# XXX remove later?
-	'NO_META'		=> 1,
+	'NAME'                  => $NAME,
+	'VERSION_FROM'          => $PM,
+	'LINKTYPE'              => 'static dynamic',
+	'XSPROTOARG'            => '-noprototypes',      # XXX remove later?
+	'NO_META'               => 1,
 );
 
 if ($^O eq 'darwin') {
-	$ARGS{'INC'}		= '-I/Developer/Headers/FlatCarbon/';
-	$ARGS{'LDDLFLAGS'}	= '-bundle -flat_namespace -undefined suppress -framework Carbon';
-	$ARGS{'CCFLAGS'}	= $Config{ccflags} . ' -fpascal-strings';
-#	$ARGS{'LDDLFLAGS'}	= '-dynamiclib -prebind -flat_namespace -undefined suppress -framework Carbon';
+	$ARGS{'INC'}            = '-I/Developer/Headers/FlatCarbon/';
+	$ARGS{'LDDLFLAGS'}      = $Config{lddlflags} . ' -bundle -flat_namespace -undefined suppress -framework Carbon';
+	$ARGS{'LDFLAGS'}        = $Config{ldflags};
+	$ARGS{'CCFLAGS'}        = $Config{ccflags} . ' -fpascal-strings';
+#	$ARGS{'LDDLFLAGS'}      = '-dynamiclib -prebind -flat_namespace -undefined suppress -framework Carbon';
 #	$ARGS{'DLEXT'}          = 'dylib';
 	$ARGS{'depend'}{$C}     = catfile($BASEDIR, 'Carbon.h');
+
+	fixargs(\%ARGS);
 }
 
 # let's make a new .pod with the right POD from .pm and .xs
