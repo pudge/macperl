@@ -62,7 +62,7 @@ EOS
 
 	# file info get/set
 	TODO: {
-		local $TODO = _is_ufs(dirname($finder));
+		local $TODO = $^O eq 'darwin';#_is_ufs(dirname($finder));
 		my($crea, $type) = GetFileInfo($finder);
 		#diag "$finder: $crea / $type";
 		is($crea, 'MACS', "creator of '$finder'");

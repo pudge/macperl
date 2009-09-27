@@ -24,6 +24,7 @@ SKIP: {
 	ok(SameProcess($psn, GetProcessForPID($$)), 'SameProcess(psn, pid)');
 
 	SKIP: {
+		skip "No parent available", 2 unless $ENV{MAC_CARBON_GUI};
 		my $info = $Process{$psn};
 		skip "No parent available", 2 unless $Process{$info->processLauncher};
 		ok(SetFrontProcess($info->processLauncher), 'set front process');
