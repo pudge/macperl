@@ -1,3 +1,8 @@
+* v0.81, 29 September 2009
+
+  More Makefile.PL fixes.  Try to catch 64-bit-only perls.
+
+
 * v0.81, 26 September 2009
 
   Fixes for building on 64-bit perls and Mac OS X 10.6.  Build should now work
