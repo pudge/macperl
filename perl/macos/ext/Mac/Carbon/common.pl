@@ -44,12 +44,17 @@ $NAME ||= "Mac::$MOD";
 
 if ($^O eq 'darwin') {
 	$ARGS{'INC'}            = '-I/Developer/Headers/FlatCarbon/';
-	$ARGS{'LDDLFLAGS'}      = $Config{lddlflags} . ' -bundle -flat_namespace -undefined suppress -framework Carbon';
+	$ARGS{'depend'}{$C}     = catfile($BASEDIR, 'Carbon.h');
+
 	$ARGS{'LDFLAGS'}        = $Config{ldflags};
 	$ARGS{'CCFLAGS'}        = $Config{ccflags} . ' -fpascal-strings';
 #	$ARGS{'LDDLFLAGS'}      = '-dynamiclib -prebind -flat_namespace -undefined suppress -framework Carbon';
 #	$ARGS{'DLEXT'}          = 'dylib';
-	$ARGS{'depend'}{$C}     = catfile($BASEDIR, 'Carbon.h');
+
+	$ARGS{'LDDLFLAGS'}      = $Config{lddlflags};
+	$ARGS{'LDDLFLAGS'}      =~ s/-undefined\s+\w+//;
+	$ARGS{'LDDLFLAGS'}      =~ s/-bundle\b//;
+	$ARGS{'LDDLFLAGS'}      .= ' -bundle -flat_namespace -undefined suppress -framework Carbon';
 
 	fixargs(\%ARGS);
 }

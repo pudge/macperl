@@ -1,6 +1,7 @@
-* v0.81, 29 September 2009
+* v0.82, 4 October 2009
 
-  More Makefile.PL fixes.  Try to catch 64-bit-only perls.
+  More Makefile.PL fixes.  Try to catch 64-bit-only perls.  Fix bug introduced
+  in 0.81 for older gcc 4's.
 
 
 * v0.81, 26 September 2009
