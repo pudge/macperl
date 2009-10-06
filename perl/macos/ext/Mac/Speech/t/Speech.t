@@ -123,6 +123,7 @@ SKIP: {
 	ok(SpeechToFile($channel, $file),		'SpeechToFile');
 	speak($channel, 'This is a test file',		'speak to file');
 	ok(-s $file,					'file exists');
+	unlink $file;
 }
 
 
