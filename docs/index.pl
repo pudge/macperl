@@ -9,7 +9,7 @@ use Pudge::Web;
 use vars '$compile';
 
 {
-	my $dir = "/home/groups/m/ma/macperl";
+	my $dir = "/home/project-web/macperl";
 	my($pw) = Pudge::Web->new(
 		Id		=> '$Id$',
 		virtual_user	=> "macperl",
