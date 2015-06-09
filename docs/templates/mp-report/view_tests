@@ -22,13 +22,14 @@ is marked OK, feel free to test it anyway, because we want to make sure it is OK
 </p></form>
 
 <table border="0" cellpadding="4">
-	<tr class="na"><td colspan="5"><table><tr>[% FOR st = status.keys.nsort %]
+	<tr class="na"><td colspan="6"><table><tr>[% FOR st = status.keys.nsort %]
 	<td class="[% PROCESS get_status st => st %]">[% status.$st %]</td>[% END %]
 </tr></table></td></tr>
 
 	<tr class="na">
 		<th>Test Name</th>
 		<th>User</th>
+		<th>Version</th>
 		<th>Config</th>
 		<th>Compiler</th>
 		<th>Date</th>
@@ -39,7 +40,7 @@ is marked OK, feel free to test it anyway, because we want to make sure it is OK
 		<td>
 <a href="http://cvs.macperl.org/cgi-bin/viewcvs.cgi/~checkout~/macperl/perl/t/[% test.test %].t?content-type=text/plain">[% test.test %]</a>
 		</td>
-		<td colspan="4">&nbsp;</td>
+		<td colspan="5">&nbsp;</td>
 	</tr>
 	[% FOR user_test = user_tests.${test.id};
 		IF form.version && configs.${user_test.config_id}.version != form.version;
@@ -52,6 +53,7 @@ is marked OK, feel free to test it anyway, because we want to make sure it is OK
 		<td>[% IF myuser.sf_match %]
 <a href="http://sf.net/users/[% myuser.user %]">[% myuser.user %]</a>
 		[% ELSE; myuser.user; END %]</td>
+		<td>[% vers = configs.${user_test.config_id}.version; version.${vers} %]</td>
 		<td>
 <a href="[% env.script_name %]?op=view_config&amp;config_id=[% user_test.config_id %]">[% FILTER strip_literal ; configs.${user_test.config_id}.name ; END %]</a>
 		</td>
